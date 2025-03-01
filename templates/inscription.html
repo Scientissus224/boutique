@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription | WarabaShop</title>
+    {% load widget_tweaks %}
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <!-- Custom Styles -->
+     <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+        }
+        /* Styles de la navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: white;
+    border-bottom: 2px solid #FF6F00; /* Orange foncé en bas */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.navbar:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo {
+    width: 80px;  /* Augmentation de la taille du logo */
+    height: 80px;
+    object-fit: contain;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.platform-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #FF6F00;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Menu principal */
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #FF6F00;
+    color: black;
+    transform: scale(1.05);
+}
+
+
+
+/* Icônes */
+.icons {
+    display: flex;
+    align-items: center;
+}
+
+button {
+    background: none;
+    border: none;
+    color: white;
+    margin: 0 10px;
+    font-size: 24px;
+    transition: transform 0.3s, color 0.3s;
+}
+
+button:hover {
+    transform: scale(1);
+    color: #FF6F00;
+}
+
+/* Style de base */
+.nav-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.hamburger {
+    display: none; /* Cacher le hamburger par défaut */
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Pour les petits écrans */
+@media screen and (max-width: 768px) {
+    .nav-links {
+        display: none; /* Cacher les liens par défaut sur les petits écrans */
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hamburger {
+        display: block; /* Afficher le bouton hamburger */
+    }
+
+    .nav-links.active {
+        display: flex; /* Afficher les liens lorsque le menu est actif */
+    }
+}
+
+/* Styles pour les écrans petits */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        position: absolute;
+        top: 60px;
+        left: 0;
+        padding: 10px;
+    }
+
+    .nav-links a {
+        padding: 15px;
+        text-align: center;
+        width: 100%;
+    }
+
+
+    .navbar.active .nav-links {
+        display: flex;
+    }
+}
+
+/* Logo et autres éléments */
+@media (max-width: 480px) {
+    .logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .platform-name {
+        font-size: 22px;
+    }
+}
+      /* Conteneur du formulaire */
+.form-container {
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Espacement entre les champs du formulaire */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Uniformiser la largeur et la hauteur des champs */
+.form-control,
+.form-control-password {
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+    height: 45px;
+    width: 100%; /* Assure que chaque champ prend 100% de la largeur du conteneur */
+}
+
+/* Style spécifique pour le champ de mot de passe */
+.form-control-password::placeholder {
+    color: white;
+}
+
+/* Gestion des erreurs dans le formulaire */
+.is-invalid {
+    border-color: #dc3545 !important; /* Bordure rouge pour les champs avec erreurs */
+}
+
+.is-invalid + .invalid-feedback {
+    color: #dc3545; /* Texte d'erreur en rouge */
+}
+
+/* Listes d'erreurs sous les champs */
+.errorlist {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 5px;
+}
+
+.errorlist li {
+    color: #dc3545;
+    font-size: 0.9rem;
+}
+
+/* Style pour les placeholders */
+::placeholder {
+    color: white; /* Couleur blanche pour le placeholder */
+    opacity: 1;
+}
+
+/* Effets visuels au focus et hover sur les champs */
+.form-control:focus,
+.form-control-password:focus {
+    border-color: #ff7043;
+    box-shadow: 0 0 5px rgba(255, 112, 67, 0.5);
+}
+
+.form-control-password:hover {
+    background-color: white;
+    color: black; /* Texte visible en noir quand le champ est actif */
+    border-color: #ff7043;
+    box-shadow: 0 0 5px rgba(255, 112, 67, 0.5);
+}
+
+/* Styles pour les labels des champs */
+.form-group label {
+    display: block; /* Mettre les labels sur une ligne distincte */
+    margin-bottom: 5px; /* Espacement entre le label et le champ */
+}
+
+/* Style du bouton primaire */
+.btn-primary {
+    background-color: #ff7043;
+    border-color: #ff7043;
+}
+
+.btn-primary:hover {
+    background-color: #e65c29;
+    border-color: #e65c29;
+}
+
+/* Logo de l'application */
+.logo-img {
+    border-radius: 15px;
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    transition: transform 0.3s ease-in-out;
+}
+
+.logo-img:hover {
+    transform: scale(1.1);
+}
+
+/* Positionner l'icône de l'œil à droite du champ de mot de passe */
+.input-group-append {
+    cursor: pointer;
+}
+
+  /* Footer Styling */
+  footer {
+    background-color: #000; /* Fond noir pur */
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 3px solid #FF4500; /* Orange foncé */
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+}
+
+/* Logo */
+.footer-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.footer-logo img {
+        width: 80px;  /* Augmentation de la taille du logo */
+        height: 80px;
+        object-fit: contain;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+    margin: 10px;
+}
+
+.footer-section h3 {
+    color: #FF4500; /* Orange foncé */
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.footer-section p, .footer-section a {
+    color: #ddd;
+    font-size: 16px;
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+}
+
+.footer-section a:hover {
+    color: #FF4500;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-icons a {
+    color: #FF4500;
+    font-size: 22px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.social-icons a:hover {
+    color: #fff;
+    transform: scale(1.2);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 15px;
+    background-color: #000;
+    font-size: 14px;
+    margin-top: 20px;
+    border-top: 1px solid #FF4500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        text-align: center;
+    }
+
+    .footer-section {
+        flex: 100%;
+        margin-bottom: 20px;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
+}
+
+     /* Boîte de notification */
+     .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
+        color: #333; /* Texte en noir pour contraster avec le fond */
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.5s ease-in-out;
+        z-index: 9999;
+    }
+    
+    .notification.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .notification.hide {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    
+    /* Bouton de fermeture */
+    .close-btn {
+        background: none;
+        border: none;
+        color: #333; /* Couleur du texte du bouton */
+        font-size: 1.5rem;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    
+    /* Style pour les messages d'erreur, succès, etc. */
+    .alert.success {
+        background-color: #4CAF50; /* Vert pour le succès */
+    }
+    
+    .alert.warning {
+        background-color: #ff9800; /* Orange pour l'avertissement */
+    }
+    
+    .alert.error {
+        background-color: #f44336; /* Rouge pour l'erreur */
+    }
+    
+    /* Styles de transition au survol du bouton de fermeture */
+    .close-btn:hover {
+        color: #ff7043;
+    }
+   </style>
+</head>
+<body>
+  <!-- Notification messages -->
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+  {% if messages %}
+  <div class="messages">
+      {% for message in messages %}
+      <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
+          <span>{{ message }}</span>
+          <button class="close-btn" onclick="closeNotification(this)">×</button>
+      </div>
+      {% endfor %}
+  </div>
+{% endif %}
+
+ <!-- Navbar -->
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        <span class="platform-name">WarabaGuinee</span>
+    </div>
+
+    <!-- Menu principal -->
+    <div class="nav-links">
+        <a href="{% url 'accueil' %}" class="home-link">
+            <i class="fa fa-home"></i> Accueil
+        </a>
+        <a href="{% url 'login' %}" class="login-link">
+            <i class="fa fa-sign-in-alt"></i> Se connecter
+        </a>
+        <a href="{% url 'inscription' %}" class="signup-link">
+            <i class="fa fa-user-plus"></i> Créer un compte
+        </a>
+    </div>
+
+    <!-- Menu hamburger -->
+    <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+</nav>
+
+
+
+
+    <!-- Inscription Section -->
+    <div class="container py-5">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-shop"></i> Créer votre compte boutique
+        </h2>        
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-12">
+                <div class="form-container">
+                    <form method="POST">
+                        {% csrf_token %}
+                    
+                        <div class="form-group">
+                            <label for="id_nom_complet"><i class="bi bi-person-fill"></i> Nom complet</label>
+                            {{ form.nom_complet|add_class:"form-control {% if form.nom_complet.errors %}is-invalid{% endif %}" }}
+                            {% if form.nom_complet.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.nom_complet.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="id_numero"><i class="bi bi-telephone-fill"></i> Numéro de téléphone</label>
+                            {{ form.numero|add_class:"form-control {% if form.numero.errors %}is-invalid{% endif %}" }}
+                            {% if form.numero.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.numero.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="id_nom_boutique"><i class="bi bi-shop-window"></i> Nom de la boutique</label>
+                            {{ form.nom_boutique|add_class:"form-control {% if form.nom_boutique.errors %}is-invalid{% endif %}" }}
+                            {% if form.nom_boutique.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.nom_boutique.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="id_email"><i class="bi bi-envelope-fill"></i> Adresse email</label>
+                            {{ form.email|add_class:"form-control {% if form.email.errors %}is-invalid{% endif %}" }}
+                            {% if form.email.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.email.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="id_password1"><i class="bi bi-lock-fill"></i> Mot de passe</label>
+                            <div class="input-group">
+                                {{ form.password1|add_class:"form-control-password {% if form.password1.errors %}is-invalid{% endif %}" }}
+                                <span class="input-group-append" onclick="togglePassword('password1')">
+                                    <i id="eye1" class="bi bi-eye-fill"></i>
+                                </span>
+                            </div>
+                            {% if form.password1.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.password1.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="id_password2"><i class="bi bi-lock-fill"></i> Confirmer le mot de passe</label>
+                            <div class="input-group">
+                                {{ form.password2|add_class:"form-control-password {% if form.password2.errors %}is-invalid{% endif %}" }}
+                                <span class="input-group-append" onclick="togglePassword('password2')">
+                                    <i id="eye2" class="bi bi-eye-fill"></i>
+                                </span>
+                            </div>
+                            {% if form.password2.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.password2.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            <img src="{% static 'lo.jpeg' %}" alt="WarabaGuinée Logo" class="logo">
+        </div>
+    
+        <div class="footer-container">
+            
+            <!-- Section Inscription -->
+            <div class="footer-section">
+                <h3>Créez votre compte</h3>
+                <p>Rejoignez WarabaGuinée et découvrez un univers de services adaptés à vos besoins. Inscrivez-vous et commencez à explorer.</p>
+                <p><a href="{% url 'inscription' %}">Créer un compte maintenant</a></p>
+            </div>
+    
+            <!-- Section Liens utiles -->
+            <div class="footer-section">
+                <h3>Inscription</h3>
+                <p><a href="{% url 'inscription' %}">Créer un compte</a></p>
+                <p><a href="{% url 'login' %}">Se connecter</a></p>
+                <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
+                <p><a href="{% url 'accueil' %}">Retour à l'accueil</a></p>
+            </div>
+            
+    
+            <!-- Section Contact -->
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-phone"></i> +224 622 00 00 00</p>
+                <p><i class="fas fa-envelope"></i> contact@warabaguinee.com</p>
+            </div>
+    
+            <!-- Section Réseaux sociaux -->
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a> <!-- Lien vers YouTube -->
+                    <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a> <!-- Lien vers TikTok -->
+                    
+                </div>
+            </div>
+    
+        </div>
+    
+        <div class="footer-bottom" style="color: white;">
+            &copy; 2025 WarabaGuinée - Tous droits réservés.
+        </div>
+    </footer>
+    
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fonction pour afficher/masquer le mot de passe
+        function togglePassword(passwordId) {
+            var passwordField = document.getElementById('id_' + passwordId);
+            var eyeIcon = document.getElementById('eye' + (passwordId === 'password1' ? '1' : '2'));
+            
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.classList.remove('bi-eye-fill');
+                eyeIcon.classList.add('bi-eye-slash-fill');
+            } else {
+                passwordField.type = "password";
+                eyeIcon.classList.remove('bi-eye-slash-fill');
+                eyeIcon.classList.add('bi-eye-fill');
+            }
+        }
+
+         // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 5000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 5000); // La notification disparaît après 5 secondes
+
+
+function toggleMenu() {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.toggle('active');
+}
+
+    </script>
+</body>
+</html>

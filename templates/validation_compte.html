@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          background-color: #333;
+          padding: 10px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+         
+          .menu-btn {
+              font-size:15px;
+              margin-right: 10px;
+          }
+      }
+     
+    
+   /* Pour les écrans plus petits que 768px (téléphones et tablettes en portrait) */
+@media (max-width: 767px) {
+    .top-bar {
+        margin-bottom: 300px; /* Ajuste la marge pour les petits écrans */
+    }
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: -250px;
+    top: 0;
+    background-color: #333;
+    padding-top: 60px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.active {
+    left: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    font-weight: 600;
+    min-height: 50px;
+}
+
+.sidebar a:hover {
+    background-color: #FF8C00;
+
+}
+
+.sidebar hr {
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.logo-container {
+    text-align: center;
+    padding: 5px;
+    margin-top: -20px;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #FF8C00;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1001;
+    position: relative;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+    transform: scale(1.15);
+    color: #FF8C00;
+}
+
+/* Ajout du style pour le bouton de fermeture du sidebar */
+.close-sidebar-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    display: none; /* Caché par défaut sur desktop */
+}
+
+/* Affichage du bouton de fermeture sur mobile */
+@media screen and (max-width: 767px) {
+    .close-sidebar-btn {
+        display: block;
+    }
+    
+    .menu-btn {
+        font-size: 24px;
+    }
+}
+
+/* Style du contenu principal */
+.content {
+    margin-left: 0;
+    padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    margin-top: 60px; /* Espace pour le top-bar */
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+
+
+
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+    .content {
+        margin: 60px 0 0 0;
+        padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sidebar {
+        width: 100%;
+        left: -100%;
+        padding-top: 60px;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .container {
+        padding: 10px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Ajustement des cartes et autres éléments */
+    .card {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .support-team {
+        padding: 10px;
+    }
+
+    .team-member {
+        margin-bottom: 20px;
+    }
+
+    /* Lorsque le sidebar est actif, désactiver le défilement du body */
+    body.no-scroll {
+        overflow: hidden;
+    }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+    .content {
+        margin-left: 250px;
+    }
+
+    .sidebar {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: none;
+    }
+
+
+}
+/* Boutons futuristes */
+.futuristic-btn {
+    background: linear-gradient(135deg, #00aaff, #4e00ff);
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+    background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+    text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+    font-weight: bold;
+    color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+    .card-body {
+        padding: 0; /* Élimine le padding inutile sur mobile */
+    }
+
+    .card {
+        margin-bottom: 20px; /* Ajoute un espacement entre les cartes */
+    }
+
+    /* Optimisation pour les images */
+    .slider-images img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Ajustement de l'image pour une présentation fluide sur Android */
+    .futuristic-card-item {
+        width: 100%; /* Les cartes occupent toute la largeur sur mobile */
+    }
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+    .col-md-3 {
+        width: 25%; /* 4 images par ligne sur tablette et plus */
+    }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+    .col-lg-3 {
+        width: 25%; /* 4 images par ligne sur grand écran */
+    }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+    color: #00aaff; /* Couleur futuriste */
+    opacity: 0.7;
+}
+
+
+/* Structure des cartes */
+.card-body {
+    text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+    font-weight: bold;
+    color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+    .col-md-3 {
+        width: 25%; /* 4 images par ligne sur tablette et plus */
+    }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+    .col-lg-3 {
+        width: 25%; /* 4 images par ligne sur grand écran */
+    }
+}
+
+/* Style général de la notification */
+.notification-box {
+    position: fixed;
+    top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+    color: #fff;
+    border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+    padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+    z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+    font-size: 2.5rem; /* Taille plus grande pour l'icône */
+    margin-right: 20px;
+    color: #00ffcc; /* Couleur cybernétique verte */
+    animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+    font-size: 1.2rem; /* Agrandit la taille du texte */
+    flex-grow: 1;
+    opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+    letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+    color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, color 0.3s;
+    padding: 5px;
+}
+
+.close-btn:hover {
+    color: #00ffcc; /* Couleur hover dynamique */
+    transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+    .notification-box {
+        top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+        right: 5px; /* Réduit l'espacement sur les petits écrans */
+        padding: 12px 18px;
+        width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+    }
+
+    .close-btn {
+        font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-box {
+        top: 5%; /* Réduit encore la distance du haut */
+        right: 5px; /* Garde une marge minimale à droite */
+        padding: 8px 15px;
+        width: 90%; /* Largeur ajustée pour les petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1rem; /* Réduit encore la taille du texte */
+    }
+
+    .close-btn {
+        font-size: 1rem; /* Petite taille du bouton de fermeture */
+    }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+    100% {
+        text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+    }
+}
+
+/* Styles des notifications */
+.notification.show {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateY(-50%) translateX(100%);
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.whatsapp-btn:hover {
+    background-color: #1da851;
+}
+
+.whatsapp-btn i {
+    margin-right: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.contact-options h2 {
+    color: #e67e22;
+    margin-bottom:0;
+    font-size: O.9rem;
+    font-weight: bold;
+}
+
+.contact-options ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-options li {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.contact-options li i {
+    font-size: 1.5rem;
+    color: #e67e22;
+    margin-right: 1rem;
+}
+
+.faq h2 {
+    color: #222;
+    margin: 2rem 0 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.faq ul {
+    list-style: none;
+    padding: 0;
+}
+
+.faq li {
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.faq li:hover {
+    transform: translateY(-5px);
+}
+
+.faq li strong {
+    color: #e67e22;
+}
+
+.social-icons {
+    text-align: center;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.social-icons a {
+    color: #333;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.social-icons a:hover {
+    color: #fff;
+    background: #FF8C00;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(255, 140, 0, 0.3);
+}
+
+.support-team {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.team-member {
+    text-align: center;
+    flex: 1 1 250px;
+    max-width: 250px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.team-member:hover {
+    transform: scale(1.05);
+}
+
+.team-member img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    margin-bottom: 0.5rem;
+    object-fit: cover;
+    border: 3px solid #fff;
+    transition: all 0.3s ease;
+    filter: brightness(1.05);
+}
+
+.team-member:hover img {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    border-color: #FF8C00;
+}
+
+.team-member h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+    color: #333;
+}
+
+.team-member p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+        margin:0;
+    }
+
+    .whatsapp-btn {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .contact-options h2,
+    .faq h2 {
+        font-size: 1.3rem;
+    }
+
+    .contact-options li {
+        font-size: 1rem;
+    }
+
+    .faq li {
+        font-size: 1rem;
+    }
+
+    .social-icons a {
+        font-size: 1.5rem;
+    }
+
+    .support-team {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .team-member {
+        flex: 1 1 200px;
+        max-width: 200px;
+    }
+
+    .team-member img {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+        margin: 0;
+    }
+
+    .alert {
+        font-size: 0.9rem;
+        padding: 1rem;
+    }
+
+    .whatsapp-btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .contact-options h2 {
+        font-size: 1.2rem;
+    }
+
+    .contact-options li {
+        font-size: 0.9rem;
+    }
+
+    .faq li {
+        font-size: 0.9rem;
+    }
+
+    .social-icons a {
+        font-size: 1.5rem;
+    }
+
+    .team-member {
+        flex: 1 1 150px;
+        max-width: 150px;
+    }
+
+    .team-member img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-sidebar-btn" onclick="closeSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <div class="header">
+        <h1><i class="fas fa-headset"></i> Support Client - WarabaGuinée</h1>
+
+    </div>
+
+    <div class="container">
+        {% if validation_compte == 'attente' %}
+        <div class="alert alert-warning" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
+            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+            <p style="margin: 0;">
+                🚀 Votre compte est en attente de validation ! Contactez notre service client dès maintenant via WhatsApp pour activer votre boutique et commencer à vendre en un instant. 📢
+            </p>
+        </div>
+    {% elif validation_compte == 'invalider' %}
+        <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
+            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+            <p style="margin: 0;">
+                ⚠️ Votre compte a été invalidé. Veuillez contacter notre support pour plus d'informations. 📞
+            </p>
+        </div>
+    {% else %}
+        <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
+            <i class="fas fa-check-circle" style="font-size: 20px; margin-right: 10px;"></i>
+            <p style="margin: 0;">
+                🎉 Félicitations ! Votre compte est validé ✅. Vous pouvez maintenant publier votre boutique en un clic et commencer à attirer vos premiers clients. 🚀 Ne perdez pas de temps, votre succès commence maintenant ! 💼🔥
+            </p>
+        </div>
+    {% endif %}
+    
+        <a href="https://wa.me/224123456789" class="whatsapp-btn" target="_blank">
+            <i class="fab fa-whatsapp"></i> Contacter sur WhatsApp
+        </a>
+
+        <div class="contact-options">
+            <h2>Contactez-nous :</h2>
+            <ul>
+                <li><i class="fas fa-phone"></i><span  style="color: black;"> Téléphone : +224 123 456 789</span></li>
+                <li><i class="fas fa-envelope"></i><span style="color: black;"> Email : support@warabaguinee.com</span></li>
+                <li><i class="fas fa-clock"></i><span style="color: black;"> Horaires : 8h - 18h, Lun - Sam</span></li>
+                <li><i class="fas fa-map-marker-alt"></i><span style="color: black;"> Adresse : 123, Avenue de l'Indépendance, Conakry</span></li>
+                
+            </ul>
+        </div>
+
+        <div class="faq">
+            <h2>Questions Fréquentes</h2>
+            <ul>
+                <ul>
+                    <li><strong>Comment valider mon compte ?</strong> <span style="color: black;">Cliquez sur le bouton WhatsApp pour contacter notre équipe support.</span></li>
+                    <li><strong>Quels sont les délais de réponse ?</strong> <span style="color: black;">Généralement dans les 24 heures ouvrables.</span></li>
+                    <li><strong>Où trouver les guides de gestion ?</strong> <span style="color: black;">Consultez la section "Guides" dans le tableau de bord.</span></li>
+                </ul>
+                
+            </ul>
+        </div>
+
+        <div class="social-icons">
+            <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
+            <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a>
+        </div>
+
+        <div class="support-team">
+            <h2 style="color: black;">Équipe de Support</h2>
+            <div class="team-member">
+                <img src="{% static 's_client2.jpg' %}" alt="John Doe">
+                <h3>Abdoul Gadirou Bah</h3>
+                <p style="color:#333333;font-size:14px">Responsable Support</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'alex.jpg' %}" alt="Jane Smith">
+                <h3>Cécé Alexis Koulemou</h3>
+                <p style="color:#333333;font-size:14px">Assistant Support</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 's_client1.jpg' %}" alt="Ali Diallo">
+                <h3>Moussa Fofana</h3>
+                <p style="color:#333333;font-size:14px">Technicien Support</p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.querySelector('.menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const body = document.body;
+        const closeSidebarBtn = document.querySelector('.close-sidebar-btn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            if (sidebar.classList.contains('active')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = 'auto';
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            body.style.overflow = 'auto';
+        }
+
+        menuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                closeSidebar();
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (sidebar.classList.contains('active') && 
+                !sidebar.contains(e.target) && 
+                !menuBtn.contains(e.target)) {
+                closeSidebar();
+            }
+        });
+
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    function toggleDescription(imageId) {
+      var descElement = document.getElementById('desc' + imageId);
+      var buttonElement = document.getElementById('toggleDesc' + imageId);
+      
+      if (descElement.style.display === "none") {
+          descElement.style.display = "block";
+          buttonElement.innerHTML = "Masquer la description";
+      } else {
+          descElement.style.display = "none";
+          buttonElement.innerHTML = "Voir la description";
+      }
+    }
+            
+    function closeNotification(element) {
+        const notification = element.parentElement;
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300);
+    }
+
+    function playNotificationSound() {
+        var sound = document.getElementById('notification-sound');
+        sound.play();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const notifications = document.querySelectorAll('.notification.show');
+        notifications.forEach(notification => {
+            playNotificationSound();
+        });
+    });
+
+    function showNotification(element) {
+        const notification = element;
+        notification.classList.add('show');
+        playNotificationSound();
+        
+        setTimeout(() => {
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 300);
+        }, 10000);
+    }
+
+    setTimeout(() => {
+        const notifications = document.querySelectorAll('.notification');
+        notifications.forEach(notification => {
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 300);
+        });
+    }, 10000);
+
+
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

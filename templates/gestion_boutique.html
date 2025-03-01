@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 20px;
+          background-color: #333;
+          
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .menu-btn {
+              font-size:15px;
+              margin-right: 10px;
+          }
+      }
+     /* Style du sidebar */
+/* Style du sidebar */
+.sidebar {
+width: 250px;
+height: 100%;
+position: fixed;
+left: -250px;
+top: 0;
+background: linear-gradient(145deg, #2c2c2c, #383838);
+border-right: 1px solid rgba(255, 140, 0, 0.2);
+padding-top: 20px;
+overflow-y: auto; /* Permet de scroller si nécessaire */
+transition: left 0.3s ease;
+z-index: 20;
+border-right: 2px solid #000;
+box-sizing: border-box; /* Gestion correcte du padding */
+}
+
+.sidebar.active {
+left: 0;
+}
+
+.sidebar a {
+display: block;
+padding: 15px 20px;
+color: #fff;
+text-decoration: none;
+font-size: 16px;
+text-transform: uppercase;
+transition: background 0.3s;
+font-weight: 600;
+min-height: 50px;
+}
+
+.sidebar a {
+  transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar a:hover {
+  background-color: #FF8C00;
+}
+
+
+.sidebar hr {
+text-align: center;
+color: white;
+margin-top: 10px;
+font-size: 20px;
+}
+
+.sidebar h2 {
+text-align: center;
+margin-top: 10px;
+font-size: 20px;
+color: white;
+}
+
+.logo-container {
+text-align: center;
+padding: 15px;
+}
+
+.logo {
+width: 100px;
+height: 100px;
+border-radius: 50%;
+border: 3px solid #000;
+}
+
+.menu-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 30px;
+cursor: pointer;
+z-index: 30;
+transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+transform: scale(1.1);
+}
+
+
+/* Style du contenu principal */
+.content {
+  padding-top: 60px; /* Ajustez cette valeur selon la hauteur de votre top-bar */
+  margin-left: 0;
+  padding: 20px;
+  min-height: calc(100vh - 60px); /* Ajuste la hauteur minimale pour éviter le débordement */
+  transition: margin-left 0.3s ease;
+  margin-left: 250px;
+  transition: background 0.3s ease;
+}
+
+
+
+
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+    height: 100vh; /* Hauteur complète pour toute la page */
+    position: absolute;
+    overflow-y: auto; /* Permet de scroller si nécessaire */
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin:0;
+    padding: 15px;
+    height: 100vh;
+  }
+
+
+  /* Lorsque le sidebar est actif, désactiver le défilement du body */
+  body.no-scroll {
+    overflow: hidden;
+  }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+  .sidebar {
+    left: 0;
+    height: 100vh;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+
+}
+/* Boutons futuristes */
+.futuristic-btn {
+  background: linear-gradient(135deg, #00aaff, #4e00ff);
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+  background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+  text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+  font-weight: bold;
+  color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+  .card-body {
+    padding: 0; /* Élimine le padding inutile sur mobile */
+  }
+
+  /* Optimisation pour les images */
+  .slider-images img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ajustement de l'image pour une présentation fluide sur Android */
+  .futuristic-card-item {
+    width: 100%; /* Les cartes occupent toute la largeur sur mobile */
+  }
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+  color: #00aaff; /* Couleur futuriste */
+  opacity: 0.7;
+}
+
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style général de la notification */
+.notification-box {
+  position: fixed;
+  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+  color: #fff;
+  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+  z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+  font-size: 2.5rem; /* Taille plus grande pour l'icône */
+  margin-right: 20px;
+  color: #00ffcc; /* Couleur cybernétique verte */
+  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+  font-size: 1.2rem; /* Agrandit la taille du texte */
+  flex-grow: 1;
+  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+  color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #00ffcc; /* Couleur hover dynamique */
+  transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .notification-box {
+    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+    right: 5px; /* Réduit l'espacement sur les petits écrans */
+    padding: 12px 18px;
+    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  }
+
+  .close-btn {
+    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-box {
+    top: 5%; /* Réduit encore la distance du haut */
+    right: 5px; /* Garde une marge minimale à droite */
+    padding: 8px 15px;
+    width: 90%; /* Largeur ajustée pour les petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1rem; /* Réduit encore la taille du texte */
+  }
+
+  .close-btn {
+    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  }
+  100% {
+    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  }
+}
+
+/* Styles des notifications */
+.notification.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateY(-50%) translateX(100%);
+}
+
+ /* Style pour le champ description */
+ .description-input {
+  font-size: 1.1rem; /* Taille de police légèrement réduite */
+  font-weight: bold; /* Texte en gras */
+  padding: 8px; /* Espacement intérieur */
+  border: 2px solid #ced4da; /* Bordure grise moderne */
+  border-radius: 5px; /* Coins légèrement arrondis */
+  background-color: #f9f9f9; /* Fond clair */
+  color: #333; /* Couleur du texte */
+  width: 100%; /* Largeur adaptée au parent */
+  max-width: 400px; /* Limite la largeur maximale */
+  height: 40px; /* Hauteur réduite pour une seule ligne */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce */
+}
+
+/* Style lorsque le champ est sélectionné (focus) */
+.description-input:focus {
+  border-color: #007bff; /* Bordure bleue au focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Ombre légère */
+  background-color: #fff; /* Fond légèrement plus clair */
+  outline: none; /* Retire l'outline par défaut */
+}
+
+/* Style pour le champ en cas d'erreur */
+.description-input.is-invalid {
+  border-color: #dc3545; /* Bordure rouge */
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.25); /* Ombre rouge subtile */
+  background-color: #fff5f5; /* Fond légèrement teinté */
+}
+
+/* Texte sous le champ en cas d'erreur */
+.description-input + .text-danger {
+  font-size: 0.9rem; /* Taille réduite pour le texte d'erreur */
+  margin-top: 5px;
+}
+/* Style pour les icônes */
+.form-label i {
+  font-size: 1.5rem; /* Agrandit la taille des icônes */
+  color: #555; /* Couleur des icônes pour un look épuré */
+  margin-right: 8px; /* Ajoute un espacement entre l'icône et le texte */
+}
+
+/* Style pour les champs select */
+select {
+  font-size: 1.1rem; /* Taille de police légèrement augmentée */
+  font-weight: bold; /* Texte en gras */
+  padding: 10px; /* Ajoute du padding pour plus de confort */
+  border: 2px solid #ced4da; /* Bordure grise moderne */
+  border-radius: 5px; /* Coins arrondis */
+  background-color: #f9f9f9; /* Fond clair */
+  color: #333; /* Couleur du texte */
+  width: 100%; /* Largeur adaptable au parent */
+  max-width: 400px; /* Limite la largeur maximale */
+  height: 50px; /* Hauteur augmentée pour une meilleure ergonomie */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce */
+}
+
+/* Focus pour les champs select */
+select:focus {
+  border-color: #007bff; /* Bordure bleue au focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Ombre subtile */
+  outline: none; /* Retire l'outline */
+}
+
+/* Style pour les champs select en cas d'erreur */
+select.is-invalid {
+  border-color: #dc3545; /* Bordure rouge pour les erreurs */
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.25); /* Ombre rouge subtile */
+  background-color: #fff5f5; /* Fond légèrement teinté en rouge */
+}
+
+/* Texte sous les champs en cas d'erreur */
+select + .text-danger {
+  font-size: 0.9rem; /* Taille réduite pour le texte d'erreur */
+  margin-top: 5px;
+}
+/* Agrandir la taille des icônes près des labels */
+.form-label i {
+  font-size: 1.8rem; /* Taille des icônes plus grande */
+  color: #555; /* Couleur neutre et moderne */
+  margin-right: 10px; /* Ajout d'un espacement avec le texte */
+}
+
+/* Style général pour les checkboxes et radios */
+input[type="checkbox"], input[type="radio"] {
+  width: 20px; /* Largeur augmentée */
+  height: 20px; /* Hauteur augmentée */
+  margin-right: 10px; /* Espacement avec le label */
+  cursor: pointer; /* Curseur pointer pour une meilleure UX */
+  accent-color: #007bff; /* Couleur personnalisée (bleu Bootstrap) */
+  transition: transform 0.2s; /* Effet de transformation pour les interactions */
+}
+
+/* Animation sur hover */
+input[type="checkbox"]:hover, input[type="radio"]:hover {
+  transform: scale(1.1); /* Effet de zoom léger */
+}
+
+/* Animation sur état actif */
+input[type="checkbox"]:checked, input[type="radio"]:checked {
+  transform: scale(1.2); /* Effet de zoom lorsqu'il est coché */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Ajout d'une ombre subtile */
+}
+
+/* Style pour les labels associés aux checkboxes et radios */
+input[type="checkbox"] + label, input[type="radio"] + label {
+  font-size: 1.2rem; /* Taille de texte augmentée */
+  font-weight: bold; /* Texte en gras */
+  margin-left: 5px; /* Espacement avec le champ */
+  cursor: pointer; /* Curseur pointer pour cliquer sur le texte */
+}
+
+/* Conteneur principal pour centrer le cercle */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ajustez selon votre usage */
+}
+
+/* Style du cercle moderne */
+.spinner-circle {
+  width: 50px; /* Taille du cercle */
+  height: 50px;
+  border: 4px solid transparent; /* Bordure transparente pour l'effet moderne */
+  border-top: 4px solid #007bff; /* Couleur principale (bleu Bootstrap) */
+  border-radius: 50%; /* Forme circulaire */
+  animation: spin 1s linear infinite; /* Animation de rotation */
+  background: linear-gradient(90deg, rgba(0, 123, 255, 0.2), rgba(0, 123, 255, 0.6));
+  background-clip: border-box;
+}
+/* Style commun pour tous les champs de formulaire */
+input, textarea, select {
+    font-size: 1.1rem; /* Taille de police commune */
+    font-weight: bold; /* Texte en gras */
+    padding: 10px; /* Padding pour tous les champs */
+    border: 2px solid #ced4da; /* Bordure moderne */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: #f9f9f9; /* Fond clair */
+    color: #333; /* Couleur du texte */
+    width: 100%; /* Largeur 100% pour tous les champs */
+    max-width: 400px; /* Limite la largeur maximale */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Animation douce */
+    margin-bottom: 15px; /* Espacement entre les champs */
+  }
+  
+  /* Style lorsque le champ est sélectionné (focus) */
+  input:focus, textarea:focus, select:focus {
+    border-color: #007bff; /* Bordure bleue au focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Ombre douce */
+    background-color: #fff; /* Fond clair au focus */
+    outline: none; /* Retire le contour par défaut */
+  }
+  
+  /* Style pour les champs en cas d'erreur */
+  input.is-invalid, textarea.is-invalid, select.is-invalid {
+    border-color: #dc3545; /* Bordure rouge pour les erreurs */
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.25); /* Ombre rouge subtile */
+    background-color: #fff5f5; /* Fond légèrement teinté */
+  }
+  
+  /* Texte sous les champs en cas d'erreur */
+  input.is-invalid + .text-danger, textarea.is-invalid + .text-danger, select.is-invalid + .text-danger {
+    font-size: 0.9rem; /* Taille réduite pour le texte d'erreur */
+    margin-top: 5px;
+  }
+  
+  /* Style des icônes près des labels */
+  .form-label i {
+    font-size: 1.8rem; /* Agrandit la taille des icônes */
+    color: #555; /* Couleur des icônes */
+    margin-right: 10px; /* Espacement entre l'icône et le texte */
+  }
+  
+/* Animation de rotation */
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+/* Masquer le bouton hamburger dans le sidebar */
+.sidebar.active .menu-btn {
+    display: none; /* Masque le bouton hamburger lorsque le sidebar est actif */
+}
+
+/* Styles pour le modal de suppression */
+@media (max-width: 576px) {
+    .modal-dialog {
+        width: 90%; /* Largeur ajustée pour petits écrans */
+        max-width: 400px; /* Limiter la taille maximale du modal */
+    }
+
+    .modal-header {
+        flex-direction: column; /* Disposition en colonne pour le titre et le bouton */
+        align-items: center; /* Centrer le contenu */
+    }
+
+    .modal-title {
+        font-size: 1.5rem; /* Réduire la taille du titre */
+        text-align: center; /* Centrer le titre */
+    }
+
+    .modal-footer {
+        flex-direction: column; /* Disposition en colonne pour les boutons */
+        align-items: center; /* Centrer les boutons */
+    }
+
+    .modal-footer .btn {
+        width: 100%; /* Rendre les boutons de la modal pleine largeur */
+        margin-top: 10px; /* Espacement entre les boutons */
+    }
+}
+
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="col-lg-5 col-md-6 col-sm-12">
+            <div class="card shadow-lg border-0">
+                <!-- En-tête de la carte -->
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <div class="icon-container mb-2">
+                        <i class="fas fa-store fa-3x"></i>
+                    </div>
+                    <h4 class="mb-0">Gérer votre Boutique</h4>
+                </div>
+    
+                <!-- Corps de la carte -->
+                {% if statut_validation_compte == 'attente' %}
+                <!-- Message d'alerte si le compte est en attente de validation -->
+                <div class="alert alert-warning" style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 22px; margin-right: 10px;"></i>
+                    <p style="margin: 0;">
+                        🚨 Votre compte est en attente de validation ! Avant de publier votre boutique, veuillez contacter notre service client via l'option <strong>Support Client</strong> pour finaliser votre validation. 📞💬
+                    </p>
+                </div>
+            {% elif statut_validation_compte == 'invalider' %}
+                <!-- Message d'alerte si le compte est invalide -->
+                <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 22px; margin-right: 10px;"></i>
+                    <p style="margin: 0;">
+                        ⚠️ Votre compte a été invalidé. Veuillez contacter notre service client pour plus d'informations. 📞
+                    </p>
+                </div>
+            {% else %}
+                <!-- Formulaire de gestion de la boutique si le compte est validé -->
+                <div class="card-body p-4">
+                    <h4 class="mb-3">Publier votre Boutique</h4>
+                    <form id="boutiqueForm" method="POST" enctype="multipart/form-data" action="{% url 'gestion_boutique' %}">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group mb-4">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold d-flex align-items-center">
+                                    {% if field.name == 'description' %}
+                                        <i class="fas fa-pencil-alt me-2 text-secondary"></i>
+                                    {% elif field.name == 'publier' %}
+                                        <i class="fas fa-paper-plane me-2 text-secondary"></i>
+                                    {% elif field.name == 'logo' %}
+                                        <i class="fas fa-file-upload me-2 text-secondary"></i>
+                                    {% elif field.name == 'statut_publication' %}
+                                        <i class="fas fa-check-circle me-2 text-secondary"></i>
+                                    {% endif %}
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+            
+                        <div class="d-grid">
+                            <button id="submitBtn" type="submit" class="btn btn-primary btn-lg">Publier</button>
+                        </div>
+                    </form>
+            
+                    <!-- Cercle de chargement -->
+                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                        <div class="spinner-circle"></div>
+                    </div>
+            
+                    <!-- Zone pour les messages -->
+                    <div id="messageContainer" class="mt-4"></div>
+                </div>
+            {% endif %}
+            
+            
+            </div>
+        </div>
+    </div>
+    </div>
+ <!-- Ajouter des sons -->
+ <audio id="successSound" src="{% static 'scusses.mp3' %}" preload="auto"></audio>
+ <audio id="loadSound" src="{% static 'son1.mp3' %}" preload="auto"></audio>
+ <audio id="errorSound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+ <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+            // Fonction pour ouvrir et fermer le sidebar
+const menuBtn = document.querySelector('.menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const body = document.querySelector('body');
+
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+  
+  // Lorsque le sidebar est actif, désactiver le scroll du body
+  if (sidebar.classList.contains('active')) {
+    body.classList.add('no-scroll');
+  } else {
+    body.classList.remove('no-scroll');
+  }
+});
+// Fonction pour afficher/masquer la description flottante
+// Fonction pour afficher ou masquer la description
+function toggleDescription(imageId) {
+  var descElement = document.getElementById('desc' + imageId);
+  var buttonElement = document.getElementById('toggleDesc' + imageId);
+  
+  if (descElement.style.display === "none") {
+      descElement.style.display = "block";
+      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
+  } else {
+      descElement.style.display = "none";
+      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
+  }
+}
+             // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 10000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 10000); // La notification disparaît après 5 secondes
+
+document.getElementById("boutiqueForm").addEventListener("submit", function (event) {
+      event.preventDefault(); // Empêche l'envoi classique du formulaire
+  
+      const form = this;
+      const formData = new FormData(form);
+      const loadingSpinner = document.getElementById("loadingSpinner");
+      const successSound = document.getElementById("successSound");
+      const loadSound = document.getElementById("loadSound");
+      const errorSound = document.getElementById("errorSound");
+      const messageContainer = document.getElementById("messageContainer");
+  
+      // Réinitialiser les messages affichés
+      messageContainer.innerHTML = "";
+  
+      // Afficher le cercle de chargement
+      loadingSpinner.style.display = "flex";
+  
+      // Envoyer les données via AJAX
+      fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+              "X-Requested-With": "XMLHttpRequest",
+          },
+      })
+          .then((response) => response.json())
+          .then((data) => {
+              // Attendre 4 secondes avant d'exécuter l'action
+              setTimeout(() => {
+                  // Cacher le cercle de chargement
+                  loadingSpinner.style.display = "none";
+  
+                  // Afficher le message et jouer le son correspondant
+                  if (data.status === "success") {
+                      successSound.play();
+                      messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                  } else if (data.status === "load") {
+                      loadSound.play();
+                      messageContainer.innerHTML = `<div class="alert alert-info">${data.message}</div>`;
+                  } else if (data.status === "error") {
+                      errorSound.play();
+                      messageContainer.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                  }
+  
+                  // Si une URL de redirection est fournie, rediriger après une pause
+                  if (data.redirect_url) {
+                      setTimeout(() => {
+                          window.location.href = data.redirect_url;
+                      }, 2000); // Délai avant la redirection
+                  }
+              }, 4000);
+          })
+          .catch((error) => {
+              console.error("Erreur :", error);
+  
+              // En cas d'erreur, cacher le cercle et afficher un message d'erreur après 4 secondes
+              setTimeout(() => {
+                  loadingSpinner.style.display = "none";
+                  errorSound.play();
+                  messageContainer.innerHTML = `<div class="alert alert-danger">Une erreur s'est produite. Veuillez réessayer.</div>`;
+              }, 4000);
+          });
+  });
+  
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"> <!-- Ajout de classes pour le centrage et le défilement -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Supprimer le produit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer ce produit ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

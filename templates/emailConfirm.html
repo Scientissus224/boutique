@@ -1,0 +1,134 @@
+{% autoescape off %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation de Compte - WarabaGuinée</title>
+    <style>
+        /* Corps de la page */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Conteneur principal centré */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* En-tête */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Style du titre */
+        .header h2 {
+            color: #4CAF50;
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Paragraphe avec le texte centré et de taille plus grande */
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        /* Texte spécifique pour les liens */
+        .btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            display: inline-block;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 16px;
+            color: #777;
+            margin-top: 30px;
+        }
+
+        /* Lien footer */
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        /* Style général du message central */
+        .message-box {
+            margin-top: 30px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mise en forme du message */
+        .message-box p {
+            font-size: 20px;
+            font-weight: 400;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Style de l'appel à l'action */
+        .action {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .action .btn {
+            font-size: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Bienvenue sur WarabaGuinée !</h2>
+            <p>Nous sommes ravis de vous accueillir dans notre communauté de créateurs de boutiques.</p>
+        </div>
+
+        <div class="message-box">
+            <p>Bonjour <strong>{{ user }}</strong>,</p>
+            <p>Pour activer votre compte et commencer à créer votre boutique en ligne, veuillez cliquer sur le lien ci-dessous :</p>
+
+            <div class="action">
+                <a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" class="btn" target="_blank">Activer mon compte</a>
+            </div>
+
+            <p>Une fois votre compte activé, vous pourrez commencer à créer des sites de vente attrayants et à gérer votre boutique en ligne facilement. Nous avons hâte de vous voir réussir avec WarabaGuinée !</p>
+        </div>
+
+        <div class="footer">
+            <p>Si vous avez des questions ou avez besoin d'aide, n'hésitez pas à <a href="mailto:support@warabaguinee.com">nous contacter</a>.</p>
+            <p>Bien à vous,<br><strong>L'équipe WarabaGuinée</strong></p>
+        </div>
+    </div>
+</body>
+</html>
+{% endautoescape %}

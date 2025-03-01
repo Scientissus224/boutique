@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarabaShop - Détail Produit</title>
+    {% load static %}
+    <!-- Liens vers les styles externes -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+    <!-- Styles personnalisés -->
+    <style>
+        body {
+            background-color: #000; /* Fond noir pour toute la section */
+            color: white;
+            font-family: 'Arial', sans-serif;
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #000;
+        padding: 20px 30px;
+        color: #fff;
+        position: relative;
+        flex-wrap: wrap;
+    }
+    
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid #fff;
+    }
+    
+    .shop-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    .navbar-search {
+        flex: 1;
+        text-align: center;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .navbar-search form {
+        display: flex;
+        justify-content: center;
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    .form-control {
+        width: 80%;
+        padding: 12px;
+        border-radius: 5px;
+        border: none;
+        font-size: 18px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        border-radius: 5px;
+        margin-left: 10px;
+        background-color: #ff7043;
+        border: none;
+        color: white;
+        font-size: 18px;
+    }
+    
+    .navbar-links {
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+        margin-left: 20px;
+    }
+    
+    .navbar-links .icon {
+        margin: 0 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+    
+    .navbar-links .icon i {
+        margin-right: 8px;
+    }
+    
+    .navbar .nav-link:hover {
+        color: #ff7043;
+    }
+    
+    .navbar .nav-link.active {
+        color: #ff7043;
+        font-weight: bold;
+    }
+    
+    .navbar .nav-link {
+        color: #ccc;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger-menu {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        cursor: pointer;
+    }
+    
+    .hamburger-menu .bar {
+        height: 4px;
+        background-color: white;
+        border-radius: 2px;
+    }
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px;
+        }
+    
+        .navbar-logo {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+    
+        .navbar-search {
+            display: none;
+        }
+    
+        .navbar-search.show {
+            display: flex;
+        }
+    
+        .navbar-links {
+            display: none; /* Cacher les liens par défaut */
+            flex-direction: column;
+            width: 100%;
+            margin-top: 10px;
+        }
+    
+        .navbar-links.show {
+            display: flex; /* Afficher les liens lorsque la classe "show" est ajoutée */
+        }
+    
+        .form-control {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .btn {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .navbar-links .icon {
+            margin-bottom: 15px; /* Ajouter de l'espace entre les éléments */
+        }
+    
+        /* Afficher le hamburger sur petits écrans */
+        .hamburger-menu {
+            display: flex;
+        }
+    }
+    .modal-content {
+        background-color: rgba(0, 0, 0, 0.9); /* Fond sombre */
+        color: white;
+        border-radius: 20px; /* Coins arrondis */
+        padding: 40px; /* Padding généreux */
+        box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
+        animation: modalFadeIn 0.6s ease-out; /* Animation d'apparition fluide */
+        width: 85%; /* Augmenter la largeur pour occuper plus d'espace */
+        max-width: 1300px; /* Largeur maximale plus grande */
+        height: 80vh; /* Hauteur de modal agrandie */
+        overflow: hidden; /* Empêcher le dépassement du contenu */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    /* Titre du modal */
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #e67e22; /* Orange moderne */
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Champs de recherche et filtres */
+    .modal-body input {
+        font-size: 1rem;
+        border-radius: 25px;
+        padding-left: 40px;
+        margin-bottom: 15px;
+    }
+
+    .modal-body .btn {
+        border-radius: 50%;
+        font-size: 1.1rem;
+    }
+
+    /* Responsivité pour les petits écrans */
+    @media (max-width: 767px) {
+        .modal-dialog {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 90%; /* Largeur ajustée pour petits écrans */
+            max-width: 500px; /* Limiter la taille du modal */
+            height: auto; /* Permet au modal de s'ajuster en fonction du contenu */
+        }
+
+        .modal-title {
+            font-size: 16px; /* Réduire la taille du titre */
+        }
+
+        .modal-body input {
+            height: 40px;
+        }
+
+        .modal-body .btn {
+            font-size: 1.2rem;
+        }
+
+        .modal-body .btn i {
+            font-size: 1.4rem; /* Réduire la taille de l'icône */
+        }
+    }
+
+    /* Améliorer la disposition des champs de filtres sur grands écrans */
+    .modal-body .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .modal-body .d-flex input {
+        width: 100%;
+    }
+
+    .modal-body .d-flex .btn {
+        margin-top: 10px;
+        margin-left: 10px;
+    }   
+  /* Styles pour le produit dans le modal */
+.modal-content {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none; /* Suppression des bordures du modal */
+}
+
+.product-item-modal {
+    padding: 8px; /* Réduire un peu l'espacement interne */
+    text-align: center;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 15px; /* Espacement entre les produits */
+}
+
+.product-item-modal:hover {
+    transform: translateY(-5px);
+}
+
+.product-image-modal {
+    width: 120%; /* Réduire la taille de l'image */
+    height: auto;
+    max-height: 200px; /* Réduire la limite pour les images */
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.product-info-modal {
+    font-size: 13px; /* Réduire la taille du texte */
+    color: white;
+}
+
+.product-name-modal {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: white; /* Nom en blanc */
+}
+
+.product-price {
+    color: #cc5500; /* Orange foncé pour le prix */
+}
+
+.product-icon-eye {
+    font-size: 18px; /* Réduire la taille de l'icône */
+    margin-top: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.product-icon-eye:hover {
+    color: #dddddd;
+}
+
+/* Fond noir clair pour le modal */
+.modal-background {
+    background-color: #000;
+}
+
+/* Responsive design pour le modal */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+    }
+
+    .product-image-modal {
+        width: 100%; /* Ajuster la largeur des images pour petits écrans */
+        max-height: 150px;
+    }
+
+    .product-info-modal {
+        font-size: 12px;
+    }
+
+    .modal-body {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-body .d-flex {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-body .d-flex input,
+    .modal-body .d-flex button {
+        width: 90%; /* Réduction de la taille des champs pour petits écrans */
+        margin-bottom: 10px;
+        height: 36px; /* Réduction de la hauteur des champs */
+        text-align: center; /* Centrage vertical du texte dans les champs */
+    }
+
+    .modal-body .d-flex input:last-child,
+    .modal-body .d-flex button:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Style de la modal-header pour une disposition en ligne */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Sur petits écrans, ajuster la taille du titre et de la croix */
+@media (max-width: 576px) {
+    .modal-header {
+        flex-direction: row; /* Disposition en ligne pour les petits écrans */
+    }
+
+    .modal-title {
+        font-size: 1rem; /* Réduire la taille du titre */
+        margin-bottom: 0; /* Enlever la marge du bas pour mieux aligner */
+    }
+
+    .btn-danger {
+        font-size: 1rem; /* Taille petite pour le bouton sur petits écrans */
+        padding: 0.5rem; /* Espacement interne réduit */
+        width: auto; /* Ajuster la taille du bouton */
+        height: auto; /* Ajuster la taille de l'icône */
+    }
+
+    .btn-danger i {
+        font-size: 1rem; /* Taille de l'icône réduite */
+    }
+}
+
+/* Sur grands écrans, garder une taille normale */
+@media (min-width: 576px) {
+    .modal-title {
+        font-size: 1.25rem; /* Taille normale du titre */
+    }
+
+    .btn-danger {
+        font-size: 1.25rem; /* Taille normale pour le bouton */
+        padding: 0.75rem 1.25rem; /* Espacement normal */
+    }
+
+    .btn-danger i {
+        font-size: 1.4rem; /* Taille normale de l'icône */
+    }
+}
+    
+        .container {
+            margin-top: 30px;
+        }
+        
+        /* Style général de la barre de défilement */
+        ::-webkit-scrollbar {
+            width: 10px; 
+            background-color: #2a2a2a;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #ff7043;
+            border-radius: 5px;
+            border: 2px solid #2a2a2a;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #e65c29;
+        }
+        
+        ::-webkit-scrollbar-thumb:active {
+            background-color: #ea1f33;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: #202020;
+            border-radius: 5px;
+        }
+        
+       /* Section produit */
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #000;  /* Fond noir pour la page */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.product-image {
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    background-color: #444;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-image img:hover {
+    transform: scale(1.05);
+}
+
+.product-info {
+    flex-grow: 1;
+    max-width: 500px;
+    color: white;  /* Texte en blanc */
+}
+
+/* Titre du produit */
+.product-info h2 {
+    font-size: 2.5rem;
+    color: white;  /* Couleur orange foncé */
+    margin-bottom: 10px;
+}
+
+/* Prix du produit */
+.product-info .price {
+    font-size: 1.8rem;
+    margin: 15px 0;
+    color: #ff7043;  /* Prix en orange foncé */
+}
+
+/* Etat du produit */
+.product-info .state {
+    font-size: 1.3rem;
+    color: #757575;  /* Gris clair pour l'état */
+}
+
+/* Description du produit */
+.product-info .description {
+    font-size: 1.1rem;
+    margin-top: 20px;
+    color: #f0f0f0;  /* Blanc cassé pour la description */
+}
+
+/* Bouton "Ajouter au panier" */
+.add-to-cart {
+    background-color: #ff7043;
+    border: none;
+    padding: 12px 25px;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-to-cart:hover {
+    background-color: #ff4500;
+}
+
+/* Images supplémentaires */
+/* Galerie des sous-images */
+.image-gallery {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: transparent; /* Fond transparent pour la galerie */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère pour l'effet de profondeur */
+}
+
+.gallery-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d75b00; /* Orange foncé */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Par défaut : 4 sous-images par ligne */
+    gap: 15px; /* Espacement entre les sous-images */
+}
+
+.image-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-thumbnail {
+    width: 100%;
+    height: auto;
+    max-width: 160px; /* Taille des sous-images */
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease; /* Effet d'agrandissement au survol */
+}
+
+.image-thumbnail:hover {
+    transform: scale(1.05); /* Agrandissement au survol */
+}
+
+/* Responsive : 3 sous-images sur petits écrans */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 sous-images par ligne */
+    }
+}
+
+/* Responsive : 2 sous-images sur très petits écrans */
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 sous-images par ligne */
+    }
+}
+
+        
+        /* Section variantes */
+   /* Conteneur principal des variantes */
+.variant-section {
+    margin-top: 40px;
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+/* Conteneur des variantes */
+.variants {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 variantes par ligne */
+    gap: 15px;  /* Espacement entre les variantes */
+}
+
+/* Style de chaque variante */
+.variant {
+    border: none; /* Enlever la bordure */
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce mais légère */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Assurer que chaque variante a une hauteur égale */
+}
+
+/* Effet au survol des variantes */
+.variant:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Image de la variante */
+.variant img {
+    width: 100%;
+    height: auto;
+    max-height: 180px; /* Réduire légèrement la taille des images */
+    object-fit: contain;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Informations de la variante */
+.variant-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Taille de la variante */
+.taille {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+/* Couleur de la variante */
+.couleur {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    border: 2px solid #fff;
+    display: block;
+}
+
+/* Prix de la variante */
+.variant-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffa500; /* Texte orange pour les prix */
+    margin-bottom: 10px;
+}
+
+/* Bouton ajouter au panier */
+.add-to-cart-btn-variante {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #28a745;
+    color: #fff;
+    border: 2px solid #28a745;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart-btn-variante:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+.icon-cart {
+    margin-right: 10px;
+    font-size: 20px;
+    color: #d9534f; /* Orange foncé pour l'icône */
+}
+
+/* Si la variante est déjà au panier */
+.ajouter {
+    font-size: 14px;
+    color: #28a745;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive grid pour les petits écrans */
+@media screen and (max-width: 768px) {
+    .variants {
+        grid-template-columns: repeat(2, 1fr); /* 2 variantes par ligne */
+        gap: 15px;
+    }
+
+    .variant img {
+        height: auto;
+        max-height: 150px; /* Réduction de la taille pour les petits écrans */
+    }
+
+    .variant-price {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .variants {
+        grid-template-columns: 1fr; /* 1 variante par ligne pour les très petits écrans */
+        gap: 10px;
+    }
+
+    .variant img {
+        height: auto;
+        max-height: 120px; /* Hauteur plus petite pour les très petits écrans */
+    }
+
+    .variant-price {
+        font-size: 12px;
+    }
+}
+
+
+        /* Styles responsive pour petits écrans */
+        @media (max-width: 768px) {
+            
+            .product-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .product-image,
+            .product-info {
+                max-width: 100%;
+            }
+        
+            .couleur {
+                width: 30px;
+                height: 30px;
+            }
+        
+            .add-to-cart {
+                width: 70%;
+                margin-top: 15px;
+            }
+        
+          
+        }
+        
+       
+        /* Icônes et animation du panier */
+        .icon-cart {
+            font-size: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .icon-success {
+            color: green;
+        }
+        
+        .icon-cart:hover {
+            color: #ff6347;
+            transform: scale(1.2);
+        }
+        
+        /* Bouton ajouter au panier */
+        #add-to-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            font-size: 18px;
+            color: #333;
+            text-decoration: none;
+            padding: 8px 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        #add-to-cart-btn:hover {
+            background-color: #ff6347;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        /* Effet au survol du bouton "Ajouter au Panier" */
+        #add-to-cart-btn:hover .icon-cart {
+            transform: scale(1.1);
+        }
+        
+        .ajouter {
+            display: inline-flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .icon-cart {
+            background-color: #28a745;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .ajouter span {
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .ajouter {
+                font-size: 14px;
+            }
+        
+            .icon-cart {
+                font-size: 18px;
+            }
+        }
+        
+        
+
+        #add-to-cart {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+          }
+          
+          .add-to-cart-btn-produit {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;  /* Pas de soulignement */
+            background-color: #28a745;  /* Couleur verte pour un effet positif */
+            color: #fff;
+            border: 2px solid #28a745;
+            border-radius: 30px;
+            transition: all 0.3s ease;  /* Animation fluide */
+            cursor: pointer;
+          }
+          
+          .add-to-cart-btn-produit:hover {
+            background-color: #218838;  /* Couleur légèrement plus foncée au survol */
+            border-color: #218838;
+          }
+          
+          .icon-cart {
+            margin-right: 10px;  /* Espace entre l'icône et le texte */
+            color: #d9534f;  /* Orange foncé pour l'icône */
+            font-size: 25px;  /* Taille agrandie de l'icône */
+          }
+          
+          .add-to-cart-btn-produit:focus {
+            outline: none;  /* Retirer le contour lors du focus pour un effet plus propre */
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5);  /* Légère ombre de focus */
+          }
+          
+          /* Style responsive pour les petits écrans */
+          @media (max-width: 768px) {
+            .add-to-cart-btn-produit {
+              padding: 8px 16px;
+              font-size: 14px;
+            }
+          
+            .icon-cart {
+              font-size: 22px;  /* Agrandir un peu l'icône pour les petits écrans */
+            }
+          }
+          
+
+/* Style de l'icône du panier variante */
+.add-to-cart-btn .icon-cart {
+    font-size: 22px;
+    margin-right: 8px;
+}
+
+/* Style du texte */
+.add-to-cart-btn span {
+    font-size: 16px;
+}
+
+/* Effet au survol */
+.add-to-cart-btn:hover {
+    background-color: #218838;  /* Couleur plus foncée au survol */
+    transform: translateY(-3px); /* Légère élévation */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Effet au clic */
+.add-to-cart-btn:active {
+    background-color: #1e7e34;
+    transform: translateY(1px); /* Légère pression du bouton */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Conteneur pour l'icône du panier */
+.cart-icon-container {
+    position: fixed; /* Rend le conteneur fixe */
+    bottom: 20px; /* Place l'icône en bas */
+    right: 20px; /* Place l'icône à droite */
+    z-index: 9999; /* S'assurer qu'il reste visible */
+    animation: bounce 2s ease-in-out infinite; /* Animation plus lente et fluide */
+}
+
+/* Icône de panier */
+.cart-icon {
+    font-size: 40px; /* Taille réduite */
+    color: #ff5733; /* Couleur de l'icône */
+    cursor: pointer;
+}
+
+/* Animation de rebond adoucie */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Réduction du rebond */
+    }
+}
+
+/* Compteur du panier */
+.cart-icon-container .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Faciliter le clic sur l'icône */
+.cart-icon-container a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+/* Styles responsive pour tablettes */
+@media (max-width: 768px) {
+    .cart-icon-container {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .cart-icon {
+        font-size: 35px; /* Réduction sur tablette */
+    }
+
+    .cart-count {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+
+    .cart-icon-container a {
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+    }
+}
+
+/* Styles responsive pour mobiles */
+@media (max-width: 480px) {
+    .cart-icon-container {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .cart-icon {
+        font-size: 30px; /* Réduction sur mobile */
+    }
+
+    .cart-count {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+
+    .cart-icon-container a {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+}
+
+
+/* Cercle de chargement (initialement caché) */
+.loading-circle {
+    display: none; /* Caché par défaut */
+    width: 40px;
+    height: 40px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db; /* Couleur du cercle */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+    margin-top: 10px;
+}
+
+/* Animation de rotation pour le cercle de chargement */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Classe de rotation ajoutée dynamiquement */
+.loading-circle.rotating {
+    animation: spin 2s linear infinite;
+}
+/* Classe de rotation ajoutée dynamiquement pour les produits */
+.loading-spinner {
+    display: none; /* Caché par défaut */
+    width: 40px;
+    height: 40px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db; /* Couleur du cercle */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+    margin-top: 10px;
+}
+
+.loading-spinner.show {
+    display: block; /* Affiche le cercle lorsqu'il est ajouté */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loading-text {
+    display: none;
+    font-size: 14px;
+    color: #3498db;
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+
+
+/* Masquer le spinner par défaut */
+#loading-spinner {
+    display: none;
+}
+
+/* Style pour le bouton d'ajout au panier */
+#add-to-cart {
+    margin-top: 10px;
+}
+
+/* Style pour le texte de chargement */
+#loading-text {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Style pour le message "Produit ajouté au panier" */
+.ajouter {
+    color: green;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.ajouter .icon-cart {
+    color: green;
+}
+
+.image-gallery {
+    margin-top: 20px;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 images par ligne sur les grands écrans */
+    gap: 10px;
+  }
+  
+  .image-item {
+    background: transparent;  /* Fond transparent */
+  }
+  
+  .image-thumbnail {
+    width: 100%;
+    height: auto;  /* Garder la hauteur proportionnelle à la largeur */
+    display: block;
+    border-radius: 8px;  /* Optionnel : arrondir les bords des images */
+    object-fit: contain;  /* Garder l'intégralité de l'image visible sans la couper */
+  }
+  
+  /* Pour les petits écrans, afficher les images en 2 par ligne */
+  @media (max-width: 768px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);  /* 2 images par ligne */
+    }
+  }
+  
+
+  /* Style pour le bouton Accueil */
+#home-button {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #007bff; /* Bleu bouton Accueil */
+    color: #fff;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.home-btn:hover {
+    background-color: #0056b3; /* Bleu foncé au survol */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.icon-home {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Style du bouton "Accueil' */
+.add-to-cart-btn-produit {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn-produit:hover {
+    background-color: #218838;
+}
+/* -------------------------------------Sans variantes--------------------- */
+/* Section principale des produits */
+.product-section {
+    text-align: center;
+    padding: 20px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Conteneur des produits */
+.shared-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Par défaut : 6 produits par ligne */
+    gap: 20px; /* Espacement entre les produits */
+    padding: 20px;
+}
+
+/* Responsive : 3 produits sur petits écrans */
+@media (max-width: 768px) {
+    .shared-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Responsive : 2 produits sur très petits écrans */
+@media (max-width: 480px) {
+    .shared-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Style des produits */
+.product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent; /* Fond transparent */
+    padding: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+.product img {
+    width: 140px; /* Agrandissement de la taille des images */
+    height: 140px;
+    object-fit: contain;
+}
+
+.product-info {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: bold; /* Nom en gras */
+    color: white; /* Nom en blanc */
+}
+
+.product-price {
+    color: darkorange; /* Prix en orange foncé */
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Icône œil animée */
+.product-link {
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.product-icon-eye {
+    font-size: 24px; /* Icône agrandie */
+    color: #000;
+    transition: transform 0.3s ease, color 0.3s ease; /* Animation au survol */
+}
+
+.product-link:hover .product-icon-eye {
+    transform: scale(1.5); /* Agrandissement au survol */
+    color: darkorange; /* Couleur au survol */
+}
+
+ /* Style de base du texte */
+/* Style de base du texte */
+.scrolling-text-container {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.scrolling-text {
+    color: #D84E00; /* Orange foncé */
+    font-size: 1.5rem;  /* Taille de police par défaut */
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    white-space: nowrap;
+    display: inline-block;
+    animation: scroll-left 40s linear infinite; /* Durée de défilement par défaut */
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%); /* Le texte commence à droite */
+    }
+    100% {
+        transform: translateX(-100%); /* Le texte finit à gauche */
+    }
+}
+
+/* Responsive : petits écrans */
+@media (max-width: 768px) {
+    .scrolling-text {
+        font-size: 1.2rem; /* Taille de police plus petite sur les tablettes */
+        animation: scroll-left 30s linear infinite; /* Raccourcir la durée pour tablettes */
+    }
+}
+
+/* Responsive : très petits écrans (mobiles) */
+@media (max-width: 480px) {
+    .scrolling-text {
+        font-size: 1rem; /* Taille de police encore plus petite sur mobiles */
+        animation: scroll-left 25s linear infinite; /* Raccourcir la durée pour les mobiles */
+    }
+}
+
+/* -----------------------------------------Icône d'avis --------------------------------------------*/
+.reviews-icon {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.reviews-icon a {
+    font-size: 1.5rem;
+    color: #ff7043;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reviews-icon a:hover {
+    color: #e64a19;
+}
+
+.reviews-icon i {
+    font-size: 1.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reviews-icon a {
+        font-size: 1.2rem; /* Réduit la taille sur les écrans plus petits */
+    }
+
+    .reviews-icon i {
+        font-size: 1.5rem; /* Réduit la taille de l'icône */
+    }
+}
+
+@media (max-width: 480px) {
+    .reviews-icon a {
+        font-size: 1rem; /* Encore plus petit sur les très petits écrans */
+    }
+
+    .reviews-icon i {
+        font-size: 1.3rem; /* Ajuste encore plus la taille de l'icône */
+    }
+}
+
+.nav-panier {
+    position: absolute;
+    transform: translateY(-40px);
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width:20px;
+    height: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+/* Ajuste la taille selon tes besoins icone de panier dans la page */
+@media (min-width: 1024px) { /* Ajuste la taille selon tes besoins */
+    .cart-icon-container {
+        display: none;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <!-- Affichage du logo et du nom de la boutique seulement si disponibles -->
+            <div class="shop-info">
+                <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
+            </div>
+    
+            <!-- Affichage du nom de la boutique ou du texte "Nom de la boutique" si le nom est indisponible -->
+            <div class="shop-info">
+                <span class="shop-name">{% if nom_boutique %}{{ nom_boutique }}{% else %}Nom de la boutique{% endif %}</span>
+            </div>
+    
+            <!-- Menu hamburger pour mobile -->
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+        <!-- Barre de recherche -->
+        <div class="navbar-search">
+            <form class="d-flex justify-content-center w-100 mx-auto" role="search">
+                <div class="position-relative w-75">
+                    <input
+                        id="search-input"
+                        class="form-control rounded-pill ps-5"
+                        type="search"
+                        placeholder="Rechercher"
+                        aria-label="Search"
+                        onfocus="openModal()"
+                        style="height: 45px; width: 100%;"
+                    />
+                    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3" style="color: #d35400;"></i>
+                </div>
+            </form>
+        </div>
+    
+        <!-- Liens de la navbar -->
+        <div class="navbar-links">
+            <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="nav-link icon">
+                <i class="fa fa-home"></i> Accueil
+            </a>
+            <a href="#produits" class="nav-link icon">
+                <i class="fa fa-box"></i> Produits
+            </a>
+            <!-- Nouvelle icône de notification -->
+            <a href="#notifications" class="nav-link icon">
+                <i class="fa fa-bell"></i> Notifications
+            </a>
+    
+            <!-- Nouvelle icône d'accueil -->
+          
+            <!-- Icône de panier avec compteur -->
+            <a href="{% url 'panier' utilisateur_id %}" class="nav-link icon">
+                <i class="fa fa-shopping-cart"></i> Panier
+                <div id="cart-count-nav" class="cart-count nav-panier">0</div>
+            </a>
+        </div>
+    </nav>
+    
+
+<!-- Modal de filtrage et recherche -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-xl modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Filtrer et rechercher des produits</h5>
+                <!-- Bouton de fermeture avec une croix orange foncé -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" style="color: #d35400; font-size: 1.5rem;"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Barre de recherche et filtres -->
+                <div class="d-flex flex-column align-items-center">
+                    <!-- Barre de recherche -->
+                    <div class="position-relative w-100 w-md-75 mb-3">
+                        <input id="search-input-modal" class="form-control rounded-pill ps-5" type="search" placeholder="Rechercher" aria-label="Search" oninput="performSearch(event)" style="height: 45px;">
+                    </div>
+                    
+                    <!-- Filtres de prix sur une même ligne -->
+                    <div class="d-flex w-100 w-md-75 flex-row mb-3 justify-content-between">
+                        <input type="number" id="min-price" class="form-control rounded-pill me-md-2 mb-2 mb-md-0" placeholder="Prix min" oninput="performSearch(event)" style="height: 40px; flex: 1; margin-right: 10px;">
+                        <input type="number" id="max-price" class="form-control rounded-pill mb-2 mb-md-0" placeholder="Prix max" oninput="performSearch(event)" style="height: 40px; flex: 1;">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <!-- Nouveau bouton de filtre avec une icône moderne -->
+                        <button  class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" onclick="applyFilter()" style="width: 40px; height: 40px; background-color:transparent;">
+                            <i class="fas fa-sliders-h"></i> <!-- Nouvelle icône de filtre -->
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Conteneur des produits filtrés -->
+                <div id="modal-product-container" class="product-section mt-3">
+                    <div class="row" id="product-container-modal" style="max-height: 50vh; overflow-y: auto;">
+                        <!-- Les produits filtrés ou recherchés apparaîtront ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container">
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
+                <span>{{ message }}</span>
+                <button class="close-btn" onclick="closeNotification(this)">×</button>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+ <!-- Section produit -->
+ <div class="product-container">
+    <!-- Image du produit -->
+    <div class="product-image">
+        <div class="product-image">
+            {% if produit.image %}
+                <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
+            {% else %}
+                <p>Aucune image disponible pour ce produit.</p>
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <!-- Informations sur le produit -->
+    <div class="product-info">
+        <!-- Nom du produit -->
+        <h2>{{ produit.nom }}</h2>
+
+        <!-- Prix du produit -->
+        <div class="price">
+            {% if produit.prix %}
+                <span class="price-value">{{ produit.prix }}</span> {{ devise }}
+            {% else %}
+                <span class="price-value">Prix non disponible</span>
+            {% endif %}
+        </div>
+
+        <!-- État du produit -->
+        <div class="state">{{ produit.etat|default:"État non spécifié" }}</div>
+
+        <!-- Description du produit -->
+        <div class="description">{{ produit.description|default:"Aucune description disponible" }}</div>
+
+        <!-- Icône pour voir les avis -->
+        <div class="reviews-icon">
+            <a href="{% url 'poster_commentaire' produit.id %}" aria-label="Voir les avis">
+                <i class="fas fa-comments"></i> Voir les avis
+            </a>
+        </div>
+
+        <!-- Si le produit est déjà dans le panier -->
+        {% if produit.id in request.session.session_id %}
+            <div class="ajouter">
+                <i class="fas fa-check icon-cart"></i> <span>Déjà au panier</span>
+            </div>
+
+            {% else %}
+            <!-- Bouton pour ajouter au panier -->
+            <div id="add-to-cart">
+                <a href="javascript:void(0);" class="add-to-cart-btn-produit" data-produit-id="{{ produit.id }}" aria-label="Ajouter au Panier">
+                    <i class="fas fa-cart-plus icon-cart"></i> Ajouter au Panier
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<!-- Icône du panier avec compteur -->
+<div class="cart-icon-container">
+    <a href="{% url 'panier' utilisateur_id %}">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+    </a>
+    <div id="cart-count" class="cart-count">0</div>
+</div>
+
+<!-- Spinner de chargement (initialement caché) -->
+<div id="loading-spinner" class="loading-spinner" style="display: none;">
+
+</div>
+
+
+<!-- Son de confirmation pour produit -->
+<audio id="confirmation-sound-produit" src="{% static 'not.mp3' %}" preload="auto"></audio>
+<!-- Son de confirmation pour variante -->
+<audio id="confirmation-sound-variante" src="{% static 'not.mp3' %}" preload="auto"></audio>
+        
+           <!-- Sous-images du produit -->
+{% if images %}
+<div class="image-gallery">
+  <h3 class="gallery-title">Sous-images du produit</h3> <!-- Titre en orange foncé -->
+  <div class="grid-container">
+    {% for image_url in images %}
+      <div class="image-item">
+        <img src="{{ image_url }}" alt="Sous-image du produit" class="image-thumbnail">
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+                
+            </div>
+            
+   <!-- Section des variantes -->
+<div class="variant-section">
+    {% if variantes %}
+        <div class="scrolling-text-container">
+            <div class="scrolling-text">
+                ✨Découvrez les variantes parfaites pour transformer votre quotidien ! 🌟🎁
+                Choisissez parmi des options incroyables et ajoutez du bonheur à votre vie ! 😊
+            </div>
+        </div>
+        <div class="variants">
+            {% for variante in variantes %}
+                <div class="variant">
+                    <img src="{% if variante.image %}{{ variante.image.url }}{% else %}https://via.placeholder.com/150{% endif %}" alt="Image de la variante">
+                    <div class="variant-info">
+                        {% if variante.taille %}
+                            <h4 class="taille">Taille: {{ variante.taille }}</h4>
+                        {% endif %}
+                        {% if variante.couleur %}
+                        <h4 class="taille">Couleur:</h4>
+
+                        <div class="couleur" style="background-color: {{ variante.couleur }};"></div>
+                        {% endif %}
+
+                        <div class="variant-price">
+                            {% if variante.prix %}
+                                {{ variante.prix }} 
+                            {% else %}
+                                Prix non disponible
+                            {% endif %}
+                            
+                            {% if devise %}
+                                {{ devise }}
+                            {% else %}
+                                Devise non spécifiée
+                            {% endif %}
+                        </div>
+
+                        {% if variante.id in request.session.session_id %}
+                            <!-- Si la variante est déjà dans le panier -->
+                            <div class="ajouter">
+                                <i class="fas fa-check icon-cart"></i> <span>Déjà au panier</span>
+                            </div>
+                        {% else %}
+                            <!-- Si la variante n'est pas dans le panier -->
+                            <div id="add-to-cart-{{ variante.id }}">
+                                <a href="javascript:void(0);" class="add-to-cart-btn-variante" data-produit-id="{{ produit.id }}" data-variante-id="{{ variante.id }}" aria-label="Ajouter au Panier">
+                                    <i class="fas fa-cart-plus icon-cart"></i>
+                                    <span>Ajouter au Panier</span>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Section des produits sans variantes -->
+        <div class="product-section"  id="produits">
+            <div class="section-header">
+                <div class="scrolling-text-container">
+                    <div class="scrolling-text">
+                        ✨ Découvrez les produits parfaits pour vous, sélectionnés avec soin et prêts à 🌟 transformer votre quotidien ! 🎁💖
+                        Ne manquez pas l'occasion de découvrir des produits incroyables 👁️🛍️ et d'apporter un peu plus de bonheur à votre vie ! 😊🌈
+                    </div>
+                </div>
+            </div>
+            <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+            <div id="user-data" data-user-id="{{ utilisateur_id }}"></div>
+            <!-- Les produits seront ajoutés ici via AJAX -->
+            <div id="produits-sans-variante-container" class="shared-container"></div>
+        </div>
+    {% endif %}
+</div>
+
+
+                <!-- Section des produits sans variantes -->
+<div class="product-section"  id="produits">
+    <div class="section-header">
+        <div class="scrolling-text-container">
+            <div class="scrolling-text">
+                ✨ Découvrez les produits parfaits pour vous, sélectionnés avec soin et prêts à 🌟 transformer votre quotidien ! 🎁💖
+        Ne manquez pas l'occasion de découvrir des produits incroyables 👁️🛍️ et d'apporter un peu plus de bonheur à votre vie ! 😊🌈
+            </div>
+        </div>
+    </div>
+    <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+    <div id="user-data" data-user-id="{{ utilisateur_id }}"></div>
+    <!-- Les produits seront ajoutés ici via AJAX -->
+    <div id="produits-sans-variante-container" class="shared-container"></div>
+</div>
+</div>
+
+
+            
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+         //-------------------------------- Responsive pour afficher la navbar------------------------------------------> 
+function toggleMenu() {
+    const search = document.querySelector('.navbar-search');
+    const links = document.querySelector('.navbar-links');
+    search.classList.toggle('show');
+    links.classList.toggle('show');
+}
+
+        
+        // Logique pour gérer le rafraîchissement si l'utilisateur revient sur la page
+        window.addEventListener('load', function () {
+            if (localStorage.getItem('shouldReload') === 'true') {
+                localStorage.removeItem('shouldReload'); // Supprime l'indicateur pour éviter des rechargements infinis
+                location.reload(); // Recharge la page
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mettre à jour le compteur du panier au chargement de la page
+            const cartCountElement = document.querySelector('#cart-count');
+            const counterNav = document.querySelector('#cart-count-nav');
+
+            if (cartCountElement) {
+                fetch('/obtenir-panier') // Remplacez par l'URL de votre API pour récupérer les données du panier
+                    .then(response => response.json())
+                    .then(data => {
+                        cartCountElement.textContent = data.total_articles || 0; // Mettre à jour avec la valeur retournée ou 0 par défaut
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération du panier:', error);
+                        cartCountElement.textContent = 0; // Afficher 0 en cas d'erreur
+                    });
+            }
+            if (counterNav) {
+                fetch('/obtenir-panier') // Remplacez par l'URL de votre API pour récupérer les données du panier
+                    .then(response => response.json())
+                    .then(data => {
+                        counterNav.textContent = data.total_articles || 0; // Mettre à jour avec la valeur retournée ou 0 par défaut
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération du panier:', error);
+                        counterNav.textContent = 0; // Afficher 0 en cas d'erreur
+                    });
+            }
+        
+      // Pour ajouter un produit au panier
+document.querySelectorAll('.add-to-cart-btn-produit').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault(); // Empêcher l'action par défaut
+
+        const produitId = this.getAttribute('data-produit-id'); // ID du produit
+        const buttonElement = this; // Référence au bouton pour mise à jour
+
+        if (!produitId) {
+            console.error("ID de produit manquant");
+            return; // Si l'ID est manquant, on arrête
+        }
+
+        // Construire l'URL pour l'ajout au panier
+        const url = `/ajouter_produit_au_panier/${produitId}/`;
+
+        // Afficher un spinner temporaire
+        const spinner = document.getElementById('loading-spinner');
+        spinner.style.display = 'block';
+
+        // Envoyer la requête AJAX
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Mise à jour du compteur du panier
+                const cartCount = document.querySelector('#cart-count');
+                const cartCountNav = document.querySelector('#cart-count-nav');
+                cartCount.textContent = data.total_articles;
+                cartCountNav.textContent = data.total_articles;
+
+                // Jouer un son de confirmation pour un produit
+                const confirmationSound = document.getElementById('confirmation-sound-produit');
+                confirmationSound.play();
+
+                // Afficher un message de succès
+                const successMessage = document.createElement('div');
+                successMessage.classList.add('ajouter');
+                successMessage.innerHTML = '<i class="fas fa-check icon-cart"></i> <span>Déjà au panier</span>';
+                buttonElement.parentNode.appendChild(successMessage);
+
+                // Cacher le bouton "Ajouter au panier"
+                buttonElement.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Erreur AJAX :', error);
+                // Réafficher le bouton en cas d'erreur
+                buttonElement.style.display = 'inline-block';
+            })
+            .finally(() => {
+                // Masquer le spinner une fois l'opération terminée
+                spinner.style.display = 'none';
+            });
+    });
+});
+
+// Pour ajouter une variante au panier
+document.querySelectorAll('.add-to-cart-btn-variante').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault(); // Empêcher l'action par défaut
+
+        const produitId = this.getAttribute('data-produit-id'); // ID du produit
+        const varianteId = this.getAttribute('data-variante-id'); // ID de la variante
+        const buttonElement = this; // Référence au bouton pour mise à jour
+
+        if (!varianteId) {
+            console.error("ID de variante manquant");
+            return; // Si l'ID de variante est manquant, on arrête
+        }
+
+        // Construire l'URL pour l'ajout au panier
+        const url = `/ajouter_variante_au_panier/${varianteId}/`;
+
+        // Afficher un spinner temporaire
+        const spinner = document.getElementById('loading-spinner');
+        spinner.style.display = 'block';
+
+        // Envoyer la requête AJAX
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Mise à jour du compteur du panier
+                const cartCount = document.querySelector('#cart-count');
+                const cartCountNav = document.querySelector('#cart-count-nav');
+                cartCount.textContent = data.total_articles;
+                cartCountNav.textContent = data.total_articles;
+
+
+                // Jouer un son de confirmation pour une variante
+                const confirmationSound = document.getElementById('confirmation-sound-variante');
+                confirmationSound.play();
+
+                // Afficher un message de succès
+                const successMessage = document.createElement('div');
+                successMessage.classList.add('ajouter');
+                successMessage.innerHTML = '<i class="fas fa-check icon-cart"></i> <span>Déjà au panier</span>';
+                buttonElement.parentNode.appendChild(successMessage);
+
+                // Cacher le bouton "Ajouter au panier"
+                buttonElement.style.display = 'none';
+                                // Actualiser la page après l'ajout de la variante
+                
+            })
+            .catch(error => {
+                console.error('Erreur AJAX :', error);
+                // Réafficher le bouton en cas d'erreur
+                buttonElement.style.display = 'inline-block';
+            })
+            .finally(() => {
+                // Masquer le spinner une fois l'opération terminée
+                spinner.style.display = 'none';
+            });
+    });
+});
+
+        });
+        
+
+        
+ // Fonction pour récupérer les produits sans variantes via AJAX
+// Fonction pour formater le prix de manière lisible
+function formaterPrix(prix) {
+    return prix.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Fonction pour récupérer les produits sans variantes via AJAX
+function chargerProduitsSansVariante(utilisateurId) {
+    $.ajax({
+        url: '/produits-sans-variante/' + utilisateurId + '/',
+        method: 'GET',
+        success: function(response) {
+            if (response.status === 'ok') {
+                var produitsHTML = '';
+                var devise = response.devise;  // Récupérer la devise de l'utilisateur
+                response.produits.forEach(function(produit) {
+                    var prixFormate = formaterPrix(produit.prix);  // Appliquer le formatage sur le prix
+                    produitsHTML += `
+                       <div class="product">
+                             <a href="${produit.url}" class="product-link">
+                                    <img src="${produit.image || 'https://via.placeholder.com/150'}" alt="${produit.nom}">
+                                </a>
+                            <div class="product-info">
+                                <h4 class="product-name">${produit.nom}</h4>
+                                <div class="product-price" style="color: #D84E00;">${prixFormate} ${devise}</div> <!-- Afficher la devise ici -->
+                                <!-- Lien vers la page du produit -->
+                                <a href="${produit.url}" class="product-link">
+                                    <div class="product-icon-eye">👁️</div>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Insérer les produits dans le conteneur
+                document.getElementById('produits-sans-variante-container').innerHTML = produitsHTML;
+            }
+        }
+    });
+}
+
+// Déclenchement de la fonction lorsque la page se charge
+document.addEventListener('DOMContentLoaded', function() {
+    var utilisateurId = document.getElementById('user-data').getAttribute('data-user-id');
+    chargerProduitsSansVariante(utilisateurId);
+});
+
+
+//<!-------------------------------- Modal de recherche de produit et filtrage Pour la recherche------------------------------------------> 
+function openModal() {
+    if (!document.getElementById('productModal').classList.contains('show')) {
+      const modal = new bootstrap.Modal(document.getElementById('productModal'));
+      modal.show();
+    }
+  }
+  
+  function performSearch(event) {
+    event.preventDefault(); // Empêche le comportement par défaut du formulaire
+    const searchQuery = document.getElementById('search-input-modal').value.trim();
+    const minPrice = document.getElementById('min-price').value.trim();
+    const maxPrice = document.getElementById('max-price').value.trim();
+  
+    if (searchQuery === "" && minPrice === "" && maxPrice === "") return;  // Ne pas faire de recherche sans critère
+  
+    const validMinPrice = minPrice !== "" ? minPrice : undefined;
+    const validMaxPrice = maxPrice !== "" ? maxPrice : undefined;
+  
+    const userId = document.getElementById('user-data').getAttribute('data-user-id');
+  
+    $.ajax({
+      url: `/recherche-produit/${userId}/`,
+      data: {
+        'nom': searchQuery,
+        'prix_min': validMinPrice,
+        'prix_max': validMaxPrice
+      },
+      success: function(response) {
+        if (response.produits && response.produits.length > 0) {
+          updateModalProducts(response.produits);
+        } else {
+          console.log('Aucun produit trouvé');
+        }
+      },
+      error: function(error) {
+        console.error('Erreur AJAX:', error);
+      }
+    });
+  }
+  
+  function updateModalProducts(produits) {
+    const productContainer = document.getElementById('product-container-modal');
+    productContainer.innerHTML = '';
+  
+    if (produits.length > 0) {
+      produits.forEach(product => {
+        const productElement = createProductElement(product);
+        const colDiv = document.createElement('div');
+        colDiv.classList.add('col-6', 'col-lg-2', 'mb-4');
+        colDiv.appendChild(productElement);
+        productContainer.appendChild(colDiv);
+      });
+    } else {
+      productContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+    }
+  }
+  
+  function createProductElement(product) {
+    const div = document.createElement('div');
+    div.classList.add('product-item-modal');
+    div.dataset.name = product.nom.toLowerCase();
+    div.dataset.price = product.prix;
+  
+    div.innerHTML = `
+     <a href="${product.url}" class="product-link">
+        <img src="${product.image_url || ''}" alt="${product.nom}" class="product-image-modal">
+      </a>
+      <div class="product-info-modal">
+        <div class="product-name-modal">${product.nom}</div>
+        <div class="product-price">${product.prix} ${product.devise}</div>
+      </div>
+      <a href="${product.url}" class="product-link">
+        <div class="product-icon-eye">👁️</div>
+      </a>
+      
+    `;
+    return div;
+  }
+  
+    </script>
+</body>
+</html>
+
+    
+ 

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de création de boutique</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            width: 85%;
+            max-width: 650px;
+            text-align: center;
+        }
+        h2 {
+            color: #4CAF50;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .identifiant-box {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .footer {
+            font-size: 16px;
+            color: #777;
+            margin-top: 30px;
+            font-style: italic;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            text-align: left;
+            list-style-type: none;
+            padding: 0;
+            font-size: 18px;
+            color: #555;
+            margin: 20px 0;
+        }
+        li {
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+        }
+        li i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Félicitations !</h2>
+        <p>Votre boutique <span class="highlight">{{ boutique }}</span> a été créée avec succès.</p>
+        <p>Votre identifiant unique :</p>
+        <div class="identifiant-box">{{ identifiant }}</div>
+        <p>Voici un résumé de vos informations :</p>
+        <ul>
+            <li><i class="fas fa-store"></i><strong> Nom de la boutique :</strong> <span class="highlight">{{ boutique }}</span></li>
+            <li><i class="fas fa-envelope"></i><strong> Email associé :</strong> <span class="highlight">{{ email }}</span></li>
+            <li><i class="fas fa-phone"></i><strong> Numéro de téléphone :</strong> <span class="highlight">{{ numero }}</span></li>
+            <li><i class="fas fa-cogs"></i><strong> Type de boutique :</strong> <span class="highlight">{{ type_boutique }}</span></li>
+            <li><i class="fas fa-cube"></i><strong> Produits vendus :</strong> <span class="highlight">{{ produits_vendus }}</span></li>
+            <li><i class="fas fa-search"></i><strong> Comment avez-vous découvert la plateforme ? :</strong> <span class="highlight">{{ source_decouverte }}</span></li>
+        </ul>
+        <p>Nous sommes ravis de vous compter parmi nos utilisateurs ! Prenez grand soin de votre identifiant unique pour un accès sécurisé à tout moment.</p>
+        <a href="#" class="button">Accéder à votre boutique</a>
+        <p class="footer">Besoin d'aide ? Contactez-nous à tout moment.</p>
+        <p class="footer"><strong>L'équipe WarabaGuinée</strong></p>
+    </div>
+</body>
+</html>

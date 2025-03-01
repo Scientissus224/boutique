@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - WarabaGuinée</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #1e1e2d;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* Pour éviter le débordement horizontal */
+        }
+        /* Pour les navigateurs de bureau */
+::-webkit-scrollbar {
+    width: 8px; /* Largeur du scrollbar sur bureau */
+    background-color: transparent; /* Fond transparent pour la zone de défilement */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #FF7F50; /* Couleur orange doux pour le thumb */
+    border-radius: 5px; /* Bordures arrondies */
+    border: 2px solid #FF6347; /* Bordure pour ajouter de la profondeur */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #FF4500; /* Couleur plus foncée au survol */
+}
+
+/* Pour les appareils Android (mobile) */
+@media (max-width: 768px) {
+    body {
+        -webkit-overflow-scrolling: touch; /* Assurer un défilement fluide sur Android */
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px; /* Plus fin sur mobile */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #FF7F50; /* Corail doux pour bien se voir */
+        border-radius: 10px; /* Forme plus arrondie pour une interaction plus fluide */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #FF4500; /* Changement de couleur au survol */
+    }
+}
+
+/* Pour les écrans très petits (par exemple les téléphones portables) */
+@media (max-width: 480px) {
+    ::-webkit-scrollbar {
+        width: 3px; /* Scrollbar encore plus fine sur les petits écrans */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #FF6347; /* Un peu plus foncé sur très petits écrans */
+        border-radius: 8px; /* Bordure arrondie mais légèrement plus petite */
+    }
+}
+
+    
+        html{
+            scroll-padding-top: 7em;
+            scroll-behavior: smooth;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 360px;
+            height: 100vh;
+            background-color: #333;
+            padding-top: 30px;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            padding: 12px;
+            display: block;
+            color: #ddd;
+            text-decoration: none;
+        }
+        .sidebar a:hover, .sidebar .active {
+            background-color: #ff9800;
+            color: white;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .stats-card {
+            background: #2d2e49;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .table-container {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        .table thead th {
+            background: #444;
+            color: white;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .status.pending { background-color: #f0ad4e; }
+        .status.validated { background-color: #28a745; }
+        .status.rejected { background-color: #d9534f; }
+        .profile {
+            text-align: center;
+            margin-top: 20px;
+            background: #2d2e49;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .profile img {
+            border-radius: 50%;
+            object-fit: cover; 
+            object-position:center;
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Menu hamburger flottant */
+        .hamburger-menu {
+            display: none;
+            position:relative;
+            top: 5px;
+            z-index: 9999;
+            border: none;
+            padding: 15px;
+            font-size: 30px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -250px;
+                width: 250px;
+                height: 100%;
+                transition: transform 0.3s ease-in-out;
+            }
+            .sidebar.active {
+                transform: translateX(250px);
+            }
+            .hamburger-menu {
+                display: block;
+            }
+            .profile {
+                margin-bottom: 20px;
+            }
+            .table-container {
+                overflow-x: scroll;
+            }
+        }
+
+         /* Boîte de notification */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
+    color: #333; /* Texte en noir pour contraster avec le fond */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease-in-out;
+    z-index: 9999;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: none;
+    border: none;
+    color: #333; /* Couleur du texte du bouton */
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Style pour les messages d'erreur, succès, etc. */
+.alert.success {
+    background-color: #4CAF50; /* Vert pour le succès */
+}
+
+.alert.warning {
+    background-color: #ff9800; /* Orange pour l'avertissement */
+}
+
+.alert.error {
+    background-color: #f44336; /* Rouge pour l'erreur */
+}
+
+/* Styles de transition au survol du bouton de fermeture */
+.close-btn:hover {
+    color: #ff7043;
+}
+
+.dashboard-header {
+    background-color: #1e1e2d;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-header p {
+        font-size: 1rem;
+    }
+}
+
+.stat-card {
+    margin: 10px 0;
+    background-color: #333;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+.stat-card h4 {
+    margin-bottom: 10px;
+}
+
+.stat-card .percentage {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
+            <span>{{ message }}</span>
+            <button class="close-btn" onclick="closeNotification(this)">×</button>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+    <div class="hamburger-menu" onclick="toggleSidebar()">&#9776;</div>
+
+    <div class="sidebar">
+        <div class="text-center">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+            <h4>WarabaGuinée</h4>
+        </div>
+        <a href="#" class="active">Tableau de bord</a>
+        <div class="stat-card">
+            <h4>Comptes Validés</h4>
+            <p>{{  compte_valide }} utilisateurs</p>
+            <p class="percentage">{{  pourcentage_valide }}%</p>
+        </div>
+        <div class="stat-card">
+            <h4>Comptes Invalidés</h4>
+            <p>{{ compte_invalide }} utilisateurs</p>
+            <p class="percentage">{{ pourcentage_invalide }}%</p>
+        </div>
+        <div class="stat-card">
+            <h4>Comptes en Attente</h4>
+            <p>{{ compte_en_attente }} utilisateurs</p>
+            <p class="percentage">{{ pourcentage_en_attente}}%</p>
+        </div>
+        <a href="{% url 'logout' %}" class="btn btn-danger w-100 mt-3">Déconnexion</a>
+        <div class="profile text-center">
+            {% if supportClient.profil %}
+                <img src="{{ supportClient.profil.url }}" alt="Profil" class="rounded-circle">
+            {% else %}
+                <img src="profile.png" alt="Profil par défaut" class="rounded-circle">
+            {% endif %}
+        
+            {% if supportClient.nom %}
+                <p>{{ supportClient.nom }}</p>
+            {% endif %}
+        
+            {% if supportClient.email %}
+                <p style="color: #ddd;">{{ supportClient.email }}</p>
+            {% endif %}
+        
+            {% if supportClient.role %}
+                <p class="badge bg-primary">{{ supportClient.role }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-9 offset-md-3">
+                <div class="dashboard-header">
+                    <h1>WarabaGuinée - Support Client</h1>
+                    <p>Validation des comptes utilisateurs.</p>
+                </div>
+                
+  <!-- Barre de recherche et filtrage -->
+  <form method="GET" class="row g-2 mb-3">
+    <div class="col-12 col-md-5">
+        <input type="text" name="nom" value="{{ nom_recherche }}" class="form-control" placeholder="Rechercher par nom" />
+    </div>
+    <div class="col-12 col-md-5">
+        <select name="statut" class="form-control">
+            <option value="">Filtrer par statut</option>
+            <option value="valider" {% if statut_filtre == "valider" %}selected{% endif %}>Validé</option>
+            <option value="attente" {% if statut_filtre == "attente" %}selected{% endif %}>En attente</option>
+            <option value="invalider" {% if statut_filtre == "invalider" %}selected{% endif %}>Rejeté</option>
+        </select>
+    </div>
+    <div class="col-12 col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <h3>Validation des Comptes</h3>
+    <table class="table table-dark table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for utilisateur in utilisateurs %}
+            <tr>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.nom_complet }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td>
+                    <span class="status {{ utilisateur.statut_validation_compte }}">
+                        {{ utilisateur.statut_validation_compte|capfirst }}
+                    </span>
+                </td>
+                <td>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
+                        <div class="d-flex flex-column flex-md-row gap-1">
+                            <button type="submit" name="action" value="valider" class="btn btn-success btn-sm w-100">Valider</button>
+                            <button type="submit" name="action" value="invalider" class="btn btn-warning btn-sm w-100">Invalider</button>
+                            <button type="submit" name="action" value="attente" class="btn btn-secondary btn-sm w-100">En Attente</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+ <!-- Diagramme en bâton -->
+ <div class="chart-container" style="position: relative; height:40vh; width:100%;">
+    <canvas id="ticketsChart"></canvas>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+
+       
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Initialisation du graphique
+        const chartCanvas = document.getElementById('ticketsChart');
+        if (chartCanvas) {
+            const ctx = chartCanvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Validés', 'En attente', 'Rejetés'],
+                    datasets: [{
+                        label: 'Comptes',
+                        data: [
+                            {{ compte_valide }},
+                            {{ compte_en_attente }},
+                            {{ compte_invalide }}
+                        ],
+                        backgroundColor: ['#28a745', '#f0ad4e', '#d9534f']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        datalabels: {
+                            color: 'white',
+                            anchor: 'end',
+                            align: 'top',
+                            font: { weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Filtrage par statut
+        const statusFilter = document.getElementById('statusFilter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function () {
+                const status = this.value;
+                document.querySelectorAll('#accountsTable tbody tr').forEach(row => {
+                    const rowStatus = row.querySelector('.status')?.classList[1] || '';
+                    row.style.display = (status && rowStatus !== status) ? 'none' : '';
+                });
+            });
+        }
+
+        // Recherche dynamique
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const query = this.value.toLowerCase();
+                document.querySelectorAll('#accountsTable tbody tr').forEach(row => {
+                    const name = row.cells[1].textContent.toLowerCase();
+                    const email = row.cells[2].textContent.toLowerCase();
+                    row.style.display = (name.includes(query) || email.includes(query)) ? '' : 'none';
+                });
+            });
+        }
+
+        // Fonction pour fermer une notification
+        function closeNotification(element) {
+            if (element) {
+                const notification = element.parentElement;
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }
+
+        // Fonction pour jouer un son de notification
+        function playNotificationSound() {
+            const sound = document.getElementById('notification-sound');
+            if (sound) sound.play();
+        }
+
+        // Gestion des notifications affichées au chargement
+        const notifications = document.querySelectorAll('.notification.show');
+        if (notifications.length > 0) {
+            playNotificationSound();
+        }
+
+        // Fonction pour afficher une notification avec animation et son
+        function showNotification(notification) {
+            if (notification) {
+                notification.classList.add('show');
+                playNotificationSound();
+                setTimeout(() => {
+                    notification.classList.add('hide');
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+            }
+        }
+
+        // Fermeture automatique des notifications après 5s
+        setTimeout(() => {
+            document.querySelectorAll('.notification').forEach(notification => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            });
+        }, 5000);
+
+    });
+    </script>
+</body>
+</html>

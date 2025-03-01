@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - WarabaShop</title>
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            box-sizing: border-box;
+            transition: all 0.2s linear;
+            text-decoration: none;
+            list-style-type: none;
+            border: none;
+        }
+
+        html {
+            font-size: 80.5%;
+            scroll-padding-top: 7em;
+            scroll-behavior: smooth;
+        }
+
+        /* Variables globales */
+        :root {
+            --primary-color: #ff7f50;
+            --hover-color: #e67e22;
+            --background-color: #2c5d77;
+            --text-color: white;
+            --btn-border-radius: 30px;
+            --btn-font-size: 1rem;
+            --btn-padding: 10px 30px;
+            --btn-font-weight: 600;
+        }
+        html {
+            font-size: 80.5%;
+            scroll-padding-top: 7em;
+            scroll-behavior: smooth;
+        }
+
+        /* Styles globaux */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+            background-size: cover;
+            scroll-behavior: smooth;
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #ea1f33;
+        }
+ /* Navbar */
+ .ms-3 {
+    font-size: 2rem; /* Ajuste la taille du texte selon vos besoins */
+    font-weight:normal; /* Met le texte en gras */
+}
+
+        .navbar {
+            background-color: #333;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar:hover {
+            background-color: #444;
+        }
+
+        .logo-img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 2px solid #fff;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .navbar-nav .nav-link {
+            margin: 0 15px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        .navbar-nav .contact {
+            background-color: #e74c3c;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar-nav .contact:hover {
+            background-color: #c0392b;
+        }
+         /* Navbar */
+         .navbar {
+            background-color: #333;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar:hover {
+            background-color: #444;
+        }
+
+        .logo-img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 2px solid #fff;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .navbar-nav .nav-link {
+            margin: 0 15px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        .navbar-nav .contact {
+            background-color: #e74c3c;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar-nav .contact:hover {
+            background-color: #c0392b;
+        }
+        body {
+            margin-top: 70px; /* Adjust based on navbar height */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+ /* Section Héros */
+
+.hero-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 80px;
+    position: relative;
+    background: url("{% static 'c.jpg' %}") no-repeat center center;
+    background-size: cover;
+    background-position: center 37%; /* Modifier ici pour déplacer l'image vers le haut */
+    height: 100vh;
+    color: white;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Colonne texte à gauche */
+.hero-section .col-md-6:first-child {
+    text-align: left;
+    transform: translateX(20px);  /* Décalage de tout le texte vers la droite */
+}
+
+/* Colonne formulaire à droite */
+.hero-section .col-md-6:last-child {
+    text-align: right;
+}
+
+/* Animation d'ombre sur le texte */
+.text-animate {
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    animation: shadowAnimation 3s infinite alternate;
+}
+
+@keyframes shadowAnimation {
+    0% {
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.7);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* Texte important : texte plus grand */
+.text-important {
+    font-size: 3rem;  /* Taille augmentée pour texte important */
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    animation: growText 3s infinite alternate;
+}
+
+@keyframes growText {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1); /* Taille un peu plus grande */
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Texte moins important : pas d'animation, couleur noire claire */
+.text-less-important {
+    font-size: 1.6rem;
+    color: #555555; /* Noir clair */
+    font-weight: normal;
+}
+
+/* Formulaire à droite */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 10;
+}
+
+.form {
+    background-color: rgba(0, 0, 0, 0.5); /* Moins opaque, plus transparent */
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 450px;
+    color: #fff;
+}
+
+
+/* Style des alertes */
+.alert-box .alert {
+    border: 1px solid rgba(0, 123, 255, 0.7);
+    border-radius: 8px;
+    background: rgba(0, 123, 255, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Amélioration du contraste du texte */
+.hero-section h1, .hero-section p {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Boutons */
+.btn {
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
+    border-radius: var(--btn-border-radius);
+    padding: var(--btn-padding);
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-color);
+}
+
+/* Champs de formulaire */
+input, textarea, select {
+    border: 1px solid #ccc;
+    padding: 10px 40px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border: 2px solid blue;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+}
+
+/* Media Queries pour les petits écrans */
+@media (max-width: 768px) {
+    /* Ajustement de la taille du texte */
+    .text-animate {
+        font-size: 1.6rem; /* Plus petit sur mobile */
+    }
+
+    /* Ajuster le padding et la mise en page pour les écrans mobiles */
+    .hero-section {
+        padding: 20px 40px;
+        height: auto;
+        background-position: 36% center; /* Image légèrement à gauche, plus proche du côté droit */
+    }
+
+    /* Empiler les éléments : Texte au-dessus du formulaire */
+    .hero-section .col-12 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    /* Formulaire en bas sur petits écrans */
+    .form-container {
+        margin-top: 20px;
+    }
+}
+
+  /* Pied de page */
+  .footer {
+    background-color: #34495e; /* Nouveau fond, un bleu-gris qui se marie avec le bleu foncé */
+    color: #ecf0f1; /* Texte blanc clair */
+    padding: 40px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-description {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.footer-description i {
+    font-size: 3rem;
+    color: #f39c12; /* Icône dorée */
+    margin-right: 15px;
+}
+
+.footer-description p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.footer-links {
+    margin: 20px 0;
+}
+
+.footer-links a {
+    color: #f39c12; /* Icônes et liens en doré */
+    margin: 0 15px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ecf0f1; /* Survol doré vers blanc */
+}
+
+.footer p {
+    font-size: 1rem;
+    margin-top: 20px;
+    color: #bdc3c7; /* Texte gris clair */
+}
+
+/* Animation de la description */
+.footer-description p {
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Animation fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+      /* Section Fonctionnalités */
+.features-section {
+    padding: 60px 20px;
+    background-color: #1a2b4c; /* Bleu foncé pour le fond */
+    color: #fff; /* Texte en blanc pour le contraste */
+    text-align: center;
+}
+
+.features-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #fff; /* Couleur du titre en blanc */
+}
+
+.feature {
+    margin: 20px;
+    display: inline-block;
+    width: 250px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white; /* Fond blanc pour chaque fonctionnalité */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre autour des éléments */
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-10px); /* Animation d'élévation au survol */
+}
+
+.feature i {
+    font-size: 3rem;
+    color: #1a2b4c; /* Icônes dans la couleur du fond de la section */
+    margin-bottom: 20px;
+}
+
+.feature h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333; /* Couleur du texte pour les titres des fonctionnalités */
+}
+
+.feature p {
+    font-size: 1rem;
+    color: #555; /* Couleur du texte pour les descriptions */
+}
+
+
+   /* Section Tarifs */
+.pricing-section {
+    padding: 60px 20px;
+    background-color: #1a2b4c; /* Nouveau fond bleu foncé */
+    text-align: center;
+}
+
+.pricing-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #ecf0f1; /* Texte en blanc clair pour un bon contraste avec le fond foncé */
+}
+
+.pricing-option {
+    display: inline-block;
+    margin: 20px;
+    width: 300px;
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #34495e; /* Fond gris-bleu foncé pour les options */
+    color: #ecf0f1; /* Texte en blanc clair pour un bon contraste */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.pricing-option:hover {
+    transform: translateY(-10px); /* Animation d'élévation au survol */
+}
+
+.pricing-option i {
+    font-size: 3rem;
+    color: #f39c12; /* Icônes dorées pour se démarquer du fond */
+    margin-bottom: 20px;
+}
+
+.pricing-option h4 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #ecf0f1; /* Couleur du titre en blanc clair */
+}
+
+.pricing-option p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #bdc3c7; /* Texte légèrement gris pour la description */
+}
+
+.pricing-option .btn {
+    background-color: #f39c12; /* Bouton jaune doré pour contraster avec le fond bleu */
+    color: #1a2b4c; /* Texte du bouton en bleu foncé */
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pricing-option .btn:hover {
+    background-color: #f1c40f; /* Couleur de survol plus claire pour le bouton */
+}
+
+/* Option Plan Premium */
+.pricing-option.premium {
+    background-color: #e74c3c; /* Fond rouge pour un plan premium attractif */
+    color: #ecf0f1; /* Texte clair */
+}
+
+.pricing-option.premium i {
+    color: #ecf0f1; /* Icônes blanches pour le plan premium */
+}
+
+.pricing-option.premium .btn {
+    background-color: #ecf0f1; /* Bouton clair pour se démarquer */
+    color: #e74c3c; /* Texte du bouton en rouge */
+}
+
+.pricing-option.premium .btn:hover {
+    background-color: #c0392b; /* Couleur de survol du bouton premium */
+}
+
+/* Style du logo */
+.logo-img {
+    border-radius: 50%; /* Rendre le logo rond */
+    width: 50px; /* Largeur du logo */
+    height: 50px; /* Hauteur du logo */
+    object-fit: cover; /* Assure que l'image est bien redimensionnée */
+    border: 2px solid #fff; /* Ajouter une bordure blanche autour du logo */
+    transition: transform 0.3s ease-in-out; /* Transition pour effet de survol */
+}
+
+.logo-img:hover {
+    transform: scale(1.1); /* Effet de zoom au survol */
+}
+
+/* Pour afficher les erreurs en rouge */
+.invalid-feedback {
+    color: red;
+    font-size: 0.875em; /* Petite taille de police pour l'erreur */
+    display: block;
+}
+
+/* Pour marquer les champs en erreur */
+.is-invalid {
+    border-color: red !important;
+    background-color: #f8d7da; /* Fond légèrement rouge pour mieux visualiser l'erreur */
+}
+
+/* Si vous souhaitez styliser les messages d'erreur de façon générale */
+.form-group .invalid-feedback p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+
+/* Bordure rouge pour les champs en erreur */
+.form-group input.is-invalid, .form-group select.is-invalid, .form-group textarea.is-invalid {
+    border: 2px solid red;
+}
+
+/* Bordure verte pour les champs valides */
+.form-group input.is-valid, .form-group select.is-valid, .form-group textarea.is-valid {
+    border: 2px solid green;
+}
+
+/* Champs de formulaire avec focus */
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border: 2px solid blue; /* Bordure bleue au focus */
+    outline: none;
+}
+
+     /* Notifications */
+     .messages {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 300px; /* Limite la largeur maximale pour les notifications */
+        width: 100%; /* Occupe toute la largeur disponible sur les petits écrans */
+    }
+    
+    .notification {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        border: 1px solid #004085;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .notification.hide {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    
+    .close-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .messages {
+            right: 10px; /* Décale légèrement la notification vers la gauche sur les petits écrans */
+            top: 60px; /* Ajuste la position verticale pour les petits écrans */
+            max-width: 250px; /* Réduit la largeur maximale sur les petits écrans */
+        }
+    
+        .notification {
+            padding: 10px 15px; /* Réduit le padding pour les petits écrans */
+            font-size: 14px; /* Réduit la taille du texte pour les petits écrans */
+        }
+    
+        .close-btn {
+            font-size: 18px; /* Réduit la taille du bouton de fermeture */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .messages {
+            right: 5px; /* Réduit encore l'espacement pour les très petits écrans */
+            top: 50px; /* Ajuste encore la position verticale */
+            max-width: 200px; /* Réduit encore la largeur maximale sur les très petits écrans */
+        }
+    
+        .notification {
+            padding: 8px 12px; /* Réduit le padding pour s'adapter aux écrans très petits */
+            font-size: 12px; /* Réduit la taille du texte */
+        }
+    
+        .close-btn {
+            font-size: 16px; /* Réduit la taille du bouton de fermeture pour les petits écrans */
+        }
+    }
+    .iti__country-name {
+        display: none;
+    }
+    .iti__flag-container {
+        width: auto;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Logo et Nom de la plateforme -->
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'logo1.webp' %}" alt="WarabaShop Logo" class="logo-img">
+                    <div class="ms-3">WarabaShop</div> <!-- Texte à côté du logo -->
+                </div>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}"><i class="fas fa-home"></i> Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#fonction"><i class="fas fa-cogs"></i> Fonctionnalités</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tarif"><i class="fas fa-tags"></i> Tarifs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link contact" href="#"><i class="fas fa-phone-alt"></i> Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
+            <span>{{ message }}</span>
+            <button class="close-btn" onclick="closeNotification(this)">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}  
+
+
+    <!-- Section Hero -->
+<section class="hero-section">
+    <div class="row align-items-center">
+        <!-- Texte à gauche sur les petits écrans et formulaire en bas -->
+        <div class="col-md-6 col-12 order-md-1 order-1">
+            <h1 class="text-important">Faites vos achats en ligne sur WarabaShop, la boutique où vos envies prennent vie !</h1>
+            <h2 class="text-animate">Explorez des produits exclusifs et trouvez tout ce dont vous avez besoin, en un clic !</h2>
+            <p class="text-animate">Rejoignez WarabaShop dès maintenant et profitez d'une expérience d'achat fluide, rapide et sécurisée. Vos produits préférés n'ont jamais été aussi proches !</p>
+        </div>
+<!-- Formulaire à droite sur les petits écrans et texte au dessus -->
+<div class="col-md-6 col-12 order-md-2 order-2">
+    <div class="form-container">
+        <form class="form" method="POST">
+            {% csrf_token %}
+
+            <!-- Champ Nom Complet -->
+            <div class="form-group">
+                <label for="id_nom_complet"><i class="fas fa-user"></i> Nom complet</label>
+                {{ form.nom_complet }}
+                {% if form.nom_complet.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.nom_complet.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_telephone"><i class="fas fa-phone-alt"></i> Numéro de téléphone</label>
+                <input id="phone" type="tel" class="form-control" name="telephone" placeholder="Entrez votre numéro" />
+                <input type="hidden" id="full_number" name="full_number" />
+                {% if form.telephone.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.telephone.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_adresse"><i class="fas fa-map-marker-alt"></i> Adresse</label>
+                {{ form.adresse }}
+                {% if form.adresse.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.adresse.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_email"><i class="fas fa-envelope"></i> Adresse email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password1"><i class="fas fa-lock"></i> Mot de passe</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2"><i class="fas fa-lock"></i> Confirmer le mot de passe</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+            
+        </form>
+    </div>
+</div>
+
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+</section>
+  <!-- Section Fonctionnalités -->
+  <section class="features-section">
+    <h2 id="fonction">Nos Fonctionnalités</h2>
+    <div class="feature">
+        <i class="fas fa-archive"></i>
+        <h4>Gestion des Produits</h4>
+        <p>Ajoutez, modifiez et supprimez vos produits en toute simplicité.</p>
+    </div>
+    <div class="feature">
+        <i class="fas fa-map-marker-alt"></i>
+        <h4>Localisation</h4>
+        <p>Ajoutez votre localisation et aidez vos clients à vous trouver.</p>
+    </div>
+    <div class="feature">
+        <i class="fas fa-credit-card"></i>
+        <h4>Options de Paiement</h4>
+        <p>Supportez divers moyens de paiement, y compris Orange Money.</p>
+    </div>
+</section>
+
+<!-- Section Tarifs -->
+<section class="pricing-section">
+<h2 id="tarif">Nos Tarifs</h2>
+<div class="pricing-option" >
+    <i class="fas fa-cogs"></i>
+    <h4>Plan de Base</h4>
+    <p>Gratuit pour les petites boutiques. Après 3 mois, 150 000 FG.</p>
+    <button class="btn">Commencer</button>
+</div>
+<div class="pricing-option premium">
+    <i class="fas fa-star"></i>
+    <h4>Plan Premium</h4>
+    <p>Pour des fonctionnalités avancées. Après 3 mois, 300 000 FG.</p>
+    <button class="btn">Souscrire</button>
+</div>
+</section>
+
+
+<!-- Pied de page -->
+<footer class="footer">
+<div class="footer-description">
+    <i class="fas fa-store-alt"></i>
+    <p>Découvrez WarabaShop, votre solution e-commerce tout-en-un, simple et rapide pour gérer votre boutique en ligne et vos ventes.</p>
+</div>
+<div class="footer-links">
+    <a href="#">À propos</a>
+    <a href="#">Politique de confidentialité</a>
+    <a href="#">Contact</a>
+</div>
+<p>© 2024 WarabaShop | Tous droits réservés</p>
+</footer>
+    <!-- Script JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function closeNotification(element) {
+            const notification = element.parentElement;
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 300); // Remove element after transition
+        }
+
+        setTimeout(() => {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            });
+        }, 5000); // Automatically hide notifications after 5 seconds
+        const input = document.querySelector("#phone");
+    const hiddenInput = document.querySelector("#full_number");
+
+    const iti = window.intlTelInput(input, {
+        initialCountry: "gn", // Par défaut : Guinée
+        separateDialCode: true, // Affiche l'indicatif séparément
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+    });
+
+    // Mettre à jour le champ caché avec le numéro complet
+    input.addEventListener("blur", () => {
+        hiddenInput.value = iti.getNumber(); // Récupère le numéro avec l'indicatif
+    });
+        </script>
+     
+</body>
+</html>

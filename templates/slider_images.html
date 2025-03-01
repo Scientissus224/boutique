@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 20px;
+          background-color: #333;
+          
+          
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .top-bar{
+            margin-bottom: 0;
+          }
+          .menu-btn {
+              font-size:15px;
+              margin-right: 10px;
+          }
+      }
+     /* Style du sidebar */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    background-color: #333;
+    padding-top: 20px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    border-right: 2px solid #000;
+    box-sizing: border-box;
+    left: -250px; /* Par défaut, le sidebar est caché */
+}
+
+.sidebar.active {
+    left: 0;
+    width: 100%; /* Prend toute la largeur sur mobile quand actif */
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    font-weight: 600;
+    min-height: 50px;
+}
+
+.sidebar a:hover {
+    background-color: #FF8C00;
+
+}
+
+.sidebar hr {
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.logo-container {
+    text-align: center;
+    padding: 15px;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #FF8C00;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 25px;
+    cursor: pointer;
+    z-index: 1002;
+    position: relative;
+    transition: transform 0.2s ease;
+    padding: 0 10px;
+}
+
+.menu-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Style du contenu principal */
+.content {
+    margin-left: 0;
+    padding: 20px;
+    min-height: calc(100vh - 60px); /* Soustrait la hauteur du top-bar */
+    transition: margin-left 0.3s ease;
+    margin-top: 60px; /* Hauteur du top-bar */
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Style du top-bar */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: 1000;
+    background-color: #333;
+}
+
+/* Responsive pour les petits écrans */
+@media screen and (max-width: 767px) {
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+
+    .content {
+        margin: 60px 0 0 0;
+        padding: 15px;
+        width: 100%;
+        min-height: calc(100vh - 60px);
+    }
+
+    .card {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+    .sidebar {
+        left: -250px;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+}
+/* Boutons futuristes */
+.futuristic-btn {
+    background: linear-gradient(135deg, #00aaff, #4e00ff);
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+    background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+    text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+    font-weight: bold;
+    color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+    .card-body {
+        padding: 0; /* Élimine le padding inutile sur mobile */
+    }
+
+
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+    .col-md-3 {
+        width: 25%; /* 4 images par ligne sur tablette et plus */
+    }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+    .col-lg-3 {
+        width: 25%; /* 4 images par ligne sur grand écran */
+    }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+    color: #00aaff; /* Couleur futuriste */
+    opacity: 0.7;
+}
+
+
+
+/* Style général de la notification */
+.notification-box {
+    position: fixed;
+    top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+    color: #fff;
+    border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+    padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+    z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+    font-size: 2.5rem; /* Taille plus grande pour l'icône */
+    margin-right: 20px;
+    color: #00ffcc; /* Couleur cybernétique verte */
+    animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+    font-size: 1.2rem; /* Agrandit la taille du texte */
+    flex-grow: 1;
+    opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+    letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+    color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, color 0.3s;
+    padding: 5px;
+}
+
+.close-btn:hover {
+    color: #00ffcc; /* Couleur hover dynamique */
+    transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+    .notification-box {
+        top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+        right: 5px; /* Réduit l'espacement sur les petits écrans */
+        padding: 12px 18px;
+        width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+    }
+
+    .close-btn {
+        font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-box {
+        top: 5%; /* Réduit encore la distance du haut */
+        right: 5px; /* Garde une marge minimale à droite */
+        padding: 8px 15px;
+        width: 90%; /* Largeur ajustée pour les petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1rem; /* Réduit encore la taille du texte */
+    }
+
+    .close-btn {
+        font-size: 1rem; /* Petite taille du bouton de fermeture */
+    }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+    100% {
+        text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+    }
+}
+
+/* Styles des notifications */
+.notification.show {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateY(-50%) translateX(100%);
+}
+.description-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8); /* Fond blanc clair avec transparence */
+    color: black; /* Couleur du texte */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0; /* Caché par défaut */
+    z-index: 10; /* Assure que le fond est au-dessus de l'image */
+}
+
+.description-overlay.active {
+    opacity: 1; /* Affiche la description */
+}
+
+/* Ajout du bouton de fermeture dans le sidebar */
+.sidebar-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+.sidebar-close:hover {
+    color: #FF8C00;
+}
+
+/* Modification du style des images */
+.slider-images {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    height: 250px; /* Hauteur fixe pour toutes les images */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+}
+
+.slider-images img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto; /* Permet à l'image de garder ses proportions */
+    height: auto; /* Permet à l'image de garder ses proportions */
+    object-fit: contain;
+    padding: 10px;
+}
+
+/* Style des cartes d'images */
+.futuristic-card-item {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-color: white;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustements responsives pour les images */
+@media screen and (max-width: 768px) {
+    .slider-images {
+        height: 200px; /* Hauteur réduite sur mobile */
+    }
+    
+    .col-6 {
+        padding: 5px;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1200px) {
+    .slider-images {
+        height: 220px; /* Hauteur intermédiaire pour les tablettes */
+    }
+}
+
+/* Pour la grille d'images */
+.row.g-3 {
+    margin: -8px;
+}
+
+.row.g-3 > [class*="col-"] {
+    padding: 8px;
+}
+
+/* Animation au survol plus douce */
+.slider-images img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.slider-images:hover img {
+    transform: scale(1.05);
+}
+
+/* Media queries pour le responsive */
+@media screen and (max-width: 991px) {
+    .sidebar {
+        left: -100%; /* Cache complètement le sidebar sur mobile */
+        width: 100%; /* Prend toute la largeur */
+    }
+    
+    .sidebar.active {
+        left: 0;
+        top: 0;
+        height: 100vh;
+    }
+    
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .sidebar-close {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: #fff;
+        font-size: 24px;
+        z-index: 1002;
+    }
+}
+
+/* Pour les grands écrans */
+@media screen and (min-width: 992px) {
+    .sidebar {
+        width: 250px;
+        left: 0;
+    }
+    
+    .content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+    
+    .sidebar-close {
+        display: none; /* Cache le bouton de fermeture sur grand écran */
+    }
+}
+
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <!-- Header -->
+<div class="content-header d-flex justify-content-center align-items-center">
+  <button type="button" class="btn btn-outline-primary btn-lg futuristic-btn"
+          data-bs-toggle="modal" data-bs-target="#ajouterSliderModal">
+      Ajouter une image
+  </button>
+</div>
+
+<!-- Modal pour ajouter une image au slider -->
+<div class="modal fade" id="ajouterSliderModal" tabindex="-1" aria-labelledby="ajouterSliderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+      <div class="modal-content" style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+          <div class="modal-header" style="border-bottom: 1px solid #ddd;">
+              <h5 class="modal-title" id="ajouterSliderModalLabel" style="font-weight: 600; color: #333;">Ajouter une image au slider</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <label for="id_title" class="form-label" style="font-weight: 500;">Titre de l'image</label>
+                      <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-font"></i></span>
+                          {{ form.title|add_class:"form-control" }}
+                      </div>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="id_description" class="form-label" style="font-weight: 500;">Description de l'image</label>
+                      <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                          {{ form.description|add_class:"form-control" }}
+                      </div>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="id_image" class="form-label" style="font-weight: 500;">Choisir une image</label>
+                      <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-image"></i></span>
+                          {{ form.image|add_class:"form-control" }}
+                      </div>
+                  </div>
+
+                  <div class="d-flex justify-content-center">
+                      <button type="submit" name="ajouter" class="btn btn-primary btn-lg" style="background-color: #007bff; border: none; font-weight: bold; padding: 12px 30px;">
+                          Ajouter l'image
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Formulaire de recherche -->
+<div class="container mt-4">
+  <div class="row mb-4">
+      <div class="col-md-6 col-lg-4">
+          <form method="GET" action="">
+              <div class="input-group">
+                  <input type="text" class="form-control" id="search" name="search" value="{{ request.GET.search }}" placeholder="Rechercher par titre">
+                  <button type="submit" class="input-group-text">
+                      <i class="fas fa-search"></i>
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+<!-- Liste des images existantes (Slider) -->
+<div class="card mt-5 futuristic-card" style="background-color: white;">
+    <div class="card-header">
+        <h5>Images du Slider</h5>
+    </div>
+    <div class="card-body d-flex justify-content-center">
+        <div class="row g-3 justify-content-center">
+            {% for image in slider_images %}
+            <div class="{% if slider_images|length == 1 %}col-12 col-sm-10 col-md-10 col-lg-8{% else %}col-6 col-sm-6 col-md-3 col-lg-3{% endif %}"> <!-- Ajustement dynamique -->
+                <div class="futuristic-card-item d-flex flex-column" style="background-color: #f4f4f4;"> <!-- Fond blanc foncé -->
+                    <div class="slider-images" style="height: auto; overflow: hidden; position: relative;">
+                        {% if image.image %}
+                            <img src="{{ image.image.url }}" alt="Slider Image" class="img-fluid w-100 object-fit-cover" style="max-height: 600px;"> <!-- Correction des dimensions -->
+                        {% else %}
+                            <!-- Icône de robot si aucune image -->
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 bg-light text-muted" style="height: 600px;">
+                                <i class="fas fa-robot fa-3x"></i>
+                                <p class="text-center">Image non disponible</p>
+                            </div>
+                        {% endif %}
+
+                        {% if image.description %}
+                            <!-- Description cachée par défaut -->
+                            <div id="desc{{ image.id }}" class="description-overlay">
+                                <div class="description-content futuristic-description">
+                                    <p>{{ image.description }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        {% if image.title %}
+                            <h6 class="card-title" style="color: black;">{{ image.title }}</h6> <!-- Titre en noir -->
+                        {% else %}
+                            <h6 class="card-title text-muted">Titre non disponible</h6>
+                        {% endif %}
+
+                        {% if image.description %}
+                            <!-- Bouton pour afficher/fermer la description -->
+                            <button class="btn btn-primary btn-sm w-100" type="button" id="toggleDesc{{ image.id }}" onclick="toggleDescription({{ image.id }})"> <!-- Bleu foncé pour la description -->
+                                Voir la description
+                            </button>
+                        {% endif %}
+
+                        <!-- Bouton Supprimer juste en dessous du bouton "Voir la description" sans hauteur supplémentaire -->
+                        <button type="button" class="btn btn-danger w-100 btn-delete mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ image.id }}" name="supprimer" style="background-color: #dc3545; color: white; border: none; font-weight: bold;">
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-slider-container" style="
+                    border: 3px dashed #007bff;
+                    border-radius: 15px;
+                    padding: 40px;
+                    text-align: center;
+                    background-color: rgba(0, 123, 255, 0.05);
+                    min-height: 300px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 20px;
+                ">
+                    <div class="empty-slider-icon" style="
+                        font-size: 4rem;
+                        color: #007bff;
+                        margin-bottom: 15px;
+                    ">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <h3 style="
+                        color: #333;
+                        font-size: 1.5rem;
+                        margin-bottom: 10px;
+                    ">Aucune image slider</h3>
+                    <p style="
+                        color: #666;
+                        margin-bottom: 20px;
+                        max-width: 400px;
+                    ">
+                        Ajoutez des images à votre slider pour mettre en valeur vos produits et attirer l'attention de vos clients
+                    </p>
+                    <button type="button" 
+                            class="btn btn-primary btn-lg"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#ajouterSliderModal"
+                            style="
+                                background: linear-gradient(45deg, #007bff, #0056b3);
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 50px;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
+                                transition: transform 0.2s ease;
+                                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+                            "
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-plus-circle"></i>
+                        Ajouter une première image
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+{% for image in slider_images %}
+<div class="modal fade" id="deleteModal{{ image.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ image.id }}" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow-lg" style="background: #ffffff; color: #333;">
+            <div class="modal-header" style="border-bottom: 1px solid #dee2e6;">
+                <h5 class="modal-title d-flex align-items-center" id="deleteModalLabel{{ image.id }}">
+                    <i class="fas fa-exclamation-triangle me-2" style="color: #ff6600;"></i>
+                    Confirmation de suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Colonne de gauche pour l'image -->
+                    <div class="col-12 col-md-6">
+                        <div class="image-preview" style="border-radius: 10px; overflow: hidden; max-height: 300px; border: 1px solid #dee2e6;">
+                            {% if image.image %}
+                                <img src="{{ image.image.url }}" alt="Image à supprimer" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <div class="d-flex justify-content-center align-items-center bg-light" style="height: 300px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Colonne de droite pour les informations -->
+                    <div class="col-12 col-md-6">
+                        <div class="image-info p-3">
+                            <h6 class="text-primary mb-3">Informations de l'image</h6>
+                            <div class="info-item mb-3">
+                                <strong class="text-dark">Titre:</strong>
+                                <p class="text-dark mb-2">{{ image.title|default:"Aucun titre" }}</p>
+                            </div>
+                            {% if image.description %}
+                            <div class="info-item mb-3">
+                                <strong class="text-dark">Description:</strong>
+                                <p class="text-dark" style="font-size: 0.9rem;">{{ image.description }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="alert alert-danger" role="alert" style="background-color: #fff3f3; border-color: #dc3545;">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                Cette action est irréversible. L'image sera définitivement supprimée.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #dee2e6;">
+                <form method="post" class="d-flex gap-2 w-100 justify-content-end">
+                    {% csrf_token %}
+                    <input type="hidden" name="slider_id" value="{{ image.id }}">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 30px; padding: 10px 25px;">
+                        <i class="fas fa-times me-2"></i>Annuler
+                    </button>
+                    <button type="submit" name="delete_slider" class="btn btn-danger" style="border-radius: 30px; padding: 10px 25px;">
+                        <i class="fas fa-trash-alt me-2"></i>Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour gérer le sidebar
+    window.toggleSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const body = document.querySelector('body');
+        
+        if (sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            body.style.overflow = 'auto'; // Réactive le scroll
+        } else {
+            sidebar.classList.add('active');
+            body.style.overflow = 'hidden'; // Désactive le scroll quand le sidebar est ouvert
+        }
+    };
+
+    // Fermer le sidebar avec le bouton de croix
+    const sidebarClose = document.querySelector('.sidebar-close');
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', function(e) {
+            e.stopPropagation(); // Empêche la propagation de l'événement
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+    }
+
+    // Empêcher la fermeture du sidebar quand on clique à l'intérieur
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Fonction pour fermer les notifications
+    window.closeNotification = function(element) {
+        const notification = element.parentElement;
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300);
+    };
+
+    // Fonction pour la recherche
+    document.querySelector('#search')?.addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const title = card.querySelector('.card-title')?.textContent.toLowerCase();
+            if (title && title.includes(searchValue)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    function toggleDescription(imageId) {
+        const descriptionOverlay = document.getElementById(`desc${imageId}`);
+        descriptionOverlay.classList.toggle('active'); // Ajoute ou enlève la classe active
+        console.log(`Toggled description for image ID: ${imageId}`); // Log pour débogage
+    }
+});
+    </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarabaShop - Connexion</title>
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            box-sizing: border-box;
+            transition: all 0.2s linear;
+            text-decoration: none;
+            list-style-type: none;
+            border: none;
+        }
+
+        html {
+            font-size: 80.5%;
+            scroll-padding-top: 7em;
+            scroll-behavior: smooth;
+        }
+
+        /* Variables globales */
+        :root {
+            --primary-color: #ff7f50;
+            --hover-color: #e67e22;
+            --background-color: #2c5d77;
+            --text-color: white;
+            --btn-border-radius: 30px;
+            --btn-font-size: 1rem;
+            --btn-padding: 10px 30px;
+            --btn-font-weight: 600;
+        }
+
+        /* Styles globaux */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+            background-size: cover;
+            scroll-behavior: smooth;
+        }
+        /* Navbar */
+        .ms-3 {
+            font-size: 2rem; /* Ajuste la taille du texte selon vos besoins */
+            font-weight: bold; /* Met le texte en gras */
+        }
+        .navbar {
+            background-color: #333;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+        
+        .navbar:hover {
+            background-color: #444;
+        }
+        
+        .logo-img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 2px solid #fff;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+        
+        .navbar-nav .nav-link {
+            margin: 0 15px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+        
+        .navbar-nav .contact {
+            background-color: #e74c3c;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        
+        .navbar-nav .contact:hover {
+            background-color: #c0392b;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #ea1f33;
+        }
+     /* Section Hero */
+.hero-section {
+    display: flex; /* Utilisation du flexbox pour disposer la description et le formulaire */
+    flex-direction: column; /* Placer les éléments en colonne (description au-dessus du formulaire) */
+    justify-content: center; /* Centrer verticalement */
+    align-items: flex-start; /* Aligner à gauche horizontalement */
+    padding: 40px 20px;
+    position: relative;
+    background: url("{% static 's2.jpeg' %}") no-repeat center center;
+    background-size: cover;
+    background-position: center 15%; /* Déplacer encore plus l'image pour voir la tête */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    color: white;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5); /* Ombre interne pour le contraste */
+}
+
+/* Animation continue de la description */
+.description-container {
+    width: 70%; /* La description prend 70% de la largeur du conteneur */
+    text-align: center; /* Centre le texte */
+    color: white; /* Couleur blanche pour la description */
+    font-size: 20px; /* Taille de la police */
+    font-weight: bold; /* Texte en gras */
+    background-color: rgba(0, 0, 0, 0.7); /* Fond noir clair avec opacité de 0.7 pour plus de lisibilité */
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px; /* Espace entre la description et le formulaire */
+    opacity: 1; /* Rendre la description visible par défaut */
+    animation: animateDescription 2s infinite alternate; /* Animation continue */
+}
+
+/* Animation continue de la description */
+@keyframes animateDescription {
+    0% {
+        opacity: 0.7;
+        transform: translateY(-20px); /* Légèrement décalé vers le haut au début */
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0); /* Retour à la position initiale */
+    }
+    100% {
+        opacity: 0.7;
+        transform: translateY(20px); /* Légèrement décalé vers le bas à la fin */
+    }
+}
+
+/* Centered Form */
+.form-container {
+    width: 30%; /* Le formulaire prend 30% de la largeur du conteneur */
+    display: flex;
+    justify-content: center; /* Centre le formulaire horizontalement */
+    align-items: center; /* Centre le formulaire verticalement */
+    height: 100%; /* Prend toute la hauteur de la section hero */
+    position: relative;
+    margin-left: 20px; /* Décale légèrement le formulaire vers la gauche */
+}
+
+/* Formulaire - Fond noir clair avec transparence */
+.form {
+    background-color: rgba(0, 0, 0, 0.6); /* Fond noir clair avec une opacité de 0.6 */
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre légère pour l'effet vitrine */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Bordure subtile pour l'effet vitrine */
+    width: 100%;
+    max-width: 400px; /* Largeur maximale du formulaire */
+}
+
+.form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+button[type="submit"] {
+    font-size: 14px;
+    padding: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column; /* Colonne pour les petits écrans */
+    }
+
+
+    .description-container {
+        width: 80%; /* Réduit la largeur de la description sur les petits écrans */
+        font-size: 16px; /* Réduit la taille de la police */
+        right: 0; /* Aligne la description à gauche pour les petits écrans */
+        max-width: none; /* Enlève la limite de largeur maximale */
+    }
+
+    .form-container {
+        width: 80%; /* Réduit la largeur du formulaire sur les petits écrans */
+        padding: 20px; /* Réduit le padding */
+    }
+
+    .form {
+        padding: 20px; /* Réduit le padding pour les petits écrans */
+    }
+
+    .form h1 {
+        font-size: 24px; /* Réduit la taille du titre pour les petits écrans */
+    }
+
+    button[type="submit"] {
+        font-size: 12px; /* Réduit la taille du texte du bouton sur les petits écrans */
+        padding: 8px; /* Réduit le padding du bouton */
+    }
+}
+
+@media (max-width: 480px) {
+    .description-container {
+        width: 90%; /* Réduit encore la largeur de la description */
+        font-size: 14px; /* Réduit la taille de la police */
+    }
+
+    .form-container {
+        width: 90%; /* Réduit la largeur du formulaire sur les très petits écrans */
+        padding: 15px; /* Réduit encore le padding */
+    }
+
+    .form h1 {
+        font-size: 20px; /* Taille de titre encore réduite pour les très petits écrans */
+    }
+
+    button[type="submit"] {
+        font-size: 10px; /* Taille de texte encore réduite */
+        padding: 6px; /* Réduit le padding du bouton */
+    }
+}
+
+/* PC (écrans larges) */
+@media (min-width: 769px) {
+    .hero-section {
+        flex-direction: column; /* Maintient la disposition en colonne sur les grands écrans */
+        justify-content: center; /* Centre tout verticalement */
+    }
+
+    .description-container {
+        width: 70%; /* La description prend 70% de la largeur du conteneur */
+        margin-bottom: 20px; /* Espace entre la description et le formulaire */
+    }
+
+    .form-container {
+        width: 30%; /* Le formulaire prend 30% de la largeur du conteneur */
+        margin-left: 20px; /* Décale légèrement le formulaire vers la gauche */
+    }
+}
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+        
+        .icons img {
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .icons img:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Notifications */
+.messages {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px; /* Limite la largeur maximale pour les notifications */
+    width: 100%; /* Occupe toute la largeur disponible sur les petits écrans */
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid #004085;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .messages {
+        right: 10px; /* Décale légèrement la notification vers la gauche sur les petits écrans */
+        top: 60px; /* Ajuste la position verticale pour les petits écrans */
+        max-width: 250px; /* Réduit la largeur maximale sur les petits écrans */
+    }
+
+    .notification {
+        padding: 10px 15px; /* Réduit le padding pour les petits écrans */
+        font-size: 14px; /* Réduit la taille du texte pour les petits écrans */
+    }
+
+    .close-btn {
+        font-size: 18px; /* Réduit la taille du bouton de fermeture */
+    }
+}
+
+@media (max-width: 480px) {
+    .messages {
+        right: 5px; /* Réduit encore l'espacement pour les très petits écrans */
+        top: 50px; /* Ajuste encore la position verticale */
+        max-width: 200px; /* Réduit encore la largeur maximale sur les très petits écrans */
+    }
+
+    .notification {
+        padding: 8px 12px; /* Réduit le padding pour s'adapter aux écrans très petits */
+        font-size: 12px; /* Réduit la taille du texte */
+    }
+
+    .close-btn {
+        font-size: 16px; /* Réduit la taille du bouton de fermeture pour les petits écrans */
+    }
+}
+
+        /* Pied de page */
+.footer {
+    background-color: #34495e; /* Nouveau fond, un bleu-gris qui se marie avec le bleu foncé */
+    color: #ecf0f1; /* Texte blanc clair */
+    padding: 40px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-description {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.footer-description i {
+    font-size: 3rem;
+    color: #f39c12; /* Icône dorée */
+    margin-right: 15px;
+}
+
+.footer-description p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.footer-links {
+    margin: 20px 0;
+}
+
+.footer-links a {
+    color: #f39c12; /* Icônes et liens en doré */
+    margin: 0 15px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ecf0f1; /* Survol doré vers blanc */
+}
+
+.footer p {
+    font-size: 1rem;
+    margin-top: 20px;
+    color: #bdc3c7; /* Texte gris clair */
+}
+
+/* Animation de la description */
+.footer-description p {
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Animation fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+            /* Section Fonctionnalités */
+.features-section {
+    padding: 60px 20px;
+    background-color: #1a2b4c; /* Bleu foncé pour le fond */
+    color: #fff; /* Texte en blanc pour le contraste */
+    text-align: center;
+}
+
+.features-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #fff; /* Couleur du titre en blanc */
+}
+
+.feature {
+    margin: 20px;
+    display: inline-block;
+    width: 250px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white; /* Fond blanc pour chaque fonctionnalité */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre autour des éléments */
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-10px); /* Animation d'élévation au survol */
+}
+
+.feature i {
+    font-size: 3rem;
+    color: #1a2b4c; /* Icônes dans la couleur du fond de la section */
+    margin-bottom: 20px;
+}
+
+.feature h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333; /* Couleur du texte pour les titres des fonctionnalités */
+}
+
+.feature p {
+    font-size: 1rem;
+    color: #555; /* Couleur du texte pour les descriptions */
+}
+
+
+   /* Section Tarifs */
+.pricing-section {
+    padding: 60px 20px;
+    background-color: #1a2b4c; /* Nouveau fond bleu foncé */
+    text-align: center;
+}
+
+.pricing-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #ecf0f1; /* Texte en blanc clair pour un bon contraste avec le fond foncé */
+}
+
+.pricing-option {
+    display: inline-block;
+    margin: 20px;
+    width: 300px;
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #34495e; /* Fond gris-bleu foncé pour les options */
+    color: #ecf0f1; /* Texte en blanc clair pour un bon contraste */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.pricing-option:hover {
+    transform: translateY(-10px); /* Animation d'élévation au survol */
+}
+
+.pricing-option i {
+    font-size: 3rem;
+    color: #f39c12; /* Icônes dorées pour se démarquer du fond */
+    margin-bottom: 20px;
+}
+
+.pricing-option h4 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #ecf0f1; /* Couleur du titre en blanc clair */
+}
+
+.pricing-option p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #bdc3c7; /* Texte légèrement gris pour la description */
+}
+
+.pricing-option .btn {
+    background-color: #f39c12; /* Bouton jaune doré pour contraster avec le fond bleu */
+    color: #1a2b4c; /* Texte du bouton en bleu foncé */
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pricing-option .btn:hover {
+    background-color: #f1c40f; /* Couleur de survol plus claire pour le bouton */
+}
+
+/* Option Plan Premium */
+.pricing-option.premium {
+    background-color: #e74c3c; /* Fond rouge pour un plan premium attractif */
+    color: #ecf0f1; /* Texte clair */
+}
+
+.pricing-option.premium i {
+    color: #ecf0f1; /* Icônes blanches pour le plan premium */
+}
+
+.pricing-option.premium .btn {
+    background-color: #ecf0f1; /* Bouton clair pour se démarquer */
+    color: #e74c3c; /* Texte du bouton en rouge */
+}
+
+.pricing-option.premium .btn:hover {
+    background-color: #c0392b; /* Couleur de survol du bouton premium */
+}
+
+        
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'logo1.webp' %}" alt="WarabaShop Logo" class="logo-img">
+                    <div class="ms-3">WarabaShop</div>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}"><i class="fas fa-home"></i> Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#fonction"><i class="fas fa-cogs"></i> Fonctionnalités</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tarif"><i class="fas fa-tags"></i> Tarifs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link contact" href="#"><i class="fas fa-phone-alt"></i> Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
+            <span>{{ message }}</span>
+            <button class="close-btn" onclick="closeNotification(this)">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+       <!-- Section Hero -->
+<section class="hero-section">
+    <div class="form-container">
+        <form class="form" method="POST">
+            {% csrf_token %}
+            <h1>Connectez-vous</h1>
+            <div class="mb-3">
+                <label for="username" class="form-label">Nom ou Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-white"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Nom complet ou Email" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-white"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+        </form>
+    </div>
+    
+    <!-- Description près de l'image -->
+    <div class="description-container">
+        <p>Bienvenue sur notre plateforme ! Veuillez vous connecter pour accéder à votre espace personnel.</p>
+    </div>
+</section>
+
+    
+    <!-- Section Fonctionnalités -->
+    <section class="features-section">
+        <h2 id="fonction">Nos Fonctionnalités</h2>
+        <div class="feature">
+            <i class="fas fa-archive"></i>
+            <h4>Gestion des Produits</h4>
+            <p>Ajoutez, modifiez et supprimez vos produits en toute simplicité.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-map-marker-alt"></i>
+            <h4>Localisation</h4>
+            <p>Ajoutez votre localisation et aidez vos clients à vous trouver.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-credit-card"></i>
+            <h4>Options de Paiement</h4>
+            <p>Supportez divers moyens de paiement, y compris Orange Money.</p>
+        </div>
+    </section>
+
+    <!-- Section Tarifs -->
+<section class="pricing-section">
+    <h2 id="tarif">Nos Tarifs</h2>
+    <div class="pricing-option" >
+        <i class="fas fa-cogs"></i>
+        <h4>Plan de Base</h4>
+        <p>Gratuit pour les petites boutiques. Après 3 mois, 150 000 FG.</p>
+        <button class="btn">Commencer</button>
+    </div>
+    <div class="pricing-option premium">
+        <i class="fas fa-star"></i>
+        <h4>Plan Premium</h4>
+        <p>Pour des fonctionnalités avancées. Après 3 mois, 300 000 FG.</p>
+        <button class="btn">Souscrire</button>
+    </div>
+</section>
+
+
+<!-- Pied de page -->
+<footer class="footer">
+    <div class="footer-description">
+        <i class="fas fa-store-alt"></i>
+        <p>Découvrez WarabaShop, votre solution e-commerce tout-en-un, simple et rapide pour gérer votre boutique en ligne et vos ventes.</p>
+    </div>
+    <div class="footer-links">
+        <a href="#">À propos</a>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Contact</a>
+    </div>
+    <p>© 2024 WarabaShop | Tous droits réservés</p>
+</footer>
+
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <!-- Notification Script -->
+    <script>
+        function closeNotification(element) {
+            const notification = element.parentElement;
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 300); // Remove element after transition
+        }
+
+        setTimeout(() => {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            });
+        }, 5000); // Automatically hide notifications after 5 seconds
+    </script>
+</body>
+</html>

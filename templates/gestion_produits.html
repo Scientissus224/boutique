@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 20px;
+          background-color: #333;
+          position: fixed;
+          width: 100%;
+          z-index: 100;
+          height: 60px;
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .menu-btn {
+              font-size: 25px;
+              margin-right: 10px;
+          }
+      }
+     /* Style du sidebar */
+.sidebar {
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    left: -250px;
+    top: 0;
+    background-color: #333;
+    padding-top: 60px;
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    z-index: 101;
+    border-right: 2px solid #000;
+    box-sizing: border-box;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    font-weight: 600;
+    min-height: 50px;
+}
+
+.sidebar a:hover {
+    background-color: #FF8C00;
+}
+
+.sidebar hr {
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.logo-container {
+    text-align: center;
+    padding: 5px;
+    margin-top: -20px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #FF8C00;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+.menu-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 30px;
+cursor: pointer;
+z-index: 1000;
+transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+transform: scale(1.1);
+}
+
+
+/* Style du contenu principal */
+.content {
+  margin-left: 0;
+  padding: 20px;
+  min-height: calc(100vh - 60px); /* Soustrait la hauteur du top-bar */
+  transition: margin-left 0.3s ease;
+  margin-left: 250px;
+  margin-top: 60px; /* Ajoute une marge en haut égale à la hauteur du top-bar */
+  overflow-x: hidden; /* Empêche le débordement horizontal */
+  width: calc(100% - 250px); /* Largeur totale moins la largeur du sidebar */
+}
+
+
+
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+  }
+
+  .content {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+    margin-top: 60px; /* Garde l'espace pour le top-bar */
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .card {
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  /* Ajuste la grille des produits */
+  .row-cols-2 {
+    margin: 0 -10px; /* Réduit les marges négatives */
+  }
+
+  .col {
+    padding: 0 10px; /* Réduit le padding des colonnes */
+  }
+
+  /* Lorsque le sidebar est actif, désactiver le défilement du body */
+  body.no-scroll {
+    overflow: hidden;
+  }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+  .sidebar {
+    left: 0;
+    height: 100vh;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .content {
+    margin-left: 250px;
+  }
+}
+/* Boutons futuristes */
+.futuristic-btn {
+  background: linear-gradient(135deg, #00aaff, #4e00ff);
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+  background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Bouton pour afficher/fermer la description */
+#toggleDesc{{ image.id }} {
+  background-color: #4e00ff; /* Un bleu plus distinct pour le bouton */
+  color: white; /* Texte blanc pour le bouton */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#toggleDesc{{ image.id }}:hover {
+  background-color: #00aaff; /* Changer la couleur du bouton au survol */
+}
+
+/* Structure des cartes */
+.card-body {
+  text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+  font-weight: bold;
+  color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style général de la notification */
+.notification-box {
+  position: fixed;
+  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+  color: #fff;
+  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+  z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+  font-size: 2.5rem; /* Taille plus grande pour l'icône */
+  margin-right: 20px;
+  color: #00ffcc; /* Couleur cybernétique verte */
+  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+  font-size: 1.2rem; /* Agrandit la taille du texte */
+  flex-grow: 1;
+  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+  color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #00ffcc; /* Couleur hover dynamique */
+  transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .notification-box {
+    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+    right: 5px; /* Réduit l'espacement sur les petits écrans */
+    padding: 12px 18px;
+    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  }
+
+  .close-btn {
+    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-box {
+    top: 5%; /* Réduit encore la distance du haut */
+    right: 5px; /* Garde une marge minimale à droite */
+    padding: 8px 15px;
+    width: 90%; /* Largeur ajustée pour les petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1rem; /* Réduit encore la taille du texte */
+  }
+
+  .close-btn {
+    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  }
+  100% {
+    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  }
+}
+
+/* Styles des notifications */
+.notification.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateY(-50%) translateX(100%);
+}
+
+/* Style pour le bouton de fermeture du sidebar */
+.sidebar-close {
+  display: none; /* Caché par défaut sur grands écrans */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 102;
+}
+
+.sidebar-close:hover {
+  color: #FF8C00;
+}
+
+/* Ajuster l'affichage pour les petits écrans */
+@media screen and (max-width: 767px) {
+  .sidebar-close {
+    display: block; /* Afficher le bouton sur petits écrans */
+  }
+  
+  /* Ajuster le padding-top du sidebar pour laisser de l'espace pour le bouton de fermeture */
+  .sidebar {
+    padding-top: 50px;
+  }
+}
+
+/* Mise à jour du style des cartes de produits */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Style amélioré pour l'image du produit */
+.product-image {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 15px 15px 0 0;
+    background: #f8f9fa;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-image:hover img {
+    transform: scale(1.05);
+}
+
+/* Style amélioré pour le bouton Détails */
+.btn-details {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-details:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn-details:hover:before {
+    left: 100%;
+}
+
+.btn-details:hover {
+    background: linear-gradient(45deg, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    color: white;
+}
+
+/* Responsive design pour différentes tailles d'écran */
+@media (max-width: 768px) {
+    .product-image {
+        height: 200px;
+    }
+    
+    .card {
+        margin: 10px 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-image {
+        height: 180px;
+    }
+    
+    .btn-details {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" onclick="toggleSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <!-- Header -->
+<div class="content-header d-flex justify-content-center align-items-center">
+  <button  type="button" class="btn btn-outline-primary btn-lg futuristic-btn"
+  data-bs-toggle="modal" 
+  data-bs-target="#ajouterProduitModal">
+  Ajouter un produit
+  </button>
+</div>
+<h2 class="text-center mb-4" style="margin-top: 10px;">Filtrer les produits</h2>
+
+<!-- Formulaire de filtrage -->
+<form method="get" class="p-4 bg-gradient rounded-xl shadow-lg" style="background: linear-gradient(135deg, #1a237e, #0d47a1);">
+    <div class="row">
+        <!-- Recherche par nom -->
+        <div class="col-md-4 mb-3">
+            <label for="search" class="form-label text-dark"><i class="fas fa-search" style="color: #333;"></i> Recherche par nom :</label>
+            <input type="text" id="search" name="search" class="form-control border border-dark p-3" style="border-radius: 10px;" value="{{ request.GET.search }}" placeholder="Nom du produit">
+        </div>
+
+        <!-- Disponibilité -->
+        <div class="col-md-4 mb-3">
+            <label for="availability" class="form-label text-dark"><i class="fas fa-check-circle" style="color: #333;"></i> Disponibilité :</label>
+            <select id="availability" name="availability" class="form-control border border-dark p-3" style="border-radius: 10px;">
+                <option value="">-- Sélectionner --</option>
+                <option value="disponible" {% if request.GET.availability == 'disponible' %}selected{% endif %}>Disponible</option>
+                <option value="indisponible" {% if request.GET.availability == 'indisponible' %}selected{% endif %}>Indisponible</option>
+            </select>
+        </div>
+
+        <!-- Prix minimum -->
+        <div class="col-md-4 mb-3">
+            <label for="min_price" class="form-label text-dark"><i class="fas fa-dollar-sign" style="color: #333;"></i> Prix minimum :</label>
+            <input type="number" id="min_price" name="min_price" class="form-control border border-dark p-3" style="border-radius: 10px;" value="{{ request.GET.min_price }}" placeholder="Prix minimum">
+        </div>
+
+        <!-- Prix maximum -->
+        <div class="col-md-4 mb-3">
+            <label for="max_price" class="form-label text-dark"><i class="fas fa-dollar-sign" style="color: #333;"></i> Prix maximum :</label>
+            <input type="number" id="max_price" name="max_price" class="form-control border border-dark p-3" style="border-radius: 10px;" value="{{ request.GET.max_price }}" placeholder="Prix maximum">
+        </div>
+
+        <!-- État du produit -->
+        <div class="col-md-4 mb-3">
+            <label for="etat" class="form-label text-dark"><i class="fas fa-cogs" style="color: #333;"></i> État du produit :</label>
+            <select id="etat" name="etat" class="form-control border border-dark p-3" style="border-radius: 10px;">
+                <option value="">-- Sélectionner --</option>
+                <option value="Neuf" {% if request.GET.etat == 'Neuf' %}selected{% endif %}>Neuf</option>
+                <option value="Occasion" {% if request.GET.etat == 'Occasion' %}selected{% endif %}>Occasion</option>
+                <option value="Reconditionné" {% if request.GET.etat == 'Reconditionné' %}selected{% endif %}>Reconditionné</option>
+            </select>
+        </div>
+
+        <!-- Poids minimum -->
+        <div class="col-md-4 mb-3">
+            <label for="poids" class="form-label text-dark"><i class="fas fa-weight-hanging" style="color: #333;"></i> Poids minimum :</label>
+            <input type="number" step="any" id="poids" name="poids" class="form-control border border-dark p-3" style="border-radius: 10px;" value="{{ request.GET.poids }}" placeholder="Poids minimum (kg)">
+        </div>
+
+        <!-- Dimensions -->
+        <div class="col-md-4 mb-3">
+            <label for="dimensions" class="form-label text-dark"><i class="fas fa-ruler" style="color: #333;"></i> Dimensions :</label>
+            <input type="text" id="dimensions" name="dimensions" class="form-control border border-dark p-3" style="border-radius: 10px;" value="{{ request.GET.dimensions }}" placeholder="Dimensions (ex : 10x20x30)">
+        </div>
+
+        <!-- Bouton d'application des filtres -->
+        <div class="col-md-12 text-center mt-4">
+            <button type="submit" class="btn btn-light p-3 rounded-pill"><i class="fas fa-filter" style="color: #333;"></i> Appliquer les filtres</button>
+        </div>
+    </div>
+</form>
+
+<!-- Liste des produits -->
+<div class="container mt-5">
+  <div class="card shadow-lg rounded-xl" style="background-color: #f7f9fb;">
+      <div class="card-header bg-transparent text-center">
+          <h5 style="font-family: 'Orbitron', sans-serif; color: #2c3e50;">Liste des Produits</h5>
+      </div>
+      <div class="card-body">
+          <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
+              {% for product in products %}
+                  <!-- Colonne pour chaque produit -->
+                  <div class="col d-flex justify-content-center">
+                      <div class="card shadow-lg rounded-3" style="border: none; background: #ffffff; border-radius: 15px; width: 100%; max-width: 250px; overflow: hidden; transition: transform 0.3s ease;">
+                          <!-- Image du produit -->
+                          <div class="product-image" style="height: 200px; width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                              {% if product.image %}
+                                  <img src="{{ product.image.url }}" alt="Image Produit" class="img-fluid" 
+                                      style="width: 100%; height: 100%; object-fit: contain; object-position: center center; border-radius: 15px;">
+                              {% else %}
+                                  <img src="https://via.placeholder.com/150" alt="Image Produit" class="img-fluid" 
+                                      style="width: 100%; height: 100%; object-fit: contain; object-position: center center; border-radius: 15px;">
+                              {% endif %}
+                          </div>
+
+                          <!-- Détails du produit -->
+                          <div class="card-body d-flex flex-column text-dark" style="padding: 15px;">
+                              <h6 class="card-title" style="color: #3498db;">
+                                  {% if product.nom %}
+                                      {{ product.nom }}
+                                  {% else %}
+                                      Nom indisponible
+                                  {% endif %}
+                              </h6>
+
+                              <p class="card-text" style="font-size: 0.9rem;">
+                                  {% if product.prix and devise %}
+                                      <span style="color: #333333;">Prix: {{ product.prix }} {{ devise }}</span>
+                                  {% else %}
+                                      Prix indisponible
+                                  {% endif %}
+                              </p>
+
+                              <!-- Indication de disponibilité -->
+                              {% if product.disponible %}
+                                  <p class="card-text bg-success text-white p-2 rounded" style="font-size: 0.9rem;">Disponible</p>
+                              {% else %}
+                                  <p class="card-text bg-warning text-white p-2 rounded" style="font-size: 0.9rem; background-color: #f39c12;">Indisponible</p>
+                              {% endif %}
+
+                              <!-- Actions -->
+                              <div class="d-flex justify-content-between mt-auto">
+                                  <!-- Bouton de suppression -->
+                                  <button type="button" class="btn btn-danger w-100 mt-2" 
+                                      data-bs-toggle="modal" 
+                                      data-bs-target="#deleteModal{{ product.id }}" name="supprimer" 
+                                      style="background-color: #e74c3c; color: white; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                      Supprimer
+                                  </button>
+                              </div>
+
+                              <!-- Lien vers les détails -->
+                              <a href="{{ product.get_absolute_url }}" 
+                                 class="btn btn-details mt-2 d-block w-100" 
+                                 style="text-decoration: none;">
+                                  <i class="fas fa-info-circle me-2"></i>Détails
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+              {% empty %}
+                  <!-- Message si aucun produit n'est disponible -->
+                  <div class="col-12">
+                      <div class="empty-state p-5 text-center" style="border: 3px dashed #e0e0e0; border-radius: 15px; background-color: #f8f9fa;">
+                          <div class="empty-state-content">
+                              <!-- Icône stylisée -->
+                              <div class="mb-4">
+                                  <i class="fas fa-store-alt" style="font-size: 4rem; color: #3498db; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));"></i>
+                              </div>
+                              
+                              <!-- Message principal -->
+                              <h3 class="mb-3" style="color: #2c3e50; font-weight: 600;">Votre boutique est vide</h3>
+                              <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                                  Commencez à construire votre marketplace en ajoutant votre premier produit
+                              </p>
+                              
+                              <!-- Bouton d'action -->
+                              <button type="button" 
+                                      class="btn btn-lg px-5 py-3" 
+                                      data-bs-toggle="modal" 
+                                      data-bs-target="#ajouterProduitModal"
+                                      style="background: linear-gradient(135deg, #3498db, #2980b9);
+                                             color: white;
+                                             border: none;
+                                             border-radius: 50px;
+                                             font-weight: 600;
+                                             transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                                  <i class="fas fa-plus-circle me-2"></i>
+                                  Ajouter mon premier produit
+                              </button>
+                              
+                              <!-- Texte d'encouragement -->
+                              <p class="mt-4 text-muted" style="font-size: 0.9rem;">
+                                  <i class="fas fa-magic me-2"></i>
+                                  Créez une expérience d'achat unique pour vos clients
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modals de confirmation de suppression pour chaque produit -->
+{% for product in products %}
+<div class="modal fade" id="deleteModal{{ product.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ product.id }}" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg" style="background: #ffffff; color: #333;">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title d-flex align-items-center" id="deleteModalLabel{{ product.id }}">
+                    <i class="fas fa-exclamation-triangle me-2" style="color: #ff6600;"></i>
+                    <span style="color: #333;">Confirmation de suppression</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Informations du produit -->
+                <div class="product-info p-3 bg-light rounded-3 mb-3" style="border: 1px solid #dee2e6;">
+                    <!-- Image du produit -->
+                    <div class="text-center mb-3">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.nom }}" 
+                                 class="img-fluid rounded-3" 
+                                 style="max-height: 200px; object-fit: contain;">
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Détails du produit -->
+                    <div class="product-details">
+                        <h6 class="text-primary mb-3">Détails du produit à supprimer :</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-cube me-2" style="color: #ff6600;"></i>
+                                <strong style="color: #333;">Nom :</strong> {{ product.nom }}
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-tag me-2" style="color: #ff6600;"></i>
+                                <strong style="color: #333;">Prix :</strong> {{ product.prix }} GNF
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-boxes me-2" style="color: #ff6600;"></i>
+                                <strong style="color: #333;">Stock :</strong> {{ product.quantite_stock }} unités
+                            </li>
+                            {% if product.reference %}
+                            <li class="mb-2">
+                                <i class="fas fa-barcode me-2" style="color: #ff6600;"></i>
+                                <strong style="color: #333;">Référence :</strong> {{ product.reference }}
+                            </li>
+                            {% endif %}
+                            {% if product.marque %}
+                            <li class="mb-2">
+                                <i class="fas fa-trademark me-2" style="color: #ff6600;"></i>
+                                <strong style="color: #333;">Marque :</strong> {{ product.marque }}
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Message d'avertissement -->
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Attention :</strong> Cette action est irréversible. Êtes-vous sûr de vouloir supprimer ce produit ?
+                </div>
+            </div>
+
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <form method="post" action="{% url 'produits' %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="produit_id" value="{{ product.id }}">
+                    <button type="submit" name="supprimer" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Confirmer la suppression
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+<div class="modal fade" id="ajouterProduitModal" tabindex="-1" aria-labelledby="ajouterProduitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content rounded-4 shadow-sm" style="background: #fff; color: #333;">
+          <div class="modal-header" style="border-bottom: 1px solid #ddd;">
+              <h5 class="modal-title d-flex align-items-center" id="ajouterProduitModalLabel">
+                  <i class="fas fa-box-open me-2" style="color: #ff6600;"></i>
+                  Ajouter un produit
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: #ff6600;"></button>
+          </div>
+          <div class="modal-body">
+              <form method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="row g-3">
+                      <!-- Nom du produit -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_nom" class="form-label">Nom du produit</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-cube"></i></span>
+                              {{ form.nom|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Prix -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_prix" class="form-label">Prix</label>
+                          <div class="input-group">
+                              <span class="input-group-text">GNF</span>
+                              {{ form.prix|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Quantité en stock -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_quantite_stock" class="form-label">Quantité en stock</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                              {{ form.quantite_stock|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Référence (Facultative) -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_reference" class="form-label">Référence (Facultatif)</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                              {{ form.reference|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Marque -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_marque" class="form-label">Marque</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                              {{ form.marque|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Poids -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_poids" class="form-label">Poids (kg)</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                              {{ form.poids|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Dimensions -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_dimensions" class="form-label">Dimensions</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                              {{ form.dimensions|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- État -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_etat" class="form-label">État</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                              {{ form.etat|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Vidéo promotionnelle -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_video_promotionnelle" class="form-label">Vidéo promotionnelle</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-video"></i></span>
+                              {{ form.video_promotionnelle|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Mise en avant -->
+                      <div class="col-12 col-md-6 col-lg-4">
+                          <label for="id_mise_en_avant" class="form-label">Mise en avant</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-star"></i></span>
+                              {{ form.mise_en_avant|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Tags -->
+                      <div class="col-12">
+                          <label for="id_tags" class="form-label">Tags</label>
+                          <div class="form-check">
+                              {{ form.tags|add_class:"form-check-input border" }}
+                          </div>
+                      </div>
+
+                      <!-- Image principale -->
+                      <div class="col-12 col-md-6">
+                          <label for="id_image" class="form-label">Image principale</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-image"></i></span>
+                              {{ form.image|add_class:"form-control border" }}
+                          </div>
+                      </div>
+
+                      <!-- Description -->
+                      <div class="col-12">
+                          <label for="id_description" class="form-label">Description</label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                              {{ form.description|add_class:"form-control border" }}
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Affichage des erreurs -->
+                  {% if form.errors %}
+                      <ul class="alert alert-danger">
+                          {% for field in form %}
+                              {% for error in field.errors %}
+                                  <li>{{ error }}</li>
+                              {% endfor %}
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+
+                  <!-- Bouton soumettre centré -->
+                  <div class="d-flex justify-content-center mt-4">
+                      <button type="submit" class="btn btn-dark btn-lg" name="ajouter" style="border-radius: 30px; padding: 10px 20px; background: #ff6600; border: none;">Ajouter</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+    <script>
+
+            // Fonction pour ouvrir et fermer le sidebar
+const menuBtn = document.querySelector('.menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const body = document.querySelector('body');
+const sidebarClose = document.querySelector('.sidebar-close');
+
+// Fonction pour ouvrir/fermer le sidebar
+function toggleSidebar() {
+  if (sidebar) {
+    sidebar.classList.toggle('active');
+    if (sidebar.classList.contains('active')) {
+      body.classList.add('no-scroll');
+    } else {
+      body.classList.remove('no-scroll');
+    }
+  }
+}
+
+// Fonction pour afficher/masquer la description flottante
+// Fonction pour afficher ou masquer la description
+function toggleDescription(imageId) {
+  var descElement = document.getElementById('desc' + imageId);
+  var buttonElement = document.getElementById('toggleDesc' + imageId);
+  
+  if (descElement.style.display === "none") {
+      descElement.style.display = "block";
+      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
+  } else {
+      descElement.style.display = "none";
+      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
+  }
+}
+             // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 10000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 10000); // La notification disparaît après 5 secondes
+
+
+// Script pour appliquer un filtre avec la barre de recherche
+document.querySelector('#search').addEventListener('input', function() {
+  // Lors de la saisie, appliquer la recherche sur les éléments du slider
+  const searchValue = this.value.toLowerCase();  // Récupère la valeur saisie dans la barre de recherche
+  const cards = document.querySelectorAll('.card');  // Sélectionne toutes les cartes des images de slider
+  cards.forEach(card => {
+      const title = card.querySelector('.card-title').textContent.toLowerCase();  // Récupère le titre de chaque image
+      if (title.includes(searchValue)) {  // Si le titre contient la valeur de recherche
+          card.style.display = 'block';  // Afficher la carte
+      } else {
+          card.style.display = 'none';  // Masquer la carte
+      }
+  });
+});
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

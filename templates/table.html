@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+            padding: 0; margin: 0;
+            font-family:'Poppins', sans-serif;
+            box-sizing: border-box;
+            transition: all.2 linear;
+            text-decoration: none;
+            list-style-type: none;border:none;
+        }
+        html{
+            font-size: 80.5%;
+            scroll-padding-top: 7em;
+            scroll-behavior: smooth;
+            
+        }
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #0b0c0e;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #333;
+            z-index: 20;
+        }
+        .top-bar h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color:#fff;
+        }
+        @media screen and (max-width: 767px) {
+            .top-bar h1 {
+                font-size: 18px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .menu-btn {
+                font-size:15px;
+                margin-right: 10px;
+            }
+        }
+       /* Style du sidebar */
+/* Style du sidebar */
+.sidebar {
+  width: 250px;
+  height: calc(100% - 60px); /* Ajustement de la hauteur pour éviter le chevauchement avec la top-bar */
+  position: fixed;
+  left: -250px;
+  top: 0; /* Positionner le sidebar pour qu'il commence en haut */
+  background-color: #333;
+  padding-top: 20px;
+  overflow-y: auto; /* Permet de scroller si nécessaire */
+  transition: left 0.3s ease;
+  z-index: 30; /* Augmenter le z-index pour passer au-dessus de la top-bar */
+  border-right: 2px solid #000;
+  box-sizing: border-box; /* Gestion correcte du padding */
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar a {
+  display: block;
+  padding: 15px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: background 0.3s;
+  font-weight: 600;
+  min-height: 50px;
+}
+
+.sidebar a:hover {
+  background-color: #FF8C00;
+
+}
+
+.sidebar hr {
+  text-align: center;
+  color: white;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.logo-container {
+  text-align: center;
+  padding: 5px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #FF8C00;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+.menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 50px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s ease;
+  padding: 10px;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Style du contenu principal */
+.content {
+  margin-left: 0;
+  margin-top: 20px; /* Ajout d'une marge supérieure pour éviter le débordement */
+  padding: 20px;
+  min-height: calc(100vh - 60px); /* Ajustement de la hauteur pour tenir compte de la top-bar */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  background: #fff;
+
+  flex: 1;
+  transition: background 0.3s ease;
+}
+
+/* Style des cartes */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card i {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.card a {
+  text-decoration: none;
+  color: #343a40;
+  border: 1px solid #343a40;
+  padding: 5px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.card a:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.card .btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: white;
+}
+
+.card .btn-outline-info:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.card .btn-outline-success:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+.card .btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.card .btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+    height: 100vh; /* Hauteur complète pour toute la page */
+    position: absolute;
+    overflow-y: auto; /* Permet de scroller si nécessaire */
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 15px;
+    height: 100vh;
+  }
+
+  .card {
+    width: 350px;
+    height: 350px;
+  }
+
+  /* Lorsque le sidebar est actif, désactiver le défilement du body */
+  body.no-scroll {
+    overflow: hidden;
+  }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+  .sidebar {
+    left: 0;
+    height: 100vh;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .close-btn {
+    display: none; /* Cacher le bouton de croix sur les grands écrans */
+  }
+
+  .content {
+    margin-left: 250px;
+  }
+}
+
+/* Style général de la notification */
+.notification-box {
+  position: fixed;
+  top: 15%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #222; /* Noir profond pour un effet premium */
+  color: #fff;
+  border-radius: 15px;
+  padding: 15px 25px;
+  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3); /* Ombre orange foncé */
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #FF8C00; /* Orange foncé */
+  z-index: 9999;
+}
+
+/* Icône */
+.notification-box i {
+  font-size: 2.5rem;
+  margin-right: 20px;
+  color: #FF8C00; /* Icône orange foncé */
+  animation: glow 1.5s infinite alternate;
+}
+
+/* Message */
+.notification-box .message {
+  font-size: 1.2rem;
+  flex-grow: 1;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+/* Bouton de fermeture */
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 60px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  padding: 10px;
+}
+
+.close-btn:hover {
+  color: #FF8C00;
+  transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .notification-box {
+    top: 10%;
+    right: 5px;
+    padding: 12px 18px;
+    width: 90%;
+  }
+  .notification-box i {
+    font-size: 2rem;
+  }
+  .notification-box .message {
+    font-size: 1.1rem;
+  }
+  .close-btn {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-box {
+    top: 5%;
+    right: 5px;
+    padding: 8px 15px;
+    width: 90%;
+  }
+  .notification-box i {
+    font-size: 1.8rem;
+  }
+  .notification-box .message {
+    font-size: 1rem;
+  }
+  .close-btn {
+    font-size: 1rem;
+  }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #FF8C00, 0 0 10px #FF8C00, 0 0 20px #FF8C00;
+  }
+  100% {
+    text-shadow: 0 0 20px #FF8C00, 0 0 30px #FF8C00, 0 0 40px #FF8C00;
+  }
+}
+
+/* Styles des notifications */
+.notification.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  box-shadow: 0 8px 30px rgba(255, 140, 0, 0.5);
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateY(-50%) translateX(100%);
+}
+
+/* Style du popup */
+.popup {
+  display: none;
+  position: fixed;
+  top: 30%; /* Centré verticalement */
+  left: 50%; /* Centré horizontalement */
+  transform: translate(-50%, -50%); /* Centrer complètement */
+  width: 300px;
+  height: auto;
+  background: rgba(35, 35, 35, 0.9); /* Fond noir clair pour un aspect marketplace */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.popup-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.popup h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: #ffffff; /* Couleur blanche pour le titre */
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.popup p {
+  color: #ffffff;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.popup button {
+  background: #007b7b; /* Couleur plus sobre pour le bouton */
+  color: #fff;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup button:hover {
+  background: #005c5c; /* Couleur sombre au survol */
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+}
+
+/* Animation d'apparition du popup */
+@keyframes popup-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Application de l'animation */
+.popup.show {
+  animation: popup-appear 0.6s ease-out forwards;
+}
+
+/* Médias Queries pour adapter le popup aux petits écrans */
+@media (max-width: 768px) {
+  .popup {
+    width: 80%; /* Réduire la largeur sur les petits écrans */
+    top: 40%; /* Positionner un peu plus haut pour les petits écrans */
+    left: 50%; /* Garder centré horizontalement */
+    transform: translate(-50%, -40%); /* Ajuster le centrage */
+  }
+
+  .popup h4 {
+    font-size: 18px; /* Réduire la taille du titre */
+  }
+
+  .popup p {
+    font-size: 14px; /* Réduire la taille du texte */
+  }
+
+  .popup button {
+    font-size: 14px; /* Réduire la taille du bouton */
+    padding: 8px 16px; /* Ajuster les dimensions du bouton */
+  }
+}
+
+@media (max-width: 480px) {
+  .popup {
+    width: 90%; /* Réduire encore plus la largeur pour les très petits écrans */
+    top: 35%; /* Monter encore plus le popup sur les petits écrans */
+    left: 5%; /* Décaler légèrement à gauche pour éviter que le popup soit trop centré */
+    transform: translate(0, -50%); /* Décalage horizontal pour centrer vers la gauche */
+  }
+
+  .popup h4 {
+    font-size: 16px; /* Réduire davantage la taille du titre */
+  }
+
+  .popup p {
+    font-size: 12px; /* Réduire davantage la taille du texte */
+  }
+
+  .popup button {
+    font-size: 12px; /* Réduire davantage la taille du bouton */
+    padding: 6px 12px; /* Ajuster les dimensions du bouton */
+  }
+}
+
+    </style>
+</head>
+<body>
+  <!-- Popup -->
+ <div id="popup" class="popup">
+    {% if statut_validation_compte != 'valider' %}
+      <div class="popup-content">
+        <div class="robot-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+            <circle cx="50" cy="50" r="45" fill="#00b3b3" />
+            <rect x="30" y="40" width="10" height="20" fill="#fff" />
+            <rect x="60" y="40" width="10" height="20" fill="#fff" />
+            <rect x="40" y="60" width="20" height="5" fill="#fff" />
+            <circle cx="35" cy="45" r="5" fill="#00ffea" />
+            <circle cx="65" cy="45" r="5" fill="#00ffea" />
+          </svg>
+        </div>
+        <h4 id="popup-title"></h4>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">OK</button>
+      </div>
+    {% endif %}
+  </div>
+
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                <!-- Icône futuriste de robot -->
+                <i class="fas fa-robot"></i>
+                <div class="message">
+                    {{ message }}
+                </div>
+                <button class="close-btn" onclick="closeNotification(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()" style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">&times;</button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+        <div class="card">
+            <i class="fas fa-images text-primary"></i>
+            <h5>Gestion des sliders</h5>
+            <p>Ajouter, modifier ou supprimer les images de votre slider.</p>
+            <a href="{% url 'sliders' %}">Gérer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-box text-success"></i>
+            <h5>Gestion des produits</h5>
+            <p>Ajouter, modifier ou supprimer vos produits.</p>
+            <a href="{% url 'produits' %}">Gérer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-map-marker-alt text-danger"></i>
+            <h5>Localisation</h5>
+            <p>Ajouter ou modifier votre lien de localisation Google Maps.</p>
+            <a href="{% url 'localisation' %}">Gérer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-credit-card text-warning"></i>
+            <h5>Moyens de paiement</h5>
+            <p>Configurer vos options de paiement.</p>
+            <a href="#paiement">Configurer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-cogs text-secondary"></i>
+            <h5>Paramètres</h5>
+            <p>Modifier vos informations personnelles et préférences.</p>
+            <a href="{% url 'profil' %}">Configurer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-upload text-info"></i>
+            <h5>Publier le site</h5>
+            <p>Mettre votre site en ligne pour le rendre accessible.</p>
+            <a href="{% url 'gestion_boutique' %}">Publier</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-shopping-cart text-warning"></i>
+            <h5>Gestion des commandes</h5>
+            <p>Suivre et gérer les commandes des clients.</p>
+            <a href="{% url 'commandes_utilisateur' %}">Gérer</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-chart-line text-success"></i>
+            <h5>Croissance des ventes</h5>
+            <p>Suivi de l'évolution des ventes avec des graphiques.</p>
+            <a href="{% url 'vente_list' %}">Voir</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-users text-info"></i>
+            <h5>Visiteurs de la boutique</h5>
+            <p>Voir le nombre de visiteurs de votre site.</p>
+            <a href="">Voir</a>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-arrow-up text-dark"></i>
+            <h5>Croissance des commandes</h5>
+            <p>Suivez l'évolution de vos commandes et leur impact sur les ventes.</p>
+            <a href="{% url 'statistiques_commandes' %}">Voir</a>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour ouvrir et fermer le sidebar
+        const menuBtn = document.querySelector('.menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const body = document.querySelector('body');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            // Lorsque le sidebar est actif, désactiver le scroll du body
+            if (sidebar.classList.contains('active')) {
+                body.classList.add('no-scroll');
+            } else {
+                body.classList.remove('no-scroll');
+            }
+        }
+
+        // Fonction pour fermer une notification
+        function closeNotification(element) {
+            const notification = element.parentElement;
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+        }
+
+        // Fonction pour jouer le son de notification
+        function playNotificationSound() {
+            var sound = document.getElementById('notification-sound');
+            sound.play();
+        }
+
+        // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+        document.addEventListener('DOMContentLoaded', function () {
+            const notifications = document.querySelectorAll('.notification.show');
+            notifications.forEach(notification => {
+                playNotificationSound();  // Jouer le son lorsque la notification est affichée
+            });
+        });
+
+        // Fonction pour afficher une notification avec animation et son
+        function showNotification(element) {
+            const notification = element;
+            notification.classList.add('show');
+            playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+            
+            // Ajouter un délai avant de masquer la notification
+            setTimeout(() => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300); // Suppression après transition
+            }, 10000); // La notification disparaît après 5 secondes
+        }
+
+        // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+        setTimeout(() => {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300); // Suppression après transition
+            });
+        }, 10000); // La notification disparaît après 5 secondes
+
+
+        // Récupérer le statut de validation du compte
+        const statutValidationCompte = "{{ statut_validation_compte }}";
+
+        // Messages en fonction du statut
+        let title = '';
+        let message = '';
+
+        if (statutValidationCompte === 'attente') {
+            title = '🚀 Votre compte est en attente de validation !';
+            message = 'Contactez notre service client dès maintenant via WhatsApp pour activer votre boutique et commencer à vendre en un instant. Rendez-vous dans l\'option "Support client" de votre tableau de bord pour plus de détails.';
+        } else if (statutValidationCompte === 'invalider') {
+            title = '📢⚠️ Votre compte a été invalidé.';
+            message = 'Veuillez contacter notre support pour plus d\'informations. 📞 Rendez-vous dans l\'option "Support client" de votre tableau de bord pour obtenir de l\'aide.';
+        }
+
+        // Afficher le popup
+        document.getElementById('popup-title').textContent = title;
+        document.getElementById('popup-message').textContent = message;
+        const popup = document.getElementById('popup');
+        popup.style.display = 'flex';
+
+        // Ajouter la classe 'show' pour activer l'animation d'apparition
+        setTimeout(() => {
+            popup.classList.add('show');
+        }, 50);  // Déclenche l'animation peu après que le popup devienne visible
+
+        // Fonction pour fermer le popup
+        function closePopup() {
+            popup.classList.remove('show');  // Enlever l'animation
+            setTimeout(() => {
+                popup.style.display = 'none';  // Cacher le popup après l'animation
+            }, 600);  // Attendre la fin de l'animation avant de le cacher
+        }
+    </script>
+
+    <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

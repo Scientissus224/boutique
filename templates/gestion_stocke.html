@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 1000;
+          background-color: #333;
+          padding: 10px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+
+          .menu-btn {
+              font-size:15px;
+              margin-right: 10px;
+          }
+      }
+     /* Style du sidebar */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: -250px; /* Par défaut caché sur mobile */
+  top: 0;
+  background-color: #333;
+  padding-top: 60px;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1001;
+  border-right: 2px solid #000;
+  box-sizing: border-box;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar a {
+  display: block;
+  padding: 15px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: background 0.3s;
+  font-weight: 600;
+  min-height: 50px;
+}
+
+.sidebar a:hover {
+  background-color: #FF8C00;
+}
+
+.sidebar hr {
+  text-align: center;
+  color: white;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.logo-container {
+  text-align: center;
+  margin-top: -20px;
+  margin-bottom: 15px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #FF8C00;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 25px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Style pour le bouton de fermeture du sidebar */
+.close-sidebar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1002;
+  transition: transform 0.2s ease;
+}
+
+.close-sidebar:hover {
+  transform: scale(1.1);
+  color: #FF8C00;
+}
+
+@media screen and (min-width: 768px) {
+  .close-sidebar {
+    display: none; /* Cache le bouton de fermeture sur desktop */
+  }
+}
+
+/* Style du contenu principal */
+.content {
+  margin-left: 0;
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+  transition: margin-left 0.3s ease;
+  margin-top: 60px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Styles pour le tableau */
+.table-responsive {
+  margin-top: 20px;
+  overflow-x: auto; /* Permet le défilement horizontal si nécessaire */
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  min-width: 800px; /* Largeur minimale pour assurer la lisibilité */
+}
+
+.table th, .table td {
+  padding: 12px;
+  vertical-align: middle;
+}
+
+/* Ajustement des colonnes du tableau */
+.table th:first-child,
+.table td:first-child {
+  width: 100px; /* Largeur fixe pour la colonne image */
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 200px; /* Largeur minimale pour le nom du produit */
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 100px; /* Largeur fixe pour la colonne stock */
+}
+
+.table th:last-child,
+.table td:last-child {
+  min-width: 200px; /* Largeur minimale pour la colonne action */
+}
+
+/* Style pour les grands écrans */
+@media screen and (min-width: 768px) {
+  .content {
+    margin-left: 250px;
+    padding: 30px; /* Plus de padding sur les grands écrans */
+  }
+
+  .table-responsive {
+    margin: 20px auto;
+    max-width: calc(100vw - 280px); /* Tenir compte de la largeur du sidebar */
+  }
+
+  .input-group {
+    max-width: 300px; /* Limite la largeur du groupe d'input */
+  }
+}
+
+/* Ajustements pour très grands écrans */
+@media screen and (min-width: 1400px) {
+  .table-responsive {
+    max-width: 1200px; /* Limite la largeur maximale sur très grands écrans */
+    margin: 20px auto;
+  }
+}
+
+/* Style pour le titre principal */
+.content h2 {
+  margin-top: 20px; /* Ajoute une marge en haut du titre */
+  padding-top: 20px; /* Ajoute un padding supplémentaire */
+  position: relative; /* Assure que le titre reste dans le flux normal */
+}
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+  .content {
+    margin-left: 0;
+    padding: 15px;
+    width: 100%;
+    margin-top: 60px;
+  }
+
+  .content h2 {
+    margin-top: 15px;
+    padding-top: 15px;
+    font-size: 1.5rem; /* Taille de police réduite sur mobile */
+  }
+
+  .table-responsive {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar {
+    width: 100%;
+    left: -100%;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .card {
+    width:100%;
+    height:350px;
+  }
+
+  /* Lorsque le sidebar est actif, désactiver le défilement du body */
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  .input-group {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .table th, .table td {
+    min-width: auto;
+    max-width: none;
+  }
+}
+
+/* Boutons futuristes */
+.futuristic-btn {
+  background: linear-gradient(135deg, #00aaff, #4e00ff);
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+  background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+  text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+  font-weight: bold;
+  color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+  .card-body {
+    padding: 0; /* Élimine le padding inutile sur mobile */
+  }
+
+  .card {
+    margin-bottom: 20px; /* Ajoute un espacement entre les cartes */
+  }
+
+  /* Optimisation pour les images */
+  .slider-images img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ajustement de l'image pour une présentation fluide sur Android */
+  .futuristic-card-item {
+    width: 100%; /* Les cartes occupent toute la largeur sur mobile */
+  }
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+  color: #00aaff; /* Couleur futuriste */
+  opacity: 0.7;
+}
+
+
+/* Style général de la notification */
+.notification-box {
+  position: fixed;
+  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+  color: #fff;
+  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+  z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+  font-size: 2.5rem; /* Taille plus grande pour l'icône */
+  margin-right: 20px;
+  color: #00ffcc; /* Couleur cybernétique verte */
+  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+  font-size: 1.2rem; /* Agrandit la taille du texte */
+  flex-grow: 1;
+  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+  color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #00ffcc; /* Couleur hover dynamique */
+  transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .notification-box {
+    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+    right: 5px; /* Réduit l'espacement sur les petits écrans */
+    padding: 12px 18px;
+    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  }
+
+  .close-btn {
+    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-box {
+    top: 5%; /* Réduit encore la distance du haut */
+    right: 5px; /* Garde une marge minimale à droite */
+    padding: 8px 15px;
+    width: 90%; /* Largeur ajustée pour les petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1rem; /* Réduit encore la taille du texte */
+  }
+
+  .close-btn {
+    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  }
+  100% {
+    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  }
+}
+
+/* Styles des notifications */
+.notification.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateY(-50%) translateX(100%);
+}
+@media (max-width: 767px) {
+  .table th, .table td {
+      padding: 8px 5px;
+      font-size: 12px;
+  }
+  .table-responsive {
+      padding-left: 10px;
+      padding-right: 10px;
+  }
+  .input-group input, .input-group button {
+      font-size: 14px;
+  }
+  .input-group .form-control {
+      min-width: 40px;
+  }
+}
+
+/* Modification pour grands écrans */
+@media screen and (min-width: 768px) {
+  .sidebar {
+    left: 0; /* Toujours visible sur desktop */
+  }
+  
+  .menu-btn {
+    display: none; /* Cache le bouton hamburger */
+  }
+
+  .content {
+    margin-left: 250px; /* Décale le contenu */
+    width: calc(100% - 250px); /* Ajuste la largeur du contenu */
+  }
+
+  .table-responsive {
+    overflow-x: visible; /* Permet l'affichage complet du tableau */
+  }
+
+  .table {
+    min-width: auto; /* Supprime la largeur minimale fixe */
+    width: 100%;
+  }
+
+  /* Ajuste les colonnes du tableau pour grands écrans */
+  .table th, 
+  .table td {
+    padding: 12px;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .top-bar {
+    margin-left: 250px; /* Aligne la barre supérieure avec le contenu */
+    width: calc(100% - 250px);
+  }
+}
+
+/* Styles pour petits écrans */
+@media (max-width: 767px) {
+  .table th, .table td {
+      padding: 8px 5px;
+      font-size: 12px;
+  }
+
+  /* Optimisation de la colonne d'action */
+  td .input-group {
+      flex-wrap: nowrap;
+      width: 120px; /* Réduit la largeur totale */
+  }
+
+  td .input-group input {
+      width: 50px; /* Réduit la largeur de l'input */
+      padding: 4px;
+      font-size: 12px;
+  }
+
+  td .input-group .btn {
+      padding: 4px 8px;
+      font-size: 12px;
+  }
+
+  /* Ajoute un tooltip pour expliquer la fonction */
+  td .input-group {
+      position: relative;
+  }
+
+  td .input-group::before {
+      content: "Modifier le stock";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+  }
+
+  td .input-group:hover::before {
+      opacity: 1;
+  }
+
+  /* Style pour indiquer que le champ est modifiable */
+  td .input-group input {
+      border: 2px solid #FF8C00;
+      background-color: #fff8e8;
+  }
+
+  /* Icône d'édition pour plus de clarté */
+  td .input-group::after {
+      content: "✏️";
+      position: absolute;
+      top: -15px;
+      right: 0;
+      font-size: 12px;
+  }
+
+  /* Animation subtile pour attirer l'attention */
+  td .input-group input:focus {
+      animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+      0% { border-color: #FF8C00; }
+      50% { border-color: #FFC107; }
+      100% { border-color: #FF8C00; }
+  }
+}
+
+/* Ajout d'un message d'aide sur desktop aussi */
+.stock-help {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-sidebar" onclick="closeSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <h2 class="text-center mb-4"><i class="fas fa-boxes"></i> Liste des Produits</h2>
+
+<!-- Formulaire de recherche et de filtre -->
+<div class="row mb-3 justify-content-center">
+    <div class="col-12 col-md-5 mb-2 mb-md-0">
+        <form method="GET" class="input-group">
+            <input type="text" name="recherche" class="form-control" placeholder="Rechercher un produit...">
+            <button class="btn btn-secondary" type="submit">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </form>
+    </div>
+    <div class="col-12 col-md-5">
+        <form method="GET" class="input-group">
+            <select name="filtre" class="form-select" onchange="this.form.submit()">
+                <option value="tous" {% if request.GET.filtre == 'tous' %}selected{% endif %}>Tous les produits</option>
+                <option value="sup20" {% if request.GET.filtre == 'sup20' %}selected{% endif %}>Stock suffisant</option>
+                <option value="inf20" {% if request.GET.filtre == 'inf20' %}selected{% endif %}>Stock moyen</option>
+                <option value="inf5" {% if request.GET.filtre == 'inf5' %}selected{% endif %}>Stock faible</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<!-- Table des produits -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th><i class="fas fa-image"></i> Image</th>
+                <th><i class="fas fa-tag"></i> Nom</th>
+                <th><i class="fas fa-warehouse"></i> Stock</th>
+                <th><i class="fas fa-cogs"></i> Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in produits %}
+            <tr>
+                <td><img src="{{ produit.image.url }}" class="img-thumbnail" style="width: 100%; max-width: 80px;" alt="{{ produit.nom }}"></td>
+                <td>{{ produit.nom }}</td>
+                <td><span class="badge bg-{% if produit.quantite_stock >= 20 %}success{% elif produit.quantite_stock > 5 %}warning{% else %}danger{% endif %}">
+                    {{ produit.quantite_stock }}</span>
+                </td>
+                <td>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="produit_id" value="{{ produit.id }}">
+                        <div class="input-group" title="Cliquez pour modifier le stock">
+                            <input type="number" 
+                                   name="quantite_stock" 
+                                   class="form-control" 
+                                   min="0" 
+                                   value="{{ produit.quantite_stock }}"
+                                   aria-label="Modifier la quantité en stock">
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </div>
+                        <span class="stock-help">Tapez une nouvelle quantité pour modifier le stock</span>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Aucun produit trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    </div>
+ <!-- Script JavaScript -->
+     <!-- Lien vers le script Bootstrap pour rendre les icônes interactives -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+            // Fonction pour ouvrir et fermer le sidebar
+const menuBtn = document.querySelector('.menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const body = document.querySelector('body');
+
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+  
+  // Lorsque le sidebar est actif, désactiver le scroll du body
+  if (sidebar.classList.contains('active')) {
+    body.classList.add('no-scroll');
+  } else {
+    body.classList.remove('no-scroll');
+  }
+});
+// Fonction pour afficher/masquer la description flottante
+// Fonction pour afficher ou masquer la description
+function toggleDescription(imageId) {
+  var descElement = document.getElementById('desc' + imageId);
+  var buttonElement = document.getElementById('toggleDesc' + imageId);
+  
+  if (descElement.style.display === "none") {
+      descElement.style.display = "block";
+      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
+  } else {
+      descElement.style.display = "none";
+      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
+  }
+}
+             // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 10000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 10000); // La notification disparaît après 5 secondes
+
+// Fonction pour fermer le sidebar
+function closeSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const body = document.querySelector('body');
+    
+    sidebar.classList.remove('active');
+    body.classList.remove('no-scroll');
+}
+
+// Fermer le sidebar en cliquant en dehors
+document.addEventListener('click', (e) => {
+    if (sidebar.classList.contains('active') && 
+        !sidebar.contains(e.target) && 
+        !menuBtn.contains(e.target)) {
+        closeSidebar();
+    }
+});
+
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

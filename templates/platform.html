@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarabaShop - Toutes les Boutiques</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Personnalisation du design */
+        body {
+            background-color: rgba(0, 0, 0, 0.8);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        .navbar {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.7) !important;
+            transition: background-color 0.3s ease;
+        }
+        .navbar:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-size: 1rem;
+            padding: 8px 15px;
+            transition: color 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ff6347;
+        }
+        .search-bar {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            padding: 8px 15px;
+            margin-left: auto;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            width: 80%;
+            background: transparent;
+        }
+        .search-bar button {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            color: #ff6347;
+            cursor: pointer;
+        }
+        .notification-icon {
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
+        .shop-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+        }
+        .shop-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        .shop-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .shop-card-body {
+            padding: 15px;
+        }
+        .shop-card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .shop-card-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 10px 0;
+        }
+        .view-btn {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .view-btn:hover {
+            background-color: #e5533b;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .row {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Barre de navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">WarabaShop</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Nos Boutiques</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">À propos</a>
+            </li>
+        </ul>
+    </div>
+    <div class="d-flex ml-auto">
+        <!-- Barre de recherche -->
+        <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Rechercher des boutiques...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <!-- Icône de notification -->
+        <i class="fas fa-bell notification-icon ml-3"></i>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title">Bienvenue sur WarabaShop</h1>
+
+    <div class="row">
+        <!-- Boutique 1 -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="shop-card">
+                <img src="https://via.placeholder.com/300x200.png?text=Boutique+1" alt="Image de la boutique 1">
+                <div class="shop-card-body">
+                    <h5 class="shop-card-title">Boutique Mode</h5>
+                    <p class="shop-card-description">Explorez des vêtements tendance pour toutes les occasions.</p>
+                    <a href="#" class="view-btn">Visiter la boutique</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutique 2 -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="shop-card">
+                <img src="https://via.placeholder.com/300x200.png?text=Boutique+2" alt="Image de la boutique 2">
+                <div class="shop-card-body">
+                    <h5 class="shop-card-title">Boutique Électronique</h5>
+                    <p class="shop-card-description">Pour tous vos besoins en gadgets électroniques et accessoires.</p>
+                    <a href="#" class="view-btn">Visiter la boutique</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutique 3 -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="shop-card">
+                <img src="https://via.placeholder.com/300x200.png?text=Boutique+3" alt="Image de la boutique 3">
+                <div class="shop-card-body">
+                    <h5 class="shop-card-title">Boutique Maison</h5>
+                    <p class="shop-card-description">Pour l'aménagement et la décoration de votre maison.</p>
+                    <a href="#" class="view-btn">Visiter la boutique</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutique 4 -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="shop-card">
+                <img src="https://via.placeholder.com/300x200.png?text=Boutique+4" alt="Image de la boutique 4">
+                <div class="shop-card-body">
+                    <h5 class="shop-card-title">Boutique Sport</h5>
+                    <p class="shop-card-description">Équipements et accessoires pour vos entraînements sportifs.</p>
+                    <a href="#" class="view-btn">Visiter la boutique</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    {% load static %}
+    <!-- Lien correct pour Font Awesome -->
+
+        <!-- Inclusion de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1e1e1e;
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    
+/* Style général de la barre de défilement */
+::-webkit-scrollbar {
+    width: 10px; /* Largeur de la scrollbar */
+    background-color: #2a2a2a; /* Fond adapté au thème sombre */
+    border-radius: 5px; /* Bords arrondis pour un design plus moderne */
+}
+
+/* Style de la "thumb" (partie déplaçable de la scrollbar) */
+::-webkit-scrollbar-thumb {
+    background-color: #ff7043; /* Couleur principale de la page */
+    border-radius: 5px; /* Bords arrondis */
+    border: 2px solid #2a2a2a; /* Ajoute un contraste avec le fond */
+}
+
+/* Style pour la partie au survol */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #e65c29; /* Changement de couleur au survol pour un effet interactif */
+}
+
+/* Style pour la partie visible au clic */
+::-webkit-scrollbar-thumb:active {
+    background-color: #ea1f33; /* Couleur plus intense au clic */
+}
+
+/* Scrollbar track (fond derrière la scrollbar) */
+::-webkit-scrollbar-track {
+    background-color: #202020; /* Fond foncé harmonieux avec le thème général */
+    border-radius: 5px; /* Garder les bords arrondis */
+}
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333333;
+        padding: 20px 30px;
+        color: white;
+        position: relative;
+        flex-wrap: wrap;
+    }
+    
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid #fff;
+    }
+    
+    .shop-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    .navbar-search {
+        flex: 1;
+        text-align: center;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .navbar-search form {
+        display: flex;
+        justify-content: center;
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    .form-control {
+        width: 80%;
+        padding: 12px;
+        border-radius: 5px;
+        border: none;
+        font-size: 18px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        border-radius: 5px;
+        margin-left: 10px;
+        background-color: #ff7043;
+        border: none;
+        color: white;
+        font-size: 18px;
+    }
+    
+    .navbar-links {
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+        margin-left: 20px;
+    }
+    
+    .navbar-links .icon {
+        margin: 0 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+    
+    .navbar-links .icon i {
+        margin-right: 8px;
+    }
+    
+    .navbar .nav-link:hover {
+        color: #ff7043;
+    }
+    
+    .navbar .nav-link.active {
+        color: #ff7043;
+        font-weight: bold;
+    }
+    
+    .navbar .nav-link {
+        color: #ccc;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger-menu {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        cursor: pointer;
+    }
+    
+    .hamburger-menu .bar {
+        height: 4px;
+        background-color: white;
+        border-radius: 2px;
+    }
+    
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px;
+        }
+    
+        .navbar-logo {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+    
+        .navbar-search {
+            display: none;
+        }
+    
+        .navbar-search.show {
+            display: flex;
+        }
+    
+        .navbar-links {
+            display: none; /* Cacher les liens par défaut */
+            flex-direction: column;
+            width: 100%;
+            margin-top: 10px;
+        }
+    
+        .navbar-links.show {
+            display: flex; /* Afficher les liens lorsque la classe "show" est ajoutée */
+        }
+    
+        .form-control {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .btn {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .navbar-links .icon {
+            margin-bottom: 15px; /* Ajouter de l'espace entre les éléments */
+        }
+    
+        /* Afficher le hamburger sur petits écrans */
+        .hamburger-menu {
+            display: flex;
+        }
+    }
+
+    .slider {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: auto;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .slides {
+        display: flex;
+        transition: transform 1s ease-in-out;
+      }
+      
+      .slide {
+        min-width: 100%;
+        height: 600px; /* Default height */
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.8s ease-out;
+      }
+      
+      .slide.active img {
+        transform: scale(1.05);
+      }
+      
+      .text {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 15px 25px;
+        max-width: 70%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        z-index: 2;
+        opacity: 0;
+        animation: fadeIn 1s forwards;
+      }
+      
+      .text h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        line-height: 1.3;
+        font-weight: bold;
+      }
+      
+      .text p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      
+      .text .btn {
+        padding: 12px 24px;
+        background-color: #ff6347;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+      
+      .text .btn:hover {
+        background-color: #ff4500;
+      }
+      
+      /* Styles for small screens */
+      @media (max-width: 768px) {
+        .slide {
+          height: 400px; /* Reduced height for smaller screens */
+        }
+      
+        .text {
+          bottom: 10px;
+          left: 10px;
+          padding: 10px 15px;
+          max-width: 90%; /* Expand text width for better readability */
+        }
+      
+        .text h2 {
+          font-size: 1.8rem; /* Smaller font size */
+        }
+      
+        .text p {
+          font-size: 1rem; /* Smaller font size */
+        }
+      
+        .text .btn {
+          padding: 10px 20px;
+          font-size: 0.9rem; /* Slightly smaller button */
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .slide {
+          height: 300px; /* Further reduced height for very small screens */
+        }
+      
+        .text h2 {
+          font-size: 1.5rem; /* Even smaller font size */
+        }
+      
+        .text p {
+          font-size: 0.9rem;
+        }
+      
+        .text .btn {
+          padding: 8px 16px;
+          font-size: 0.8rem;
+        }
+      }
+        
+  .dots-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+  }
+  
+  .dot {
+      height: 12px;
+      width: 12px;
+      margin: 0 7px;
+      background-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+  }
+  
+  .dot.active {
+      background-color: #ff6347;
+  }
+  
+  /* Réponse pour les écrans mobiles */
+  @media (max-width: 768px) {
+      .slide img {
+          object-position: center; /* Toujours centrer l'image */
+          transition: transform 0.5s ease-out; /* Plus rapide pour les petits écrans */
+      }
+  
+      .text h2 {
+          font-size: 1.8rem;
+      }
+  
+      .text p {
+          font-size: 1rem;
+      }
+  
+      .text {
+          max-width: 80%; /* Augmente la largeur du texte sur mobile */
+      }
+  
+      .text .btn {
+          padding: 10px 20px; /* Réduit la taille des boutons */
+          font-size: 1rem;
+      }
+  
+      .dots-container {
+          bottom: 10px; /* Décale les points pour plus d'espace sur mobile */
+      }
+  
+      .dot {
+          height: 10px;
+          width: 10px;
+          margin: 0 5px;
+      }
+  }
+  
+  /* Animation du fade-in */
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+  .scrolling-text-container {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      overflow: hidden;
+  }
+  
+  .scrolling-text {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      white-space: nowrap;
+      display: inline-block;
+      animation: scroll-left 20s linear infinite; /* Augmenter la durée pour ralentir l'animation */
+  }
+  
+  @keyframes scroll-left {
+      0% {
+          transform: translateX(100%); /* Le texte commence à droite */
+      }
+      100% {
+          transform: translateX(-100%); /* Le texte finit à gauche */
+      }
+  }
+  
+  h1 {
+      text-align: center;
+      margin-top: 40px;
+      color: white;
+      font-size: 2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      animation: titleAnimation 1s ease-in-out;
+  }
+  
+  /* Animation pour l'icône et le titre */
+  @keyframes titleAnimation {
+      0% {
+          transform: translateY(-20px);
+          opacity: 0;
+      }
+      100% {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }
+  
+  h1 .material-icons {
+      font-size: 2em;
+      animation: iconAnimation 1s ease-in-out infinite alternate;
+  }
+  
+  @keyframes iconAnimation {
+      0% {
+          transform: rotate(-15deg);
+      }
+      100% {
+          transform: rotate(15deg);
+      }
+  }
+
+ /* Section contenant l'icône et le titre */
+.product-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Style pour le titre et l'icône */
+.section-header {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.product-icon {
+    font-size: 30px;
+    color: #FF8C00;
+    animation: bounceIcon 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+
+h2 {
+    font-size: 30px;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Animation pour l'icône */
+@keyframes bounceIcon {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Animation pour le titre */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Espace en haut de la section des produits */
+.product-section {
+    margin-top: 50px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+}
+
+/* Conteneur des produits */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Style des produits */
+.product {
+    background-color: transparent;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+    transition: transform 0.3s ease;
+    position: relative; /* Pour un meilleur contrôle des éléments enfants */
+}
+
+/* Animation de zoom au survol de la carte produit */
+.product:hover {
+    transform: scale(1.05);
+    border-color: #ffa500;
+}
+
+/* Style des images des produits */
+.product img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    opacity: 1; /* Affiche les images de manière immédiate */
+    transition: opacity 0.3s ease-in-out; /* Transition fluide pour un léger changement */
+}
+
+/* Animation de l'image lors du survol du produit */
+.product:hover img {
+    opacity: 0.9; /* Légère diminution de l'opacité au survol */
+}
+
+/* Style du nom et du prix du produit */
+.product-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.product-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #d2691e; /* orange foncé */
+}
+
+/* Animation spécifique pour l'icône oeil (👁️) */
+.product-icon-eye {
+    width: 50px;
+    height: 50px;
+    margin: 10px auto;
+    margin-top: 20px;
+    background-color: #555;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Animation pulsée pour l'icône oeil */
+.product-icon-eye:hover {
+    background-color: #ffa500;
+    transform: scale(1.2); /* Effet de zoom léger */
+    box-shadow: 0px 0px 15px rgba(255, 165, 0, 0.5); /* Ombre pour attirer l'attention */
+}
+
+/* Animation de pulsation pour l'icône oeil */
+@keyframes pulseEye {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* Appliquer l'animation pulsée à l'icône oeil */
+.product-icon-eye {
+    animation: pulseEye 1.5s infinite;
+}
+
+/* Style de l'icône boutique (fa-store) */
+.product-icon-store {
+    width: 50px;
+    height: 50px;
+    margin: 10px auto;
+    margin-top: 20px;
+    background-color: #444;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Animation au survol de l'icône boutique */
+.product-icon-store:hover {
+    background-color: #66cc66; /* Changer la couleur de fond */
+    transform: scale(1.1); /* Effet léger de zoom */
+}
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .container {
+        gap: 10px;
+    }
+    .product {
+        flex: 0 0 calc(50% - 10px);
+    }
+}
+
+/*localisation*/
+.localisation {
+    background: transparent;
+    padding: 20px;
+    text-align: center;
+    ;
+  }
+  
+  .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  .title i {
+    font-size: 30px;
+    color: #FF8C00; /* Couleur orange foncé */
+    margin-right: 10px;
+    animation: bounce 1s ease infinite; /* L'animation dure 1 seconde, avec un effet de rebond infini */
+  }
+  
+  
+  .title h2 {
+    font-size: 30px;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .localisation-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-left: 400px
+  }
+  
+  .map iframe {
+    width: 100%;
+    height: 450px;
+    border: none;
+   
+  }
+  
+  .location-info {
+    display: grid;
+    gap: 15px;
+    color: white;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+  }
+  
+  .info-item i {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #FF8C00; /* Orange foncé */
+  }
+  
+  .info-item p {
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .localisation-container {
+      grid-template-columns: 1fr; /* Une seule colonne pour les petits écrans */
+      margin-left: 0; /* Enlever le margin-left pour les petits écrans */
+    }
+  
+    .map iframe {
+      height: 250px;
+    }
+    .info-item i {
+        margin-right: 10px;
+        font-size: 16px;
+        color: #FF8C00; /* Orange foncé */
+      }
+  }
+/*slider de la localisation */
+.localization-slider {
+    position: relative;
+    width: 80%;  /* Largeur réduite à 80% du parent */
+    max-width: 800px;  /* Largeur maximale pour ne pas dépasser un certain seuil */
+    height: 400px;  /* Hauteur réduite */
+    margin: 40px auto;  /* Centrer le slider horizontalement */
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.localization-slider .slides {
+    display: flex;
+    transition: transform 1s ease-in-out;
+}
+
+.localization-slider .slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.localization-slider .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s ease-out;
+}
+
+.localization-slider .slide.active img {
+    transform: scale(1.05);
+}
+
+.localization-slider .text {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px 25px;
+    max-width: 70%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.localization-slider .text h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    font-weight: bold;
+}
+
+.localization-slider .text p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.localization-slider .text .btn {
+    padding: 12px 24px;
+    background-color: #ff6347;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.localization-slider .text .btn:hover {
+    background-color: #ff4500;
+}
+
+@media (max-width: 768px) {
+    .localization-slider {
+        width: 90%; /* Réduire encore la largeur pour les petits écrans */
+        height: 300px; /* Ajuster la hauteur pour les petits écrans */
+    }
+
+    .localization-slider .text {
+        bottom: 10px;
+        left: 10px;
+        padding: 10px 15px;
+        max-width: 80%;
+    }
+
+    .localization-slider .text h2 {
+        font-size: 1.5rem;
+    }
+
+    .localization-slider .text p {
+        font-size: 1rem;
+    }
+
+    .localization-slider .text .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .localization-slider {
+        width: 100%; /* Prendre toute la largeur pour les très petits écrans */
+        height: 250px; /* Hauteur encore réduite */
+    }
+    .title-slider{
+        font-size: 0.5rem;
+    }
+    .localization-slider .text h2 {
+        font-size: 1.2rem;
+    }
+
+    .localization-slider .text p {
+        font-size: 0.9rem;
+    }
+
+    .localization-slider .text .btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+.title-slider {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00;  /* Jaune pour le texte */
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.6); /* Ombre pour faire ressortir le texte */
+    opacity: 0; /* Commence invisible */
+    transform: translateX(-50px); /* Commence légèrement à gauche */
+    animation: slideIn 2s ease-out forwards; /* Applique l'animation */
+    text-align: center;
+}
+
+/* Animation pour le titre */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+ /* Commentaire */
+.comment-section {
+    background-color: transparent;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.comment-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.product-icon {
+    font-size: 2.5em;
+    color: #fff;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.comment-section i {
+    font-size: 1.5em;
+    color: #FF8C00;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.form-group {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.star-rating input:checked ~ label,
+.star-rating input:checked + label,
+.star-rating input:checked + label + label,
+.star-rating input:checked + label + label + label,
+.star-rating input:checked + label + label + label + label {
+    color: #FFD700;  /* Gold color */
+}
+
+.star-rating input:hover ~ label {
+    color: #FFD700;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comment-section {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .product-icon {
+        font-size: 2em;
+    }
+
+    .comment-form {
+        width: 100%;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 1em;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-icon {
+        font-size: 1.8em;
+    }
+
+    .comment-section h2 {
+        font-size: 1.4em;
+    }
+
+    .form-group {
+        max-width: 90%;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+    }
+}
+
+/* Section des commentaires des visiteurs */
+.visitor-comments-section {
+    background-color: transparent;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.visitor-comments-section h2 {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.visitor-comments-section i {
+    font-size: 1.3em;
+    color: #FF8C00;
+}
+
+.comments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.comment {
+    background-color: #333;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.comment-rating {
+    display: flex;
+    gap: 5px;
+}
+
+.comment-rating .star {
+    color: #ccc;
+}
+
+.comment-rating .star-half {
+    color: gold;
+}
+
+.comment-rating .star:hover {
+    color: gold;
+}
+
+.comment-text {
+    font-size: 1.1em;
+    color: #ccc;
+}
+
+/* Section de Contact */
+.contact-section {
+    background-color: transparent;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.contact-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.product-icon {
+    font-size: 2em;
+    color: #FF8C00;
+    animation: bounceIcon 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.form-group {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-section {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .product-icon {
+        font-size: 2em;
+    }
+
+    .contact-form {
+        width: 100%;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 1em;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-icon {
+        font-size: 1.8em;
+    }
+
+    .contact-section h2 {
+        font-size: 1.4em;
+    }
+
+    .form-group {
+        max-width: 90%;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+    }
+}
+
+
+/* Footer Styling (déjà présent dans le design de base) */
+.footer {
+    background-color: #000; /* Fond noir */
+    color: #fff; /* Texte blanc */
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1 1 300px;
+    min-width: 250px;
+}
+
+.footer-section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #ffcc00; /* Titre en jaune */
+}
+
+.footer-section p,
+.footer-section ul {
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #ffcc00;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #fff;
+}
+
+.social-links a {
+    font-size: 1.5rem;
+    color: #ffcc00;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.2);
+    color: #fff;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+    color: #bbb;
+}
+
+/* Responsive Design */
+
+/* Tablettes (écrans entre 768px et 1024px) */
+@media screen and (max-width: 1024px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        flex: 1 1 auto;
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Smartphones (écrans en dessous de 768px) */
+@media screen and (max-width: 768px) {
+    .footer-container {
+        padding: 0 10px;
+    }
+
+    .footer-section ul li {
+        margin-bottom: 5px;
+    }
+
+    .social-links a {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .footer-section h4 {
+        font-size: 1rem;
+    }
+
+    .footer-section p,
+    .footer-section ul {
+        font-size: 0.8rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.7rem;
+        padding-top: 5px;
+    }
+}
+
+    </style> 
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">
+        <img src="logo.png" alt="Logo de la boutique" class="logo">
+        <span class="shop-name">Nom de la Boutique</span>
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+    <div class="navbar-search">
+        <form class="d-flex justify-content-center w-75 mx-auto" role="search">
+            <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Rechercher</button>
+        </form>
+    </div>
+    <div class="navbar-links">
+        <a href="#produits" class="nav-link icon"><i class="fa fa-box"></i> Produits</a>
+        <a href="#localisation" class="nav-link icon"><i class="fa fa-map-marker-alt"></i> Localisation</a>
+        <a href="#commentaire" class="nav-link icon"><i class="fa fa-comment"></i> Commentaires</a>
+        <a href="#message" class="nav-link icon"><i class="fa fa-envelope"></i> Messages</a>
+    </div>
+</nav>
+
+<!-- Header -->
+<div class="scrolling-text-container">
+  <div class="scrolling-text">
+      Découvrez nos produits tendance et de qualité, soigneusement sélectionnés pour répondre à vos besoins, avec des offres exceptionnelles à ne pas manquer !
+  </div>
+</div>
+ <!-----------------------------Section des sliders des produits--------------------------->
+<!-- Carousel -->
+<div id="slider1" class="slider">
+    <div class="slides">
+      {% for slide in slides|slice:":8" %}
+      <div class="slide {% if forloop.first %}active{% endif %}">
+        {% if slide.image %}
+        <img src="{{ slide.image.url }}" alt="{{ slide.alt_text|default:'Image indisponible' }}">
+        {% else %}
+        <p>Image non disponible</p>
+        {% endif %}
+        <div class="text">
+          {% if slide.title %}
+          <h2>{{ slide.title }}</h2>
+          {% else %}
+          <h2>Pas de titre disponible</h2>
+          {% endif %}
+          {% if slide.description %}
+          <p>{{ slide.description }}</p>
+          {% else %}
+          <p>Description non disponible</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="dots-container">
+      {% for slide in slides|slice:":8" %}
+      <span class="dot {% if forloop.first %}active{% endif %}"></span>
+      {% endfor %}
+    </div>
+  </div>
+         <!-----------------------------Section des produits--------------------------->
+  
+  <div class="product-section">
+    <!-- Titre Nos Produits avec une icône FontAwesome -->
+    <div class="section-header">
+      <i class="fas fa-store product-icon me-2"></i> <!-- Icône boutique à gauche -->
+      <h2 id="produits">Nos Produits</h2>
+    </div>
+  
+    <div class="container">
+      {% if products %}
+        {% for product in products|slice:":8" %}
+        <div class="product">
+          <!-- Afficher l'image du produit -->
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name|default:'Produit sans nom' }}">
+          {% else %}
+          <img src="{% static 'placeholder.png' %}" alt="Image non disponible">
+          {% endif %}
+          
+          <!-- Afficher le nom du produit -->
+          <div class="product-name">
+            {{ product.name|default:"Nom non disponible" }}
+          </div>
+          
+          <!-- Afficher le prix du produit -->
+          <div class="product-price">
+            {% if product.price %}
+            {{ product.price }} FCFA
+            {% else %}
+            Prix non disponible
+            {% endif %}
+          </div>
+          
+          <!-- Icône œil -->
+          <div class="product-icon-eye">👁️</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>Aucun produit disponible pour le moment.</p>
+      {% endif %}
+    </div>
+  </div>
+            <!-----------------------------Section de la localisation --------------------------->
+  <section class="localisation">
+    <div class="title" id="localisation">
+      <i class="fas fa-location-pin"></i>
+      <h2>Localisation</h2>
+    </div>
+    <div class="localisation-container">
+      <!-- Affichage des cartes de localisation -->
+      {% if localisations %}
+        {% for localisation in localisations %}
+          <div class="map">
+            <!-- Affichage du lien de la localisation avec |safe -->
+            {{ localisation.lien|safe }}
+          </div>
+          <div class="location-info">
+            <div class="info-item">
+              <i class="fas fa-city"></i>
+              <p>Ville : {{ localisation.ville|default:"Non spécifiée" }}</p>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <p>Quartier : {{ localisation.quartier|default:"Non spécifié" }}</p>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-thumbtack"></i>
+              <p>Référence : {{ localisation.reference|default:"Non spécifiée" }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>Aucune localisation disponible.</p>
+      {% endif %}
+    </div>
+  </section>
+  
+  
+<!-- Slider pour les images de localisation -->
+<h3 class="title-slider">Trouvez-nous en un clin d'œil</h3>
+<div id="localization-slider" class="localization-slider">
+    <div class="slides">
+        {% if localisation_images %}
+            {% for image in localisation_images|slice:":4" %} <!-- Limite à 4 images -->
+                <div class="slide {% if forloop.first %}active{% endif %}">
+                    <img src="{{ image.src }}" alt="{{ image.alt|default:'Image de localisation' }}">
+                    <div class="text">
+                        <h2>{{ image.title|default:'Titre de la localisation' }}</h2>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune image de localisation disponible.</p>
+        {% endif %}
+    </div>
+    <div class="dots-container">
+        {% if localisation_images %}
+            {% for image in localisation_images|slice:":4" %} <!-- Limite à 4 images -->
+                <span class="dot {% if forloop.first %}active{% endif %}"></span>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+    <!-----------------------------Section des commentaires--------------------------->
+<section class="comment-section">
+    <h2 id="commentaire"><i class="fa fa-comment product-icon me-2"></i> Laissez un commentaire</h2>
+
+    <!-- Formulaire de commentaire -->
+    <form class="comment-form">
+        <div class="form-group">
+            <label for="name">Nom</label>
+            <input type="text" id="name" name="name" placeholder="Votre nom" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Votre email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="comment">Commentaire</label>
+            <textarea id="comment" name="comment" rows="4" placeholder="Votre commentaire" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Note (étoiles)</label>
+            <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5">
+                <label for="star5" class="star">&#9733;</label>
+                <input type="radio" id="star4" name="rating" value="4">
+                <label for="star4" class="star">&#9733;</label>
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3" class="star">&#9733;</label>
+                <input type="radio" id="star2" name="rating" value="2">
+                <label for="star2" class="star">&#9733;</label>
+                <input type="radio" id="star1" name="rating" value="1">
+                <label for="star1" class="star">&#9733;</label>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Envoyer votre commentaire</button>
+    </form>
+</section>
+
+<section class="visitor-comments-section">
+    <h2><i class="fa fa-comments product-icon me-2"></i> Avis de nos Clients</h2>
+
+    <!-- Affichage des commentaires -->
+    <div class="comments-container">
+        <!-- Exemple de commentaire 1 -->
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">Jean Dupont</span>
+                <div class="comment-rating">
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star-half">&#9733;</span>
+                </div>
+            </div>
+            <p class="comment-text">Excellente expérience d'achat, le produit est arrivé rapidement et correspond exactement à ce que je cherchais. Je recommande fortement!</p>
+        </div>
+
+        <!-- Exemple de commentaire 2 -->
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">Marie Lemoine</span>
+                <div class="comment-rating">
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star-half">&#9733;</span>
+                    <span class="star-half">&#9733;</span>
+                </div>
+            </div>
+            <p class="comment-text">Le service est très bien, mais j'aurais aimé plus de choix de produits. Cependant, la qualité était au rendez-vous. Je reviendrai!</p>
+        </div>
+
+        <!-- Exemple de commentaire 3 -->
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">Ali Keita</span>
+                <div class="comment-rating">
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                </div>
+            </div>
+            <p class="comment-text">Service impeccable ! Livraison rapide et produit de qualité supérieure. Je suis entièrement satisfait. Merci pour la qualité du service!</p>
+        </div>
+
+        <!-- Exemple de commentaire 4 -->
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">Fatou Bamba</span>
+                <div class="comment-rating">
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star-half">&#9733;</span>
+                    <span class="star-half">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                </div>
+            </div>
+            <p class="comment-text">Très bien, mais je pense que la présentation des produits pourrait être améliorée sur le site. Les articles sont bons, cependant.</p>
+        </div>
+    </div>
+</section>
+      <!-----------------------------Section des messages --------------------------->
+<section class="contact-section">
+    <h2><i class="fa fa-envelope product-icon me-2" id="message"></i> Envoyer un Message</h2>
+
+    <!-- Formulaire de contact -->
+    <form class="contact-form">
+        <div class="form-group">
+            <label for="name">Nom</label>
+            <input type="text" id="name" name="name" placeholder="Votre nom" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Votre email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="subject">Sujet</label>
+            <input type="text" id="subject" name="subject" placeholder="Sujet de votre message" required>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Envoyer le Message</button>
+    </form>
+</section>
+ <!-----------------------------Section du footer--------------------------->
+<footer class="footer">
+    <div class="footer-container">
+        <!-- Section Contact -->
+        <div class="footer-section">
+            <h4>Contactez-nous</h4>
+            <p>Email : contact@boutique.com</p>
+            <p>Téléphone : +224 123 456 789</p>
+            <p>Adresse : Rue des Commerces, Conakry, Guinée</p>
+        </div>
+
+        <!-- Section Liens utiles -->
+        <div class="footer-section">
+            <h4>Liens utiles</h4>
+            <ul>
+                <li><a href="#produits">Nos produits</a></li>
+                <li><a href="#localisation">Notre localisation</a></li>
+                <li><a href="#commentaire">commentaire</a></li>
+                <li><a href="#message">Nous contacter</a></li>
+            </ul>
+        </div>
+
+        <!-- Section Réseaux sociaux -->
+        <div class="footer-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Boutique Moderne. Tous droits réservés.</p>
+    </div>
+</footer>
+
+
+
+<script>
+
+function toggleMenu() {
+  const search = document.querySelector('.navbar-search');
+  const links = document.querySelector('.navbar-links');
+  search.classList.toggle('show');
+  links.classList.toggle('show');
+}
+
+
+let currentIndex = 0;
+
+const slides = document.querySelectorAll('#slider1 .slide');
+const dots = document.querySelectorAll('#slider1 .dot');
+
+function showSlide(index) {
+  if (index >= slides.length) {
+    currentIndex = 0;
+  } else if (index < 0) {
+    currentIndex = slides.length - 1;
+  }
+
+  // Remove active class from all slides and dots
+  slides.forEach((slide) => {
+    slide.classList.remove('active');
+  });
+  dots.forEach((dot) => {
+    dot.classList.remove('active');
+  });
+
+  // Show the current slide and activate the corresponding dot
+  slides[currentIndex].classList.add('active');
+  dots[currentIndex].classList.add('active');
+
+  // Update the slides container's transform property to slide
+  document.querySelector('#slider1 .slides').style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+
+function nextSlide() {
+  currentIndex++;
+  showSlide(currentIndex);
+}
+
+function prevSlide() {
+  currentIndex--;
+  showSlide(currentIndex);
+}
+
+// Automatically change slide every 3 seconds
+setInterval(nextSlide, 3000);
+
+/*localisation*/
+let currentIndexLocalization = 0;
+
+const slidesLocalization = document.querySelectorAll('#localization-slider .slide');
+const dotsLocalization = document.querySelectorAll('#localization-slider .dot');
+
+function showSlideLocalization(index) {
+  if (index >= slidesLocalization.length) {
+    currentIndexLocalization = 0;
+  } else if (index < 0) {
+    currentIndexLocalization = slidesLocalization.length - 1;
+  }
+
+  // Remove active class from all slides and dots
+  slidesLocalization.forEach((slide) => {
+    slide.classList.remove('active');
+  });
+  dotsLocalization.forEach((dot) => {
+    dot.classList.remove('active');
+  });
+
+  // Show the current slide and activate the corresponding dot
+  slidesLocalization[currentIndexLocalization].classList.add('active');
+  dotsLocalization[currentIndexLocalization].classList.add('active');
+
+  // Update the slides container's transform property to slide
+  document.querySelector('#localization-slider .slides').style.transform = `translateX(-${currentIndexLocalization * 100}%)`;
+}
+
+function nextSlideLocalization() {
+  currentIndexLocalization++;
+  showSlideLocalization(currentIndexLocalization);
+}
+
+function prevSlideLocalization() {
+  currentIndexLocalization--;
+  showSlideLocalization(currentIndexLocalization);
+}
+
+// Automatically change slide every 3 seconds
+setInterval(nextSlideLocalization, 3000);
+
+// Initialize the slider
+showSlideLocalization(currentIndexLocalization);
+
+// Add event listeners for dots
+dotsLocalization.forEach((dot, index) => {
+  dot.addEventListener('click', () => {
+    currentIndexLocalization = index;
+    showSlideLocalization(currentIndexLocalization);
+  });
+});
+
+
+
+</script>
+</body>
+</html>

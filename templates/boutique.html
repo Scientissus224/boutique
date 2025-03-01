@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique</title>
+    {% load static %}
+  <!-- Lien correct pour Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+<!-- Inclusion de jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap CSS (dernière version stable) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS (dernière version stable) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <style>
+        *{
+            padding: 0; margin: 0;
+            font-family:'Poppins', sans-serif;
+            box-sizing: border-box;
+            transition: all.2 linear;
+            text-decoration: none;
+            list-style-type: none;border:none;
+        }
+    
+body {
+    font-family: 'Roboto', sans-serif;  /* Utilisation d'une police moderne et lisible */
+    background-color: #000;  /* Fond noir */
+    color: #fff;  /* Texte en blanc pour un bon contraste */
+    line-height: 1.6;  /* Espacement entre les lignes pour une meilleure lisibilité */
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+ /* Titres principaux (h1, h2, h3) */
+h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;  /* Police stylisée pour les titres */
+    font-weight: bold;
+    color: #fff;  /* Couleur blanche pour les titres */
+    margin-bottom: 20px;  /* Espacement sous les titres */
+}   
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #000;
+        padding: 20px 30px;
+        color: #fff;
+        position: relative;
+        flex-wrap: wrap;
+    }
+    
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid #fff;
+    }
+    
+    .shop-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    .navbar-search {
+        flex: 1;
+        text-align: center;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .navbar-search form {
+        display: flex;
+        justify-content: center;
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    .form-control {
+        width: 80%;
+        padding: 12px;
+        border-radius: 5px;
+        border: none;
+        font-size: 18px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        border-radius: 5px;
+        margin-left: 10px;
+        background-color: #ff7043;
+        border: none;
+        color: white;
+        font-size: 18px;
+    }
+    
+    .navbar-links {
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+        margin-left: 20px;
+    }
+    
+    .navbar-links .icon {
+        margin: 0 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+
+    .navbar-links .icon:hover {
+        color: #ffcc00;
+    }
+    
+    .navbar-links .icon i {
+        margin-right: 8px;
+    }
+    
+    .navbar .nav-link:hover {
+        color: #ff7043;
+    }
+    
+    .navbar .nav-link.active {
+        color: #ff7043;
+        font-weight: bold;
+    }
+    
+    .navbar .nav-link {
+        color: #ccc;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger-menu {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        cursor: pointer;
+    }
+    
+    .hamburger-menu .bar {
+        height: 4px;
+        background-color: white;
+        border-radius: 2px;
+    }
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px;
+        }
+    
+        .navbar-logo {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+    
+        .navbar-search {
+            display: none;
+        }
+    
+        .navbar-search.show {
+            display: flex;
+        }
+    
+        .navbar-links {
+            display: none; /* Cacher les liens par défaut */
+            flex-direction: column;
+            width: 100%;
+            margin-top: 10px;
+        }
+    
+        .navbar-links.show {
+            display: flex; /* Afficher les liens lorsque la classe "show" est ajoutée */
+        }
+    
+        .form-control {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .btn {
+            width: 100%;
+            font-size: 16px;
+        }
+    
+        .navbar-links .icon {
+            margin-bottom: 15px; /* Ajouter de l'espace entre les éléments */
+        }
+    
+        /* Afficher le hamburger sur petits écrans */
+        .hamburger-menu {
+            display: flex;
+        }
+    }
+    
+
+    .slider {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: auto;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .slides {
+        display: flex;
+        transition: transform 1s ease-in-out;
+      }
+      
+      .slide {
+        min-width: 100%;
+        height: 600px; /* Default height */
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.8s ease-out;
+      }
+      
+      .slide.active img {
+        transform: scale(1.05);
+      }
+      
+      .text {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 15px 25px;
+        max-width: 70%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        z-index: 2;
+        opacity: 0;
+        animation: fadeIn 1s forwards;
+      }
+      
+      .text h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        line-height: 1.3;
+        font-weight: bold;
+      }
+      
+      .text p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      
+      .text .btn {
+        padding: 12px 24px;
+        background-color: #ff6347;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+      
+      .text .btn:hover {
+        background-color: #ff4500;
+      }
+      
+      /* Styles for small screens */
+      @media (max-width: 768px) {
+        .slide {
+          height: 400px; /* Reduced height for smaller screens */
+        }
+      
+        .text {
+          bottom: 10px;
+          left: 10px;
+          padding: 10px 15px;
+          max-width: 90%; /* Expand text width for better readability */
+        }
+      
+        .text h2 {
+          font-size: 1.8rem; /* Smaller font size */
+        }
+      
+        .text p {
+          font-size: 1rem; /* Smaller font size */
+        }
+      
+        .text .btn {
+          padding: 10px 20px;
+          font-size: 0.9rem; /* Slightly smaller button */
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .slide {
+          height: 300px; /* Further reduced height for very small screens */
+        }
+      
+        .text h2 {
+          font-size: 1.5rem; /* Even smaller font size */
+        }
+      
+        .text p {
+          font-size: 0.9rem;
+        }
+      
+        .text .btn {
+          padding: 8px 16px;
+          font-size: 0.8rem;
+        }
+      }
+        
+  .dots-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+  }
+  
+  .dot {
+      height: 12px;
+      width: 12px;
+      margin: 0 7px;
+      background-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+  }
+  
+  .dot.active {
+      background-color: #ff6347;
+  }
+  
+  /* Réponse pour les écrans mobiles */
+  @media (max-width: 768px) {
+      .slide img {
+          object-position: center; /* Toujours centrer l'image */
+          transition: transform 0.5s ease-out; /* Plus rapide pour les petits écrans */
+      }
+  
+      .text h2 {
+          font-size: 1.8rem;
+      }
+  
+      .text p {
+          font-size: 1rem;
+      }
+  
+      .text {
+          max-width: 80%; /* Augmente la largeur du texte sur mobile */
+      }
+  
+      .text .btn {
+          padding: 10px 20px; /* Réduit la taille des boutons */
+          font-size: 1rem;
+      }
+  
+      .dots-container {
+          bottom: 10px; /* Décale les points pour plus d'espace sur mobile */
+      }
+  
+      .dot {
+          height: 10px;
+          width: 10px;
+          margin: 0 5px;
+      }
+  }
+ 
+  
+  .carousel-container { 
+    width: 100%; 
+    padding: 50px; 
+    background-color: #000; /* Fond noir */
+}
+
+.swiper {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    padding-bottom: 80px;
+}
+
+.swiper-slide {
+    position: relative;
+    width: 100%;
+    height: auto; /* Suppression de la hauteur fixe */
+    min-height: 450px; /* Hauteur minimale pour garder une taille uniforme */
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column; /* Alignement des éléments en colonne */
+    justify-content: space-between; /* Répartition de l'espace */
+    transition: transform 0.5s, filter 0.5s;
+    background-color: #000; /* Fond noir */
+}
+
+.swiper-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 20px;
+    transform: translateY(10px); /* Légèrement déplacée vers le bas */
+}
+
+.product-info {
+    text-align: center;
+    padding-top: 20px; /* Espacement entre l'image et les informations */
+    margin-bottom: 10px; /* Assurer un petit espace en bas */
+    flex-grow: 1; /* Permet de pousser le bouton vers le bas si nécessaire */
+}
+
+.product-price {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #e65100; /* Orange foncé */
+    text-align: center; /* Centrage du prix */
+}
+
+.btn-acheter {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #e65100; /* Orange foncé */
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Espacement entre le prix et le bouton */
+    text-align: center;
+}
+
+.btn-acheter:hover {
+    background-color: #ff5722; /* Légèrement plus clair lors du survol */
+}
+
+/* Effet sur l'image active */
+.swiper-slide-active {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.8); /* Ombre plus marquée pour donner de la profondeur */
+}
+
+/* Boutons de navigation */
+.swiper-button-prev, .swiper-button-next {
+    color: white;
+    transform: scale(1.2);
+}
+
+/* Pagination */
+.swiper-pagination-bullet {
+    width: 16px;
+    height: 16px;
+    background-color: #aaa;
+    transition: all 0.3s;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #ff6600; /* Orange clair pour la pagination active */
+    width: 35px;
+    border-radius: 10px;
+}
+
+/* Responsive pour les petits écrans (mobiles) */
+@media (max-width: 768px) {
+    .swiper-slide {
+        min-height: 350px; /* Ajuster la hauteur minimale pour les petits écrans */
+    }
+    .swiper-slide img {
+        transform: translateY(0); /* Ne pas décaler l'image */
+    }
+    .product-info {
+        flex-grow: 0; /* Ne pas pousser les éléments vers le bas, maintenir l'espacement */
+        padding-top: 10px; /* Moins d'espacement entre l'image et le texte */
+    }
+    .btn-acheter {
+        margin-top: 15px; /* Espacement plus grand entre le prix et le bouton */
+    }
+}
+
+/* Responsive pour les tablettes et petits écrans moyens */
+@media (max-width: 1024px) {
+    .swiper-slide {
+        min-height: 380px; /* Ajustement pour les écrans moyens */
+    }
+}
+
+
+  /* Animation du fade-in */
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+  .highlight-text-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #D76E2E; /* Orange foncé */
+    position: relative;
+    overflow: hidden;
+  }
+
+  h1 {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    text-align: center;
+    animation: explodeText 1.5s ease-out, glowEffect 2s ease-in-out infinite alternate;
+  }
+
+  /* Animation pour un effet "explosif" */
+  @keyframes explodeText {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Effet lumineux alterné (sans feu) */
+  @keyframes glowEffect {
+    0% {
+      text-shadow: 0 0 10px #ffffff, 0 0 15px #ff9e00, 0 0 20px #ff6600;
+    }
+    100% {
+      text-shadow: 0 0 20px #ff9e00, 0 0 30px #ff6600, 0 0 40px #ff3300;
+    }
+  }
+
+  h1 .material-icons {
+    font-size: 2.5rem;
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+
+  /* Animation de rebond pour les icônes */
+  @keyframes bounce {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.5rem;
+      gap: 10px;
+    }
+
+    h1 .material-icons {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.2rem;
+      gap: 8px;
+    }
+
+    h1 .material-icons {
+      font-size: 1.8rem;
+    }
+  }
+ /* Section principale des produits */
+.product-section {
+    text-align: center;
+    padding: 20px;
+}
+
+/* Style pour la section header */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Style pour l'icône du produit */
+.product-icon {
+    font-size: 30px; /* Taille de l'icône */
+    color: white; /* Couleur de l'icône en blanc */
+    animation: bounce 1s infinite; /* Animation rebond */
+}
+
+/* Style pour le titre de la section */
+#produits {
+    color: white; /* Couleur du texte en blanc */
+    font-weight: bold; /* Texte en gras */
+    font-size: 24px; /* Taille de la police */
+    margin-left: 10px; /* Espacement entre l'icône et le texte */
+}
+
+/* Animation rebond de l'icône */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Conteneur des produits */
+.shared-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Par défaut : 6 produits par ligne */
+    gap: 20px; /* Espacement entre les produits */
+    padding: 20px;
+}
+
+/* Responsive : 3 produits sur petits écrans */
+@media (max-width: 768px) {
+    .shared-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Responsive : 2 produits sur très petits écrans */
+@media (max-width: 480px) {
+    .shared-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Style des produits */
+.product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent; /* Fond transparent */
+    padding: 10px;
+    transition: transform 0.2s ease-in-out;
+    opacity: 0; /* Commence invisible */
+    animation: fadeIn 0.6s forwards; /* Animation de fade-in */
+}
+
+.product:nth-child(odd) {
+    animation-delay: 0.3s; /* Délai pour une animation échelonnée */
+}
+
+.product:nth-child(even) {
+    animation-delay: 0.6s; /* Délai pour une animation échelonnée */
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+.product img {
+    width: 140px; /* Agrandissement de la taille des images */
+    height: 140px;
+    object-fit: contain;
+}
+
+.product-info {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: bold; /* Nom en gras */
+    color: white; /* Nom en blanc */
+}
+
+.product-price {
+    color: darkorange; /* Prix en orange foncé */
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Icône œil animée */
+.product-link {
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.product-icon-eye {
+    font-size: 24px; /* Icône agrandie */
+    color: #000;
+    transition: transform 0.3s ease, color 0.3s ease; /* Animation au survol */
+}
+
+.product-link:hover .product-icon-eye {
+    transform: scale(1.5); /* Agrandissement au survol */
+    color: darkorange; /* Couleur au survol */
+}
+
+/* Animation d'apparition (fade-in) des produits */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px); /* Déplace les produits vers le bas au début */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Remet les produits à leur position initiale */
+    }
+}
+
+
+  /* Animation de l'apparition du modal */
+    /* Animation de l'apparition du modal */
+    @keyframes modalFadeIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .modal-content {
+        background-color: rgba(0, 0, 0, 0.9); /* Fond sombre */
+        color: white;
+        border-radius: 20px; /* Coins arrondis */
+        padding: 40px; /* Padding généreux */
+        box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
+        animation: modalFadeIn 0.6s ease-out; /* Animation d'apparition fluide */
+        width: 85%; /* Augmenter la largeur pour occuper plus d'espace */
+        max-width: 1300px; /* Largeur maximale plus grande */
+        height: 80vh; /* Hauteur de modal agrandie */
+        overflow: hidden; /* Empêcher le dépassement du contenu */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    /* Titre du modal */
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #e67e22; /* Orange moderne */
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Champs de recherche et filtres */
+    .modal-body input {
+        font-size: 1rem;
+        border-radius: 25px;
+        padding-left: 40px;
+        margin-bottom: 15px;
+    }
+
+    .modal-body .btn {
+        border-radius: 50%;
+        font-size: 1.1rem;
+    }
+
+    /* Responsivité pour les petits écrans */
+    @media (max-width: 767px) {
+        .modal-dialog {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 90%; /* Largeur ajustée pour petits écrans */
+            max-width: 500px; /* Limiter la taille du modal */
+            height: auto; /* Permet au modal de s'ajuster en fonction du contenu */
+        }
+
+        .modal-title {
+            font-size: 16px; /* Réduire la taille du titre */
+        }
+
+        .modal-body input {
+            height: 40px;
+        }
+
+        .modal-body .btn {
+            font-size: 1.2rem;
+        }
+
+        .modal-body .btn i {
+            font-size: 1.4rem; /* Réduire la taille de l'icône */
+        }
+    }
+
+    /* Améliorer la disposition des champs de filtres sur grands écrans */
+    .modal-body .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .modal-body .d-flex input {
+        width: 100%;
+    }
+
+    .modal-body .d-flex .btn {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    /* Redimensionner les produits pour les petits écrans */
+    .product-section {
+        max-height: 50vh;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .product-section .row {
+        gap: 15px;
+    }
+/*localisation*/
+.localisation {
+    background: transparent;
+    padding: 20px;
+    text-align: center;
+    ;
+  }
+  
+  .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  .title i {
+    font-size: 30px;
+    color: #FF8C00; /* Couleur orange foncé */
+    margin-right: 10px;
+    animation: bounce 1s ease infinite; /* L'animation dure 1 seconde, avec un effet de rebond infini */
+  }
+  
+  
+  .title h2 {
+    font-size: 30px;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .localisation-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-left: 400px
+  }
+  
+  .map iframe {
+    width: 100%;
+    height: 450px;
+    border: none;
+   
+  }
+  
+  .location-info {
+    display: grid;
+    gap: 15px;
+    color: white;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+  }
+  
+  .info-item i {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #FF8C00; /* Orange foncé */
+  }
+  
+  .info-item p {
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .localisation-container {
+      grid-template-columns: 1fr; /* Une seule colonne pour les petits écrans */
+      margin-left: 0; /* Enlever le margin-left pour les petits écrans */
+    }
+  
+    .map iframe {
+      height: 250px;
+    }
+    .info-item i {
+        margin-right: 10px;
+        font-size: 16px;
+        color: #FF8C00; /* Orange foncé */
+      }
+  }
+/*slider de la localisation */
+.localization-slider {
+    position: relative;
+    width: 80%;  /* Largeur réduite à 80% du parent */
+    max-width: 800px;  /* Largeur maximale pour ne pas dépasser un certain seuil */
+    height: 400px;  /* Hauteur réduite */
+    margin: 40px auto;  /* Centrer le slider horizontalement */
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.localization-slider .slides {
+    display: flex;
+    transition: transform 1s ease-in-out;
+}
+
+.localization-slider .slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.localization-slider .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s ease-out;
+}
+
+.localization-slider .slide.active img {
+    transform: scale(1.05);
+}
+
+.localization-slider .text {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px 25px;
+    max-width: 70%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.localization-slider .text h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    font-weight: bold;
+}
+
+.localization-slider .text p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.localization-slider .text .btn {
+    padding: 12px 24px;
+    background-color: #ff6347;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.localization-slider .text .btn:hover {
+    background-color: #ff4500;
+}
+
+@media (max-width: 768px) {
+    .localization-slider {
+        width: 90%; /* Réduire encore la largeur pour les petits écrans */
+        height: 300px; /* Ajuster la hauteur pour les petits écrans */
+    }
+
+    .localization-slider .text {
+        bottom: 10px;
+        left: 10px;
+        padding: 10px 15px;
+        max-width: 80%;
+    }
+
+    .localization-slider .text h2 {
+        font-size: 1.5rem;
+    }
+
+    .localization-slider .text p {
+        font-size: 1rem;
+    }
+
+    .localization-slider .text .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .localization-slider {
+        width: 100%; /* Prendre toute la largeur pour les très petits écrans */
+        height: 250px; /* Hauteur encore réduite */
+    }
+    .title-slider{
+        font-size: 0.5rem;
+    }
+    .localization-slider .text h2 {
+        font-size: 1.2rem;
+    }
+
+    .localization-slider .text p {
+        font-size: 0.9rem;
+    }
+
+    .localization-slider .text .btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+.title-slider {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00;  /* Jaune pour le texte */
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.6); /* Ombre pour faire ressortir le texte */
+    opacity: 0; /* Commence invisible */
+    transform: translateX(-50px); /* Commence légèrement à gauche */
+    animation: slideIn 2s ease-out forwards; /* Applique l'animation */
+    text-align: center;
+}
+
+/* Animation pour le titre */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+ /* Commentaire */
+.comment-section {
+    background-color: transparent;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.comment-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.product-icon {
+    font-size: 2.5em;
+    color: #fff;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.comment-section i {
+    font-size: 1.5em;
+    color: #FF8C00;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.form-group {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.star-rating input:checked ~ label,
+.star-rating input:checked + label,
+.star-rating input:checked + label + label,
+.star-rating input:checked + label + label + label,
+.star-rating input:checked + label + label + label + label {
+    color: #FFD700;  /* Gold color */
+}
+
+.star-rating input:hover ~ label {
+    color: #FFD700;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comment-section {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .product-icon {
+        font-size: 2em;
+    }
+
+    .comment-form {
+        width: 100%;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 1em;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-icon {
+        font-size: 1.8em;
+    }
+
+    .comment-section h2 {
+        font-size: 1.4em;
+    }
+
+    .form-group {
+        max-width: 90%;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+    }
+}
+/* Upload File */
+.file-upload {
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.file-input-wrapper input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-input-wrapper .upload-icon {
+    font-size: 1.5em;
+    color: #FF8C00;
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.file-input-wrapper::before {
+    content: "Sélectionner une image";
+    display: block;
+    padding: 12px 15px;
+    font-size: 1em;
+    background-color: #333;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+}
+
+.file-input-wrapper:hover::before {
+    background-color: #444;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comment-section {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .product-icon {
+        font-size: 2em;
+    }
+
+    .comment-form {
+        width: 100%;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 1em;
+    }
+
+    .submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+
+    .file-upload {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .file-input-wrapper::before {
+        font-size: 0.9em;
+        padding: 10px 12px;
+    }
+
+    .file-input-wrapper .upload-icon {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-icon {
+        font-size: 1.8em;
+    }
+
+    .comment-section h2 {
+        font-size: 1.4em;
+    }
+
+    .form-group {
+        max-width: 90%;
+    }
+
+    .form-group input, 
+    .form-group textarea {
+        padding: 10px;
+    }
+
+    .submit-btn {
+        font-size: 0.9em;
+        padding: 8px 15px;
+    }
+
+    .file-input-wrapper::before {
+        font-size: 0.8em;
+        padding: 8px 10px;
+    }
+
+    .file-input-wrapper .upload-icon {
+        font-size: 1em;
+    }
+}
+
+/* Footer Styling amélioré */
+.footer {
+    background: linear-gradient(to top, #111, #000); /* Dégradé du noir vers un gris foncé */
+    color: #fff;
+    padding: 50px 20px;
+    font-family: 'Arial', sans-serif;
+    border-top-left-radius: 30px; /* Coins arrondis en haut */
+    border-top-right-radius: 30px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Sections du footer */
+.footer-section {
+    flex: 1 1 300px;
+    min-width: 250px;
+}
+
+.footer-section h4 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #FF6600;; /* Orange foncé pour attirer l'attention */
+    border-bottom: 2px solid #ff9900;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.footer-section p,
+.footer-section ul {
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.8;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 12px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #ffcc00;
+    transition: all 0.3s ease-in-out;
+}
+
+.footer-section ul li a:hover {
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* Icônes des réseaux sociaux */
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-links a {
+    font-size: 1.7rem;
+    color: #ffcc00;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.3);
+    color: #fff;
+}
+
+/* Pied de page */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+    color: #bbb;
+}
+
+/* Responsive Design */
+
+/* Tablettes (max 1024px) */
+@media screen and (max-width: 1024px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Smartphones (max 768px) */
+@media screen and (max-width: 768px) {
+    .footer-container {
+        padding: 0 15px;
+    }
+
+    .footer-section h4 {
+        font-size: 1.1rem;
+    }
+
+    .footer-section p,
+    .footer-section ul {
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+        padding-top: 10px;
+    }
+
+    .social-links a {
+        font-size: 1.4rem;
+    }
+}
+
+
+
+/* Conteneur pour l'icône du panier */
+.cart-icon-container {
+    position: fixed;
+    bottom: 50px; /* Ajustement de la hauteur */
+    right: 20px; /* Placer l'icône à droite */
+    z-index: 9998;
+    animation: bounce 3s ease-in-out infinite; /* Animation plus fluide */
+}
+
+/* Icône de panier */
+.cart-icon {
+    font-size: 40px; /* Réduction de la taille */
+    color: #FF8C00; /* Orange foncé */
+    cursor: pointer;
+}
+
+/* Compteur du panier */
+.cart-icon-container .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Animation de rebond adoucie */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Réduction du rebond */
+    }
+}
+
+/* Styles responsive pour tablettes */
+@media (max-width: 768px) {
+    .cart-icon-container {
+        bottom: 40px;
+        right: 15px;
+    }
+
+    .cart-icon {
+        font-size: 35px; /* Réduction de la taille sur tablette */
+    }
+
+    .cart-count {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+}
+
+/* Styles responsive pour mobiles */
+@media (max-width: 480px) {
+    .cart-icon-container {
+        bottom: 30px;
+        right: 10px;
+    }
+
+    .cart-icon {
+        font-size: 30px; /* Réduction supplémentaire sur mobile */
+    }
+
+    .cart-count {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+}
+ /* Styles de la boîte de notification */
+ /* Styles de la boîte de notification */
+ .notification {
+    position: fixed;
+    top: 50%; /* Centre verticalement */
+    left: 50%; /* Centre horizontalement */
+    transform: translate(-50%, -50%); /* Ajuste pour centrer */
+    background-color: #f44336; /* Rouge pour indiquer une erreur */
+    color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: opacity 0.5s ease-in-out; /* Animation de fondu */
+    opacity: 1;
+    width: calc(100% - 60px); /* Largeur responsive */
+    max-width: 400px;
+}
+
+.notification.hidden {
+    opacity: 0; /* Invisible */
+    pointer-events: none; /* Empêche l'interaction */
+}
+
+.notification .close-btn {
+    cursor: pointer;
+    font-weight: bold;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.notification .close-btn:hover {
+    color: #ddd;
+}
+
+@media (max-width: 768px) {
+    .notification {
+        font-size: 14px; /* Réduit la taille de la police sur des écrans étroits */
+        padding: 15px 20px;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification {
+        font-size: 12px;
+        padding: 10px 15px;
+        max-width: 250px;
+    }
+}
+
+/* Styles pour le modal */
+/* Styles pour le produit dans le modal */
+.modal-content {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none; /* Suppression des bordures du modal */
+}
+
+.product-item-modal {
+    padding: 8px; /* Réduire un peu l'espacement interne */
+    text-align: center;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 15px; /* Espacement entre les produits */
+}
+
+.product-item-modal:hover {
+    transform: translateY(-5px);
+}
+
+.product-image-modal {
+    width: 120%; /* Réduire la taille de l'image */
+    height: auto;
+    max-height: 200px; /* Réduire la limite pour les images */
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.product-info-modal {
+    font-size: 13px; /* Réduire la taille du texte */
+    color: white;
+}
+
+.product-name-modal {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: white; /* Nom en blanc */
+}
+
+.product-price {
+    color: #cc5500; /* Orange foncé pour le prix */
+}
+
+.product-icon-eye {
+    font-size: 18px; /* Réduire la taille de l'icône */
+    margin-top: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.product-icon-eye:hover {
+    color: #dddddd;
+}
+
+/* Fond noir clair pour le modal */
+.modal-background {
+    background-color: #000;
+}
+
+/* Responsive design pour le modal */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+    }
+
+    .product-image-modal {
+        width: 100%; /* Ajuster la largeur des images pour petits écrans */
+        max-height: 150px;
+    }
+
+    .product-info-modal {
+        font-size: 12px;
+    }
+
+    .modal-body {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-body .d-flex {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-body .d-flex input,
+    .modal-body .d-flex button {
+        width: 90%; /* Réduction de la taille des champs pour petits écrans */
+        margin-bottom: 10px;
+        height: 36px; /* Réduction de la hauteur des champs */
+        text-align: center; /* Centrage vertical du texte dans les champs */
+    }
+
+    .modal-body .d-flex input:last-child,
+    .modal-body .d-flex button:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Style de la modal-header pour une disposition en ligne */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Sur petits écrans, ajuster la taille du titre et de la croix */
+@media (max-width: 576px) {
+    .modal-header {
+        flex-direction: row; /* Disposition en ligne pour les petits écrans */
+    }
+
+    .modal-title {
+        font-size: 1rem; /* Réduire la taille du titre */
+        margin-bottom: 0; /* Enlever la marge du bas pour mieux aligner */
+    }
+
+    .btn-danger {
+        font-size: 1rem; /* Taille petite pour le bouton sur petits écrans */
+        padding: 0.5rem; /* Espacement interne réduit */
+        width: auto; /* Ajuster la taille du bouton */
+        height: auto; /* Ajuster la taille de l'icône */
+    }
+
+    .btn-danger i {
+        font-size: 1rem; /* Taille de l'icône réduite */
+    }
+}
+
+/* Sur grands écrans, garder une taille normale */
+@media (min-width: 576px) {
+    .modal-title {
+        font-size: 1.25rem; /* Taille normale du titre */
+    }
+
+    .btn-danger {
+        font-size: 1.25rem; /* Taille normale pour le bouton */
+        padding: 0.75rem 1.25rem; /* Espacement normal */
+    }
+
+    .btn-danger i {
+        font-size: 1.4rem; /* Taille normale de l'icône */
+    }
+}
+/*----------------------Whatsapp icon-----------------*/
+ /* Positionnement de l'icône WhatsApp */
+ .whatsapp-icons {
+    position: fixed;
+    bottom: 120px; /* Positionnement vertical ajusté */
+    right: 10px; /* Pousser encore plus à droite */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  /* Style de l'icône WhatsApp */
+  .whatsapp-icons a {
+    display: inline-block;
+    margin-bottom: 10px; /* Espacement entre l'icône et le texte */
+    font-size: 50px; /* Taille de l'icône réduite */
+    color: #25D366; /* Couleur WhatsApp */
+    transition: transform 0.3s ease, color 0.3s ease; /* Animation fluide */
+  }
+
+  .whatsapp-icons a:hover {
+    transform: scale(1.2); /* Agrandir l'icône au survol */
+    color: #128C7E; /* Couleur plus foncée au survol */
+  }
+
+  /* Responsive Design */
+
+  /* Smartphones (écrans petits) */
+  @media (max-width: 480px) {
+    .whatsapp-icons {
+      bottom: 50px; /* Positionner plus bas pour les petits écrans */
+      right: 5px; /* Positionner encore plus près du bord */
+    }
+
+    .whatsapp-icons a {
+      font-size: 40px; /* Taille réduite pour l'icône sur mobile */
+    }
+  }
+
+  /* Tablettes (écrans moyens) */
+  @media (max-width: 768px) {
+    .whatsapp-icons {
+      bottom: 80px; /* Ajuster la position verticale */
+      right: 15px; /* Positionnement plus centré */
+    }
+
+    .whatsapp-icons a {
+      font-size: 45px; /* Taille réduite pour les tablettes */
+    }
+  }
+
+  /* Ordinateurs de bureau (grands écrans) */
+  @media (min-width: 1024px) {
+    .whatsapp-icons {
+      bottom: 120px; /* Retour à la position initiale */
+      right: 20px; /* Plus à droite */
+    }
+
+    .whatsapp-icons a {
+      font-size: 50px; /* Taille de l'icône */
+    }
+  }
+
+.nav-panier {
+    position: absolute;
+    transform: translateY(-41px);
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width:18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+/* Ajuste la taille selon tes besoins icone de panier dans la page */
+@media (min-width: 1024px) { /* Ajuste la taille selon tes besoins */
+    .cart-icon-container {
+        display: none;
+    }
+}
+
+.conteneur-slide {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 20px 0;
+    position: relative;
+    text-align: center; /* Centre le titre */
+}
+
+.conteneur-slide h3 {
+    font-size: 24px;
+    color: #FF6600; /* Couleur orange foncé */
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.slide-wrapper {
+    display: flex;
+    gap: 30px;
+    animation: scroll 15s linear infinite;
+}
+
+.article {
+    background-color: transparent;
+    border-radius: 8px;
+    width: 220px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: inline-block;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.article:hover {
+    transform: scale(1.1);
+}
+
+.article img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+}
+
+.article-info {
+    padding: 15px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.article-info h3 {
+    font-size: 18px;
+    color: #ff6600;
+    margin-bottom: 5px;
+}
+
+.article-info p {
+    font-size: 14px;
+    color: #ddd;
+    margin: 0;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style> 
+</head>
+<body>
+ <!-- Boîte de notification -->
+<div id="notification-box" class="notification hidden">
+    <span id="notification-message">Aucun produit correspondant trouvé.</span>
+    <button class="close-btn" onclick="hideNotification()">×</button>
+</div>
+
+
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <!-- Affichage du logo et du nom de la boutique seulement si disponibles -->
+            <div class="shop-info">
+                <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
+            </div>
+    
+            <!-- Affichage du nom de la boutique ou du texte "Nom de la boutique" si le nom est indisponible -->
+            <div class="shop-info">
+                <span class="shop-name">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+            </div>
+    
+            <!-- Menu hamburger pour mobile -->
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+<!-- Barre de recherche -->
+<div class="navbar-search">
+    <form class="d-flex justify-content-center w-100 mx-auto" role="search">
+        <div class="position-relative w-75">
+            <input
+                id="search-input"
+                class="form-control rounded-pill ps-5"
+                type="search"
+                placeholder="Rechercher"
+                aria-label="Search"
+                onfocus="openModal()"
+                style="height: 45px; width: 100%;"
+            />
+            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3" style="color: #d35400;"></i>
+        </div>
+    </form>
+</div>
+
+
+
+        <!-- Liens de la navbar -->
+        <div class="navbar-links">
+                         
+                    <!-- Nouvelle icône d'accueil -->
+                    <a href="{% url 'accueil' %}" class="nav-link icon">
+                        <i class="fa fa-home"></i> Accueil
+                    </a>   
+            <a href="#produits" class="nav-link icon">
+                <i class="fa fa-box"></i> Produits
+            </a>
+            <a href="#localisation" class="nav-link icon">
+                <i class="fa fa-map-marker-alt"></i> Localisation
+            </a>
+            
+             <!-- Icône de panier avec compteur -->
+             <a href="{{ panier_url }}" class="nav-link icon">
+                <i class="fa fa-shopping-cart"></i> Panier
+                <div id="cart-count-nav" class="cart-count nav-panier">0</div>
+            </a>
+
+
+
+                </div>
+    </nav>
+
+   <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+   <div id="user-data" data-user-id="{{user_id}}"></div>
+
+  <!-- Nouvelle icône de panier avec le compteur -->
+<div class="cart-icon-container">
+    <a href="{{ panier_url }}">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+    </a>
+    <!-- Le compteur du panier, initialement vide -->
+    <div id="cart-count" class="cart-count">0</div>
+</div>
+
+
+   <!-- Affichage du total du panier -->
+   <div id="total-panier"></div>
+
+<!-- Header -->
+<div class="highlight-text-container">
+    <h1>
+      <span class="material-icons">rocket_launch</span>
+      ⚡ Ne ratez pas nos offres 💥 Exceptionnelles ! ⚡
+      <span class="material-icons">local_offer</span>
+    </h1>
+  </div>
+
+</div>
+ <!-----------------------------Section des sliders des produits--------------------------->
+<!-- Carousel -->
+<!-- Carousel -->
+<section class="carousel-container">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for produit in featured_products %}
+            <div class="swiper-slide">
+                {% if produit.image %}
+                <a href="{{ produit.get_produit_url }}">
+                    <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
+                </a>
+                <div class="product-info">
+                    <div class="product-price" style="color: #e65100;"> 
+                        <p>{{ produit.prix }} {{ devise }}</p>
+                    </div>
+                    <a href="{{ produit.get_produit_url }}" class="btn-acheter">
+                        Acheter maintenant
+                    </a>
+                </div>
+                {% else %}
+                <p>Image non disponible</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+
+         <!-----------------------------Section des produits--------------------------->
+ <!-- Section Produits -->
+ <div class="product-section">
+    <div class="section-header">
+        <i class="fas fa-fire product-icon me-2" style="color: #D76E2E;"></i>
+        <h2 id="produits" style="color: #D76E2E;">Les hits du moment</h2>
+        
+        
+    </div>
+</div>
+
+    <!-- Conteneur partagé avec affichage des produits -->
+    <div class="container shared-container" id="product-container">
+        {% if products %}
+            {% for product in products %}
+                <div class="product" data-name="{{ product.nom|lower }}" data-price="{{ product.prix }}">
+                    {% if product.image %}
+                    <a href="{{ product.get_produit_url }}" class="product-link">
+                        <img src="{{ product.image.url }}" alt="{{ product.nom|default:'Produit sans nom' }}">
+                    </a>
+                    {% else %}
+                        <img src="" alt="Image non disponible">
+                    {% endif %}
+                    <div class="product-info">
+                        <div class="product-name">{{ product.nom|default:"Nom non disponible" }}</div>
+                        <div class="product-price">
+                            {% if product.prix %}
+                                {{ product.prix }} {{ devise }}
+                            {% else %}
+                                Prix non disponible
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{{ product.get_produit_url }}" class="product-link">
+                        <div class="product-icon-eye">👁️</div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun produit disponible pour le moment.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de filtrage et recherche -->
+<!-- Modal de filtrage et recherche -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-xl modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Filtrer et rechercher des produits</h5>
+                <!-- Bouton de fermeture avec une croix orange foncé -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" style="color: #d35400; font-size: 1.5rem;"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Barre de recherche et filtres -->
+                <div class="d-flex flex-column align-items-center">
+                    <!-- Barre de recherche -->
+                    <div class="position-relative w-100 w-md-75 mb-3">
+                        <input id="search-input-modal" class="form-control rounded-pill ps-5" type="search" placeholder="Rechercher" aria-label="Search" oninput="performSearch(event)" style="height: 45px;">
+                    </div>
+                    
+                    <!-- Filtres de prix sur une même ligne -->
+                    <div class="d-flex w-100 w-md-75 flex-row mb-3 justify-content-between">
+                        <input type="number" id="min-price" class="form-control rounded-pill me-md-2 mb-2 mb-md-0" placeholder="Prix min" oninput="performSearch(event)" style="height: 40px; flex: 1; margin-right: 10px;">
+                        <input type="number" id="max-price" class="form-control rounded-pill mb-2 mb-md-0" placeholder="Prix max" oninput="performSearch(event)" style="height: 40px; flex: 1;">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <!-- Nouveau bouton de filtre avec une icône moderne -->
+                        <button  class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" onclick="applyFilter()" style="width: 40px; height: 40px; background-color:transparent;">
+                            <i class="fas fa-sliders-h"></i> <!-- Nouvelle icône de filtre -->
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Conteneur des produits filtrés -->
+                <div id="modal-product-container" class="product-section mt-3">
+                    <div class="row" id="product-container-modal" style="max-height: 50vh; overflow-y: auto;">
+                        <!-- Les produits filtrés ou recherchés apparaîtront ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+            <!-----------------------------Section de la localisation --------------------------->
+            <section class="localisation">
+                <div class="title" id="localisation">
+                  <i class="fas fa-location-pin" style="color:#FF6600;;"></i>
+                  <h2 style="color:#FF6600;;">Localisation</h2>
+                </div>
+                <div class="localisation-container">
+                  <!-- Affichage des cartes de localisation -->
+                  {% if localisation %}
+                    <div class="map">
+                      <!-- Affichage du lien de la localisation avec |safe -->
+                      {{ localisation.lien_maps|safe }}
+                    </div>
+                    <div class="location-info">
+                      <div class="info-item">
+                        <i class="fas fa-city"></i>
+                        <p>Ville : {{ localisation.ville|default:"Non spécifiée" }}</p>
+                      </div>
+                      <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Quartier : {{ localisation.quartier|default:"Non spécifié" }}</p>
+                      </div>
+                      <div class="info-item">
+                        <i class="fas fa-thumbtack"></i>
+                        <p>Référence : {{ localisation.repere|default:"Non spécifiée" }}</p>
+                      </div>
+                    </div>
+                  {% else %}
+                    <p>Aucune localisation disponible.</p>
+                  {% endif %}
+                </div>
+              </section>
+              
+              
+ <!-- Slider pour les images de localisation -->
+<h3 class="title-slider" style="color: #FF6600;">Trouvez-nous en un clin d'œil</h3>
+<div id="localization-slider" class="localization-slider">
+    <div class="slides">
+        {% if localisation_images %}
+            {% for image in localisation_images %}
+                <div class="slide {% if forloop.first %}active{% endif %}">
+                    <img src="{{ image.url }}" alt="localisation image">
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune image de localisation disponible.</p>
+        {% endif %}
+    </div>
+    <div class="dots-container">
+        {% if localisation_images %}
+            {% for image in localisation_images %}
+                <span class="dot {% if forloop.first %}active{% endif %}"></span>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+ <!-- affichages des sliders des produits ----------------------------------------- -->
+ <div class="conteneur-slide">
+    <h3><i class="fa fa-heart"></i> Nos coups de cœur ✨</h3>
+
+    <div class="slide-wrapper">
+        {% for slide in slides %}
+            <div class="article">
+                <img src="{{ slide.image.url }}" alt="{{ slide.title }}">
+                <div class="article-info">
+                    <h3>{{ slide.title }}</h3>
+                    <p>{{ slide.description }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Aucun article trouvé.</p>
+        {% endfor %}
+    </div>
+</div>
+
+ <!-- fin ----------------------------------------- -->
+</section>
+ <!-- Icône WhatsApp avec texte -->
+ <div class="whatsapp-icons">
+    <a href="https://wa.me/224{{numero}}?text=Bonjour,%20j'ai%20effectué%20une%20commande%20sur%20votre%20boutique%20{{boutique}}.%20J'aimerais%20savoir%20si%20ma%20commande%20a%20été%20bien%20prise%20en%20compte%20et%20quelles%20sont%20les%20étapes%20suivantes.%20Merci%20beaucoup!" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <span class="whatsapp-text"></span>
+</div>
+
+ <!-----------------------------Section du footer--------------------------->
+ <footer class="footer">
+    <div class="footer-container">
+        <!-- Section Contact -->
+        <div class="footer-section">
+            <h4>Contactez-nous</h4>
+            
+            {% if utilisateur_email %}
+                <p>Email : {{ utilisateur_email }}</p>
+            {% else %}
+                <p>Email : Non disponible</p>
+            {% endif %}
+            
+            {% if utilisateur_numero %}
+                <p>Téléphone : {{ utilisateur_numero }}</p>
+            {% else %}
+                <p>Téléphone : Non disponible</p>
+            {% endif %}
+            
+            {% if localisation %}
+                <p>Adresse : {{ localisation.repere }}, {{ localisation.ville }}, Guinée</p>
+            {% else %}
+                <p>Adresse : Non disponible</p>
+            {% endif %}
+        </div>
+
+        <!-- Section Liens utiles -->
+        <div class="footer-section">
+            <h4>Liens utiles</h4>
+            <ul>
+                <li><a href="#produits">Nos produits</a></li>
+                <li><a href="#localisation">Notre localisation</a></li>
+            </ul>
+        </div>
+
+        <!-- Section Réseaux sociaux -->
+        <div class="footer-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Boutique Moderne. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<!-- Ajout de Font Awesome si besoin -->
+<script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script>
+  //-------------------------------- Responsive pour afficher la navbar------------------------------------------> 
+function toggleMenu() {
+    const search = document.querySelector('.navbar-search');
+    const links = document.querySelector('.navbar-links');
+    search.classList.toggle('show');
+    links.classList.toggle('show');
+}
+  
+//--------------------------------Gestion des sliders-----------------------------------------> 
+/*--------------------Produits slider -----------------*/
+var swiper = new Swiper(".swiper", {
+    grabCursor: true,
+    centeredSlides: true,
+    loop: true,
+    speed: 900,
+    autoplay: { delay: 2500 },
+    effect: "coverflow",
+    slidesPerView: "auto",
+    coverflowEffect: {
+        rotate: 0, stretch: -30, depth: 150, modifier: 1.5, slideShadows: true,
+    },
+    navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+    pagination: { el: ".swiper-pagination", clickable: true },
+    breakpoints: {
+        0: { slidesPerView: 1 },
+        600: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+    },
+});
+
+
+/*--------------------localisation slider -----------------*/
+let currentIndexLocalization = 0;
+
+const slidesLocalization = document.querySelectorAll('#localization-slider .slide');
+const dotsLocalization = document.querySelectorAll('#localization-slider .dot');
+const totalSlidesLocalization = slidesLocalization.length;
+
+function showSlideLocalization(index) {
+  if (index >= totalSlidesLocalization) {
+    currentIndexLocalization = 0;
+  } else if (index < 0) {
+    currentIndexLocalization = totalSlidesLocalization - 1;
+  } else {
+    currentIndexLocalization = index;
+  }
+
+  slidesLocalization.forEach((slide) => slide.classList.remove('active'));
+  dotsLocalization.forEach((dot) => dot.classList.remove('active'));
+
+  slidesLocalization[currentIndexLocalization].classList.add('active');
+  dotsLocalization[currentIndexLocalization].classList.add('active');
+
+  document.querySelector('#localization-slider .slides').style.transform = `translateX(-${currentIndexLocalization * 100}%)`;
+}
+
+function nextSlideLocalization() {
+  showSlideLocalization(currentIndexLocalization + 1);
+}
+
+function prevSlideLocalization() {
+  showSlideLocalization(currentIndexLocalization - 1);
+}
+
+dotsLocalization.forEach((dot, index) => {
+  dot.addEventListener('click', () => showSlideLocalization(index));
+});
+
+const autoSlideIntervalLocalization = setInterval(nextSlideLocalization, 3000);
+
+const localizationSlider = document.getElementById('localization-slider');
+localizationSlider.addEventListener('mouseover', () => clearInterval(autoSlideIntervalLocalization));
+localizationSlider.addEventListener('mouseout', () => setInterval(nextSlideLocalization, 3000));
+
+showSlideLocalization(currentIndexLocalization);
+
+//<!-------------------------------- Gestion de la mise à jour du panier-----------------------------------------> 
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/obtenir-panier/')
+    .then(response => response.json())
+    .then(data => {
+      const cartCount = document.querySelector('#cart-count');
+      const cartCountNav = document.querySelector('#cart-count-nav');
+      cartCount.textContent = data.total_articles;  // Mettez à jour le nombre d'articles dans le panier
+      cartCountNav.textContent = data.total_articles;  // Mettez à jour le nombre d'articles dans le panier
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération du panier:', error);
+    });
+
+  // Ajout de l'écouteur d'événement sur le bouton de filtrage
+  const applyFilterButton = document.getElementById('apply-filter-button');
+  if (applyFilterButton) {
+    applyFilterButton.addEventListener('click', performSearch);
+  } else {
+    console.error('Bouton "apply-filter-button" introuvable.');
+  }
+});
+
+//<!-------------------------------- Modal de recherche de produit et filtrage Pour la recherche------------------------------------------> 
+function openModal() {
+  if (!document.getElementById('productModal').classList.contains('show')) {
+    const modal = new bootstrap.Modal(document.getElementById('productModal'));
+    modal.show();
+  }
+}
+
+function performSearch(event) {
+  event.preventDefault(); // Empêche le comportement par défaut du formulaire
+  const searchQuery = document.getElementById('search-input-modal').value.trim();
+  const minPrice = document.getElementById('min-price').value.trim();
+  const maxPrice = document.getElementById('max-price').value.trim();
+
+  if (searchQuery === "" && minPrice === "" && maxPrice === "") return;  // Ne pas faire de recherche sans critère
+
+  const validMinPrice = minPrice !== "" ? minPrice : undefined;
+  const validMaxPrice = maxPrice !== "" ? maxPrice : undefined;
+
+  const userId = document.getElementById('user-data').getAttribute('data-user-id');
+
+  $.ajax({
+    url: `/recherche-produit/${userId}/`,
+    data: {
+      'nom': searchQuery,
+      'prix_min': validMinPrice,
+      'prix_max': validMaxPrice
+    },
+    success: function(response) {
+      if (response.produits && response.produits.length > 0) {
+        updateModalProducts(response.produits);
+      } else {
+        console.log('Aucun produit trouvé');
+      }
+    },
+    error: function(error) {
+      console.error('Erreur AJAX:', error);
+    }
+  });
+}
+
+function updateModalProducts(produits) {
+  const productContainer = document.getElementById('product-container-modal');
+  productContainer.innerHTML = '';
+
+  if (produits.length > 0) {
+    produits.forEach(product => {
+      const productElement = createProductElement(product);
+      const colDiv = document.createElement('div');
+      colDiv.classList.add('col-6', 'col-lg-2', 'mb-4');
+      colDiv.appendChild(productElement);
+      productContainer.appendChild(colDiv);
+    });
+  } else {
+    productContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+  }
+}
+
+function createProductElement(product) {
+  const div = document.createElement('div');
+  div.classList.add('product-item-modal');
+  div.dataset.name = product.nom.toLowerCase();
+  div.dataset.price = product.prix;
+
+  div.innerHTML = `
+   <a href="${product.url}" class="product-link">
+      <img src="${product.image_url || ''}" alt="${product.nom}" class="product-image-modal">
+    </a>
+    <div class="product-info-modal">
+      <div class="product-name-modal">${product.nom}</div>
+      <div class="product-price">${product.prix} ${product.devise}</div>
+    </div>
+    <a href="${product.url}" class="product-link">
+      <div class="product-icon-eye">👁️</div>
+    </a>
+    
+  `;
+  return div;
+}
+
+</script>
+</body>
+</html>

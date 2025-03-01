@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription | WarabaShop</title>
+    {% load widget_tweaks %}
+    <!-- Assurez-vous que ce fichier audio est bien présent dans votre dossier "static" -->
+
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <!-- Custom Styles -->
+     <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+        }
+        /* Styles de la navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: white;
+    border-bottom: 2px solid #FF6F00; /* Orange foncé en bas */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.navbar:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo {
+    width: 80px;  /* Augmentation de la taille du logo */
+    height: 80px;
+    object-fit: contain;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.platform-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #FF6F00;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Menu principal */
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #FF6F00;
+    color: black;
+    transform: scale(1.05);
+}
+
+
+
+/* Icônes */
+.icons {
+    display: flex;
+    align-items: center;
+}
+
+button {
+    background: none;
+    border: none;
+    color: white;
+    margin: 0 10px;
+    font-size: 24px;
+    transition: transform 0.3s, color 0.3s;
+}
+
+button:hover {
+    transform: scale(1);
+    color: #FF6F00;
+}
+
+/* Menu utilisateur */
+.user-icon {
+    position: relative;
+}
+
+.user-menu {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    width: 200px;
+}
+
+.user-menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 5px 0;
+}
+
+.user-menu a:hover {
+    background-color: #FF6F00;
+}
+
+.user-icon:hover .user-menu {
+    display: block;
+}
+
+.user-icon::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #444;
+}
+
+/* Hamburger menu (visible sur petits écrans) */
+/* Style de base */
+.nav-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.hamburger {
+    display: none; /* Cacher le hamburger par défaut */
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Pour les petits écrans */
+@media screen and (max-width: 768px) {
+    .nav-links {
+        display: none; /* Cacher les liens par défaut sur les petits écrans */
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hamburger {
+        display: block; /* Afficher le bouton hamburger */
+    }
+
+    .nav-links.active {
+        display: flex; /* Afficher les liens lorsque le menu est actif */
+    }
+}
+
+/* Styles pour les écrans petits */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        position: absolute;
+        top: 60px;
+        left: 0;
+        padding: 10px;
+    }
+
+    .nav-links a {
+        padding: 15px;
+        text-align: center;
+        width: 100%;
+    }
+
+
+    .navbar.active .nav-links {
+        display: flex;
+    }
+}
+
+/* Logo et autres éléments */
+@media (max-width: 480px) {
+    .logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .platform-name {
+        font-size: 22px;
+    }
+}
+
+      /* Conteneur du formulaire */
+.form-container {
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Espacement entre les champs du formulaire */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Uniformiser la largeur et la hauteur des champs */
+.form-control,
+.form-control-password {
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+    height: 45px;
+    width: 100%; /* Assure que chaque champ prend 100% de la largeur du conteneur */
+}
+
+/* Style spécifique pour le champ de mot de passe */
+.form-control-password::placeholder {
+    color: white;
+}
+
+/* Gestion des erreurs dans le formulaire */
+.is-invalid {
+    border-color: #dc3545 !important; /* Bordure rouge pour les champs avec erreurs */
+}
+
+.is-invalid + .invalid-feedback {
+    color: #dc3545; /* Texte d'erreur en rouge */
+}
+
+/* Listes d'erreurs sous les champs */
+.errorlist {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 5px;
+}
+
+.errorlist li {
+    color: #dc3545;
+    font-size: 0.9rem;
+}
+
+/* Style pour les placeholders */
+::placeholder {
+    color: white; /* Couleur blanche pour le placeholder */
+    opacity: 1;
+}
+
+/* Effets visuels au focus et hover sur les champs */
+.form-control:focus,
+.form-control-password:focus {
+    border-color: #ff7043;
+    box-shadow: 0 0 5px rgba(255, 112, 67, 0.5);
+}
+
+.form-control-password:hover {
+    background-color: white;
+    color: black; /* Texte visible en noir quand le champ est actif */
+    border-color: #ff7043;
+    box-shadow: 0 0 5px rgba(255, 112, 67, 0.5);
+}
+
+/* Styles pour les labels des champs */
+.form-group label {
+    display: block; /* Mettre les labels sur une ligne distincte */
+    margin-bottom: 5px; /* Espacement entre le label et le champ */
+}
+
+/* Style du bouton primaire */
+.btn-primary {
+    background-color: #ff7043;
+    border-color: #ff7043;
+}
+
+.btn-primary:hover {
+    background-color: #e65c29;
+    border-color: #e65c29;
+}
+
+/* Logo de l'application */
+.logo-img {
+    border-radius: 15px;
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    transition: transform 0.3s ease-in-out;
+}
+
+.logo-img:hover {
+    transform: scale(1.1);
+}
+
+/* Positionner l'icône de l'œil à droite du champ de mot de passe */
+.input-group-append {
+    cursor: pointer;
+}
+/* Footer Styling */
+    /* Footer Styling */
+    footer {
+        background-color: #000; /* Fond noir pur */
+        padding: 40px 20px;
+        text-align: center;
+        border-top: 3px solid #FF4500; /* Orange foncé */
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* Logo */
+    .footer-logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .footer-logo img {
+            width: 80px;  /* Augmentation de la taille du logo */
+            height: 80px;
+            object-fit: contain;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+    }
+
+    .footer-section {
+        flex: 1;
+        min-width: 250px;
+        margin: 10px;
+    }
+
+    .footer-section h3 {
+        color: #FF4500; /* Orange foncé */
+        margin-bottom: 15px;
+        font-size: 22px;
+    }
+
+    .footer-section p, .footer-section a {
+        color: #ddd;
+        font-size: 16px;
+        text-decoration: none;
+        transition: 0.3s ease-in-out;
+    }
+
+    .footer-section a:hover {
+        color: #FF4500;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .social-icons a {
+        color: #FF4500;
+        font-size: 22px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .social-icons a:hover {
+        color: #fff;
+        transform: scale(1.2);
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding: 15px;
+        background-color: #000;
+        font-size: 14px;
+        margin-top: 20px;
+        border-top: 1px solid #FF4500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .footer-container {
+            text-align: center;
+        }
+
+        .footer-section {
+            flex: 100%;
+            margin-bottom: 20px;
+        }
+
+        .social-icons {
+            justify-content: center;
+        }
+    }
+
+ /* Boîte de notification ajustée */
+.notification-box {
+    position: fixed;
+    top: 100px; /* Décale la boîte de 100px depuis le haut pour éviter la navbar */
+    right: -400px; /* Commence hors de l'écran */
+    transform: translateY(-50%); /* Centré verticalement */
+    background: linear-gradient(145deg, #121212, #222222);
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(255, 255, 255, 0.2);
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 9999;
+    animation: slideInVertical 1s ease-out forwards;
+    border: 2px solid #ff6600;
+    position: relative;
+}
+
+/* Animation de la boîte */
+@keyframes slideInVertical {
+    0% {
+        transform: translateY(-50%) translateX(100%); /* Hors de l'écran à droite */
+    }
+    100% {
+        transform: translateY(-50%) translateX(0); /* Position centrée */
+    }
+}
+
+/* Style général de la notification */
+.notification-box {
+    position: fixed;
+    top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #ff6600;
+    z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+    font-size: 2rem;
+    margin-right: 20px;
+    color: #ff6600;
+    animation: glow 1.5s infinite alternate;
+}
+
+/* Message */
+.notification-box .message {
+    font-size: 1rem;
+    flex-grow: 1;
+    opacity: 0.85;
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, color 0.3s;
+}
+
+.close-btn:hover {
+    color: #ff6600;
+    transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+    .notification-box {
+        top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+        right: 5px; /* Réduit l'espacement sur les petits écrans */
+        padding: 8px 15px;
+    }
+
+    .notification-box i {
+        font-size: 1.5rem; /* Réduit la taille de l'icône sur les petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 0.9rem; /* Réduit la taille du texte pour plus de lisibilité */
+    }
+
+    .close-btn {
+        font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    }
+}
+
+/* Pour les très petits écrans (téléphones mobiles en portrait) */
+@media (max-width: 480px) {
+    .notification-box {
+        top: 5%; /* Réduit encore la distance du haut */
+        right: 5px; /* Garde une marge minimale à droite */
+        padding: 6px 12px;
+    }
+
+    .notification-box i {
+        font-size: 1.2rem; /* Plus petit pour les très petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 0.8rem; /* Réduit encore la taille du texte */
+    }
+
+    .close-btn {
+        font-size: 1rem; /* Petite taille du bouton de fermeture */
+    }
+}
+
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #ff6600, 0 0 10px #ff6600, 0 0 20px #ff6600;
+    }
+    100% {
+        text-shadow: 0 0 20px #ff6600, 0 0 30px #ff6600, 0 0 40px #ff6600;
+    }
+}
+
+/* Styles des notifications */
+.notification.show {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateY(-50%) translateX(100%);
+}
+
+
+/* Design pour le lien "Mot de passe oublié" */
+.forgot-password {
+    display: inline-block;
+    margin-top: 10px;
+    color: #FF6F00;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #d35400;
+    text-decoration: underline;
+}
+
+/* Design pour le lien "Créer un compte" */
+.create-account {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2980b9;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.create-account:hover {
+    color: #1c6ba0;
+    text-decoration: underline;
+}
+
+/* Design pour le lien "Mot de passe oublié" */
+.forgot-password {
+    display: inline-block;
+    margin-top: 10px;
+    color: #FF6F00;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #d35400;
+    text-decoration: underline;
+}
+
+/* Design pour le lien "Créer un compte" */
+.create-account {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2980b9;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.create-account:hover {
+    color: #1c6ba0;
+    text-decoration: underline;
+}
+
+    </style>
+</head>
+<body>
+    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                <!-- Icône futuriste de robot -->
+                <i class="fas fa-robot"></i>
+                <div class="message">
+                    {{ message }}
+                </div>
+                <button class="close-btn" onclick="closeNotification(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+ <!-- Navbar -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        <span class="platform-name">WarabaGuinee</span>
+    </div>
+
+    <!-- Menu principal -->
+    <div class="nav-links">
+        <a href="{% url 'accueil' %}" class="home-link">
+            <i class="fa fa-home"></i> Accueil
+        </a>
+        <a href="{% url 'login' %}" class="login-link">
+            <i class="fa fa-sign-in-alt"></i> Se connecter
+        </a>
+        <a href="{% url 'inscription' %}" class="signup-link">
+            <i class="fa fa-user-plus"></i> Créer un compte
+        </a>
+    </div>
+
+    <!-- Menu hamburger -->
+    <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+</nav>
+
+
+  <!-- Inscription Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-4">
+        <i class="bi bi-person-fill"></i> Connectez-vous à votre compte
+    </h2>               
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-12">
+            <div class="form-container">
+                <form class="form" method="POST">
+                    {% csrf_token %}
+                    <h1>Connectez-vous</h1>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Identifiant ou Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-white"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Nom complet ou Email" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-white"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required>
+                            <button type="button" class="input-group-text bg-dark text-white" id="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+                    <div class="mt-3 text-center">
+                        <a href="{% url 'password_reset' %}" class="forgot-password">Mot de passe oublié ?</a>
+                        <a href="{% url 'inscription' %}" class="create-account">Créer un compte</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+    <footer>
+        <div class="footer-logo">
+            <img src="{% static 'lo.jpeg' %}" alt="WarabaGuinée Logo" class="logo">
+        </div>
+        
+        <div class="footer-container">
+            <!-- Section Liens utiles -->
+            <div class="footer-section">
+                <p><a href="#">Besoin d'aide ?</a></p>
+                <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
+                <p><a href="{% url 'inscription' %}">Créer un compte boutique</a></p>
+            </div>
+    
+            <!-- Section Contact -->
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
+                <p><i class="fas fa-phone"></i> +224 622 00 00 00</p>
+                <p><i class="fas fa-envelope"></i> contact@warabaguinee.com</p>
+            </div>
+    
+            <!-- Section Réseaux sociaux -->
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a> <!-- Lien vers YouTube -->
+                    <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a> <!-- Lien vers TikTok -->
+                    
+                </div>
+            </div>
+        </div>
+   
+        <div class="footer-bottom" style="color: white;">
+            &copy; 2025 WarabaGuinée - Tous droits réservés.
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+       // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 5000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 5000); // La notification disparaît après 5 secondes
+
+
+// Toggle visibility of password
+const togglePasswordBtn = document.getElementById('toggle-password');
+const passwordField = document.getElementById('password');
+
+togglePasswordBtn.addEventListener('click', function() {
+    // Check if the password field is of type 'password'
+    const type = passwordField.type === 'password' ? 'text' : 'password';
+    passwordField.type = type;
+
+    // Change the icon
+    const icon = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    togglePasswordBtn.querySelector('i').className = icon;
+});
+
+
+function toggleMenu() {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.toggle('active');
+}
+
+    </script>
+</body>
+</html>

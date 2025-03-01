@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 5;
+          height: 60px;
+          background-color: #333;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 20px;
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color: #fff;
+          margin: 0;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar {
+              padding: 0 10px;
+          }
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .menu-btn {
+              font-size: 20px;
+          }
+      }
+     /* Style du sidebar */
+/* Style du sidebar */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: -250px;
+    top: 0; /* Commence depuis le haut de la page */
+    background-color: #333;
+    padding-top: 60px; /* Réduit le padding-top de 80px à 60px */
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    z-index: 6; /* Plus élevé que le top-bar */
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    font-weight: 600;
+    min-height: 50px;
+}
+
+.sidebar a:hover {
+    background-color: #FF8C00;
+
+}
+
+.sidebar hr {
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.logo-container {
+    text-align: center;
+    padding: 5px; /* Réduit le padding de 15px à 5px */
+    margin-top: -20px; /* Ajoute une marge négative pour remonter le logo */
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #FF8C00;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+  }
+  
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.menu-btn:hover {
+    transform: scale(1.1);
+}
+
+
+/* Style du contenu principal */
+.content {
+    margin-left: 0;
+    padding: 80px 20px 20px; /* Augmente le padding-top pour éviter le chevauchement avec top-bar */
+    min-height: calc(100vh - 60px); /* Ajuste la hauteur en tenant compte du top-bar */
+    transition: margin-left 0.3s ease;
+    overflow-x: hidden; /* Empêche le débordement horizontal */
+}
+
+
+
+
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+    .content {
+        margin: 0;
+        padding: 80px 15px 20px; /* Ajuste le padding pour mobile */
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .sidebar {
+        width: 100%;
+        left: -100%;
+        padding-top: 60px; /* Réduit le padding-top sur mobile */
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .card {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Lorsque le sidebar est actif, désactiver le défilement du body */
+    body.no-scroll {
+        overflow: hidden;
+    }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+    .content {
+        margin-left: 250px;
+    }
+
+    .sidebar {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: none;
+    }
+
+    /* Cacher le bouton croix sur les grands écrans */
+    .close-sidebar-btn {
+        display: none;
+    }
+}
+/* Boutons futuristes */
+.futuristic-btn {
+    background: linear-gradient(135deg, #00aaff, #4e00ff);
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+    background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+    text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+    font-weight: bold;
+    color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+    .card-body {
+        padding: 0; /* Élimine le padding inutile sur mobile */
+    }
+
+    .card {
+        margin-bottom: 20px; /* Ajoute un espacement entre les cartes */
+    }
+
+    /* Optimisation pour les images */
+    .slider-images img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Ajustement de l'image pour une présentation fluide sur Android */
+    .futuristic-card-item {
+        width: 100%; /* Les cartes occupent toute la largeur sur mobile */
+    }
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+    .col-md-3 {
+        width: 25%; /* 4 images par ligne sur tablette et plus */
+    }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+    .col-lg-3 {
+        width: 25%; /* 4 images par ligne sur grand écran */
+    }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+    color: #00aaff; /* Couleur futuriste */
+    opacity: 0.7;
+}
+
+
+/* Style général de la notification */
+.notification-box {
+    position: fixed;
+    top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+    color: #fff;
+    border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+    padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+    z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+    font-size: 2.5rem; /* Taille plus grande pour l'icône */
+    margin-right: 20px;
+    color: #00ffcc; /* Couleur cybernétique verte */
+    animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+    font-size: 1.2rem; /* Agrandit la taille du texte */
+    flex-grow: 1;
+    opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+    letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+    color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, color 0.3s;
+    padding: 5px;
+}
+
+.close-btn:hover {
+    color: #00ffcc; /* Couleur hover dynamique */
+    transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+    .notification-box {
+        top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+        right: 5px; /* Réduit l'espacement sur les petits écrans */
+        padding: 12px 18px;
+        width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+    }
+
+    .close-btn {
+        font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-box {
+        top: 5%; /* Réduit encore la distance du haut */
+        right: 5px; /* Garde une marge minimale à droite */
+        padding: 8px 15px;
+        width: 90%; /* Largeur ajustée pour les petits écrans */
+    }
+
+    .notification-box i {
+        font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+    }
+
+    .notification-box .message {
+        font-size: 1rem; /* Réduit encore la taille du texte */
+    }
+
+    .close-btn {
+        font-size: 1rem; /* Petite taille du bouton de fermeture */
+    }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+    100% {
+        text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+    }
+}
+
+/* Styles des notifications */
+.notification.show {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateY(-50%) translateX(100%);
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.list-group-item {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.list-group-item span {
+    font-size: 16px;
+    color: #333;
+}
+.badge {
+    font-size: 14px;
+    padding: 5px 10px;
+}
+.badge-primary {
+    background-color: #FFCC80; /* Orange foncé */
+}
+.text-success {
+    color: #28a745 !important;
+}
+@media (max-width: 767px) {
+    .product-image {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+.custom-btn-success {
+    background-color: #ff7f00; /* Orange foncé */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s;
+}
+
+.custom-btn-success:hover {
+    background-color: #e67000; /* Orange plus foncé */
+    transform: scale(1.05);
+}
+
+.custom-btn-success:active {
+    transform: scale(0.95);
+}
+
+.custom-btn-success i {
+    font-size: 18px;
+}
+
+.close-sidebar-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 7;
+    padding: 10px;
+}
+
+.close-sidebar-btn:hover {
+    color: #FF8C00;
+    transform: scale(1.1);
+}
+
+.empty-state {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.empty-state:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.empty-state i {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,140,0,0.4);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 15px;
+    }
+    .stat-value {
+        font-size: 1.2rem !important;
+    }
+}
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-sidebar-btn" onclick="closeSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <div class="container">
+        <h1 class="text-center text-primary">Suivi de l'évolution des ventes</h1>
+
+        <!-- Formulaire pour filtrer par date -->
+        <form method="GET" class="mb-5 filter-form">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- Groupe pour les jours d'un mois -->
+                    <div class="col-12 col-md-6">
+                        <div class="filter-card p-4" style="
+                            border: 2px solid #FF8C00;
+                            border-radius: 15px;
+                            background-color: #fff;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <h5 class="mb-3">
+                                <i class="fas fa-calendar-alt text-warning me-2"></i>
+                                Filtrer par intervalle
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6">
+                                    <label for="debut_jour" class="form-label">Date de début:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-calendar"></i>
+                                        </span>
+                                        <input type="date" 
+                                               name="debut_jour" 
+                                               id="debut_jour" 
+                                               class="form-control" 
+                                               value="{{ intervalle_jours_debut }}"
+                                               style="border-color: #FF8C00;">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="fin_jour" class="form-label">Date de fin:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-calendar"></i>
+                                        </span>
+                                        <input type="date" 
+                                               name="fin_jour" 
+                                               id="fin_jour" 
+                                               class="form-control" 
+                                               value="{{ intervalle_jours_fin }}"
+                                               style="border-color: #FF8C00;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groupe pour filtrage par un jour spécifique -->
+                    <div class="col-12 col-md-6">
+                        <div class="filter-card p-4" style="
+                            border: 2px solid #FF8C00;
+                            border-radius: 15px;
+                            background-color: #fff;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <h5 class="mb-3">
+                                <i class="fas fa-calendar-day text-warning me-2"></i>
+                                Jour spécifique
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="jour_unique" class="form-label">Sélectionner une date:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-calendar"></i>
+                                        </span>
+                                        <input type="date" 
+                                               name="jour_unique" 
+                                               id="jour_unique" 
+                                               class="form-control" 
+                                               value="{{ jour_unique }}"
+                                               style="border-color: #FF8C00;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bouton de filtrage -->
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <i class="fas fa-filter me-2"></i>
+                            Filtrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+     <!-- Statistiques des ventes -->
+<div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+        <div class="stat-card" style="
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            text-align: center;
+            height: 100%;">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-hand-holding-usd fa-2x" style="color: #28a745;"></i>
+            </div>
+            <h5 class="stat-title mb-2">Total Revenu</h5>
+            <p class="stat-value mb-0" style="font-size: 1.5rem; font-weight: bold; color: #28a745;">
+                {{ total_revenu|default:"0" }} GNF
+            </p>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="stat-card" style="
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            text-align: center;
+            height: 100%;">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-shopping-cart fa-2x" style="color: #dc3545;"></i>
+            </div>
+            <h5 class="stat-title mb-2">Total Coût</h5>
+            <p class="stat-value mb-0" style="font-size: 1.5rem; font-weight: bold; color: #dc3545;">
+                {{ total_cout|default:"0" }} GNF
+            </p>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="stat-card" style="
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            text-align: center;
+            height: 100%;">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-chart-line fa-2x" style="color: #0d6efd;"></i>
+            </div>
+            <h5 class="stat-title mb-2">Profit Total</h5>
+            <p class="stat-value mb-0" style="font-size: 1.5rem; font-weight: bold; color: #0d6efd;">
+                {{ total_profit|default:"0" }} GNF
+            </p>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="stat-card" style="
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            text-align: center;
+            height: 100%;">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-percentage fa-2x" style="color: #6f42c1;"></i>
+            </div>
+            <h5 class="stat-title mb-2">Pourcentage Profit</h5>
+            <p class="stat-value mb-0" style="font-size: 1.5rem; font-weight: bold; color: #6f42c1;">
+                {{ pourcentage_profit|default:"0" }}%
+            </p>
+        </div>
+    </div>
+</div>
+
+  <!-- Affichage des Top Produits et Produits Recommandés -->
+<div class="row mb-5">
+    <div class="col-md-6">
+        <h4 class="text-center text-success"><i class="fas fa-trophy"></i> Top Produits</h4>
+        <ul class="list-group">
+            {% if top_produits %}
+                {% for produit in top_produits %}
+                <li class="list-group-item d-flex align-items-center">
+                    <img src="{{ produit.image_url }}" alt="{{ produit.nom_produit }}" class="product-image">
+                    <span class="ml-3">{{ produit.nom_produit }}</span>
+                    <span class="badge badge-primary float-right ml-3">{{ produit.total_vendu }} unités</span>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item text-center">Aucun produit à afficher <i class="fas fa-frown"></i></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+      <h4 class="text-center text-warning"><i class="fas fa-star"></i> Produits Recommandés</h4>
+      <ul class="list-group">
+          {% if produits_recommandes %}
+              {% for produit in produits_recommandes %}
+              <li class="list-group-item d-flex align-items-center">
+                  <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="product-image">
+                  <span class="ml-3">{{ produit.nom }}</span>
+                  {% if produit.quantite_stock <= 5 %}
+                      <span class="ml-2 text-danger">
+                          <i class="fas fa-exclamation-triangle" title="Stock faible"></i>
+                          <strong>{{ produit.quantite_stock }} en stock</strong>
+                      </span>
+                  {% endif %}
+              </li>
+              {% endfor %}
+          {% else %}
+              <div class="empty-state p-5 text-center" style="
+                  border: 3px dashed #FF8C00;
+                  border-radius: 20px;
+                  margin: 20px;
+                  background-color: rgba(255, 140, 0, 0.05);">
+                  <i class="fas fa-box-open fa-4x mb-4" style="color: #FF8C00; filter: drop-shadow(0 0 10px rgba(255,140,0,0.5));"></i>
+                  <h3 class="text-dark mb-3" style="font-family: 'Orbitron', sans-serif;">{{ empty_products_title|default:"Aucun produit disponible" }}</h3>
+                  <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                      {{ empty_products_message }}
+                  </p>
+              </div>
+          {% endif %}
+      </ul>
+  
+      <!-- Bouton commun pour gérer tous les stocks faibles -->
+      {% if produits_recommandes %}
+          <div class="text-center mt-3">
+              <a href="{% url 'update_quantite' %}" class="btn btn-warning">
+                  <i class="fas fa-cogs"></i> Gérer les Stocks Faibles
+              </a>
+          </div>
+      {% endif %}
+  </div>
+  
+  
+</div>
+
+
+       <!-- Formulaire pour mettre à jour les ventes -->
+<form method="POST">
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead class="bg-light">
+                <tr>
+                    <th class="p-2" style="min-width: 150px;">Nom du Produit</th>
+                    <th class="p-2" style="min-width: 100px;">Image</th>
+                    <th class="p-2" style="min-width: 120px;">Prix d'achat</th>
+                    <th class="p-2" style="min-width: 120px;">Prix de vente</th>
+                    <th class="p-2" style="min-width: 120px;">Quantité vendue</th>
+                    <th class="p-2 text-center" style="min-width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vente in ventes %}
+                <tr>
+                    <td class="p-2">{{ vente.nom_produit }}</td>
+                    <td class="p-2">
+                        <img src="{{ vente.image_produit.url }}" alt="{{ vente.nom_produit }}" width="80" class="img-fluid rounded">
+                    </td>
+                    <td class="p-2">
+                        <input type="text" name="prix_achat_{{ vente.id }}" value="{{ vente.prix_achat }}" class="form-control form-control-sm">
+                    </td>
+                    <td class="p-2">
+                        <input type="text" name="prix_vente_{{ vente.id }}" value="{{ vente.prix_vente }}" class="form-control form-control-sm">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" name="quantite_vendue_{{ vente.id }}" value="{{ vente.quantite_vendue }}" class="form-control form-control-sm">
+                    </td>
+                    <td class="p-2 text-center">
+                        <button type="submit" name="action_{{ vente.id }}" value="supprimer" class="btn custom-btn-danger">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </button>
+                    </td>
+                    
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center p-5">
+                      <div class="empty-state" style="
+                          border: 3px dashed #FF8C00;
+                          border-radius: 20px;
+                          padding: 40px;
+                          background-color: rgba(255, 140, 0, 0.05);">
+                          <i class="fas fa-store-alt fa-4x mb-4" style="color: #FF8C00; filter: drop-shadow(0 0 10px rgba(255,140,0,0.5));"></i>
+                          <h3 class="text-dark mb-3" style="font-family: 'Orbitron', sans-serif;">{{ empty_sales_title|default:"Aucune vente" }}</h3>
+                          <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                              {{ empty_sales_message }}
+                          </p>
+                      </div>
+                  </td>
+              </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">
+        <i class="fas fa-save"></i> Enregistrer
+    </button>
+</form>
+
+    </div>
+</div>
+<!-- Script JavaScript -->
+     <!-- Lien vers le script Bootstrap pour rendre les icônes interactives -->
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+            // Fonction pour ouvrir et fermer le sidebar
+const menuBtn = document.querySelector('.menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const body = document.querySelector('body');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    if (sidebar.classList.contains('active')) {
+        body.classList.add('no-scroll');
+    } else {
+        body.classList.remove('no-scroll');
+    }
+}
+
+function closeSidebar() {
+    sidebar.classList.remove('active');
+    body.classList.remove('no-scroll');
+}
+
+// Fermer le sidebar en cliquant en dehors
+document.addEventListener('click', function(event) {
+    const isClickInsideSidebar = sidebar.contains(event.target);
+    const isClickOnMenuBtn = menuBtn.contains(event.target);
+    
+    if (!isClickInsideSidebar && !isClickOnMenuBtn && sidebar.classList.contains('active')) {
+        closeSidebar();
+    }
+});
+
+// Fonction pour afficher/masquer la description flottante
+// Fonction pour afficher ou masquer la description
+function toggleDescription(imageId) {
+  var descElement = document.getElementById('desc' + imageId);
+  var buttonElement = document.getElementById('toggleDesc' + imageId);
+  
+  if (descElement.style.display === "none") {
+      descElement.style.display = "block";
+      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
+  } else {
+      descElement.style.display = "none";
+      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
+  }
+}
+             // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 10000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 10000); // La notification disparaît après 5 secondes
+
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

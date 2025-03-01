@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page introuvable - WarabaGuinée</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            padding: 10px;
+        }
+        .robot-container {
+            width: 80%;
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+            animation: float 3s infinite ease-in-out;
+            position: relative;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .btn-orange {
+            background: linear-gradient(135deg, #ff6600, #ff3300);
+            color: white;
+            border-radius: 25px;
+            padding: 12px 24px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            transition: background 0.3s;
+            max-width: 250px;
+        }
+        .btn-orange:hover {
+            background: linear-gradient(135deg, #cc5200, #ff3300);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        p {
+            font-size: 1.2rem;
+        }
+        .thought-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffffff;
+            color: #000;
+            border-radius: 50px;
+            padding: 10px;
+            font-size: 1rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .btn-orange {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .robot-container {
+                width: 70%;
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            .btn-orange {
+                font-size: 16px;
+                padding: 8px 18px;
+            }
+            p {
+                font-size: 0.9rem;
+            }
+            .robot-container {
+                width: 60%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SVG du Robot Guépard futuriste avec des signes de réflexion -->
+    <div class="robot-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
+            <!-- Corps du robot guépard avec reflet -->
+            <ellipse cx="50" cy="70" rx="40" ry="20" fill="url(#grad1)" stroke="black" stroke-width="2"/>
+            <ellipse cx="50" cy="70" rx="38" ry="18" fill="rgba(255, 255, 255, 0.3)" stroke="none"/>
+            <!-- Tête du robot guépard avec reflet -->
+            <circle cx="50" cy="30" r="18" fill="url(#grad1)" stroke="black" stroke-width="2"/>
+            <circle cx="50" cy="30" r="16" fill="rgba(255, 255, 255, 0.2)" stroke="none"/>
+            <!-- Yeux du robot guépard -->
+            <circle cx="43" cy="25" r="3" fill="white"/>
+            <circle cx="57" cy="25" r="3" fill="white"/>
+            <!-- Oreilles du robot guépard -->
+            <polygon points="40,20 35,10 45,15" fill="url(#grad1)" stroke="black" stroke-width="2"/>
+            <polygon points="60,20 65,10 55,15" fill="url(#grad1)" stroke="black" stroke-width="2"/>
+            <!-- Motifs de guépard (taches noires) -->
+            <circle cx="45" cy="50" r="2" fill="black"/>
+            <circle cx="55" cy="50" r="2" fill="black"/>
+            <circle cx="43" cy="60" r="2" fill="black"/>
+            <circle cx="57" cy="60" r="2" fill="black"/>
+            <circle cx="48" cy="58" r="2" fill="black"/>
+            <circle cx="52" cy="58" r="2" fill="black"/>
+            <!-- Bras du robot guépard -->
+            <line x1="30" y1="70" x2="20" y2="85" stroke="black" stroke-width="3"/>
+            <line x1="70" y1="70" x2="80" y2="85" stroke="black" stroke-width="3"/>
+            <!-- Jambes du robot guépard -->
+            <line x1="40" y1="85" x2="40" y2="95" stroke="black" stroke-width="3"/>
+            <line x1="60" y1="85" x2="60" y2="95" stroke="black" stroke-width="3"/>
+            <!-- Queue du robot guépard -->
+            <path d="M50 90 Q70 100, 50 110" stroke="url(#grad1)" stroke-width="3" fill="transparent"/>
+            <!-- Dégradé couleur -->
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ff6600;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ff3300;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Bulle de pensée affichée -->
+        <div class="thought-bubble">Hmm... où est passée la page ?</div>
+    </div>
+
+    <h1>Oups! Page introuvable</h1>
+    <p class="lead">Le waraba robot cherche la page... mais elle semble avoir disparu.</p>
+
+    <a href="{% url 'accueil' %}" class="btn btn-orange mt-3">
+        <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+    </a>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

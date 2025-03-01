@@ -1,0 +1,37 @@
+<section class="b-contenaire">
+    <h1 class="responsive-title">
+        <a href="#" class="boutique-link">
+            <i class="fas fa-store" id="boutique-icon"></i> Nos Boutiques
+        </a>
+    </h1>
+    
+    <div class="boutiques">
+        {% for boutique in boutiques %}
+        <div class="boutique">
+            <!-- Affichage du logo de la boutique -->
+            {% if boutique.logo %}
+            <img src="{{ boutique.logo }}" alt="Logo de la boutique">
+            {% else %}
+            <img src="path/to/default/logo.png" alt="Logo par défaut"> <!-- Remplace par un logo par défaut -->
+            {% endif %}
+            
+            <div class="boutique-info">
+                <!-- Affichage de la description de la boutique -->
+                <h3>{{ boutique.nom_boutique }}</h3>
+                <p>{{ boutique.description }}</p>
+                
+                <!-- Affichage du type de boutique si disponible -->
+                {% if boutique.type_boutique %}
+                    <p><strong>Type de boutique :</strong> {{ boutique.type_boutique }}</p>
+                {% endif %}
+                
+                <!-- Lien vers la page de la boutique -->
+                <a href="{{ boutique.page_html_path }}" class="boutique-link">Voir la boutique</a>
+            </div>
+        </div>
+        {% empty %}
+            <p>Aucune boutique trouvée.</p>
+        {% endfor %}
+    </div>
+    
+</section>

@@ -1,0 +1,58 @@
+from .views import (
+    # Vues de gestion des utilisateurs
+    InscriptionUtilisateurView,
+    InscriptionClientView,
+    login,
+    logout_view,
+    activate,
+
+    # Vues de gestion des produits et du panier
+    gestion_produits,
+    gestion_slider,
+    gestion_localisation,
+    afficher_produits_panier,
+    afficher_session_id,
+    detail_produits,
+    afficher_produit,
+    boutique_contenu,
+    rechercher_produits,
+   ajouter_produit_au_panier,
+   ajouter_variante_au_panier,
+    reinitialiser_panier,
+    obtenir_panier,
+    obtenir_panier_table,
+    retirer_produit_du_panier,
+    retirer_variante_du_panier,
+    envoyer_commande,
+    rechercher_produits,
+    commandes_utilisateur,
+    produits_sans_variante,
+    rechercher_boutiques_ajax,
+    statut_validation_compte,
+    update_utilisateur_status,
+     statistiques_commandes,
+     vente_list,
+     mise_a_jour_quantite,
+     custom_404,
+
+    # Vues liées à la gestion du site
+    home,
+    site,
+    parametres,
+    informations_supplementaires_view,
+    poster_commentaire,
+    gestion_boutique,
+    get_total_panier,
+    home, boutique_contenu,
+    get_boutique_html_path,
+    demander_reinitialisation,
+    renitialisation_mail,
+    reset_password,
+    password_reset_complete,
+    # Vues liées aux tableaux
+    table,
+    table_petite,
+    table_croissance,
+)
+
+

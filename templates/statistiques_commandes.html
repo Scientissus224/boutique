@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - WarabaGuinée</title>
+    {% load static %}
+    {% load widget_tweaks %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+         <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        *{
+          padding: 0; margin: 0;
+          font-family:'Poppins', sans-serif;
+          box-sizing: border-box;
+          transition: all.2 linear;
+          text-decoration: none;
+          list-style-type: none;border:none;
+      }
+      html{
+          font-size: 80.5%;
+          scroll-padding-top: 7em;
+          scroll-behavior: smooth;
+      }
+      body {
+          font-family: 'Orbitron', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #0b0c0e;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+      .top-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 20px;
+          background-color: #333;
+          position: fixed;
+          width: 100%;
+          top: 0;
+          z-index: 100;
+      }
+      .top-bar h1 {
+          flex: 1;
+          text-align: center;
+          font-size: 24px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color:#fff;
+      }
+      @media screen and (max-width: 767px) {
+          .top-bar h1 {
+              font-size: 18px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .top-bar{
+               margin-bottom:100px;
+          }
+          .menu-btn {
+              font-size:15px;
+              margin-right: 10px;
+          }
+      }
+     /* Style du sidebar */
+/* Style du sidebar */
+.sidebar {
+width: 250px;
+height: 100%;
+position: fixed;
+left: -250px;
+top: 0;
+background-color: #333;
+padding-top: 80px;
+overflow-y: auto; /* Permet de scroller si nécessaire */
+transition: left 0.3s ease;
+z-index: 1000;
+border-right: 2px solid #000;
+box-sizing: border-box; /* Gestion correcte du padding */
+}
+
+.sidebar.active {
+left: 0;
+}
+
+.sidebar a {
+display: block;
+padding: 15px 20px;
+color: #fff;
+text-decoration: none;
+font-size: 16px;
+text-transform: uppercase;
+transition: background 0.3s;
+font-weight: 600;
+min-height: 50px;
+}
+
+.sidebar a:hover {
+background-color: #FF8C00;
+
+}
+
+.sidebar hr {
+text-align: center;
+color: white;
+margin-top: 10px;
+font-size: 20px;
+}
+
+.sidebar h2 {
+text-align: center;
+margin-top: 10px;
+font-size: 20px;
+color: white;
+}
+
+.logo-container {
+text-align: center;
+padding: 15px;
+margin-top: -80px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #FF8C00;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Modification du style pour le bouton de fermeture */
+.close-sidebar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 0.2s ease;
+    padding: 5px;
+    display: none; /* Cache par défaut le bouton sur grands écrans */
+}
+
+/* Affiche le bouton uniquement sur les petits écrans */
+@media screen and (max-width: 767px) {
+    .close-sidebar {
+        display: block; /* Affiche le bouton sur mobile */
+    }
+}
+
+/* Style du contenu principal */
+.content {
+  margin-left: 0;
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+  margin-top: 60px;
+  transition: margin-left 0.3s ease;
+  overflow-x: hidden;
+  width: calc(100% - 250px); /* Ajusté pour tenir compte de la largeur du sidebar */
+  float: right; /* Ajouté pour permettre au contenu de flotter à droite du sidebar */
+}
+
+/* Responsiveness pour les petits écrans (moins de 767px) */
+@media screen and (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+    padding-top: 60px;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .content {
+    margin: 60px 0 0 0;
+    padding: 15px;
+    width: 100%;
+  }
+
+  .card {
+    width:100%;
+    height:350px;
+  }
+
+  /* Lorsque le sidebar est actif, désactiver le défilement du body */
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  /* Ajustement des graphiques pour les petits écrans */
+  #commandesChart, #evolutionChart {
+    height: 300px !important;
+    margin-bottom: 20px;
+  }
+
+  /* Ajustement des stat-box pour les petits écrans */
+  .stat-box {
+    margin-bottom: 15px;
+  }
+
+  .row {
+    margin: 0;
+  }
+}
+
+/* Pour les écrans plus grands (à partir de 768px) */
+@media screen and (min-width: 768px) {
+  .sidebar {
+    left: 0;
+    height: 100vh;
+    position: fixed;
+    overflow-y: auto;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .content {
+    margin-left: 250px; /* Correspond à la largeur du sidebar */
+    width: calc(100% - 250px);
+  }
+}
+/* Boutons futuristes */
+.futuristic-btn {
+  background: linear-gradient(135deg, #00aaff, #4e00ff);
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.futuristic-btn:hover {
+  background: linear-gradient(135deg, #4e00ff, #00aaff);
+}
+
+
+
+/* Structure des cartes */
+.card-body {
+  text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+  font-weight: bold;
+  color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour la grille */
+@media (max-width: 767px) {
+  .card-body {
+    padding: 0; /* Élimine le padding inutile sur mobile */
+  }
+
+  .card {
+    margin-bottom: 20px; /* Ajoute un espacement entre les cartes */
+  }
+
+  /* Optimisation pour les images */
+  .slider-images img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ajustement de l'image pour une présentation fluide sur Android */
+  .futuristic-card-item {
+    width: 100%; /* Les cartes occupent toute la largeur sur mobile */
+  }
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style de l'icône de robot */
+.fas.fa-robot {
+  color: #00aaff; /* Couleur futuriste */
+  opacity: 0.7;
+}
+
+/* Overlay Description */
+.description-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* Fond sombre avec transparence */
+  color: white; /* Texte blanc */
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1; /* La description est maintenant toujours visible */
+  transition: opacity 0.3s ease;
+  z-index: 10; /* Assure que le texte est toujours au-dessus de l'image */
+}
+
+/* Texte de la description avec meilleure visibilité */
+.description-content p {
+  color: white; /* Texte blanc pour une meilleure lisibilité */
+  font-size: 1rem; /* Taille de police optimisée */
+  line-height: 1.5; /* Améliore l'espacement des lignes pour le confort de lecture */
+  margin: 0;
+}
+
+/* Bouton pour afficher/fermer la description */
+#toggleDesc{{ image.id }} {
+  background-color: #4e00ff; /* Un bleu plus distinct pour le bouton */
+  color: white; /* Texte blanc pour le bouton */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#toggleDesc{{ image.id }}:hover {
+  background-color: #00aaff; /* Changer la couleur du bouton au survol */
+}
+
+/* Structure des cartes */
+.card-body {
+  text-align: center; /* Centre le texte et les éléments dans la carte */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Ajuste la taille du titre pour une meilleure lisibilité */
+  font-weight: bold;
+  color: #fff; /* Titres lumineux pour plus de visibilité */
+}
+
+/* Responsive pour 4 images par ligne */
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%; /* 4 images par ligne sur tablette et plus */
+  }
+}
+
+/* Responsive tablette et grand écran */
+@media (min-width: 1200px) {
+  .col-lg-3 {
+    width: 25%; /* 4 images par ligne sur grand écran */
+  }
+}
+
+/* Style général de la notification */
+.notification-box {
+  position: fixed;
+  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
+  color: #fff;
+  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
+  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+}
+
+/* Pointe de la boîte */
+.notification-box:after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+  z-index: 9999;
+}
+
+/* Icône futuriste de robot */
+.notification-box i {
+  font-size: 2.5rem; /* Taille plus grande pour l'icône */
+  margin-right: 20px;
+  color: #00ffcc; /* Couleur cybernétique verte */
+  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+}
+
+/* Message */
+.notification-box .message {
+  font-size: 1.2rem; /* Agrandit la taille du texte */
+  flex-grow: 1;
+  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
+  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
+  color: #fff; /* Assure que le texte est bien visible */
+}
+
+/* Bouton de fermeture */
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #00ffcc; /* Couleur hover dynamique */
+  transform: scale(1.2);
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .notification-box {
+    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
+    right: 5px; /* Réduit l'espacement sur les petits écrans */
+    padding: 12px 18px;
+    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  }
+
+  .close-btn {
+    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-box {
+    top: 5%; /* Réduit encore la distance du haut */
+    right: 5px; /* Garde une marge minimale à droite */
+    padding: 8px 15px;
+    width: 90%; /* Largeur ajustée pour les petits écrans */
+  }
+
+  .notification-box i {
+    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  }
+
+  .notification-box .message {
+    font-size: 1rem; /* Réduit encore la taille du texte */
+  }
+
+  .close-btn {
+    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  }
+}
+
+/* Animation de lueur pour l'icône */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  }
+  100% {
+    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  }
+}
+
+/* Styles des notifications */
+.notification.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateY(-50%) translateX(100%);
+}
+
+/* Style des cartes statistiques inspiré de Shopify */
+.stat-box {
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e5e5;
+  text-align: left;
+  margin-bottom: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-box .icon-large {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  color: #008060; /* Couleur principale Shopify */
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+.stat-box h3 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #212b36;
+  margin-bottom: 8px;
+}
+
+.stat-box p {
+  font-size: 14px;
+  color: #637381;
+  margin-bottom: 4px;
+}
+
+/* Style des graphiques façon Shopify */
+.chart-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e5e5;
+    padding: 24px;
+    margin-bottom: 24px;
+    height: 400px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: #008060;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #212b36;
+    margin-bottom: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+canvas {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: calc(100% - 50px) !important;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+/* Responsive design amélioré */
+@media screen and (max-width: 1200px) {
+    .chart-container {
+        height: 350px;
+        padding: 20px;
+    }
+    
+    .chart-title {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .chart-container {
+        height: 320px;
+        margin-bottom: 20px;
+    }
+    
+    .col-md-6 {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .chart-container {
+        height: 300px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .chart-title {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+    
+    canvas {
+        top: 40px;
+        height: calc(100% - 40px) !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .chart-container {
+        height: 250px;
+        padding: 12px;
+    }
+    
+    .chart-title {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+    
+    canvas {
+        top: 35px;
+        height: calc(100% - 35px) !important;
+    }
+}
+
+/* Couleurs Shopify pour les graphiques */
+:root {
+  --shopify-green: #008060;
+  --shopify-red: #de3618;
+  --shopify-yellow: #ffc453;
+  --shopify-blue: #006fbb;
+}
+
+/* Ajustements pour le conteneur principal */
+.container {
+  max-width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+/* Ajustements pour les graphiques */
+.row {
+  margin: 0;
+  width: 100%;
+}
+
+/* Ajustements responsive supplémentaires */
+@media screen and (max-width: 1200px) {
+  .content {
+    padding: 15px;
+  }
+  
+  .chart-container {
+    height: 350px; /* Hauteur ajustée pour les écrans plus petits */
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .content {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .chart-container {
+    height: 300px; /* Hauteur ajustée pour mobile */
+  }
+}
+
+/* Style des conteneurs de graphiques */
+.chart-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e5e5;
+    padding: 24px;
+    margin-bottom: 24px;
+    height: 400px; /* Hauteur fixe ajoutée */
+    position: relative; /* Ajouté */
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #212b36;
+    margin-bottom: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Ajustements responsives pour les graphiques */
+@media screen and (max-width: 767px) {
+    .chart-container {
+        margin-bottom: 20px;
+        padding: 16px;
+    }
+    
+    .chart-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+    
+    canvas {
+        height: 250px !important;
+    }
+}
+    </style>
+</head>
+<body>
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+  {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
+                  <!-- Icône futuriste de robot -->
+                  <i class="fas fa-robot"></i>
+                  <div class="message">
+                      {{ message }}
+                  </div>
+                  <button class="close-btn" onclick="closeNotification(this)">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+    <div class="top-bar">
+        <button class="menu-btn">☰</button>
+        <h1>Tableau de Bord - WarabaGuinée</h1>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-sidebar">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="logo-container">
+            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <h2>WarabaGuinée</h2>
+        <hr>    
+    <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
+    <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
+    <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
+    <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+    <a href=""><i class="fas fa-map"></i> Lieux</a>
+    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
+    <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
+    <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
+    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
+    <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
+    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
+    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
+    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
+    <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
+    <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
+    <a href=""><i class="fas fa-bell"></i> Notifications</a>
+    <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
+    <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
+    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
+    <a href=""></a>
+    </div>
+    
+    <div class="content">
+      <div class="container">
+        <h1 class="text-center text-primary">Statistiques des Commandes</h1>
+        <div class="text-center mb-4">
+          <form method="get" action="{% url 'statistiques_commandes' %}" class="d-flex justify-content-center gap-2">
+              <div class="form-group">
+                  <label for="filter">Filtrer les commandes :</label>
+                  <select name="filter" id="filter" class="form-select w-auto">
+                      <option value="all" {% if request.GET.filter == 'all' %}selected{% endif %}>Toutes</option>
+                      <option value="week" {% if request.GET.filter == 'week' %}selected{% endif %}>Cette semaine</option>
+                      <option value="month" {% if request.GET.filter == 'month' %}selected{% endif %}>Ce mois</option>
+                      <option value="day" {% if request.GET.filter == 'day' %}selected{% endif %}>Aujourd'hui</option>
+                      <option value="date" {% if request.GET.filter == 'date' %}selected{% endif %}>Jour spécifique</option>
+                      <option value="custom" {% if request.GET.filter == 'custom' %}selected{% endif %}>Intervalle personnalisé</option>
+                  </select>
+      
+                  <!-- Si le filtre 'date' est sélectionné, afficher un calendrier -->
+                  {% if request.GET.filter == 'date' %}
+                      <input type="date" name="selected_date" class="form-control w-auto mt-2" value="{{ selected_date }}">
+                  {% endif %}
+      
+                  {% if request.GET.filter == 'custom' %}
+                      <div class="d-flex gap-2 mt-2">
+                          <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                          <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                      </div>
+                  {% endif %}
+      
+                  <button type="submit" class="btn btn-primary btn-sm mt-2">
+                      <i class="fas fa-filter"></i> Appliquer le filtre
+                  </button>
+              </div>
+          </form>
+      </div>
+      
+    </div>
+    
+          
+  
+          <div class="row text-center g-3">
+              <div class="col-6 col-md-3">
+                  <div class="stat-box">
+                      <i class="fas fa-check-circle icon-large text-success"></i>
+                      <h3>{{ commandes_livrees }}</h3>
+                      <p>Livrées</p>
+                      <p>{{ pourcentage_livrees|floatformat:2 }}%</p>
+                  </div>
+              </div>
+              <div class="col-6 col-md-3">
+                  <div class="stat-box">
+                      <i class="fas fa-times-circle icon-large text-danger"></i>
+                      <h3>{{ commandes_annulees }}</h3>
+                      <p>Annulées</p>
+                      <p>{{ pourcentage_annulees|floatformat:2 }}%</p>
+                  </div>
+              </div>
+              <div class="col-6 col-md-3">
+                  <div class="stat-box">
+                      <i class="fas fa-hourglass-half icon-large text-warning"></i>
+                      <h3>{{ commandes_en_attente }}</h3>
+                      <p>En attente</p>
+                      <p>{{ pourcentage_en_attente|floatformat:2 }}%</p>
+                  </div>
+              </div>
+              <div class="col-6 col-md-3">
+                  <div class="stat-box">
+                      <i class="fas fa-cogs icon-large text-info"></i>
+                      <h3>{{ commandes_en_cours }}</h3>
+                      <p>En cours</p>
+                      <p>{{ pourcentage_en_cours|floatformat:2 }}%</p>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="text-center mt-4">
+              <h3>Total des commandes : {{ total_commandes }}</h3>
+          </div>
+  
+          <div class="row mt-5">
+              <!-- Premier graphique -->
+              <div class="col-md-6">
+                  <div class="chart-container">
+                      <h2 class="chart-title">Répartition des Commandes</h2>
+                      <canvas id="commandesChart" height="300"></canvas>
+                  </div>
+              </div>
+              
+              <!-- Deuxième graphique -->
+              <div class="col-md-6">
+                  <div class="chart-container">
+                      <h2 class="chart-title">Évolution des Commandes</h2>
+                      <canvas id="evolutionChart" height="300"></canvas>
+                  </div>
+              </div>
+          </div>    
+     </div>
+  
+
+ <script>
+
+            // Fonction pour ouvrir et fermer le sidebar
+const menuBtn = document.querySelector('.menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const body = document.querySelector('body');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    
+    // Toggle de la classe no-scroll sur le body
+    if (sidebar.classList.contains('active')) {
+        body.classList.add('no-scroll');
+    } else {
+        body.classList.remove('no-scroll');
+    }
+}
+
+// Gestionnaire d'événements pour le bouton hamburger
+menuBtn.addEventListener('click', function(event) {
+    event.stopPropagation(); // Empêche la propagation de l'événement
+    toggleSidebar();
+});
+
+// Gestionnaire d'événements pour le bouton de fermeture
+document.querySelector('.close-sidebar').addEventListener('click', function(event) {
+    event.stopPropagation(); // Empêche la propagation de l'événement
+    toggleSidebar();
+});
+
+// Fermer le sidebar en cliquant en dehors
+document.addEventListener('click', function(event) {
+    if (sidebar.classList.contains('active') && 
+        !sidebar.contains(event.target) && 
+        event.target !== menuBtn) {
+        toggleSidebar();
+    }
+});
+
+// Fonction pour afficher/masquer la description flottante
+// Fonction pour afficher ou masquer la description
+function toggleDescription(imageId) {
+  var descElement = document.getElementById('desc' + imageId);
+  var buttonElement = document.getElementById('toggleDesc' + imageId);
+  
+  if (descElement.style.display === "none") {
+      descElement.style.display = "block";
+      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
+  } else {
+      descElement.style.display = "none";
+      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
+  }
+}
+             // Fonction pour fermer une notification
+function closeNotification(element) {
+    const notification = element.parentElement;
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+}
+
+// Fonction pour jouer le son de notification
+function playNotificationSound() {
+    var sound = document.getElementById('notification-sound');
+    sound.play();
+}
+
+// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
+document.addEventListener('DOMContentLoaded', function () {
+    const notifications = document.querySelectorAll('.notification.show');
+    notifications.forEach(notification => {
+        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+    });
+});
+
+// Fonction pour afficher une notification avec animation et son
+function showNotification(element) {
+    const notification = element;
+    notification.classList.add('show');
+    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    
+    // Ajouter un délai avant de masquer la notification
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    }, 10000); // La notification disparaît après 5 secondes
+}
+
+// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
+setTimeout(() => {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 300); // Suppression après transition
+    });
+}, 10000); // La notification disparaît après 5 secondes
+
+
+// Initialisation des contextes des graphiques
+var ctx = document.getElementById('commandesChart').getContext('2d');
+var ctxEvolution = document.getElementById('evolutionChart').getContext('2d');
+
+// Configuration des graphiques style Shopify
+var commandesChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Livrées', 'Annulées', 'En attente', 'En cours'],
+        datasets: [{
+            label: 'Statut des commandes',
+            data: [{{ commandes_livrees }}, {{ commandes_annulees }}, {{ commandes_en_attente }}, {{ commandes_en_cours }}],
+            backgroundColor: [
+                'rgba(0, 128, 96, 0.8)',  // Vert Shopify
+                'rgba(222, 54, 24, 0.8)',  // Rouge Shopify
+                'rgba(255, 196, 83, 0.8)', // Jaune Shopify
+                'rgba(0, 111, 187, 0.8)'   // Bleu Shopify
+            ],
+            borderColor: [
+                'rgba(0, 128, 96, 1)',
+                'rgba(222, 54, 24, 1)',
+                'rgba(255, 196, 83, 1)',
+                'rgba(0, 111, 187, 1)'
+            ],
+            borderWidth: 0,
+            borderRadius: 4,
+            barThickness: 20,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(33, 43, 54, 0.95)',
+                titleFont: {
+                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    size: 14,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    size: 13
+                },
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: true,
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += context.parsed.y + ' commandes';
+                        return label;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#e5e5e5',
+                    drawBorder: false
+                },
+                ticks: {
+                    font: {
+                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        size: 12
+                    },
+                    color: '#637381'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    font: {
+                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        size: 12
+                    },
+                    color: '#637381'
+                }
+            }
+        }
+    }
+});
+
+// Mise à jour du graphique d'évolution style Shopify
+var evolutionChart = new Chart(ctxEvolution, {
+    type: 'line',
+    data: {
+        labels: {{ months|safe }},
+        datasets: [{
+            label: 'Livrées',
+            data: {{ evolution_livrees|safe }},
+            borderColor: 'rgba(0, 128, 96, 1)',
+            backgroundColor: 'rgba(0, 128, 96, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: 'rgba(0, 128, 96, 1)',
+            pointBorderWidth: 2
+        }, {
+            label: 'Annulées',
+            data: {{ evolution_annulees|safe }},
+            borderColor: 'rgba(222, 54, 24, 1)',
+            backgroundColor: 'rgba(222, 54, 24, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: 'rgba(222, 54, 24, 1)',
+            pointBorderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                align: 'start',
+                labels: {
+                    boxWidth: 12,
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 20,
+                    font: {
+                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(33, 43, 54, 0.95)',
+                titleFont: {
+                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    size: 14,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    size: 13
+                },
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: true,
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += context.parsed.y + ' commandes';
+                        return label;
+                    }
+                }
+            }
+        },
+        hover: {
+            mode: 'index',
+            intersect: false
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#e5e5e5',
+                    drawBorder: false
+                },
+                ticks: {
+                    font: {
+                        size: 12
+                    },
+                    color: '#637381'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    font: {
+                        size: 12
+                    },
+                    color: '#637381'
+                }
+            }
+        }
+    }
+});
+
+  </script>
+
+  <!-- Bootstrap JS (facultatif pour certaines interactions) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

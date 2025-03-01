@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande - Confirmation</title>
+    {% load static %}
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            font-size: 24px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+        .client-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .client-info p {
+            margin: 5px 0;
+        }
+        .order-summary {
+            margin-top: 20px;
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .product-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+        .product-info h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .product-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .total-price {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #d4a017; /* Jaune foncé */
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .cta-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .product-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nouvelle commande reçue !</h1>
+
+        <p>Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
+
+        <div class="client-info">
+            <h2>Informations du client</h2>
+            <p><strong>Nom:</strong> {{ client_nom }}</p>
+            <p><strong>Numéro de commande:</strong> {{ client_numero }}</p>
+            <p><strong>Lieu de livraison:</strong> {{ lieu_de_livraison }}</p>  <!-- Ajout du lieu de livraison -->
+        </div>
+
+        <div class="order-summary">
+            <h2>Récapitulatif des produits commandés</h2>
+            {% for produit in produits_info %}
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>{{ produit.nom }}</h4>
+                        {% if produit.type == 'variante' %}
+                            <p><strong>Taille:</strong> {{ produit.taille }}</p>
+                            <p><strong>Couleur:</strong> {{ produit.couleur }}</p>
+                        {% endif %}
+                        <p><strong>Prix:</strong> <span style="color: #d4a017;">{{ produit.prix }} {{ devise }}</span></p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="total-price">
+            <p><strong>Total Commande:</strong> <span style="color: #d4a017;">{{ total_prix }} {{ devise }}</span></p>
+        </div>
+
+        <p>Pour gérer cette commande, connectez-vous à votre <a href="http://{{ domain }}{% url 'table' %}" class="cta-button">Tableau de bord</a>.</p>
+    </div>
+
+</body>
+</html>

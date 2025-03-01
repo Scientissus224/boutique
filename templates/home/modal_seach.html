@@ -1,0 +1,28 @@
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" style="position: fixed; top: 40px; left: 0; right: 0; margin-top: 0;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Recherchez vos boutiques</h5>
+                <!-- Icône de fermeture en orange foncé ❌ -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer">
+                    ❌
+                </button>
+            </div>
+            <hr> <!-- Ligne séparatrice en orange foncé -->
+            <div class="modal-body">
+                <!-- Barre de recherche dans le modal -->
+                <div class="d-flex flex-column align-items-center mb-4">
+                    <div class="position-relative w-100 w-md-75 mb-3">
+                        <input id="modal-search-input" class="form-control rounded-pill ps-5" type="search" placeholder="Rechercher une boutique ..." aria-label="Search" oninput="performModalSearch(event)">
+                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3" style="color: #d35400;"></i>
+                    </div>
+                </div>
+
+                <!-- Conteneur des résultats des boutiques -->
+                <div id="modal-boutique-container" class="boutique-section mt-3">
+                    <!-- Les résultats des boutiques apparaîtront ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

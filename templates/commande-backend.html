@@ -1,0 +1,149 @@
+<div class="container">
+    <h2 class="section-title">Détails de la commande</h2>
+
+    <!-- Informations du client -->
+    <div class="client-info">
+        <h3 class="section-title">Informations du client</h3>
+        <p><strong>Nom:</strong> <span class="client-name">{{ client_nom }}</span></p>
+        <p><strong>Numéro de commande:</strong> <span class="client-numero">{{ client_numero }}</span></p>
+        <p><strong>Lieu de livraison:</strong> <span class="delivery-address">{{ lieu_de_livraison }}</span></p>  <!-- Ajout du lieu de livraison -->
+    </div>
+
+    <!-- Récapitulatif des produits commandés -->
+    <div class="order-summary">
+        <h3 class="section-title">Produits commandés</h3>
+        
+        <!-- Conteneur défilable pour les produits -->
+        <div class="product-scroll-container">
+            <div class="product-grid">
+                {% for produit in produits_info %}
+                    <div class="product-item">
+                        <div class="product-info">
+                            <h4 class="product-name">{{ produit.nom }}</h4>
+                            
+                            <!-- Affichage de l'image du produit -->
+                            {% if produit.image %}
+                                <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="product-image">
+                            {% endif %}
+
+                            <!-- Détails du produit -->
+                            {% if produit.type == 'variante' %}
+                                <p><strong>Taille:</strong> {{ produit.taille }}</p>
+                                <p><strong>Couleur:</strong> {{ produit.couleur }}</p>
+                            {% endif %}
+                            <p><strong>Prix:</strong> <span class="product-price">{{ produit.prix }} {{ devise }}</span></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Total de la commande -->
+    <div class="order-total">
+        <h3 class="total-text">Total de la commande: <span class="total-price">{{ total_prix }} {{ devise }}</span></h3>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .section-title {
+        color: #1a3d6d; /* Bleu foncé */
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .client-info p {
+        font-size: 1rem;
+        color: #000;
+        margin: 5px 0;
+    }
+
+    /* Nouveau style pour le nom, numéro du client et lieu de livraison */
+    .client-name, .client-numero, .delivery-address {
+        color: #4caf50; /* Vert (ou une autre couleur de ton choix) */
+        font-size: 1.2rem; /* Augmentation de la taille de la police */
+        font-weight: bold;
+    }
+
+    /* Grid pour les produits */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        width: 100%;
+    }
+
+    .product-item {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-info {
+        font-size: 1rem;
+        color: #000;
+        text-align: center;
+    }
+
+    .product-name {
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 10px;
+    }
+
+    .product-image {
+        max-width: 100px;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        color: #d45716; /* Orange foncé pour le prix */
+        font-weight: bold;
+    }
+
+    .order-total {
+        margin-top: 30px;
+    }
+
+    .total-text {
+        font-size: 1.5rem;
+        color: #000;
+    }
+
+    .total-price {
+        color: #d45716; /* Orange foncé pour le total */
+        font-weight: bold;
+    }
+
+    /* Conteneur défilable pour les produits */
+    .product-scroll-container {
+        max-height: 500px; /* Hauteur maximale de la zone défilable */
+        overflow-y: auto;  /* Ajout de la barre de défilement verticale */
+        padding-right: 10px; /* Espace pour la barre de défilement */
+    }
+
+    /* Responsivité pour les petits écrans */
+    @media (max-width: 1200px) {
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
