@@ -1,346 +1,1681 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ produit.nom|default:"Produit Inconnu" }} - Commentaires</title>
+    <head>
+        <head>
+            <head>
+                <title>WarabaGuinée</title>
+                <link rel="icon" type="image/png" sizes="32x32" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="48x48" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="96x96" href="/sta nbhi j^$=ûiopà)^tic/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="192x192" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="512x512" href="/static/lo.jpeg">
+            </head>
+            
+        </head>
+        
+    </head>
     {% load static %}
-    
+   <!-- Meta Informations -->
+<meta name="csrf-token" content="{{ csrf_token }}"> <!-- Ajoute le token CSRF -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Fonts (Material Icons) -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap CSS (dernière version stable) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Bootstrap JS (dernière version stable) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FontAwesome Kit (remplacez YOUR_KIT_CODE par votre clé) -->
+<script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+
     <style>
-        /* Global Styles */
-        body {
+         /* Global navbar styles */
+         * {
             margin: 0;
             padding: 0;
-            background-color: #111;
-            color: #fff;
-            font-family: 'Helvetica', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100%;
-            overflow-y: auto;
-            transition: background-color 0.5s ease;
-        }
-
-        /* Container Management */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 20px;
-            padding: 20px;
-            overflow: hidden;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Product Section */
-        .product-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #222;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .product-image {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .product-details h1 {
-            color: #ff7043;
-            font-size: 2.5rem;
-            margin: 15px 0;
-        }
-
-        .product-details .price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ff7043;
-        }
-
-        /* Comment Section */
-        .comment-form {
-            width: 100%;
-            max-width: 1000px;
-            background-color: #222;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
             box-sizing: border-box;
         }
-
-        .comment-form textarea {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #444;
-            margin-bottom: 20px;
-            resize: none;
-            box-sizing: border-box;
-            font-size:18px;
+        
+    body {
+        font-family: 'Roboto', sans-serif;  /* Utilisation d'une police moderne et lisible */
+        background-color: #000;  /* Fond noir */
+        color: #fff;  /* Texte en blanc pour un bon contraste */
+        line-height: 1.6;  /* Espacement entre les lignes pour une meilleure lisibilité */
         }
 
-        .comment-form button {
-            width: 100%;
-            padding: 15px;
-            background-color: #ff7043;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        /* Stars in the Comments */
-        .stars {
-            font-size: 1.5rem;  /* Diminue la taille des étoiles */
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
 
-        .star {
-            cursor: pointer;
-            color: #bbb;
-            transition: color 0.3s ease;
-        }
-
-        .star.selected {
-            color: #f39c12;
-        }
-
-        /* Comment List */
-        .comment-list {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding-top: 30px;
-        }
-
-        .comment {
-            width: 100%;
-            background-color: #333;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .comment-header img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .comment-body {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #bbb;
-        }
-
-        .comment-footer {
-            font-size: 14px;
-            color: #888;
-            text-align: right;
-        }
-
-        .etoiles {
-            font-size: 1.5rem;
-            color: #f39c12;
-            margin-bottom: 10px;
-        }
-
-        /* Profil File Input */
-        .file-input-container {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-
-        .file-input-container input[type="file"] {
-            display: none;
-        }
-
-        .icon-upload {
-            font-size: 2rem;
-            color: #ff7043;
-        }
-
-        .file-input-label {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #444;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .file-input-label:hover {
-            background-color: #555;
-        }
-
-        /* Hide extra comments */
-        .extra-comments {
-            display: none;
-        }
-
-        .show-more-btn {
-            background-color: #ff7043;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .show-more-btn:hover {
-            background-color: #e64a19;
-        }
-
-        /* Media Queries for Responsiveness */
-        @media (max-width: 768px) {
-            .product-container {
-                width: 90%;
-                padding: 15px;
-            }
-
-            .product-image {
-                max-width: 100%;
-            }
-
-            .comment-form,
-            .comment-list {
-                width: 90%;
-            }
-
-            .comment-header img {
-                width: 40px;
-                height: 40px;
-            }
-
-            .etoiles {
-                font-size: 1.2rem;
-            }
-
-            .comment-body {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .product-container {
-                padding: 10px;
-            }
-
-            .product-details h1 {
-                font-size: 2rem;
-            }
-
-            .comment-form textarea {
-                height: 100px;
-            }
-
-            .comment-footer {
-                font-size: 12px;
-            }
-
-            .stars {
-                font-size: 1.2rem;
-            }
-        }
-  /* Boîte de notification */
-  .notification {
+/* Styles de la navbar */
+.navbar {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
-    color: #333; /* Texte en noir pour contraster avec le fond */
-    padding: 15px;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    flex-wrap: nowrap;
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+}
+
+.search-container {
+    flex: 0 1 400px;
+    margin: 0.5rem 2rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 5px 15px;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.search-container:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+}
+
+.search-bar {
+    background: transparent;
+    border: none;
+    padding: 8px 0;
+    color: white;
+    width: 100%;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+.nav-link i {
+    font-size: 20px; /* Taille augmentée pour un meilleur visuel */
+    margin-right: 8px;
+}
+.search-icon {
+    background: transparent;
+    border: none;
+    color: #FF6F00;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.search-icon:hover {
+    transform: scale(1.1);
+    color: #FFA726;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background: rgba(255, 111, 0, 0.15);
+    color: #FF6F00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 111, 0, 0.1);
+}
+
+.whatsapp-link {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    font-weight: 600;
+}
+
+.whatsapp-link:hover {
+    background: linear-gradient(135deg, #128C7E, #075E54);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.5rem;
+    color: #d35400;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 1rem;
+    }
+    
+    .nav-item {
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.98);
+        padding: 1rem;
+        gap: 0.5rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .hamburger {
+        display: block;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover .logo {
+    transform: scale(1.1) rotate(5deg);
+}
+
+@media (max-width: 480px) {
+    .logo {
+        width: 50px;
+        height: 50px;
+    }
+} 
+/* Style amélioré pour la barre de recherche */
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    margin-top: -20px;
+    background-color: transparent;
+    border-bottom: none;
+    flex-shrink: 0;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Style pour la barre de recherche principale (navbar) */
+.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid rgba(211, 84, 0, 0.3);
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+
+    /* Style moderne pour la barre de recherche */
+    .search-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 111, 0, 0.3);
+        border-radius: 25px;
+        padding: 12px 20px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #FF6F00;
+        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+    }
+
+    /* Style pour le modal */
+    .modal-content {
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 111, 0, 0.2);
+        border-radius: 25px;
+        color: white;
+    }
+
+    @keyframes modalOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Effet de parallaxe pour le header */
+    .header-section {
+        position: relative;
+        overflow: hidden;
+        padding: 150px 0;
+        background-attachment: fixed;
+        background-position: center;
+        background-size: cover;
+    }
+
+    /* Style pour les sections */
+    .section {
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 111, 0, 0.1), transparent);
+        z-index: -1;
+    }
+
+    /* Styles de base de la navbar */
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Logo et nom de la marque */
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        text-decoration: none;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        border: 2px solid #FF6F00;
+        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+        padding: 2px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-logo:hover {
+        transform: scale(1.1);
+        border-color: #FF9800;
+        box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
+    }
+
+    .brand-name {
+        color: #FF6F00;
+        font-size: 1.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .navbar-brand {
+            gap: 0.8rem;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+        }
+    }
+
+    /* Barre de recherche */
+    .search-wrapper {
+        flex: 0 1 400px;
+        margin: 0 2rem;
+    }
+
+    .search-box {
+        position: relative;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #FF6F00;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 111, 0, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FF6F00;
+        font-size: 1rem;
+    }
+
+    /* Menu principal */
+    .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        white-space: nowrap;  /* Empêche le texte de passer à la ligne */
+    }
+
+    .nav-link:hover {
+        color: #FF6F00;
+        background: rgba(255, 111, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .contact-link {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: white;
+    }
+
+    .contact-link:hover {
+        background: linear-gradient(135deg, #128C7E, #075E54);
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+    }
+
+    /* Menu utilisateur */
+    .user-menu {
+        margin-left: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+  /* Style du compteur du panier dans la navbar*/
+.navbar-panier{
+    position: absolute;
+    transform: translate(3px,-14px);
+    background-color: #ff3d00; /* Rouge vif pour attirer l'attention */
+    color: white;
+    width: 16px;  /* Augmenter la taille pour éviter le débordement */
+    height:18px; /* Augmenter la taille pour éviter le débordement */
+    font-size: 14px; /* Taille de police plus grande pour s'adapter */
+    font-weight: bold;
+    text-align: center;
+    line-height: -30px;  /* Centrer verticalement le texte */
+    border-radius: 50%; /* Cercle parfait */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
+}
+    /* Menu hamburger */
+    .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #FF6F00;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 2001;
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive design */
+    @media (max-width: 1024px) {
+        .navbar {
+            padding: 1rem;
+        }
+        
+        .search-wrapper {
+            flex: 0 1 300px;
+            margin: 0 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            padding: 1rem 0;
+            background: rgba(0, 0, 0, 0.98);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            transform-origin: top;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-menu.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .search-wrapper {
+            order: 3;
+            flex: 1 1 100%;
+            margin: 0.8rem 0;
+        }
+
+        .hamburger-btn {
+            display: block;
+            order: 2;
+        }
+
+        .user-menu {
+            order: 1;
+        }
+
+        .nav-link {
+            width: 100%;
+            padding: 0.8rem 2rem;
+            border-radius: 0;
+            white-space: normal;  /* Permet le retour à la ligne sur mobile si nécessaire */
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* Style de la barre de recherche dans la navbar */
+    .navbar .search-wrapper {
+        max-width: 400px;
+        margin: 0 2rem;
+    }
+
+    .navbar .search-box {
+        position: relative;
+        width: 100%;
+    }
+
+    .navbar .search-input {
+        width: 100%;
+        padding: 8px 40px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 111, 0, 0.2);
+        border-radius: 20px;
+        color: #fff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .navbar .search-input:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #FF6F00;
+        box-shadow: 0 0 10px rgba(255, 111, 0, 0.15);
+    }
+
+    .navbar .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FF6F00;
+        font-size: 1rem;
+    }
+
+   
+    /* Styles pour la sidebar mobile */
+    .mobile-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+    }
+
+    .mobile-sidebar.active {
+        left: 0;
+    }
+
+    /* Overlay pour la sidebar */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 1999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Style des éléments de la sidebar */
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 111, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .sidebar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .sidebar-brand {
+        color: #FF6F00;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-link i {
+        margin-right: 15px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255, 111, 0, 0.1);
+        color: #FF6F00;
+        transform: translateX(5px);
+    }
+
+    .sidebar-auth {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 111, 0, 0.2);
+    }
+
+    .sidebar-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-close:hover {
+        color: #FF6F00;
+        transform: rotate(90deg);
+    }
+
+    /* Modification du bouton hamburger */
+    .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #FF6F00;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 2001;
+        transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: block;
+        }
+        
+        .nav-menu {
+            display: none;
+        }
+        
+        .auth-buttons {
+            display: none;
+        }
+    }
+
+    /* Changer la couleur du titre "Nos Boutiques" */
+    .responsive-title {
+        color: #D35400; /* Orange foncé */
+    }
+
+    @media (min-width: 1200px) {
+        .produits-container {
+            gap: 40px; /* Augmentation de l'espacement pour les grands écrans */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .produit {
+            margin-right: 0; /* Supprime la marge à droite sur les petits écrans */
+        }
+    }
+
+    /* Ajout d'une animation pour les produits */
+    .produit-carousel-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.3s ease; /* Animation fluide */
+        margin: 10px; /* Espacement entre les produits */
+    }
+
+    .produit-carousel-item:hover {
+        transform: scale(1.05); /* Légère augmentation de la taille au survol */
+    }
+
+    /* Responsive pour les petits écrans */
+    @media (max-width: 768px) {
+        .produit-carousel-track {
+            display: flex;
+            flex-direction: column; /* Affichage en colonne pour éviter la superposition */
+            align-items: center; /* Centrer les éléments */
+        }
+
+        .produit-carousel-item {
+            width: 90%; /* Largeur ajustée pour les petits écrans */
+            margin: 10px 0; /* Espacement vertical */
+        }
+    }
+/*---------------------------------------------Gestion du modla Fond noir clair pour le modal ------------------------------------------------------*/
+.modal-content {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none;
+}
+
+/* ✅ Organisation des produits */
+.product-section-modal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* ✅ Centrage des produits */
+    align-items: flex-start;
+    gap: 15px; /* ✅ Espacement uniforme */
+    width: 100%;
+    padding: 10px;
+}
+
+/* ✅ Chaque produit garde son espace */
+.product-item-modal {
+    flex: 1 1 calc(50% - 15px); /* ✅ 2 produits par ligne */
+    max-width: 300px; /* ✅ Taille normale même avec 1 ou 2 produits */
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-item-modal:hover {
+    transform: translateY(-5px);
+}
+
+/* ✅ Taille des images maintenue */
+.product-image-modal {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* ✅ Garde une taille correcte */
+    min-height: 180px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+
+/* ✅ Sur grands écrans, ne pas rapetisser les produits */
+@media (min-width: 992px) {
+    .product-section-modal {
+        justify-content: flex-start; /* ✅ Garde un alignement naturel */
+    }
+
+    .product-item-modal {
+        flex: 1 1 auto; /* ✅ Garde une bonne taille même avec 1 produit */
+        max-width: 250px; /* ✅ Pas trop grand */
+    }
+}
+
+/* ✅ Sur petits écrans (2 colonnes) */
+@media (max-width: 768px) {
+    .product-section-modal {
+        justify-content: space-between; /* ✅ Évite les gros espaces vides */
+    }
+
+    .product-item-modal {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 150px;
+    }
+}
+
+/* ✅ Sur très petits écrans (1 colonne si nécessaire) */
+@media (max-width: 480px) {
+    .product-item-modal {
+        flex: 1 1 100%;
+    }
+}
+
+/* ✅ Autres styles */
+.product-info-modal {
+    font-size: 12px;
+    color: white;
+}
+
+.product-name-modal {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.product-price {
+    color: #cc5500;
+}
+
+.product-icon-eye {
+    font-size: 18px;
+    margin-top: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.product-icon-eye:hover {
+    color: #dddddd;
+}
+
+.modal-background {
+    background-color: #000;
+}
+
+/* Style de la modal-header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ✅ Ajustements pour petits écrans */
+@media (max-width: 576px) {
+    .modal-header {
+        flex-direction: row;
+    }
+
+    .modal-title {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .btn-danger {
+        font-size: 1rem;
+        padding: 0.5rem;
+        width: auto;
+        height: auto;
+    }
+
+    .btn-danger i {
+        font-size: 1rem;
+    }
+}
+
+/* ✅ Sur grands écrans */
+@media (min-width: 576px) {
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .btn-danger {
+        font-size: 1.25rem;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .btn-danger i {
+        font-size: 1.4rem;
+    }
+}
+
+/* ✅ Sur Android, le modal couvre toute la page */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+    }
+}
+@media (max-width: 768px) {
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+    .position-relative {
+        width: 100%;
+        max-width: 250px;
+        min-width: 200px;
+    }
+    .form-control {
+        width: 100%;
+        padding-left: 40px;
+    }
+    .position-absolute {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: gray;
+    }
+    .btn-primary {
+        width: auto;
+        min-width: 100px;
+    }
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .product-section .row {
+        justify-content: center;
+    }
+    .product-section .row > div {
+        flex: 1 1 auto;
+        max-width: 300px;
+    }
+}
+/*--------------------------------------------------------localisation--------------------------------------------------------------------------*/
+ /* Container Management */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto; /* Centre horizontalement */
+    padding: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top:120px;
+}
+a{
+    text-decoration:none;
+}
+/* Product Section */
+.product-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto; /* Centre horizontalement */
+    background-color: #222;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    text-align: center;
+}
+
+.product-image {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+.product-details h1 {
+    color: #ff7043;
+    font-size: 2.5rem;
+    margin: 15px 0;
+}
+
+.product-details .price {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ff7043;
+}
+
+/* Comment Section */
+.comment-form {
+    width: 100%;
+    max-width: 1000px;
+    background-color: #222;
+    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.5s ease-in-out;
-    z-index: 9999;
+    margin-top: 30px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    box-sizing: border-box;
+    margin: 20px auto; /* Centre horizontalement */
+}
+
+.comment-form textarea {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
+    margin-bottom: 20px;
+    resize: none;
+    box-sizing: border-box;
+    font-size:18px;
+}
+
+.comment-form button {
+    width: 100%;
+    padding: 15px;
+    background-color: #ff7043;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Stars in the Comments */
+.stars {
+    font-size: 1.5rem;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.star {
+    cursor: pointer;
+    color: #bbb;
+    transition: color 0.3s ease;
+}
+
+.star.selected {
+    color: #f39c12;
+}
+
+/* Comment List */
+.comment-list {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 30px;
+    margin: 0 auto; /* Centre horizontalement */
+}
+
+.comment {
+    width: 100%;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.comment-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-body {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #bbb;
+}
+
+.comment-footer {
+    font-size: 14px;
+    color: #888;
+    text-align: right;
+}
+
+.etoiles {
+    font-size: 1.5rem;
+    color: #f39c12;
+    margin-bottom: 10px;
+}
+
+/* Profil File Input */
+.file-input-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.file-input-container input[type="file"] {
+    display: none;
+}
+
+.icon-upload {
+    font-size: 2rem;
+    color: #ff7043;
+}
+
+.file-input-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.file-input-label:hover {
+    background-color: #555;
+}
+
+/* Hide extra comments */
+.extra-comments {
+    display: none;
+}
+
+.show-more-btn {
+    background-color: #ff7043;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.show-more-btn:hover {
+    background-color: #e64a19;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .product-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .product-image {
+        max-width: 100%;
+    }
+
+    .comment-form,
+    .comment-list {
+        width: 90%;
+    }
+
+    .comment-header img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .etoiles {
+        font-size: 1.2rem;
+    }
+
+    .comment-body {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-container {
+        padding: 10px;
+    }
+
+    .product-details h1 {
+        font-size: 2rem;
+    }
+
+    .comment-form textarea {
+        height: 100px;
+    }
+
+    .comment-footer {
+        font-size: 12px;
+    }
+
+    .stars {
+        font-size: 1.2rem;
+    }
+}
+
+/* Boîte de notification */
+.notification {
+position: fixed;
+top: 20px;
+right: 20px;
+width: 300px;
+background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
+color: #333; /* Texte en noir pour contraster avec le fond */
+padding: 15px;
+border-radius: 10px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
+opacity: 0;
+transform: translateX(100%);
+transition: all 0.5s ease-in-out;
+z-index: 9999;
 }
 
 .notification.show {
-    opacity: 1;
-    transform: translateX(0);
+opacity: 1;
+transform: translateX(0);
 }
 
 .notification.hide {
-    opacity: 0;
-    transform: translateX(100%);
+opacity: 0;
+transform: translateX(100%);
 }
 
 /* Bouton de fermeture */
 .close-btn {
-    background: none;
-    border: none;
-    color: #333; /* Couleur du texte du bouton */
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+background: none;
+border: none;
+color: #333; /* Couleur du texte du bouton */
+font-size: 1.5rem;
+cursor: pointer;
+position: absolute;
+top: 10px;
+right: 10px;
 }
 
 /* Style pour les messages d'erreur, succès, etc. */
 .alert.success {
-    background-color: #4CAF50; /* Vert pour le succès */
+background-color: #4CAF50; /* Vert pour le succès */
 }
 
 .alert.warning {
-    background-color: #ff9800; /* Orange pour l'avertissement */
+background-color: #ff9800; /* Orange pour l'avertissement */
 }
 
 .alert.error {
-    background-color: #f44336; /* Rouge pour l'erreur */
+background-color: #f44336; /* Rouge pour l'erreur */
 }
 
 /* Styles de transition au survol du bouton de fermeture */
 .close-btn:hover {
-    color: #ff7043;
+color: #ff7043;
 }
 
+/* Footer Styling amélioré */
+.footer {
+    background: linear-gradient(to top, #111, #000); /* Dégradé du noir vers un gris foncé */
+    color: #fff;
+    padding: 50px 20px;
+    font-family: 'Arial', sans-serif;
+    border-top-left-radius: 30px; /* Coins arrondis en haut */
+    border-top-right-radius: 30px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Sections du footer */
+.footer-section {
+    flex: 1 1 300px;
+    min-width: 250px;
+}
+
+.footer-section h4 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #FF6600;; /* Orange foncé pour attirer l'attention */
+    border-bottom: 2px solid #ff9900;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.footer-section p,
+.footer-section ul {
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.8;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 12px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #ffcc00;
+    transition: all 0.3s ease-in-out;
+}
+
+.footer-section ul li a:hover {
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* Icônes des réseaux sociaux */
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-links a {
+    font-size: 1.7rem;
+    color: #ffcc00;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.3);
+    color: #fff;
+}
+
+/* Pied de page */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+    color: #bbb;
+}
+
+/* Responsive Design */
+
+/* Tablettes (max 1024px) */
+@media screen and (max-width: 1024px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Smartphones (max 768px) */
+@media screen and (max-width: 768px) {
+    .footer-container {
+        padding: 0 15px;
+    }
+
+    .footer-section h4 {
+        font-size: 1.1rem;
+    }
+
+    .footer-section p,
+    .footer-section ul {
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+        padding-top: 10px;
+    }
+
+    .social-links a {
+        font-size: 1.4rem;
+    }
+}
+
+
+
+/* Conteneur pour l'icône du panier */
+.cart-icon-container {
+    position: fixed;
+    bottom: 50px; /* Ajustement de la hauteur */
+    right: 20px; /* Placer l'icône à droite */
+    z-index: 9998;
+    animation: bounce 3s ease-in-out infinite; /* Animation plus fluide */
+}
+
+/* Icône de panier */
+.cart-icon {
+    font-size: 40px; /* Réduction de la taille */
+    color: #FF8C00; /* Orange foncé */
+    cursor: pointer;
+}
+
+/* Compteur du panier */
+/* Compteur du panier */
+.cart-icon-container .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color:#ff3d00;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    width:16px;
+    height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #fff; /* Bordure blanche pour un effet pro */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
+}
+/* Animation de rebond adoucie */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Réduction du rebond */
+    }
+}
+
+/* Styles responsive pour tablettes */
+@media (max-width: 768px) {
+    .cart-icon-container {
+        bottom: 40px;
+        right: 15px;
+    }
+
+    .cart-icon {
+        font-size: 35px; /* Réduction de la taille sur tablette */
+    }
+
+    .cart-count {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+}
+
+/* Styles responsive pour mobiles */
+@media (max-width: 480px) {
+    .cart-icon-container {
+        bottom: 30px;
+        right: 10px;
+    }
+
+    .cart-icon {
+        font-size: 30px; /* Réduction supplémentaire sur mobile */
+    }
+
+    .cart-count {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+}
  
+/*----------------------Whatsapp icon-----------------*/
+ 
+.nav-panier {
+    position: absolute;
+    transform: translate(3px,-14px);
+    background-color: #ff3d00; /* Rouge vif pour attirer l'attention */
+    color: white;
+    width: 16px;  /* Augmenter la taille pour éviter le débordement */
+    height:18px; /* Augmenter la taille pour éviter le débordement */
+    font-size: 14px; /* Taille de police plus grande pour s'adapter */
+    font-weight: bold;
+    text-align: center;
+    line-height: -30px;  /* Centrer verticalement le texte */
+    border-radius: 50%; /* Cercle parfait */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
+}
+/* Ajuste la taille selon tes besoins icone de panier dans la page */
+@media (min-width: 1024px) { /* Ajuste la taille selon tes besoins */
+    .cart-icon-container {
+        display: none;
+    }
+}
+
+.conteneur-slide {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 20px 0;
+    position: relative;
+    text-align: center; /* Centre le titre */
+}
+
+.conteneur-slide h3 {
+    font-size: 24px;
+    color: #FF6600; /* Couleur orange foncé */
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.slide-wrapper {
+    display: flex;
+    gap: 30px;
+    animation: scroll 15s linear infinite;
+}
+
+.article {
+    background-color: transparent;
+    border-radius: 8px;
+    width: 220px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: inline-block;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.article:hover {
+    transform: scale(1.1);
+}
+
+.article img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+}
+
+.article-info {
+    padding: 15px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.article-info h3 {
+    font-size: 18px;
+    color: #ff6600;
+    margin-bottom: 5px;
+}
+
+.article-info p {
+    font-size: 14px;
+    color: #ddd;
+    margin: 0;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
     </style>
 </head>
-<body class="day-mode">
+
+<body>
     <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
     {% if messages %}
     <div class="messages">
@@ -353,174 +1688,602 @@
     </div>
 {% endif %}
 
-    <div class="container">
+ <!-- Navbar -->
+<nav class="navbar">
+    <!-- Logo et nom de la plateforme -->
+    <a class="navbar-brand">
+        <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
+        <span class="brand-name">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+    </a>
 
-        <!-- Product Section -->
-        <div class="product-container">
-            {% if produit.image %} 
-                <img src="{{ produit.image.url }}" alt="{{ produit.nom|default:'Produit' }}" class="product-image">
-            {% else %}
-                <img src="" alt="Produit par défaut" class="product-image">
-            {% endif %}
-            <div class="product-details">
-                <h1>{{ produit.nom|default:"Nom du Produit" }}</h1>
-                <div class="price">{{ produit.prix|default:0 }} GNF</div>
-                <div class="rating">
-                    <div class="etoiles">
-                        {% for i in etoiles_range %}
-                            {% if i <= etoiles_moyenne %}
-                                ★
-                            {% else %}
-                                ☆
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                <p class="product-description">{{ produit.description|default:"Aucune description disponible pour ce produit." }}</p>
-            </div>
+    <!-- Barre de recherche centrale -->
+    <div class="search-wrapper">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" placeholder="Rechercher un produit..." class="search-input"
+            onfocus="openModal()">
         </div>
-
-        <!-- Comment Section -->
-        <div class="comment-form">
-            <h3>Laissez un commentaire</h3>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <textarea name="comment" placeholder="Votre expérience avec ce produit..." required></textarea>
-
-                <div>
-                    <label for="rating">Note :</label>
-                    <div class="stars">
-                        <span class="star" data-value="1" aria-label="1 étoile">★</span>
-                        <span class="star" data-value="2" aria-label="2 étoiles">★</span>
-                        <span class="star" data-value="3" aria-label="3 étoiles">★</span>
-                        <span class="star" data-value="4" aria-label="4 étoiles">★</span>
-                        <span class="star" data-value="5" aria-label="5 étoiles">★</span>
-                    </div>
-                </div>
-
-                <div class="file-input-container">
-                    <label for="file-input" class="file-input-label">📷 Choisir une image</label>
-                    <input type="file" name="image_profil" accept="image/*" id="file-input">
-                </div>
-
-                <input type="hidden" name="rating" id="rating-input" value="">
-
-                <button type="submit">Envoyer</button>
-            </form>
-        </div>
-
-        <!-- Comment List -->
-        <div class="comment-list">
-            {% if commentaires %}
-                {% for commentaire in commentaires %}
-                    <div class="comment{% if forloop.counter > 3 %} extra-comments{% endif %}">
-                        <div class="comment-header">
-                            {% if commentaire.image_profil %}
-                                <img src="{{ commentaire.image_profil.url }}" alt="Profil">
-                            {% else %}
-                            <img src="{% static 'profil.jpeg' %}" alt="Profil">
-                            {% endif %}
-                            <div class="etoiles">
-                                {{ commentaire.etoiles }}
-                            </div>
-                        </div>
-                        <div class="comment-body">
-                            {{ commentaire.commentaire|default:"Aucun commentaire fourni." }}
-                        </div>
-                        <div class="comment-footer">{{ commentaire.date_commentaire|date:"d/m/Y H:i" }}</div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>Aucun commentaire pour ce produit pour le moment.</p>
-            {% endif %}
-        </div>
-
-        <!-- Show More Button -->
-        {% if commentaires|length > 3 %}
-            <button class="show-more-btn" id="show-more-btn">Afficher plus de commentaires</button>
-        {% endif %}
-
     </div>
 
+    <!-- Menu principal -->
+    <div class="nav-menu">
+        <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="#produits" class="nav-link">
+            <i class="fa fa-box"></i> Produits
+        </a>
+        <a href="#localisation" class="nav-link">
+            <i class="fa fa-map-marker-alt"></i> Localisation
+        </a>
+        <a href="{% url 'panier' user_id %}" class="nav-link">
+            <i class="fa fa-shopping-cart"></i> Panier
+            <div id="cart-count-nav" class="cart-count navbar-panier">0</div>
+        </a>
+        
+        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="nav-link contact-link">
+            <i class="fab fa-whatsapp"></i>
+            <span>Contact</span>
+        </a>
+    </div>
+    <!-- Menu hamburger pour mobile -->
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+</nav>
+  
+   <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+   <div id="user-data" data-user-id="{{user_id}}"></div>
+
+  <!-- Nouvelle icône de panier avec le compteur -->
+<div class="cart-icon-container">
+    <a href="{% url 'panier' user_id %}">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+    </a>
+    <!-- Le compteur du panier, initialement vide -->
+    <div id="cart-count" class="cart-count">0</div>
+</div>
+
+
+   <!-- Affichage du total du panier -->
+   <div id="total-panier"></div>
+
+ <!-----------------------------Section des sliders des produits--------------------------->
+<!-- Modal de filtrage et recherche -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-xl modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Filtrer et rechercher des produits</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" style="color: #d35400; font-size: 1.5rem;"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Barre de recherche et filtres alignés sur une ligne -->
+                <div class="d-flex flex-wrap align-items-center w-100 mb-3 gap-2 flex-md-nowrap justify-content-center" style="margin-top: 10px;">
+                    <div class="position-relative flex-grow-1" style="max-width: 250px; min-width: 200px;">
+                        <input id="search-input-modal" class="form-control text-center" type="search" placeholder="🔍 Rechercher un produit..." aria-label="Search" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-search position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
+                        <input type="number" id="min-price" class="form-control text-center" placeholder="💰 Prix min" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
+                        <input type="number" id="max-price" class="form-control text-center" placeholder="💰 Prix max" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <button class="btn btn-primary d-flex align-items-center justify-content-center" onclick="applyFilter()" style="height: 40px; border-radius: 8px; background-color: #007bff; min-width: 100px;">
+                        <i class="fas fa-filter text-white me-2"></i> Appliquer
+                    </button>
+                </div>
+                <div id="modal-product-container" class="product-section-modal mt-3">
+                    <div class="row" id="product-container-modal" style="max-height: 50vh; overflow-y: auto; display: flex; justify-content: center;">
+                        <!-- Les produits filtrés ou recherchés apparaîtront ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <!-- Product Section -->
+    <div class="product-container">
+        {% if produit.image %} 
+            <img src="{{ produit.image.url }}" alt="{{ produit.nom|default:'Produit' }}" class="product-image">
+        {% else %}
+            <img src="" alt="Produit par défaut" class="product-image">
+        {% endif %}
+        <div class="product-details">
+            <h1>{{ produit.nom|default:"Nom du Produit" }}</h1>
+            <div class="price">{{ produit.prix|default:0 }} GNF</div>
+            <div class="rating">
+                <div class="etoiles">
+                    {% for i in etoiles_range %}
+                        {% if i <= etoiles_moyenne %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <p class="product-description">{{ produit.description|default:"Aucune description disponible pour ce produit." }}</p>
+        </div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="comment-form">
+        <h3>Laissez un commentaire</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea name="comment" placeholder="Votre expérience avec ce produit..." required></textarea>
+
+            <div>
+                <label for="rating">Note :</label>
+                <div class="stars">
+                    <span class="star" data-value="1" aria-label="1 étoile">★</span>
+                    <span class="star" data-value="2" aria-label="2 étoiles">★</span>
+                    <span class="star" data-value="3" aria-label="3 étoiles">★</span>
+                    <span class="star" data-value="4" aria-label="4 étoiles">★</span>
+                    <span class="star" data-value="5" aria-label="5 étoiles">★</span>
+                </div>
+            </div>
+
+            <div class="file-input-container">
+                <label for="file-input" class="file-input-label">📷 Choisir une image</label>
+                <input type="file" name="image_profil" accept="image/*" id="file-input">
+            </div>
+
+            <input type="hidden" name="rating" id="rating-input" value="">
+
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Comment List -->
+    <div class="comment-list">
+        {% if commentaires %}
+            {% for commentaire in commentaires %}
+                <div class="comment{% if forloop.counter > 3 %} extra-comments{% endif %}">
+                    <div class="comment-header">
+                        {% if commentaire.image_profil %}
+                            <img src="{{ commentaire.image_profil.url }}" alt="Profil">
+                        {% else %}
+                        <img src="{% static 'profil.jpeg' %}" alt="Profil">
+                        {% endif %}
+                        <div class="etoiles">
+                            {{ commentaire.etoiles }}
+                        </div>
+                    </div>
+                    <div class="comment-body">
+                        {{ commentaire.commentaire|default:"Aucun commentaire fourni." }}
+                    </div>
+                    <div class="comment-footer">{{ commentaire.date_commentaire|date:"d/m/Y H:i" }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun commentaire pour ce produit pour le moment.</p>
+        {% endif %}
+    </div>
+
+    <!-- Show More Button -->
+    {% if commentaires|length > 3 %}
+        <button class="show-more-btn" id="show-more-btn">Afficher plus de commentaires</button>
+    {% endif %}
+
+</div>
+
+
+ <!-----------------------------Section du footer--------------------------->
+ <footer class="footer">
+    <div class="footer-container">
+        <!-- Section Contact -->
+        <div class="footer-section">
+            <h4>Contactez-nous</h4>
+            
+            {% if utilisateur_email %}
+                <p>Email : {{ utilisateur_email }}</p>
+            {% else %}
+                <p>Email : Non disponible</p>
+            {% endif %}
+            
+            {% if utilisateur_numero %}
+                <p>Téléphone : {{ utilisateur_numero }}</p>
+            {% else %}
+                <p>Téléphone : Non disponible</p>
+            {% endif %}
+            
+            {% if localisation %}
+                <p>Adresse : {{ localisation.repere }}, {{ localisation.ville }}, Guinée</p>
+            {% else %}
+                <p>Adresse : Non disponible</p>
+            {% endif %}
+        </div>
+
+        <!-- Section Liens utiles -->
+        <div class="footer-section">
+            <h4>Liens utiles</h4>
+            <ul>
+                <li><a href="#produits">Nos produits</a></li>
+                <li><a href="#localisation">Notre localisation</a></li>
+            </ul>
+        </div>
+
+        <!-- Section Réseaux sociaux -->
+        <div class="footer-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Boutique Moderne. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<!-- Ajout de Font Awesome si besoin -->
+<script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // Dynamique des étoiles
-        const stars = document.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating-input');
+        // Gestion du menu mobile
+        function toggleMenu() {
+            const navbar = document.querySelector('.navbar');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger i');
+            
+            navLinks.classList.toggle('active');
+            navbar.classList.toggle('mobile-active');
+            
+            // Animation de l'icône du menu
+            if (navLinks.classList.contains('active')) {
+                hamburger.classList.remove('fa-bars');
+                hamburger.classList.add('fa-times');
+            } else {
+                hamburger.classList.add('fa-bars');
+                hamburger.classList.remove('fa-times');
+            }
+        }
 
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = star.getAttribute('data-value');
-                ratingInput.value = rating; // Assigner la note au champ caché
+        // Gestion du scroll pour la navbar
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll <= 0) {
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                return;
+            }
+            
+            if (currentScroll > lastScroll && !navbar.classList.contains('mobile-active')) {
+                // Scroll vers le bas
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll vers le haut
+                navbar.style.transform = 'translateY(0)';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.15)';
+            }
+            
+            lastScroll = currentScroll;
+        });
 
-                stars.forEach(s => {
-                    if (parseInt(s.getAttribute('data-value')) <= rating) {
-                        s.classList.add('selected');
-                    } else {
-                        s.classList.remove('selected');
-                    }
-                });
+        // Fermer le menu mobile lors du clic sur un lien
+        document.querySelectorAll('.nav-links .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.querySelector('.nav-links');
+                const hamburger = document.querySelector('.hamburger i');
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    document.querySelector('.navbar').classList.remove('mobile-active');
+                    hamburger.classList.add('fa-bars');
+                    hamburger.classList.remove('fa-times');
+                }
             });
         });
 
-        // Logique pour afficher plus de commentaires
-        const showMoreBtn = document.getElementById('show-more-btn');
-        const extraComments = document.querySelectorAll('.extra-comments');
+   
+    </script>
 
-        if (showMoreBtn) {
-            showMoreBtn.addEventListener('click', () => {
-                extraComments.forEach(comment => {
-                    comment.style.display = 'block';
-                });
-                showMoreBtn.style.display = 'none'; // Masquer le bouton après affichage
-            });
+    <script>
+        // Gestion du menu hamburger
+        function toggleMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            
+            navMenu.classList.toggle('show');
+            hamburgerBtn.classList.toggle('active');
+            
+            // Empêcher le défilement de la page quand le menu est ouvert
+            document.body.style.overflow = navMenu.classList.contains('show') ? 'hidden' : '';
         }
 
-          // Fonction pour fermer une notification
+        // Fermer le menu mobile lors du clic sur un lien
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.querySelector('.nav-menu');
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                
+                if (navMenu.classList.contains('show')) {
+                    navMenu.classList.remove('show');
+                    hamburgerBtn.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Fermer le menu mobile lors du redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const navMenu = document.querySelector('.nav-menu');
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                
+                navMenu.classList.remove('show');
+                hamburgerBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+
+
+
+<!-- Sidebar mobile -->
+<div class="sidebar-overlay"></div>
+<div class="mobile-sidebar">
+    
+    <div class="sidebar-header">
+        <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="sidebar-logo">
+        <span class="sidebar-brand">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="sidebar-link">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="#product" class="sidebar-link">
+            <i class="fas fa-box"></i>
+            <span>Produits</span>
+        </a>
+        <a href="#localisation" class="sidebar-link">
+            <i class="fa fa-map-marker-alt"></i> Localisation
+        </a>
+        <a href="{% url 'panier' user_id %}" class="sidebar-link">
+            <i class="fa fa-shopping-cart"></i> Panier
+            <div id="sidebar-count" class="cart-count navbar-panier">0</div>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="sidebar-link">
+            <i class="fab fa-whatsapp"></i>
+            <span>Contact</span>
+        </a>
+    </nav>
+</div>
+
+<script>
+// Gestion de la sidebar mobile
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const sidebar = document.querySelector('.mobile-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const sidebarClose = document.querySelector('.sidebar-close');
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    hamburgerBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+    sidebarClose.addEventListener('click', toggleSidebar);
+
+    // Fermer la sidebar lors du clic sur un lien
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            toggleSidebar();
+        });
+    });
+});
+</script>
+
+
+<script>
+   
+//<!-------------------------------- Gestion de la mise à jour du panier-----------------------------------------> 
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/obtenir-panier/')
+    .then(response => response.json())
+    .then(data => {
+      const cartCount = document.querySelector('#cart-count');
+      const cartCountNav = document.querySelector('#cart-count-nav');
+      const sidebarCount = document.querySelector('#sidebar-count');
+      cartCount.textContent = data.total_articles;  // Mettez à jour le nombre d'articles dans le panier
+      cartCountNav.textContent = data.total_articles;  // Mettez à jour le nombre d'articles dans le panier
+      sidebarCount.textContent = data.total_articles;  // Mettez à jour le nombre d'articles dans le panier
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération du panier:', error);
+    });
+
+  // Ajout de l'écouteur d'événement sur le bouton de filtrage
+  const applyFilterButton = document.getElementById('apply-filter-button');
+  if (applyFilterButton) {
+    applyFilterButton.addEventListener('click', performSearch);
+  } else {
+    console.error('Bouton "apply-filter-button" introuvable.');
+  }
+});
+
+//<!-------------------------------- Modal de recherche de produit et filtrage Pour la recherche------------------------------------------> 
+function openModal() {
+  if (!document.getElementById('productModal').classList.contains('show')) {
+    const modal = new bootstrap.Modal(document.getElementById('productModal'));
+    modal.show();
+  }
+}
+
+function performSearch(event) {
+  event.preventDefault(); // Empêche le comportement par défaut du formulaire
+  const searchQuery = document.getElementById('search-input-modal').value.trim();
+  const minPrice = document.getElementById('min-price').value.trim();
+  const maxPrice = document.getElementById('max-price').value.trim();
+
+  if (searchQuery === "" && minPrice === "" && maxPrice === "") return;  // Ne pas faire de recherche sans critère
+
+  const validMinPrice = minPrice !== "" ? minPrice : undefined;
+  const validMaxPrice = maxPrice !== "" ? maxPrice : undefined;
+
+  const userId = document.getElementById('user-data').getAttribute('data-user-id');
+
+  $.ajax({
+    url: `/recherche-produit/${userId}/`,
+    data: {
+      'nom': searchQuery,
+      'prix_min': validMinPrice,
+      'prix_max': validMaxPrice
+    },
+    success: function(response) {
+      if (response.produits && response.produits.length > 0) {
+        updateModalProducts(response.produits);
+      } else {
+        console.log('Aucun produit trouvé');
+      }
+    },
+    error: function(error) {
+      console.error('Erreur AJAX:', error);
+    }
+  });
+}
+
+function updateModalProducts(produits) {
+  const productContainer = document.getElementById('product-container-modal');
+  productContainer.innerHTML = '';
+
+  if (produits.length > 0) {
+    produits.forEach(product => {
+      const productElement = createProductElement(product);
+      const colDiv = document.createElement('div');
+      colDiv.classList.add('col-6', 'col-lg-2', 'mb-4');
+      colDiv.appendChild(productElement);
+      productContainer.appendChild(colDiv);
+    });
+  } else {
+    productContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+  }
+}
+
+function createProductElement(product) {
+  const div = document.createElement('div');
+  div.classList.add('product-item-modal');
+  div.dataset.name = product.nom.toLowerCase();
+  div.dataset.price = product.prix;
+
+  div.innerHTML = `
+   <a href="${product.url}" class="product-link">
+      <img src="${product.image_url || ''}" alt="${product.nom}" class="product-image-modal">
+    </a>
+    <div class="product-info-modal">
+      <div class="product-name-modal">${product.nom}</div>
+      <div class="product-price">${product.prix} ${product.devise}</div>
+    </div>
+    <a href="${product.url}" class="product-link">
+      <div class="product-icon-eye">👁️</div>
+    </a>
+    
+  `;
+  return div;
+}
+
+</script>
+<script>
+    // Dynamique des étoiles
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating-input');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = star.getAttribute('data-value');
+            ratingInput.value = rating; // Assigner la note au champ caché
+
+            stars.forEach(s => {
+                if (parseInt(s.getAttribute('data-value')) <= rating) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        });
+    });
+
+    // Logique pour afficher plus de commentaires
+    const showMoreBtn = document.getElementById('show-more-btn');
+    const extraComments = document.querySelectorAll('.extra-comments');
+
+    if (showMoreBtn) {
+        showMoreBtn.addEventListener('click', () => {
+            extraComments.forEach(comment => {
+                comment.style.display = 'block';
+            });
+            showMoreBtn.style.display = 'none'; // Masquer le bouton après affichage
+        });
+    }
+
+      // Fonction pour fermer une notification
 function closeNotification(element) {
-    const notification = element.parentElement;
-    notification.classList.add('hide');
-    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+const notification = element.parentElement;
+notification.classList.add('hide');
+setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
 }
 
 // Fonction pour jouer le son de notification
 function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
+var sound = document.getElementById('notification-sound');
+sound.play();
 }
 
 // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
 document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
-    });
+const notifications = document.querySelectorAll('.notification.show');
+notifications.forEach(notification => {
+    playNotificationSound();  // Jouer le son lorsque la notification est affichée
+});
 });
 
 // Fonction pour afficher une notification avec animation et son
 function showNotification(element) {
-    const notification = element;
-    notification.classList.add('show');
-    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-    
-    // Ajouter un délai avant de masquer la notification
-    setTimeout(() => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    }, 5000); // La notification disparaît après 5 secondes
+const notification = element;
+notification.classList.add('show');
+playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+
+// Ajouter un délai avant de masquer la notification
+setTimeout(() => {
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Suppression après transition
+}, 5000); // La notification disparaît après 5 secondes
 }
 
 // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
 setTimeout(() => {
-    const notifications = document.querySelectorAll('.notification');
-    notifications.forEach(notification => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    });
+const notifications = document.querySelectorAll('.notification');
+notifications.forEach(notification => {
+    notification.classList.add('hide');
+    setTimeout(() => notification.remove(), 300); // Suppression après transition
+});
 }, 5000); // La notification disparaît après 5 secondes
 
 
 
-    </script>
+</script>
 
 </body>
 </html>

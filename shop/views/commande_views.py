@@ -1,4 +1,4 @@
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import  EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, get_object_or_404
 from shop.models import Utilisateur, Commande, Produit, Variante, Devise,Vente 
@@ -139,8 +139,9 @@ def envoyer_commande(request, user_id):
 
                 # Vider le panier après l'enregistrement de la commande
                 request.session['panier'] = {}
+                request.session['session_id'] = []
 
-                messages.success(request, "Votre commande a bien été enregistrée et les ventes associées ont été créées.")
+                messages.success(request, "Votre commande a bien été enregistrée.")
             else:
                 messages.error(request, "L'envoi de l'email a échoué. La commande n'a pas été enregistrée.")
                 logger.error(f"Échec de l'envoi de l'email pour la commande de {client_nom}")

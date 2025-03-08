@@ -138,22 +138,21 @@ class InscriptionClientView(View):
         return render(request, 'inscription_client.html', {'form': form})
     
 # Fonction pour générer un identifiant unique
-def generate_readable_identifier(email, platform_name="warabaGuinee"):
-    """Génère un identifiant unique, lisible et facile à retenir."""
+def generate_readable_identifier(email):
+    """Génère un identifiant professionnel basé sur l'email, en remplaçant les chiffres par un nombre aléatoire."""
+    
+    # Vérifie si l'email est valide
     if "@" not in email or len(email.split('@')[0]) < 6:
         raise ValueError("Email invalide ou trop court pour générer un identifiant.")
-
-    email_prefix = email.split('@')[0]  # Récupère tout avant le @
-
-    # Prend les 6 premières lettres du préfixe de l'email
-    short_prefix = email_prefix[:6]
-
+    
+    # Récupère la première partie de l'email (avant le @)
+    email_prefix = email.split('@')[0]
+    
+    # Supprime les chiffres à la fin du préfixe de l'email, avant le '@'
+    email_prefix = ''.join([char for char in email_prefix if not char.isdigit()])
+    
     # Ajoute 4 chiffres aléatoires pour assurer l'unicité
     random_numbers = ''.join(random.choices(string.digits, k=4))
-
-    # Génère l'identifiant final
-    return f"{platform_name}-{short_prefix}-{random_numbers}"
-
-# Exemple d'utilisation
-email = "exemple@gmail.com"
-print(generate_readable_identifier(email))
+    
+    # Crée l'identifiant final en combinant la première partie de l'email et les chiffres
+    return f"{email_prefix}{random_numbers}"

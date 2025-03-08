@@ -6,9 +6,29 @@
     <title>Panier</title>
     {% load static %}
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Google Fonts (Material Icons) -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap CSS (dernière version stable) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Bootstrap JS (dernière version stable) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FontAwesome Kit (remplacez YOUR_KIT_CODE par votre clé) -->
+<script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
     <style>
         *{
             padding: 0; margin: 0;
@@ -26,110 +46,767 @@
             margin: 0;
             padding: 0;
         }
+        /* Styles de la navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    flex-wrap: nowrap;
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+}
+
+.search-container {
+    flex: 0 1 400px;
+    margin: 0.5rem 2rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 5px 15px;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.search-container:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+}
+
+.search-bar {
+    background: transparent;
+    border: none;
+    padding: 8px 0;
+    color: white;
+    width: 100%;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+.nav-link i {
+    font-size: 20px; /* Taille augmentée pour un meilleur visuel */
+    margin-right: 8px;
+}
+.search-icon {
+    background: transparent;
+    border: none;
+    color: #FF6F00;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.search-icon:hover {
+    transform: scale(1.1);
+    color: #FFA726;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background: rgba(255, 111, 0, 0.15);
+    color: #FF6F00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 111, 0, 0.1);
+}
+
+.whatsapp-link {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    font-weight: 600;
+}
+
+.whatsapp-link:hover {
+    background: linear-gradient(135deg, #128C7E, #075E54);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.5rem;
+    color: #d35400;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 1rem;
+    }
+    
+    .nav-item {
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.98);
+        padding: 1rem;
+        gap: 0.5rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .hamburger {
+        display: block;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover .logo {
+    transform: scale(1.1) rotate(5deg);
+}
+
+@media (max-width: 480px) {
+    .logo {
+        width: 50px;
+        height: 50px;
+    }
+} 
+/* Style amélioré pour la barre de recherche */
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    margin-top: -20px;
+    background-color: transparent;
+    border-bottom: none;
+    flex-shrink: 0;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Style pour la barre de recherche principale (navbar) */
+.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid rgba(211, 84, 0, 0.3);
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+
+    /* Style moderne pour la barre de recherche */
+    .search-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 111, 0, 0.3);
+        border-radius: 25px;
+        padding: 12px 20px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #FF6F00;
+        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+    }
+
+    /* Style pour le modal */
+    .modal-content {
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 111, 0, 0.2);
+        border-radius: 25px;
+        color: white;
+    }
+
+    @keyframes modalOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Effet de parallaxe pour le header */
+    .header-section {
+        position: relative;
+        overflow: hidden;
+        padding: 150px 0;
+        background-attachment: fixed;
+        background-position: center;
+        background-size: cover;
+    }
+
+    /* Style pour les sections */
+    .section {
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 111, 0, 0.1), transparent);
+        z-index: -1;
+    }
+
+    /* Styles de base de la navbar */
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Logo et nom de la marque */
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        text-decoration: none;
+    }
+
+    .nav-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        border: 2px solid #FF6F00;
+        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+        padding: 2px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-logo:hover {
+        transform: scale(1.1);
+        border-color: #FF9800;
+        box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
+    }
+
+    .brand-name {
+        color: #FF6F00;
+        font-size: 1.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .navbar-brand {
+            gap: 0.8rem;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+        }
+    }
+
+    /* Barre de recherche */
+    .search-wrapper {
+        flex: 0 1 400px;
+        margin: 0 2rem;
+    }
+
+    .search-box {
+        position: relative;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #FF6F00;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 111, 0, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FF6F00;
+        font-size: 1rem;
+    }
+
+    /* Menu principal */
+    .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        white-space: nowrap;  /* Empêche le texte de passer à la ligne */
+    }
+
+    .nav-link:hover {
+        color: #FF6F00;
+        background: rgba(255, 111, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .contact-link {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: white;
+    }
+
+    .contact-link:hover {
+        background: linear-gradient(135deg, #128C7E, #075E54);
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+    }
+
+    /* Menu utilisateur */
+    .user-menu {
+        margin-left: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+  /* Style du compteur du panier dans la navbar*/
+.navbar-panier{
+    position: absolute;
+    transform: translate(3px,-14px);
+    background-color: #ff3d00; /* Rouge vif pour attirer l'attention */
+    color: white;
+    width: 16px;  /* Augmenter la taille pour éviter le débordement */
+    height:18px; /* Augmenter la taille pour éviter le débordement */
+    font-size: 14px; /* Taille de police plus grande pour s'adapter */
+    font-weight: bold;
+    text-align: center;
+    line-height: -30px;  /* Centrer verticalement le texte */
+    border-radius: 50%; /* Cercle parfait */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
+}
+    /* Menu hamburger */
+    .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #FF6F00;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 2001;
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive design */
+    @media (max-width: 1024px) {
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #000;
-            padding: 20px 30px;
-            color: #fff;
-            position: relative;
+            padding: 1rem;
+        }
+        
+        .search-wrapper {
+            flex: 0 1 300px;
+            margin: 0 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0.8rem;
             flex-wrap: wrap;
         }
-        
-        .navbar-logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid #fff;
-        }
-        
-        .shop-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        
-        .navbar-links {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            gap: 20px;
-        }
-        
-        .navbar-links .icon {
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            transition: color 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-        #accueil-icone{
-            margin-right:20px;
-        }
-        .navbar-links .icon:hover {
-            color: #ff7043;
-            font-weight: bold;
-        }
-        
-        .navbar-links .icon i {
-            margin-right: 8px;
-        }
-        
-        /* Affichage du bouton hamburger */
-        .hamburger-menu {
-            display: none; /* Par défaut, le bouton hamburger est caché */
+
+        .nav-menu {
+            display: none;
+            width: 100%;
             flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
-            cursor: pointer;
+            padding: 1rem 0;
+            background: rgba(0, 0, 0, 0.98);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            transform-origin: top;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-menu.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .search-wrapper {
+            order: 3;
+            flex: 1 1 100%;
+            margin: 0.8rem 0;
+        }
+
+        .hamburger-btn {
+            display: block;
+            order: 2;
+        }
+
+        .user-menu {
+            order: 1;
+        }
+
+        .nav-link {
+            width: 100%;
+            padding: 0.8rem 2rem;
+            border-radius: 0;
+            white-space: normal;  /* Permet le retour à la ligne sur mobile si nécessaire */
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* Style de la barre de recherche dans la navbar */
+    .navbar .search-wrapper {
+        max-width: 400px;
+        margin: 0 2rem;
+    }
+
+    .navbar .search-box {
+        position: relative;
+        width: 100%;
+    }
+
+    .navbar .search-input {
+        width: 100%;
+        padding: 8px 40px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 111, 0, 0.2);
+        border-radius: 20px;
+        color: #fff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .navbar .search-input:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #FF6F00;
+        box-shadow: 0 0 10px rgba(255, 111, 0, 0.15);
+    }
+
+    .navbar .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FF6F00;
+        font-size: 1rem;
+    }
+
+   
+    /* Styles pour la sidebar mobile */
+    .mobile-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+    }
+
+    .mobile-sidebar.active {
+        left: 0;
+    }
+
+    /* Overlay pour la sidebar */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 1999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Style des éléments de la sidebar */
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 111, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .sidebar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .sidebar-brand {
+        color: #FF6F00;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-link i {
+        margin-right: 15px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255, 111, 0, 0.1);
+        color: #FF6F00;
+        transform: translateX(5px);
+    }
+
+    .sidebar-auth {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 111, 0, 0.2);
+    }
+
+    .sidebar-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-close:hover {
+        color: #FF6F00;
+        transform: rotate(90deg);
+    }
+
+    /* Modification du bouton hamburger */
+    .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #FF6F00;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 2001;
+        transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: block;
         }
         
-        .hamburger-menu .bar {
-            height: 4px;
-            background-color: white;
-            border-radius: 2px;
+        .nav-menu {
+            display: none;
         }
         
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                align-items: center;
-                padding: 15px;
-            }
-        
-            .navbar-logo {
-                width: 100%;
-                justify-content: space-between;
-            }
-        
-            .navbar-links {
-                width: 100%;
-                justify-content: center;
-                display: none; /* Cacher les liens par défaut */
-                flex-direction: column;
-                margin-top: 10px;
-            }
-        
-            .navbar-links.show {
-                display: flex; /* Afficher les liens lorsque la classe "show" est ajoutée */
-            }
-        
-            /* Afficher le bouton hamburger sur mobile */
-            .hamburger-menu {
-                display: flex;
-            }
+        .auth-buttons {
+            display: none;
         }
+    }
+
+    /* Changer la couleur du titre "Nos Boutiques" */
+    .responsive-title {
+        color: #D35400; /* Orange foncé */
+    }
+
+    @media (min-width: 1200px) {
+        .produits-container {
+            gap: 40px; /* Augmentation de l'espacement pour les grands écrans */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .produit {
+            margin-right: 0; /* Supprime la marge à droite sur les petits écrans */
+        }
+    }
+
+    /* Ajout d'une animation pour les produits */
+    .produit-carousel-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.3s ease; /* Animation fluide */
+        margin: 10px; /* Espacement entre les produits */
+    }
+
+    .produit-carousel-item:hover {
+        transform: scale(1.05); /* Légère augmentation de la taille au survol */
+    }
+
+    /* Responsive pour les petits écrans */
+    @media (max-width: 768px) {
+        .produit-carousel-track {
+            display: flex;
+            flex-direction: column; /* Affichage en colonne pour éviter la superposition */
+            align-items: center; /* Centrer les éléments */
+        }
+
+        .produit-carousel-item {
+            width: 90%; /* Largeur ajustée pour les petits écrans */
+            margin: 10px 0; /* Espacement vertical */
+        }
+    }
         
         .container {
             margin-top: 30px;
@@ -151,265 +828,180 @@
         }
         
         /* Tableau de produits */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-        }
-        
-        th {
-            background-color: #333;
-            color: #ff7043;
-        }
-        
-        td {
-            background-color: #2a2a2a;
-            color: white;
-        }
-        
-        td img {
-            max-width: 100px;
-            height: auto;
-        }
-        
-        .remove-btn {
-            background-color: #f44336;
-            border: none;
-            padding: 12px 25px;
-            color: white;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .order-form {
-            background-color: #333;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-        }
-        
-        .order-form h3 {
-            font-size: 1.8rem;
-            color: #ff7043;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .order-form input, .order-form textarea {
-            width: calc(100% - 20px);  /* Ajuster pour éviter que les champs débordent */
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ff7043;
-            background-color: #2a2a2a;
-            color: white;
-            font-size: 1.2rem; /* Augmenter la taille de police */
-        }
-        
-        .order-form button {
-            background-color: #ff7043;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 1.1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .order-form input:focus, .order-form button:focus {
-            outline: none;
-            border-color: #ff6f40; /* Changer la couleur de bordure au focus */
-        }
-        
-        .whatsapp-icons {
-            position: fixed;
-            bottom: 100px; /* Position de base depuis le bas */
-            right: 30px; /* Position de base depuis la droite */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: moveUp 2s ease-in-out infinite;
-            z-index: 9999;
-        }
-        
-        .whatsapp-icons a {
-            display: inline-block;
-            margin-right: 15px; /* Espacement entre l'icône et le texte */
-            font-size: 70px; /* Taille par défaut de l'icône */
-            color: #25D366; /* Couleur de l'icône WhatsApp */
-            transition: transform 0.3s ease; /* Animation de l'icône */
-        }
-        
-        .whatsapp-icons a:hover {
-            transform: scale(1.3); /* Agrandir l'icône au survol */
-        }
-        
-        .whatsapp-text {
-            font-size: 20px; /* Taille du texte par défaut */
-            color: #FF6F00; /* Orange foncé */
-            font-weight: bold;
-            display: inline-block;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-            animation: textAnim 3s ease-in-out infinite;
-        }
-        
-        /* Animation du mouvement vers le haut de l'icône */
-        @keyframes moveUp {
-            0%, 100% {
-                transform: translateY(0); /* Position initiale */
-            }
-            50% {
-                transform: translateY(-30px); /* Monter davantage */
-            }
-        }
-        
-        /* Animation du texte pour attirer l'attention */
-        @keyframes textAnim {
-            0%, 100% {
-                opacity: 0.9;
-            }
-            50% {
-                opacity: 1; /* Augmenter l'opacité pour faire ressortir le texte */
-            }
-        }
-        
-        /* Media Queries pour rendre l'icône et le texte responsive */
-        
-        /* Smartphones (écrans petits) */
-        @media (max-width: 480px) {
-            .whatsapp-icons {
-                bottom: 60px; /* Un peu plus bas sur les petits écrans */
-                right: 10px; /* Plus près du bord */
-            }
-        
-            .whatsapp-icons a {
-                font-size: 50px; /* Réduire la taille de l'icône */
-            }
-        
-            .whatsapp-text {
-                font-size: 16px; /* Réduire la taille du texte */
-            }
-        }
-        
-        /* Tablettes (écrans moyens) */
-        @media (max-width: 768px) {
-            .whatsapp-icons {
-                bottom: 80px; /* Ajuster la position pour les tablettes */
-                right: 20px; /* Positionner légèrement mieux */
-            }
-        
-            .whatsapp-icons a {
-                font-size: 60px; /* Réduire la taille de l'icône */
-            }
-        
-            .whatsapp-text {
-                font-size: 18px; /* Ajuster la taille du texte */
-            }
-        }
-        
-        /* Ordinateurs de bureau (grands écrans) */
-        @media (min-width: 1024px) {
-            .whatsapp-icons {
-                bottom: 100px; /* Retour à la position par défaut */
-                right: 30px; /* Position de base */
-            }
-        
-            .whatsapp-icons a {
-                font-size: 70px; /* Taille maximale de l'icône */
-            }
-        
-            .whatsapp-text {
-                font-size: 20px; /* Taille du texte par défaut */
-            }
-        }
-        
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h2 {
-                font-size: 2rem;
-            }
-        
-            .cart-icon {
-                font-size: 1.5rem;
-            }
-        
-            table th, table td {
-                font-size: 1rem;
-            }
-        
-            .order-form {
-                width: 90%;
-                padding: 15px;
-            }
-        
-            .footer-icons i {
-                font-size: 3rem;
-            }
-        
-            .footer-text {
-                font-size: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h2 {
-                font-size: 1.5rem;
-            }
-        
-            .cart-icon {
-                font-size: 1.2rem;
-            }
-        
-            .order-form h3 {
-                font-size: 1.5rem;
-            }
-        
-            table th, table td {
-                font-size: 0.9rem;
-            }
-        
-            .footer-icons i {
-                font-size: 2.5rem;
-            }
-        
-            .footer-text {
-                font-size: 0.9rem;
-            }
-        }
+/* Conteneur du tableau pour l'effet responsive */
+.table-container {
+    width: 100%;
+    max-width: 100%; /* Empêche le débordement du tableau */
+    overflow-x: auto; /* Permet de faire défiler le tableau horizontalement sur les petits écrans */
+    margin: 0 auto; /* Centre le conteneur du tableau */
+    padding: 0 10px; /* Espacement autour du tableau */
+    box-sizing: border-box;
+}
 
-        .loading-circle {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+/* Style du tableau */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto; /* Centre le tableau */
+}
+
+/* Style des th et td */
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+    white-space: nowrap; /* Empêche le contenu de se répartir sur plusieurs lignes */
+    overflow: hidden; /* Cache tout contenu qui déborde */
+    text-overflow: ellipsis; /* Ajoute des points de suspension quand le texte est trop long */
+}
+
+/* Style pour l'en-tête */
+th {
+    background-color: #333;
+    color: #ff7043;
+}
+
+/* Style pour les cellules */
+td {
+    background-color: #2a2a2a;
+    color: white;
+}
+
+/* Style des images dans le tableau */
+td img {
+    max-width: 100px;
+    height: auto;
+}
+
+/* Style du bouton de suppression */
+.remove-btn {
+    background-color: #f44336;
+    border: none;
+    padding: 12px 25px;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block; /* Permet d'ajuster la taille et éviter qu'il ne prenne trop de place */
+    text-align: center;
+}
+
+/* Media Query pour les écrans plus petits (ex: Android) */
+@media (max-width: 600px) {
+    .remove-btn {
+        padding: 10px 20px; /* Réduire le padding sur petits écrans */
+        font-size: 1rem; /* Réduire la taille de la police pour l'adapter aux petits écrans */
+        border-radius: 4px; /* Légère réduction du rayon des bords pour mieux s'adapter */
+    }
+
+    /* Adapter le conteneur du tableau */
+    .table-container {
+        padding: 0; /* Retirer le padding pour mieux occuper l'espace sur petits écrans */
+    }
+
+    /* Adapter le tableau */
+    table {
+        width: 100%;
+        table-layout: fixed; /* Fixer la largeur des colonnes */
+    }
+
+    /* Ajuster les cellules sur petits écrans */
+    th, td {
+        padding: 8px; /* Réduire le padding des cellules */
+        white-space: normal; /* Permettre au texte de se casser et d'être visible */
+        overflow-wrap: break-word; /* Casser le mot si nécessaire pour éviter le débordement */
+    }
+}
+
+.order-form {
+    background-color: #333;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.order-form h3 {
+    font-size: 1.8rem;
+    color: #ff7043;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+
+      /* Formulaire */
+.order-form {
+    background-color: #333;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+/* Titre du formulaire */
+.order-form h3 {
+    font-size: 1.8rem;
+    color: #ff7043;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Champs de saisie (input et textarea) */
+.order-form input, .order-form textarea {
+    width: 100%;  /* Utiliser 100% de la largeur du conteneur */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ff7043;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 1.2rem;
+    box-sizing: border-box;  /* Pour que le padding n'affecte pas la largeur totale */
+}
+
+/* Bouton de soumission */
+.order-form button {
+    background-color: #ff7043;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Focus sur les champs et le bouton */
+.order-form input:focus, .order-form button:focus {
+    outline: none;
+    border-color: #ff6f40; /* Changer la couleur de bordure au focus */
+}
+
+/* Media Query pour les écrans plus petits (ex: Android) */
+@media (max-width: 600px) {
+    .order-form {
+        padding: 15px; /* Réduire le padding pour plus d'espace sur les petits écrans */
+    }
+    
+    .order-form input, .order-form textarea {
+        font-size: 1rem; /* Réduire la taille de la police pour une meilleure lisibilité sur mobile */
+    }
+    
+    .order-form button {
+        font-size: 1rem; /* Ajuster la taille du bouton */
+        padding: 12px; /* Un peu plus d'espace pour le bouton */
+    }
+}
+
         
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
  /* Conteneur pour l'icône du panier */
 .cart-icon-container {
     position: fixed; /* Rendre l'icône fixe sur l'écran */
@@ -516,107 +1108,6 @@
     color: #D65E00; /* Orange foncé */
 }
 
- /* Style pour le bouton Accueil */
- #home-button {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.home-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #007bff; /* Bleu bouton Accueil */
-    color: #fff;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.home-btn:hover {
-    background-color: #0056b3; /* Bleu foncé au survol */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.icon-home {
-    margin-right: 10px;
-    font-size: 18px;
-}
-
-/* Style du bouton "Accueil' */
-.add-to-cart-btn-produit {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.add-to-cart-btn-produit:hover {
-    background-color: #218838;
-}
-
-
-  /* Boîte de notification */
-  .notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
-    color: #333; /* Texte en noir pour contraster avec le fond */
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.5s ease-in-out;
-    z-index: 9999;
-}
-
-.notification.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.notification.hide {
-    opacity: 0;
-    transform: translateX(100%);
-}
-
-/* Bouton de fermeture */
-.close-btn {
-    background: none;
-    border: none;
-    color: #333; /* Couleur du texte du bouton */
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-/* Style pour les messages d'erreur, succès, etc. */
-.alert.success {
-    background-color: #4CAF50; /* Vert pour le succès */
-}
-
-.alert.warning {
-    background-color: #ff9800; /* Orange pour l'avertissement */
-}
-
-.alert.error {
-    background-color: #f44336; /* Rouge pour l'erreur */
-}
-
 /* Styles de transition au survol du bouton de fermeture */
 .close-btn:hover {
     color: #ff7043;
@@ -629,7 +1120,7 @@
     border-radius: 50%;
     width:18px;
     height: 18px;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: bold;
     text-align: center;
     line-height: 18px; /* Centre le texte verticalement */
@@ -639,7 +1130,7 @@
         width:12px;
         height: 14px;
         border-radius: 50%;
-        font-size:10px;
+        font-size:14px;
         line-height: 16px; /* Centre le texte verticalement */
     }
 }
@@ -651,50 +1142,637 @@
 }
 
 
-    </style>
+/* Modal */
+.modal {
+    display: none; /* Cacher le modal par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.5s ease-out; /* Animation d'apparition */
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal */
+/* Modal spécifique à la confirmation de commande */
+#confirmation-modal-boutique {
+    display: none; /* Cacher le modal par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.5s ease-out; /* Animation d'apparition */
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#confirmation-modal-boutique .modal-content-confirmation  {
+    background-color: #333;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    width: 80%;
+    max-width: 500px;
+    animation: zoomIn 0.5s ease-out; /* Animation de zoom */
+    position: relative;
+}
+
+/* Animation de zoom */
+@keyframes zoomIn {
+    from {
+        transform: scale(0.7);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Titre du modal */
+#confirmation-modal-boutique .modal-content h2 {
+    color: #ff7043;
+}
+
+/* Icône de fermeture */
+#confirmation-modal-boutique .close-btn {
+    color: #ff7043;
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+/* Icône WhatsApp */
+#confirmation-modal-boutique .whatsapp-icons {
+    margin-top: 20px;
+    animation: pulse 1.5s infinite; /* Animation de pulsation */
+}
+
+#confirmation-modal-boutique .whatsapp-icons a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+#confirmation-modal-boutique .whatsapp-icons i {
+    font-size: 3rem;
+    color: #25d366;
+    transition: transform 0.3s;
+    animation: pulse 1.5s infinite; /* Ajouter animation pulsée */
+}
+
+#confirmation-modal-boutique .whatsapp-icons i:hover {
+    transform: scale(1.1);
+}
+
+#confirmation-modal-boutique .whatsapp-text {
+    display: block;
+    font-size: 1.2rem;
+    color: white;
+    margin-top: 10px;
+}
+
+/* Animation pulsation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Icône de validation */
+#confirmation-modal-boutique .fa-check-circle {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin-top: 20px;
+}
+
+/* Media Query pour les écrans plus petits (ex: Android) */
+@media (max-width: 600px) {
+    #confirmation-modal-boutique .modal-content-confirmation {
+        width: 90%; /* Réduire la largeur du modal sur les petits écrans */
+        padding: 20px;
+    }
+
+    #confirmation-modal-boutique .whatsapp-icons i {
+        font-size: 2.5rem;
+    }
+
+    #confirmation-modal-boutique .whatsapp-text {
+        font-size: 1rem;
+    }
+
+    #confirmation-modal-boutique .fa-check-circle {
+        font-size: 2rem; /* Réduire la taille de l'icône sur petits écrans */
+    }
+}
+/*---------------------------------------------Gestion du modla Fond noir clair pour le modal ------------------------------------------------------*/
+.modal-content {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none;
+}
+
+/* ✅ Organisation des produits */
+.product-section-modal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* ✅ Centrage des produits */
+    align-items: flex-start;
+    gap: 15px; /* ✅ Espacement uniforme */
+    width: 100%;
+    padding: 10px;
+}
+
+/* ✅ Chaque produit garde son espace */
+.product-item-modal {
+    flex: 1 1 calc(50% - 15px); /* ✅ 2 produits par ligne */
+    max-width: 300px; /* ✅ Taille normale même avec 1 ou 2 produits */
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-item-modal:hover {
+    transform: translateY(-5px);
+}
+
+/* ✅ Taille des images maintenue */
+.product-image-modal {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* ✅ Garde une taille correcte */
+    min-height: 180px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+
+/* ✅ Sur grands écrans, ne pas rapetisser les produits */
+@media (min-width: 992px) {
+    .product-section-modal {
+        justify-content: flex-start; /* ✅ Garde un alignement naturel */
+    }
+
+    .product-item-modal {
+        flex: 1 1 auto; /* ✅ Garde une bonne taille même avec 1 produit */
+        max-width: 250px; /* ✅ Pas trop grand */
+    }
+}
+
+/* ✅ Sur petits écrans (2 colonnes) */
+@media (max-width: 768px) {
+    .product-section-modal {
+        justify-content: space-between; /* ✅ Évite les gros espaces vides */
+    }
+
+    .product-item-modal {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 150px;
+    }
+}
+
+/* ✅ Sur très petits écrans (1 colonne si nécessaire) */
+@media (max-width: 480px) {
+    .product-item-modal {
+        flex: 1 1 100%;
+    }
+}
+
+/* ✅ Autres styles */
+.product-info-modal {
+    font-size: 12px;
+    color: white;
+}
+
+.product-name-modal {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.product-price {
+    color: #cc5500;
+}
+
+.product-icon-eye {
+    font-size: 18px;
+    margin-top: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.product-icon-eye:hover {
+    color: #dddddd;
+}
+
+.modal-background {
+    background-color: #000;
+}
+
+/* Style de la modal-header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ✅ Ajustements pour petits écrans */
+@media (max-width: 576px) {
+    .modal-header {
+        flex-direction: row;
+    }
+
+    .modal-title {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .btn-danger {
+        font-size: 1rem;
+        padding: 0.5rem;
+        width: auto;
+        height: auto;
+    }
+
+    .btn-danger i {
+        font-size: 1rem;
+    }
+}
+
+/* ✅ Sur grands écrans */
+@media (min-width: 576px) {
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .btn-danger {
+        font-size: 1.25rem;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .btn-danger i {
+        font-size: 1.4rem;
+    }
+}
+
+/* ✅ Sur Android, le modal couvre toute la page */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+    }
+}
+@media (max-width: 768px) {
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+    .position-relative {
+        width: 100%;
+        max-width: 250px;
+        min-width: 200px;
+    }
+    .form-control {
+        width: 100%;
+        padding-left: 40px;
+    }
+    .position-absolute {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: gray;
+    }
+    .btn-primary {
+        width: auto;
+        min-width: 100px;
+    }
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .product-section .row {
+        justify-content: center;
+    }
+    .product-section .row > div {
+        flex: 1 1 auto;
+        max-width: 300px;
+    }
+}
+/* Footer Styling amélioré */
+.footer {
+    background: linear-gradient(to top, #111, #000); /* Dégradé du noir vers un gris foncé */
+    color: #fff;
+    padding: 50px 20px;
+    font-family: 'Arial', sans-serif;
+    border-top-left-radius: 30px; /* Coins arrondis en haut */
+    border-top-right-radius: 30px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Sections du footer */
+.footer-section {
+    flex: 1 1 300px;
+    min-width: 250px;
+}
+
+.footer-section h4 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #FF6600;; /* Orange foncé pour attirer l'attention */
+    border-bottom: 2px solid #ff9900;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.footer-section p,
+.footer-section ul {
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.8;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 12px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #ffcc00;
+    transition: all 0.3s ease-in-out;
+}
+
+.footer-section ul li a:hover {
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* Icônes des réseaux sociaux */
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-links a {
+    font-size: 1.7rem;
+    color: #ffcc00;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.3);
+    color: #fff;
+}
+
+/* Pied de page */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+    color: #bbb;
+}
+
+/* Responsive Design */
+
+/* Tablettes (max 1024px) */
+@media screen and (max-width: 1024px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Smartphones (max 768px) */
+@media screen and (max-width: 768px) {
+    .footer-container {
+        padding: 0 15px;
+    }
+
+    .footer-section h4 {
+        font-size: 1.1rem;
+    }
+
+    .footer-section p,
+    .footer-section ul {
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+        padding-top: 10px;
+    }
+
+    .social-links a {
+        font-size: 1.4rem;
+    }
+}
+
+
+
+/* Conteneur pour l'icône du panier */
+.cart-icon-container {
+    position: fixed;
+    bottom: 50px; /* Ajustement de la hauteur */
+    right: 20px; /* Placer l'icône à droite */
+    z-index: 9998;
+    animation: bounce 3s ease-in-out infinite; /* Animation plus fluide */
+}
+
+/* Icône de panier */
+.cart-icon {
+    font-size: 40px; /* Réduction de la taille */
+    color: #FF8C00; /* Orange foncé */
+    cursor: pointer;
+}
+
+/* Compteur du panier */
+/* Compteur du panier */
+.cart-icon-container .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color:#ff3d00;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    width:16px;
+    height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #fff; /* Bordure blanche pour un effet pro */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
+}
+/* Animation de rebond adoucie */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Réduction du rebond */
+    }
+}
+
+/* Styles responsive pour tablettes */
+@media (max-width: 768px) {
+    .cart-icon-container {
+        bottom: 40px;
+        right: 15px;
+    }
+
+    .cart-icon {
+        font-size: 35px; /* Réduction de la taille sur tablette */
+    }
+
+    .cart-count {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+}
+
+/* Styles responsive pour mobiles */
+@media (max-width: 480px) {
+    .cart-icon-container {
+        bottom: 30px;
+        right: 10px;
+    }
+
+    .cart-icon {
+        font-size: 30px; /* Réduction supplémentaire sur mobile */
+    }
+
+    .cart-count {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+}
+
+</style>
 </head>
 <body>
     <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
-            <span>{{ message }}</span>
-            <button class="close-btn" onclick="closeNotification(this)">×</button>
-        </div>
-        {% endfor %}
-    </div>
-{% endif %}
+<!-- Navbar -->
 <nav class="navbar">
-    <div class="navbar-logo">
-        <div class="shop-info">
-            <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
-        </div>
-        <div class="shop-info">
-            <span class="shop-name">{% if nom_boutique %}{{ nom_boutique }}{% else %}Nom de la boutique{% endif %}</span>
-        </div>
-        <!-- Menu hamburger pour mobile -->
-        <div class="hamburger-menu" onclick="toggleMenu()">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-    </div>
-    <div class="navbar-links">
-        <a href="{% url 'boutique_contenu' boutique_id=boutique_id%}" class="nav-link icon" id="accueil-icone">
-            <i class="fa fa-home"></i> Accueil
-        </a>
-        <a href="" class="nav-link icon">
-            <i class="fa fa-shopping-cart"></i> Panier
-            <div id="cart-count-nav" class="cart-count nav-panier">0</div>
-        </a>
-    </div>
-</nav>
+    <!-- Logo et nom de la plateforme -->
+    <a class="navbar-brand">
+        <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
+        <span class="brand-name">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+    </a>
 
-    <div class="container">
-        <h2>Votre Panier <i class="fas fa-shopping-cart icon"></i></h2>
-    
-        <!-- Tableau des produits -->
+    <!-- Barre de recherche centrale -->
+    <div class="search-wrapper">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" placeholder="Rechercher un produit..." class="search-input"
+            onfocus="openModal()">
+        </div>
+    </div>
+
+    <!-- Menu principal -->
+    <div class="nav-menu">
+        <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="#produits" class="nav-link">
+            <i class="fa fa-box"></i> Produits
+        </a>
+        <a href="#localisation" class="nav-link">
+            <i class="fa fa-map-marker-alt"></i> Localisation
+        </a>
+        <a href="#" class="nav-link">
+            <i class="fa fa-shopping-cart"></i> Panier
+            <div id="cart-count-nav" class="cart-count navbar-panier">0</div>
+        </a>
+        
+        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="nav-link contact-link">
+            <i class="fab fa-whatsapp"></i>
+            <span>Contact</span>
+        </a>
+    </div>
+    <!-- Menu hamburger pour mobile -->
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+</nav>
+   <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+   <div id="user-data" data-user-id="{{user_id}}"></div>
+
+   <div class="container" style="margin-top: 200px;">
+    <h2>Votre Panier <i class="fas fa-shopping-cart icon"></i></h2>
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
@@ -708,57 +1786,160 @@
                 <!-- Les lignes des produits et variantes seront ajoutées ici via AJAX -->
             </tbody>
         </table>
-        
-        <!-- Total -->
-        <div id="total-container" class="text-center">
-            <h3>Total : <span id="total-price">0.00</span> {{ devise }}</h3>
-        </div>
-          <!-- Nouveau bouton Accueil -->
-
-        
-        <!-- Son de confirmation -->
-        <audio id="confirmation-sound" src="{% static 'not.mp3' %}" preload="auto"></audio>
-        
-            
-
- <!-- Nouvelle icône de panier avec le compteur -->
- <div class="cart-icon-container">
-    <a href="{% url 'panier' user_id%}">
-        <i class="fas fa-shopping-cart cart-icon"></i>
-    </a>
-    <!-- Le compteur du panier, initialement vide -->
-    <div id="cart-count" class="cart-count">0</div>
-</div>
-
-
-
-   <!-- Affichage du total du panier -->
-   <div id="total-panier"></div>
-
-    
-   <!-- Formulaire d'envoi de la commande -->
-<div class="order-form">
-    <h3>Envoyer votre commande</h3>
-    <form method="post" action="{% url 'envoyer_commande' user_id=user_id %}">
-        {% csrf_token %}
-        <input type="text" name="name" placeholder="Nom du client" required>
-        <input type="text" name="phone" placeholder="Numéro du client" required>
-        <input type="text" name="lieu_de_livraison" placeholder="Lieu de livraison" required>
-        <button type="submit">Envoyer la commande</button>
-    </form>
-</div>
-
-    
-    <!-- Icône WhatsApp avec texte -->
-    <div class="whatsapp-icons">
-        <a href="https://api.whatsapp.com/send/?phone=224{{numero}}&text=Bonjour,%20j'ai%20effectué%20une%20commande%20sur%20votre%20boutique%20{{boutique}}.%20J'aimerais%20savoir%20si%20ma%20commande%20a%20été%20bien%20prise%20en%20compte%20et%20quelles%20sont%20les%20étapes%20suivantes.%20Merci%20beaucoup!&type=phone_number&app_absent=0" target="_blank">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <span class="whatsapp-text">Valider la commande</span>
     </div>
     
+    <!-- Total -->
+    <div id="total-container" class="text-center">
+        <h3>Total : <span id="total-price">0.00</span> {{ devise }}</h3>
+    </div>
+    
+    <!-- Son de confirmation -->
+    <audio id="confirmation-sound" src="{% static 'not.mp3' %}" preload="auto"></audio>
+    
+    <!-- Nouvelle icône de panier avec le compteur -->
+    <div class="cart-icon-container">
+        <a href="{% url 'panier' user_id%}">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+        </a>
+        <div id="cart-count" class="cart-count">0</div>
+    </div>
+    
+    <!-- Affichage du total du panier -->
+    <div id="total-panier"></div>
+    
+    <!-- Formulaire d'envoi de la commande -->
+    <div class="order-form">
+        <h3>Envoyer votre commande</h3>
+        <form method="post" action="{% url 'envoyer_commande' user_id=user_id %}">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Nom du client" required>
+            <input type="text" name="phone" placeholder="Numéro du client" required>
+            <input type="text" name="lieu_de_livraison" placeholder="Lieu de livraison" required>
+            <button type="submit">Envoyer la commande</button>
+        </form>
+    </div>
+    
+   <!-- Modal de confirmation de commande -->
+<div id="confirmation-modal-boutique" class="modal">
+    <div class="modal-content-confirmation">
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'error' in message.tags or 'warning' in message.tags %}
+                    <div class="alert {{ message.tags }} notification show">
+                        <i class="fa {% if 'error' in message.tags %}fa-exclamation-circle{% else %}fa-exclamation-triangle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% else %}
+                    <h2>Confirmation</h2>
+                    <p id="modal-message">Merci pour votre commande.</p>
+                    <div class="messages">
+                        <div class="alert {{ message.tags }} notification show">
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                    <p>Pour finaliser votre commande, cliquez sur l'icône WhatsApp ci-dessous.</p>
+                    <div class="whatsapp-icons">
+                        <a href="https://api.whatsapp.com/send/?phone=224{{numero}}&text=Bonjour,%20j'ai%20effectué%20une%20commande%20sur%20votre%20boutique%20{{boutique}}.%20J'aimerais%20savoir%20si%20ma%20commande%20a%20été%20bien%20prise%20en%20compte%20et%20quelles%20sont%20les%20étapes%20suivantes.%20Merci%20beaucoup!&type=phone_number&app_absent=0" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <span class="whatsapp-text">Valider la commande</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <span class="close-btn" onclick="closeModal()">×</span>
+    </div>
+</div>
+    <!-- Modal de filtrage et recherche -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-xl modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Filtrer et rechercher des produits</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" style="color: #d35400; font-size: 1.5rem;"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Barre de recherche et filtres alignés sur une ligne -->
+                <div class="d-flex flex-wrap align-items-center w-100 mb-3 gap-2 flex-md-nowrap justify-content-center" style="margin-top: 10px;">
+                    <div class="position-relative flex-grow-1" style="max-width: 250px; min-width: 200px;">
+                        <input id="search-input-modal" class="form-control text-center" type="search" placeholder="🔍 Rechercher un produit..." aria-label="Search" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-search position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
+                        <input type="number" id="min-price" class="form-control text-center" placeholder="💰 Prix min" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
+                        <input type="number" id="max-price" class="form-control text-center" placeholder="💰 Prix max" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
+                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
+                    </div>
+                    <button class="btn btn-primary d-flex align-items-center justify-content-center" onclick="applyFilter()" style="height: 40px; border-radius: 8px; background-color: #007bff; min-width: 100px;">
+                        <i class="fas fa-filter text-white me-2"></i> Appliquer
+                    </button>
+                </div>
+                <div id="modal-product-container" class="product-section-modal mt-3">
+                    <div class="row" id="product-container-modal" style="max-height: 50vh; overflow-y: auto; display: flex; justify-content: center;">
+                        <!-- Les produits filtrés ou recherchés apparaîtront ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+</div>
+<!-----------------------------Section du footer--------------------------->
+<footer class="footer">
+    <div class="footer-container">
+        <!-- Section Contact -->
+        <div class="footer-section">
+            <h4>Contactez-nous</h4>
+            
+            {% if utilisateur_email %}
+                <p>Email : {{ utilisateur_email }}</p>
+            {% else %}
+                <p>Email : Non disponible</p>
+            {% endif %}
+            
+            {% if utilisateur_numero %}
+                <p>Téléphone : {{ utilisateur_numero }}</p>
+            {% else %}
+                <p>Téléphone : Non disponible</p>
+            {% endif %}
+            
+            {% if localisation %}
+                <p>Adresse : {{ localisation.repere }}, {{ localisation.ville }}, Guinée</p>
+            {% else %}
+                <p>Adresse : Non disponible</p>
+            {% endif %}
+        </div>
+
+        <!-- Section Liens utiles -->
+        <div class="footer-section">
+            <h4>Liens utiles</h4>
+            <ul>
+                <li><a href="#produits">Nos produits</a></li>
+                <li><a href="#localisation">Notre localisation</a></li>
+            </ul>
+        </div>
+
+        <!-- Section Réseaux sociaux -->
+        <div class="footer-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Boutique Moderne. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<!-----------------------------Section du footer--------------------------->
 <script>
     function toggleMenu() {
         const navbarLinks = document.querySelector('.navbar-links');
@@ -774,9 +1955,11 @@
             .then(data => {
                 // Mettre à jour le compteur du panier avec le nombre d'articles
                 const cartCount = document.querySelector('#cart-count');
+                const sidebarCount = document.querySelector('#sidebar-count');
                 const cartCountNav = document.querySelector('#cart-count-nav');
                 cartCount.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier
                 cartCountNav.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier pour la navbar
+                sidebarCount.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier pour le sidebar
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération du panier:', error);
@@ -926,52 +2109,275 @@
     
   
     
-       // ---------------------------Fonction pour fermer une notification------------------------------
-function closeNotification(element) {
-    const notification = element.parentElement;
-    notification.classList.add('hide');
-    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
+       // ---------------------------Script d'affichage et de gestion du modal------------------------------
+       function playNotificationSound() {
+        var sound = document.getElementById('notification-sound');
+        if (sound) {
+            sound.play(); // Jouer le son
+        }}
+       function showModal() {
+        const modal = document.getElementById('confirmation-modal-boutique');  // Changer l'ID ici
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 100);
+        playNotificationSound(); // Jouer le son lors de l'affichage du modal
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById('confirmation-modal-boutique');  // Changer l'ID ici
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+    
+    // Affichage automatique du modal après soumission de la commande
+    window.addEventListener('load', () => {
+        if (document.querySelector('.messages')) {
+            showModal();
+        }
+    });
+    
+
+</script>
+<script>
+    // Gestion du menu mobile
+    function toggleMenu() {
+        const navbar = document.querySelector('.navbar');
+        const navLinks = document.querySelector('.nav-links');
+        const hamburger = document.querySelector('.hamburger i');
+        
+        navLinks.classList.toggle('active');
+        navbar.classList.toggle('mobile-active');
+        
+        // Animation de l'icône du menu
+        if (navLinks.classList.contains('active')) {
+            hamburger.classList.remove('fa-bars');
+            hamburger.classList.add('fa-times');
+        } else {
+            hamburger.classList.add('fa-bars');
+            hamburger.classList.remove('fa-times');
+        }
+    }
+
+    // Gestion du scroll pour la navbar
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll <= 0) {
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            return;
+        }
+        
+        if (currentScroll > lastScroll && !navbar.classList.contains('mobile-active')) {
+            // Scroll vers le bas
+            navbar.style.transform = 'translateY(-100%)';
+        } else {
+            // Scroll vers le haut
+            navbar.style.transform = 'translateY(0)';
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.15)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+
+    // Fermer le menu mobile lors du clic sur un lien
+    document.querySelectorAll('.nav-links .nav-item').forEach(link => {
+        link.addEventListener('click', () => {
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger i');
+            if (navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                document.querySelector('.navbar').classList.remove('mobile-active');
+                hamburger.classList.add('fa-bars');
+                hamburger.classList.remove('fa-times');
+            }
+        });
+    });
+
+
+</script>
+
+<script>
+    // Gestion du menu hamburger
+    function toggleMenu() {
+        const navMenu = document.querySelector('.nav-menu');
+        const hamburgerBtn = document.querySelector('.hamburger-btn');
+        
+        navMenu.classList.toggle('show');
+        hamburgerBtn.classList.toggle('active');
+        
+        // Empêcher le défilement de la page quand le menu est ouvert
+        document.body.style.overflow = navMenu.classList.contains('show') ? 'hidden' : '';
+    }
+
+    // Fermer le menu mobile lors du clic sur un lien
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            const navMenu = document.querySelector('.nav-menu');
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            
+            if (navMenu.classList.contains('show')) {
+                navMenu.classList.remove('show');
+                hamburgerBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+
+    // Fermer le menu mobile lors du redimensionnement de la fenêtre
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            const navMenu = document.querySelector('.nav-menu');
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            
+            navMenu.classList.remove('show');
+            hamburgerBtn.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
+
+
+
+<!-- Sidebar mobile -->
+<div class="sidebar-overlay"></div>
+<div class="mobile-sidebar">
+<div class="sidebar-header">
+    <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="sidebar-logo">
+    <span class="sidebar-brand">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+</div>
+
+<nav class="sidebar-nav">
+    <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="sidebar-link">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span>
+    </a>
+    <a href="#product" class="sidebar-link">
+        <i class="fas fa-box"></i>
+        <span>Produits</span>
+    </a>
+    <a href="#localisation" class="sidebar-link">
+        <i class="fa fa-map-marker-alt"></i> Localisation
+    </a>
+    <a href="#" class="sidebar-link">
+        <i class="fa fa-shopping-cart"></i> Panier
+        <div id="sidebar-count" class="cart-count navbar-panier" style="font-size:12px;">0</div>
+    </a>
+    <a href="https://api.whatsapp.com/send/?phone=224610253216" class="sidebar-link">
+        <i class="fab fa-whatsapp"></i>
+        <span>Contact</span>
+    </a>
+</nav>
+</div>
+
+<script>
+// Gestion de la sidebar mobile
+document.addEventListener('DOMContentLoaded', function() {
+const hamburgerBtn = document.querySelector('.hamburger-btn');
+const sidebar = document.querySelector('.mobile-sidebar');
+const overlay = document.querySelector('.sidebar-overlay');
+const sidebarClose = document.querySelector('.sidebar-close');
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
 }
 
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
-}
+hamburgerBtn.addEventListener('click', toggleSidebar);
+overlay.addEventListener('click', toggleSidebar);
+sidebarClose.addEventListener('click', toggleSidebar);
 
-// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
+// Fermer la sidebar lors du clic sur un lien
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        toggleSidebar();
     });
 });
-
-// Fonction pour afficher une notification avec animation et son
-function showNotification(element) {
-    const notification = element;
-    notification.classList.add('show');
-    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-    
-    // Ajouter un délai avant de masquer la notification
-    setTimeout(() => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    }, 5000); // La notification disparaît après 5 secondes
-}
-
-// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-setTimeout(() => {
-    const notifications = document.querySelectorAll('.notification');
-    notifications.forEach(notification => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
+});
+</script>
+<script>
+     //<!-------------------------------- Modal de recherche de produit et filtrage Pour la recherche------------------------------------------> 
+function openModal() {
+    if (!document.getElementById('productModal').classList.contains('show')) {
+      const modal = new bootstrap.Modal(document.getElementById('productModal'));
+      modal.show();
+    }
+  }
+  
+  function performSearch(event) {
+    event.preventDefault(); // Empêche le comportement par défaut du formulaire
+    const searchQuery = document.getElementById('search-input-modal').value.trim();
+    const minPrice = document.getElementById('min-price').value.trim();
+    const maxPrice = document.getElementById('max-price').value.trim();
+  
+    if (searchQuery === "" && minPrice === "" && maxPrice === "") return;  // Ne pas faire de recherche sans critère
+  
+    const validMinPrice = minPrice !== "" ? minPrice : undefined;
+    const validMaxPrice = maxPrice !== "" ? maxPrice : undefined;
+  
+    const userId = document.getElementById('user-data').getAttribute('data-user-id');
+  
+    $.ajax({
+      url: `/recherche-produit/${userId}/`,
+      data: {
+        'nom': searchQuery,
+        'prix_min': validMinPrice,
+        'prix_max': validMaxPrice
+      },
+      success: function(response) {
+        if (response.produits && response.produits.length > 0) {
+          updateModalProducts(response.produits);
+        } else {
+          console.log('Aucun produit trouvé');
+        }
+      },
+      error: function(error) {
+        console.error('Erreur AJAX:', error);
+      }
     });
-}, 5000); // La notification disparaît après 5 secondes
-
-
-    </script>
-    
+  }
+  
+  function updateModalProducts(produits) {
+    const productContainer = document.getElementById('product-container-modal');
+    productContainer.innerHTML = '';
+  
+    if (produits.length > 0) {
+      produits.forEach(product => {
+        const productElement = createProductElement(product);
+        const colDiv = document.createElement('div');
+        colDiv.classList.add('col-6', 'col-lg-2', 'mb-4');
+        colDiv.appendChild(productElement);
+        productContainer.appendChild(colDiv);
+      });
+    } else {
+      productContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+    }
+  }
+  
+  function createProductElement(product) {
+    const div = document.createElement('div');
+    div.classList.add('product-item-modal');
+    div.dataset.name = product.nom.toLowerCase();
+    div.dataset.price = product.prix;
+  
+    div.innerHTML = `
+     <a href="${product.url}" class="product-link">
+        <img src="${product.image_url || ''}" alt="${product.nom}" class="product-image-modal">
+      </a>
+      <div class="product-info-modal">
+        <div class="product-name-modal">${product.nom}</div>
+        <div class="product-price">${product.prix} ${product.devise}</div>
+      </div>
+      <a href="${product.url}" class="product-link">
+        <div class="product-icon-eye">👁️</div>
+      </a>
+      
+    `;
+    return div;
+  }
+</script>
 </body>
 </html>
 

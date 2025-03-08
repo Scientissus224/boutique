@@ -53,6 +53,7 @@ def afficher_produits_panier(request, utilisateur_id):
         'boutique':utilisateur.nom_boutique,
         'boutique_id':boutique.pk,
         'nom_boutique':utilisateur.nom_boutique,
+        'user_id': utilisateur_id
     }
 
     # Rendu du template 'produits_panier.html' avec le contexte

@@ -23,6 +23,9 @@ def home(request):
     produits_boutique5 = []
     produits_boutique6 = []
 
+    # Liste pour tous les produits
+    produits_ok = []
+
     # Récupérer les 6 premières boutiques premium
     boutiques_premium = Boutique.objects.filter(premium=True).order_by('id')[:6]
 
@@ -41,37 +44,39 @@ def home(request):
                 mise_en_avant="OUI"  # Filtre sur les produits mis en avant
             ).order_by('id')[:10]
 
-            # Affecter les produits aux bonnes variables en fonction de la boutique
+            def format_produits(produits):
+                return [
+                    {
+                        "nom": produit.nom,
+                        "prix": produit.prix,
+                        "image": produit.image.url if produit.image else None,
+                        "boutique_url": reverse('boutique_contenu', args=[boutique.id]),
+                        "produit_url": produit.get_produit_url(),  # Ajout de l'URL absolue du produit
+                    }
+                    for produit in produits
+                ]
+
+            # Ajout des produits de chaque boutique dans les listes respectives
             if boutique == boutiques_premium[0]:
-                produits_boutique1 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique1 = format_produits(produits_premium)
             elif boutique == boutiques_premium[1]:
-                produits_boutique2 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique2 = format_produits(produits_premium)
             elif boutique == boutiques_premium[2]:
-                produits_boutique3 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique3 = format_produits(produits_premium)
             elif boutique == boutiques_premium[3]:
-                produits_boutique4 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique4 = format_produits(produits_premium)
             elif boutique == boutiques_premium[4]:
-                produits_boutique5 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique5 = format_produits(produits_premium)
             elif boutique == boutiques_premium[5]:
-                produits_boutique6 = [
-                    {"nom": produit.nom, "prix": produit.prix, "image": produit.image.url if produit.image else None, "boutique_url": reverse('boutique_contenu', args=[boutique.id])} 
-                    for produit in produits_premium
-                ]
+                produits_boutique6 = format_produits(produits_premium)
+
+            # Ajouter tous les produits dans la liste produits_ok
+            produits_ok.extend(produits_boutique1)
+            produits_ok.extend(produits_boutique2)
+            produits_ok.extend(produits_boutique3)
+            produits_ok.extend(produits_boutique4)
+            produits_ok.extend(produits_boutique5)
+            produits_ok.extend(produits_boutique6)
 
     # Récupérer les données de la session si elles existent
     total_produits_ajoutes = request.session.get('total_produits_ajoutes', 0)  # Nombre total de produits ajoutés
@@ -80,17 +85,14 @@ def home(request):
     context = {
         "boutiques": boutiques_data,  # Boutiques publiées
         "produits_premium": produits_premium_data,  # Produits mis en avant des boutiques premium
-        "produits_boutique1": produits_boutique1,
-        "produits_boutique2": produits_boutique2,
-        "produits_boutique3": produits_boutique3,
-        "produits_boutique4": produits_boutique4,
-        "produits_boutique5": produits_boutique5,
-        "produits_boutique6": produits_boutique6,
+        "produits_ok": produits_ok,  # Liste globale de tous les produits des boutiques premium
         "total_produits_ajoutes": total_produits_ajoutes,  # Inclure le total des produits ajoutés
         "produit_data": produit_data,  # Inclure les informations des produits
     }
 
     return render(request, 'home.html', context)
+
+
 
 
 

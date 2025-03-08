@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmation de création de boutique</title>
+    
+    <!-- Lien CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
+        /* Global Styles */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f7f8fa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,45 +22,46 @@
         }
         .container {
             background-color: #ffffff;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 40px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            width: 85%;
-            max-width: 650px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
             text-align: center;
         }
         h2 {
-            color: #4CAF50;
-            font-size: 40px;
-            margin-bottom: 20px;
+            color: #e67e22; /* Orange foncé */
+            font-size: 36px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
         p {
-            font-size: 18px;
-            color: #333;
-            line-height: 1.6;
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.5;
         }
         .highlight {
-            color: #4CAF50;
+            color: #e67e22; /* Orange foncé */
             font-weight: bold;
-            font-size: 22px;
+            font-size: 18px;
         }
         .identifiant-box {
-            background: #4CAF50;
-            color: white;
-            padding: 15px;
-            font-size: 24px;
+            background: #e67e22; /* Orange foncé */
+            color: #fff;
+            padding: 15px 25px;
+            font-size: 22px;
             border-radius: 8px;
             display: inline-block;
             margin-top: 20px;
         }
         .footer {
-            font-size: 16px;
-            color: #777;
+            font-size: 14px;
+            color: #7f8c8d;
             margin-top: 30px;
             font-style: italic;
         }
         .button {
-            background-color: #4CAF50;
+            background-color: #e67e22; /* Orange foncé */
             color: #fff;
             padding: 15px 30px;
             font-size: 18px;
@@ -63,18 +69,19 @@
             border-radius: 6px;
             text-decoration: none;
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 25px;
+            transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #45a049;
+            background-color: #d35400; /* Teinte plus foncée de l'orange */
         }
         ul {
             text-align: left;
             list-style-type: none;
             padding: 0;
-            font-size: 18px;
-            color: #555;
-            margin: 20px 0;
+            font-size: 16px;
+            color: #7f8c8d;
+            margin: 25px 0;
         }
         li {
             margin: 12px 0;
@@ -83,16 +90,64 @@
         }
         li i {
             margin-right: 10px;
-            color: #4CAF50;
+            color: #e67e22; /* Orange foncé */
+        }
+        img {
+            max-width: 150px;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            h2 {
+                font-size: 30px;
+            }
+            .highlight {
+                font-size: 16px;
+            }
+            .identifiant-box {
+                font-size: 18px;
+                padding: 12px 20px;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 26px;
+            }
+            .highlight {
+                font-size: 14px;
+            }
+            .identifiant-box {
+                font-size: 16px;
+                padding: 10px 18px;
+            }
+            .button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            ul {
+                font-size: 14px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="container">
+        <img src="{{ logo_url }}" alt="WarabaShop Logo">
         <h2>Félicitations !</h2>
         <p>Votre boutique <span class="highlight">{{ boutique }}</span> a été créée avec succès.</p>
-        <p>Votre identifiant unique :</p>
+        <p><strong>Votre identifiant unique :</strong></p>
         <div class="identifiant-box">{{ identifiant }}</div>
         <p>Voici un résumé de vos informations :</p>
         <ul>
@@ -103,8 +158,8 @@
             <li><i class="fas fa-cube"></i><strong> Produits vendus :</strong> <span class="highlight">{{ produits_vendus }}</span></li>
             <li><i class="fas fa-search"></i><strong> Comment avez-vous découvert la plateforme ? :</strong> <span class="highlight">{{ source_decouverte }}</span></li>
         </ul>
-        <p>Nous sommes ravis de vous compter parmi nos utilisateurs ! Prenez grand soin de votre identifiant unique pour un accès sécurisé à tout moment.</p>
-        <a href="#" class="button">Accéder à votre boutique</a>
+        <p>Nous sommes ravis de vous compter parmi nos utilisateurs ! Prenez soin de votre identifiant unique pour un accès sécurisé.</p>
+        <a href="http://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="button">Activer mon compte</a>
         <p class="footer">Besoin d'aide ? Contactez-nous à tout moment.</p>
         <p class="footer"><strong>L'équipe WarabaGuinée</strong></p>
     </div>

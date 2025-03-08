@@ -1,11 +1,10 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models import Avg
-from shop.models import Commentaire, Utilisateur, Produit
+from shop.models import Commentaire, Produit,Boutique
 from django.db.models import Avg
 import re
 
@@ -49,6 +48,8 @@ def envoyer_email_commentaire(boutique, produit_nom, commentaire, note, utilisat
 def poster_commentaire(request, produit_id):
     produit = get_object_or_404(Produit, id=produit_id)
     utilisateur = produit.utilisateur  # Utilisateur du produit (le vendeur)
+     # Récupérer la boutique lié à cet utilisateur
+    boutique_id = get_object_or_404(Boutique, utilisateur_id=utilisateur.id)
     boutique = utilisateur.nom_boutique
     utilisateur_mail = utilisateur.email
     produit_nom = produit.nom  # Nom du produit à inclure dans l'email
@@ -120,4 +121,6 @@ def poster_commentaire(request, produit_id):
         "moyenne_notes": moyenne_notes,
         "etoiles_moyenne": etoiles_moyenne,  # Passer la moyenne des étoiles calculées
         "etoiles_range": etoiles_range,  # Passer la plage des étoiles pour l'affichage dans le template
+        'user_id':utilisateur.id,
+        'boutique_id':boutique_id.pk
     })
