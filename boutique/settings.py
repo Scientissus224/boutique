@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'warabaguinee',
-        'USER': 'root',
-        'PASSWORD': '2003',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'warabaguinee'),  # Utilisation de la variable d'environnement DB_NAME
+        'USER': os.getenv('DB_USER', 'root'),  # Utilisation de la variable d'environnement DB_USER
+        'PASSWORD': os.getenv('DB_PASSWORD', '2003'),  # Utilisation de la variable d'environnement DB_PASSWORD
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),  # Utilisation de la variable d'environnement DB_HOST (par défaut localhost)
+        'PORT': os.getenv('DB_PORT', '3306'),  # Utilisation de la variable d'environnement DB_PORT (par défaut 3306)
         'OPTIONS': {
             'charset': 'utf8mb4',  # Assurez-vous que utf8mb4 est utilisé
         },
