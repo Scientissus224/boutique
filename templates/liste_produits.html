@@ -1,0 +1,81 @@
+{% for produit in produits %}
+        <div class="modern-product-card">
+            <!-- Badge PROMO si le produit est en promotion -->
+            {% if produit.type_produit == 'Promo' %}
+            <div class="promo-badge">PROMO</div>
+            {% endif %}
+            
+            <!-- Image du produit -->
+            <div class="product-media">
+                <a href="{{ produit.url_boutique}}" class="product-link">
+                    <div class="image-wrapper">
+                        <img src="{{produit.image}}" alt="{{ produit.nom }}" class="product-image" loading="lazy">
+                        <div class="image-overlay"></div>
+                    </div>
+
+                    
+                    <!-- Quick view -->
+                    <a href="{{ produit.url_boutique}}">
+                        <button class="quick-view-btn">
+                            <i class="fas fa-eye"></i> Voir plus
+                        </button>
+                    </a>
+                </a>
+            </div>
+            
+            <!-- Détails du produit -->
+            <div class="product-details">
+                <!-- Marque -->
+                {% if produit.marque %}
+                <div class="product-brand">{{ produit.marque }}</div>
+                {% endif %}
+                
+                <!-- Titre -->
+                <h3 class="product-title">
+                    <a href="{{ produit.get_absolute_url }}">{{ produit.nom|truncatechars:50 }}</a>
+                </h3>
+                
+                <!-- Prix -->
+                <div class="product-pricing">
+                    {% if produit.type_produit == 'Promo' and produit.ancien_prix %}
+                    <div class="price-with-discount">
+                        <span class="current-price">{{ produit.prix|floatformat:2 }} FG</span>
+                        <span class="old-price">{{ produit.ancien_prix|floatformat:2 }} FG</span>
+                        {% if produit.pourcentage_reduction %}
+                        <span class="discount-badge">-{{ produit.pourcentage_reduction }}%</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="standard-price">{{ produit.prix|floatformat:2 }} FG</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Stock -->
+                <div class="stock-info {% if produit.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                    {% if produit.stock > 0 %}
+                    <i class="fas fa-check-circle"></i> En stock
+                    {% else %}
+                    <i class="fas fa-times-circle"></i> Rupture
+                    {% endif %}
+                </div>
+                
+                <!-- Actions -->
+                <div class="product-actions">
+                    <a href="{% url 'poster_commentaire' produit.identifiant %}">
+                        <button class="btn btn-outline buy-now">
+                            <i class="fas fa-star"></i> Avis
+                        </button>
+                    </a>
+                    <a href="{{ produit.url_boutique}}">
+                        <button class="btn btn-primary buy-now">
+                            Acheter
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-products">
+            <i class="fas fa-box-open"></i> Aucun produit disponible pour le moment
+        </div>
+{% endfor %}

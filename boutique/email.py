@@ -4,3 +4,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'warabakabagui@gmail.com'
 EMAIL_HOST_PASSWORD = 'pzzc rhkw hwyy apul'
 EMAIL_PORT = 587
+
+
+

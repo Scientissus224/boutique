@@ -1,0 +1,189 @@
+         /* Styles pour la sidebar mobile */
+         .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background: #2c3e50; /* Fond sombre pour un look moderne */
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Ombre pour la profondeur */
+            overflow-y: auto;
+        }
+    
+        .mobile-sidebar.active {
+            left: 0;
+        }
+    
+        /* Overlay pour la sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:transparent;
+            backdrop-filter: blur(3px);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+    
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    
+        /* Style des éléments de la sidebar */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 111, 0, 0.2);
+            margin-bottom: 20px;
+        }
+    
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+    
+        .sidebar-brand {
+            color: #FF6F00; /* Couleur de la marque */
+            font-size: 1.5rem; /* Taille de police augmentée */
+            font-weight: 700; /* Poids de police plus audacieux */
+        }
+    
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #ecf0f1; /* Couleur claire pour le texte */
+            text-decoration: none;
+            border-radius: 10px;
+            transition: background 0.3s ease, color 0.3s ease; /* Transition douce */
+        }
+    
+        .sidebar-link i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+    
+        .sidebar-link:hover {
+            background: rgba(255, 111, 0, 0.2); /* Fond au survol */
+            color: #FF6F00; /* Couleur du texte au survol */
+        }
+    
+        .sidebar-auth {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 111, 0, 0.2);
+        }
+    
+        .sidebar-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+    
+        .sidebar-close:hover {
+            color: #FF6F00;
+            transform: rotate(90deg);
+        }
+    
+        /* Modification du bouton hamburger */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #FF6F00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 2001;
+            transition: all 0.3s ease;
+        }
+    
+        @media (max-width: 768px) {
+            .hamburger-btn {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .auth-buttons {
+                display: none;
+            }
+        }
+        .theme-icon {
+            position: static;
+            margin: 10px auto;
+            background: none;
+            box-shadow: none;
+            width: auto;
+            height: auto;
+        }
+        .theme-desktop{
+            display: none;
+        }
+        .theme-icon i {
+            font-size: 2rem;
+        }
+    
+        .theme-icon:hover {
+            background: transparent;
+        }
+    
+        [data-theme="light"] .theme-icon i {
+            color: #333;
+        }
+    
+        [data-theme="dark"] .theme-icon i {
+            color: #fff;
+        }
+@media (max-width: 768px){
+    .theme-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        color: #ecf0f1; /* Couleur claire pour le texte */
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+        background: rgba(255, 111, 0, 0.2);
+        color: #FF6F00;
+    }
+
+    .theme-toggle i {
+        font-size: 1.5rem;
+        margin-right: 8px;
+    }
+
+} 
+       

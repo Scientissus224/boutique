@@ -4,6 +4,9 @@ import uuid
 from django.db.models import Sum
 from decimal import Decimal, InvalidOperation
 from datetime import timedelta
+import random
+import string
+from django.utils.text import slugify
 from django.utils.timezone import now
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -18,29 +21,37 @@ from .const_models import (
     SOURCE_DECOUVERTE_CHOICES,
     PRODUITS_VENDUS_CHOICES
 )
+
 # -----------------------
 # Gestionnaire d'utilisateurs personnalisé
 # -----------------------
 class UtilisateurManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, identifiant_unique, email, password=None, **extra_fields):
         """
-        Crée et retourne un utilisateur avec un email et un mot de passe.
+        Crée et retourne un utilisateur avec un identifiant_unique, email et mot de passe.
         """
+        if not identifiant_unique:
+            raise ValueError('L\'utilisateur doit avoir un identifiant unique')
         if not email:
             raise ValueError('L\'utilisateur doit avoir un email')
+        
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(
+            identifiant_unique=identifiant_unique,
+            email=email,
+            **extra_fields
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(self, identifiant_unique, email, password=None, **extra_fields):
         """
-        Crée et retourne un superutilisateur avec un email et un mot de passe.
+        Crée et retourne un superutilisateur avec un identifiant_unique, email et mot de passe.
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(identifiant_unique, email, password, **extra_fields)
 
 
 # -----------------------
@@ -52,7 +63,7 @@ STATUT_CHOICES = [
         ('invalider', 'Invalider'),
     ]
 class Utilisateur(AbstractUser):
-    identifiant_unique = models.CharField(max_length=100, unique=True, default='warabaguinee224')  # Valeur par défaut ajoutée
+    identifiant_unique = models.CharField(max_length=100, unique=True)
     nom_complet = models.CharField(max_length=200)
     numero = models.CharField(max_length=15, unique=True)
     nom_boutique = models.CharField(max_length=200, unique=True)
@@ -60,14 +71,19 @@ class Utilisateur(AbstractUser):
     statut_validation_compte = models.CharField(
         max_length=10,
         choices=STATUT_CHOICES,
-        default='attente',  # Valeur par défaut 'attente'
+        default='attente',
     )
     
-    # Champ produits_vendus ajouté
     produits_vendus = models.CharField(
-        max_length=225,  # Limite de 225 caractères
-        default=None,  # Valeur par défaut de None
-        blank=True  # Le champ peut être laissé vide
+        max_length=225,
+        default=None,
+        blank=True
+    )
+
+    logo_boutique = models.ImageField(
+        upload_to='logos_boutiques/',
+        blank=True,
+        null=True
     )
 
     groups = models.ManyToManyField(
@@ -87,10 +103,10 @@ class Utilisateur(AbstractUser):
     def __str__(self):
         return f"{self.nom_complet} - {self.nom_boutique}"
 
-    # Utilisation de l'email comme identifiant
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nom_complet', 'nom_boutique']  # Champs requis pour les superutilisateurs
-    
+    # Utilisation de identifiant_unique comme identifiant principal
+    USERNAME_FIELD = 'identifiant_unique'
+    REQUIRED_FIELDS = ['email', 'nom_complet', 'nom_boutique']
+
 class UtilisateurTemporaire(models.Model):
     identifiant_unique= models.CharField(max_length=100, unique=True, default='identifiant_par_defaut')
     email = models.EmailField(unique=True)
@@ -203,17 +219,6 @@ class Client(AbstractUser):
         blank=True
     )
                        # -----------------------Modèle Produit-----------------------
- 
-# Définir les choix pour l'état du produit
-NEUF = 'neuf'
-OCCASION = 'occasion'
-RECONDITIONNE = 'reconditionne'
-
-ETAT_CHOICES = [
-    (NEUF, 'Neuf'),
-    (OCCASION, 'Occasion'),
-    (RECONDITIONNE, 'Reconditionné'),
-]
 
 
 class Produit(models.Model):
@@ -236,6 +241,20 @@ class Produit(models.Model):
         (NON, 'Non'),
     ]
 
+    PROMO = 'Promo'
+    Aucun = 'Aucun'
+    POPULAIRE = 'Populaire'
+    NOUVEAUTE = 'Nouveauté'
+
+    TYPE_PRODUIT_CHOICES = [
+        (Aucun , 'Aucun'),
+        (PROMO, 'Promo'),
+        (POPULAIRE, 'Populaire'),
+        (NOUVEAUTE, 'Nouveauté'),
+    ]
+
+    # Nouveau champ identifiant unique
+    identifiant = models.UUIDField(editable=False, unique=True , null=True, default=uuid.uuid4)
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="produits")
     nom = models.CharField(max_length=200)  # Nom du produit
     description = models.TextField()  # Description détaillée
@@ -254,6 +273,18 @@ class Produit(models.Model):
     tags = models.ManyToManyField('Tag', related_name="produits", blank=True)  # Tags associés
     mise_en_avant = models.CharField(max_length=3, choices=MISE_EN_AVANT_CHOICES, default=NON)  # Produit mis en avant ou non
 
+    # Ajout d'un champ pour le type du produit (promo, nouveauté, populaire)
+    type_produit = models.CharField(max_length=10, choices=TYPE_PRODUIT_CHOICES, null=True, blank=True)
+
+    # Champs pour la promotion
+    ancien_prix = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        # Si c'est un nouveau produit (pas encore enregistré en base)
+        if not self.pk and not self.identifiant:
+            self.identifiant = uuid.uuid4()
+        super().save(*args, **kwargs)
+    
     def clean(self):
         """Validation des dimensions et du poids."""
         if self.poids and self.poids <= 0:
@@ -269,8 +300,10 @@ class Produit(models.Model):
         return reverse('detail_produits', kwargs={'produit_id': self.pk})
     
     def get_produit_url(self):
-        return reverse('afficher_produit', kwargs={'produit_id': self.pk, 'utilisateur_id': self.utilisateur.pk})
-
+        return reverse('afficher_produit', kwargs={
+            'produit_identifiant': self.identifiant,  # Utilisation de l'UUID au lieu de self.pk
+            'utilisateur_identifiant': self.utilisateur.identifiant_unique
+        })
     def produit_panier_id(self):
         return reverse('ajouter_au_panier', kwargs={'produit_id': self.pk})
 
@@ -309,6 +342,20 @@ class Produit(models.Model):
 
 
 
+class VenteAttente(models.Model):
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="ventes_attente")
+    produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, null=True, blank=True, related_name="ventes_attente")
+    nom_produit = models.CharField(max_length=200)  # Sauvegarde du nom du produit
+    image_produit = models.ImageField(upload_to='vent/', null=True, blank=True)  # Image du produit vendu
+    prix_achat = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix d'achat
+    prix_vente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix de vente
+    quantite_vendue = models.PositiveIntegerField(default=0)  # Quantité vendue
+    date_vente = models.DateTimeField(auto_now_add=True)  # Date de la vente
+
+    def __str__(self):
+        return f"[Attente] Vente de {self.nom_produit} ({self.quantite_vendue}x) par {self.utilisateur}"
+
+
 class Vente(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="ventes")
     produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, null=True, blank=True, related_name="ventes")
@@ -319,6 +366,22 @@ class Vente(models.Model):
     statut = models.BooleanField(default=False) 
     quantite_vendue = models.PositiveIntegerField(default=0)  # Quantité vendue
     date_vente = models.DateTimeField(auto_now_add=True)  # Date de la vente
+
+    def update_stock(self):
+        """ Mise à jour du stock du produit après chaque vente """
+        if self.produit and isinstance(self.produit.quantite_stock, int):
+            if self.produit.quantite_stock >= self.quantite_vendue:
+                self.produit.quantite_stock -= self.quantite_vendue
+                if self.produit.quantite_stock == 0:
+                    self.produit.disponible = False
+            else:
+                # Stock insuffisant : désactivation produit + annulation vente
+                self.produit.disponible = False
+                self.statut = False  # Marquer la vente comme non valide
+
+            self.produit.save()
+        else:
+            raise ValueError("Le stock du produit est invalide ou manquant.")
 
     @classmethod
     def top_produits(cls, utilisateur, limite=5):
@@ -360,22 +423,10 @@ class Vente(models.Model):
         
         return recommandations
 
-    def update_stock(self):
-        """ Mise à jour du stock du produit après chaque vente """
-        if self.produit and isinstance(self.produit.quantite_stock, int) and self.produit.quantite_stock >= self.quantite_vendue:
-            self.produit.quantite_stock -= self.quantite_vendue
-
-            # Si le stock est épuisé, on met disponible à False
-            if self.produit.quantite_stock == 0:
-                self.produit.disponible = False
-
-            self.produit.save()
-        else:
-            raise ValueError("Le stock est insuffisant pour cette vente.")
-
-
     def save(self, *args, **kwargs):
         """ Enregistrer la vente et mettre à jour le stock """
+
+        # 💰 Validation des prix
         try:
             if self.prix_achat is not None:
                 self.prix_achat = Decimal(str(self.prix_achat).strip()) if isinstance(self.prix_achat, (int, float, str)) else self.prix_achat
@@ -383,14 +434,21 @@ class Vente(models.Model):
                 self.prix_vente = Decimal(str(self.prix_vente).strip()) if isinstance(self.prix_vente, (int, float, str)) else self.prix_vente
         except InvalidOperation:
             raise ValueError("Les prix doivent être des nombres valides (entiers ou décimaux).")
-        
+
+        # 📦 Vérification de la quantité vendue
         self.quantite_vendue = int(self.quantite_vendue)
 
-        if self.produit and isinstance(self.produit.quantite_stock, int) and self.produit.quantite_stock < self.quantite_vendue:
-            raise ValueError("Stock insuffisant pour cette vente.")
+        # 📉 Vérification du stock
+        if self.produit and isinstance(self.produit.quantite_stock, int):
+            if self.produit.quantite_stock < self.quantite_vendue:
+                self.produit.statut = False
+                self.produit.save()
+                raise ValueError("Stock insuffisant pour cette vente.")
 
+        # 💾 Enregistrement de la vente et mise à jour du stock
         super().save(*args, **kwargs)
         self.update_stock()
+
 
     def __str__(self):
         return f'Vente de {self.nom_produit} ({self.quantite_vendue}x) par {self.utilisateur}'
@@ -399,6 +457,7 @@ class Vente(models.Model):
         ordering = ['-date_vente']
         verbose_name = "Vente"
         verbose_name_plural = "Ventes"
+
 
 
 
@@ -505,11 +564,50 @@ class SliderImage(models.Model):
 # Modèle Localisation du site
 # -----------------------
 class Localisation(models.Model):
+    # Jours de la semaine pour les horaires
+    LUNDI = 'Lundi'
+    MARDI = 'Mardi'
+    MERCREDI = 'Mercredi'
+    JEUDI = 'Jeudi'
+    VENDREDI = 'Vendredi'
+    SAMEDI = 'Samedi'
+    DIMANCHE = 'Dimanche'
+    
+    JOURS_SEMAINE = [
+        (LUNDI, 'Lundi'),
+        (MARDI, 'Mardi'),
+        (MERCREDI, 'Mercredi'),
+        (JEUDI, 'Jeudi'),
+        (VENDREDI, 'Vendredi'),
+        (SAMEDI, 'Samedi'),
+        (DIMANCHE, 'Dimanche'),
+    ]
+
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="localisations")
     lien_maps = models.CharField(max_length=1000)  # Lien vers la localisation Google Maps
     ville = models.CharField(max_length=100, null=True, blank=True)
     quartier = models.CharField(max_length=100, null=True, blank=True)
     repere = models.CharField(max_length=255, null=True, blank=True)  # Champ pour le repère
+    
+    # Champs pour les horaires
+    jour_ouverture = models.CharField(
+        max_length=10,
+        choices=JOURS_SEMAINE,
+        default=LUNDI,
+        null=True,
+        blank=True
+    )
+    jour_fermeture = models.CharField(
+        max_length=10,
+        choices=JOURS_SEMAINE,
+        default=SAMEDI,
+        null=True,
+        blank=True
+    )
+    heure_ouverture = models.TimeField(null=True, blank=True)
+    heure_fermeture = models.TimeField(null=True, blank=True)
+    ouvert_24h = models.BooleanField(default=False)
+    ferme_jour_ferie = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('utilisateur',)
@@ -687,45 +785,108 @@ class BoutiqueNavCusor(models.Model):
 #-------------------------------------------Génération de la boutique----------------------------------
 
 
-
-
 class Boutique(models.Model):
     utilisateur = models.OneToOneField(
-        Utilisateur,  # Référence au modèle Utilisateur existant
+        Utilisateur,
         on_delete=models.CASCADE,
-        related_name="boutique",  # Utilisez un seul nom de relation
+        related_name="boutique",
+        verbose_name="Propriétaire",  # Meilleur nom pour l'admin
     )
-    description = models.TextField(blank=True)  # Description de la boutique
-    publier = models.BooleanField(default=False)  # Statut de publication (False = chargé)
-    html_contenu = models.TextField(blank=True)  # Contenu HTML généré
-    logo = models.ImageField(upload_to="logos/", null=True, blank=True)  # Logo de la boutique
-    premium = models.BooleanField(default=False)  # Champ premium ajouté, par défaut False
+    identifiant = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        help_text="Identifiant unique généré automatiquement",  # Info pour l'admin
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description de la boutique"
+    )
+    publier = models.BooleanField(
+        default=False,
+        verbose_name="Publié"
+    )
+    html_contenu = models.TextField(
+        blank=True,
+        verbose_name="Contenu HTML"
+    )
+    logo = models.ImageField(
+        upload_to="logos/",
+        null=True,
+        blank=True,
+        verbose_name="Logo de la boutique"
+    )
+    premium = models.BooleanField(
+        default=False,
+        verbose_name="Boutique premium"
+    )
     
     statut_publication = models.CharField(
         max_length=20,
-        choices=[("chargé", "Chargé"), ("publié", "Publié")],  # Deux valeurs possibles
-        default="chargé",  # Valeur par défaut
+        choices=[("chargé", "Chargé"), ("publié", "Publié")],
+        default="chargé",
+        verbose_name="Statut"
     )
-    date_publication = models.DateTimeField(null=True, blank=True)  # Date de publication
+    date_publication = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date de publication"
+    )
     produits_vendus = models.CharField(
-        max_length=250,  # Limite de 250 caractères
-        default="non",  # Valeur par défaut "non"
-        blank=True  # Le champ peut être laissé vide si nécessaire
+        max_length=250,
+        default="non",
+        blank=True,
+        verbose_name="Produits vendus"
     )
 
     class Meta:
         db_table = 'shop_boutique'
-        managed = True  # Pour laisser Django gérer la création et la mise à jour de la table
+        managed = True
+        verbose_name = "Boutique"
+        verbose_name_plural = "Boutiques"
+        ordering = ['-date_publication']
 
     def __str__(self):
         return f"Boutique de {self.utilisateur.nom_complet}"
+
+    def save(self, *args, **kwargs):
+        """
+        Génère un identifiant unique et élégant lors de la création de la boutique.
+        """
+        # Ne génère l'identifiant que lors de la création (pas de modification)
+        if not self.pk and not self.identifiant:
+            self._generate_identifiant()
+        
+        super().save(*args, **kwargs)
+
+    def _generate_identifiant(self):
+        """Méthode séparée pour générer l'identifiant"""
+        try:
+            base = slugify(self.utilisateur.nom_complet.split()[0]).lower()
+            suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            self.identifiant = f"{base}-{suffix}"
+            
+            # Vérifie l'unicité
+            while Boutique.objects.filter(identifiant=self.identifiant).exists():
+                suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+                self.identifiant = f"{base}-{suffix}"
+        except Exception as e:
+            # Solution de repli en cas d'erreur
+            self.identifiant = f"boutique-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+
+    def get_absolute_url(self, domaine):
+        """
+        Retourne l'URL publique de la boutique en utilisant l'identifiant.
+        """
+        domain_str = str(domaine.domain) if hasattr(domaine, 'domain') else str(domaine)
+        return f"{domain_str.rstrip('/')}/warabaguinee/{self.identifiant}/"
 
     def publier_boutique(self):
         """
         Publie la boutique et met à jour la date de publication.
         """
         self.publier = True
-        self.statut_publication = "publié"  # Met à jour le statut à "publié"
+        self.statut_publication = "publié"
         self.date_publication = timezone.now()
         self.save()
 
@@ -734,9 +895,14 @@ class Boutique(models.Model):
         Dépublie la boutique et supprime la date de publication.
         """
         self.publier = False
-        self.statut_publication = "chargé"  # Met à jour le statut à "chargé"
-        self.date_publication = None  # Enlever la date de publication si la boutique est dépubliée
+        self.statut_publication = "chargé"
+        self.date_publication = None
         self.save()
+
+    @property
+    def est_publiee(self):
+        """Propriété pour vérifier facilement le statut"""
+        return self.statut_publication == "publié"
 
     @staticmethod
     def get_html_contenu_par_utilisateur(utilisateur_id):
@@ -757,13 +923,18 @@ class SupportClientManager(BaseUserManager):
         if not email:
             raise ValueError("L'email est requis")
         
-        # Création de l'utilisateur sans la vérification de l'email
+        # Normalisation de l'email
+        email = self.normalize_email(email)
+        
+        # Création de l'utilisateur
         user = self.model(
-            email=self.normalize_email(email),
+            email=email,
             nom=nom,
             role=role,
             profil=profil
         )
+        
+        # Hachage du mot de passe avant sauvegarde
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -797,8 +968,8 @@ class SupportClient(AbstractBaseUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, choices=ROLES)
     validation_compte = models.CharField(max_length=20, choices=VALIDATION_COMPTE)
-    profil = models.ImageField(upload_to='profiles/', null=True, blank=True)  # Champ image
-    password = models.CharField(max_length=255)
+    profil = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    password = models.CharField(max_length=255)  # Le mot de passe haché sera stocké ici
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -818,7 +989,11 @@ class SupportClient(AbstractBaseUser):
 
     def save(self, *args, **kwargs):
         # Vérification si l'email existe déjà dans la table Utilisateur
-        if Utilisateur.objects.filter(email=self.email).exists():
+        if Utilisateur.objects.filter(email=self.email).exclude(pk=self.pk).exists():
             raise ValidationError(f"L'email {self.email} existe déjà dans la base de données.")
+        
+        # Si le mot de passe est en clair (pas encore haché), on le hache
+        if self.password and not self.password.startswith(('pbkdf2_sha256$', 'bcrypt$', 'argon2')):
+            self.set_password(self.password)
         
         super().save(*args, **kwargs)

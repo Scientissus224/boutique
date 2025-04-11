@@ -3,94 +3,326 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from shop.models import Boutique,Produit
 from django.db.models import Q  # Importer Q pour les requêtes complexes
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template.loader import render_to_string
 
 
 def home(request):
     """
-    Page d'accueil affichant la liste des boutiques publiées et les produits mis en avant des boutiques premium.
+    Page d'accueil avec boutiques et produits premium - Version robuste
     """
-    # Récupération des boutiques publiées
-    boutiques = Boutique.objects.filter(publier=True)
+    try:
+        # 1. GESTION DES BOUTIQUES
+        boutiques_list = Boutique.objects.filter(publier=True).order_by('-id')
+        
+        # Pagination des boutiques
+        page = request.GET.get('page', 1)
+        paginator = Paginator(boutiques_list, 1)  # 1 boutique par page
+        
+        try:
+            boutiques_page = paginator.page(page)
+        except PageNotAnInteger:
+            boutiques_page = paginator.page(1)
+        except EmptyPage:
+            boutiques_page = paginator.page(paginator.num_pages)
 
-    # Récupération des produits mis en avant des boutiques premium uniquement
-    produits_premium_data = []
-    boutiques_data = []
-
-    produits_boutique1 = []
-    produits_boutique2 = []
-    produits_boutique3 = []
-    produits_boutique4 = []
-    produits_boutique5 = []
-    produits_boutique6 = []
-
-    # Liste pour tous les produits
-    produits_ok = []
-
-    # Récupérer les 6 premières boutiques premium
-    boutiques_premium = Boutique.objects.filter(premium=True).order_by('id')[:6]
-
-    for boutique in boutiques:
-        # Ajouter les boutiques normalement
-        boutiques_data.append({
+        # Formatage des données des boutiques
+        boutiques_data = [{
+            "id": boutique.id,
             "description": boutique.description,
             "logo": boutique.logo.url if boutique.logo else None,
-            "page_html_path": reverse('boutique_contenu', args=[boutique.id]),  # Génère l'URL dynamique
+            "page_html_path": reverse('boutique_contenu', args=[boutique.identifiant]),
+        } for boutique in boutiques_page]
+
+        # 2. PRODUITS DES BOUTIQUES PREMIUM (version robuste)
+        def get_produits_premium():
+            try:
+                boutiques_premium = Boutique.objects.filter(
+                    premium=True,
+                    publier=True
+                ).order_by('-id')[:6]  # Limite à 6 boutiques premium
+                
+                produits_data = {
+                    'promo': [],
+                    'populaire': [],
+                    'nouveaute': [],
+                    'occasion': [],
+                    'reconditionne': [],
+                    'neuf': []
+                }
+                
+                for boutique in boutiques_premium:
+                    try:
+                        # Base QuerySet pour les produits disponibles de la boutique
+                        base_query = Produit.objects.filter(
+                            utilisateur=boutique.utilisateur,
+                            disponible=True
+                        )
+                        
+                        # Remplissage des catégories avec gestion des erreurs
+                        for categorie in produits_data.keys():
+                            try:
+                                filtered = filtrer_produits(
+                                    base_query,
+                                    request,
+                                    force_categorie=categorie
+                                )[:8]  # Limite à 8 produits par catégorie
+                                
+                                produits_data[categorie].extend([{
+                                    "id": p.id,
+                                    "identifiant":p.identifiant,
+                                    'stock':p.quantite_stock,
+                                    "nom": p.nom,
+                                    "url_boutique": p.get_produit_url(),
+                                    "prix": float(p.prix) if p.prix else 0.0,
+                                    "pourcentage_reduction": round(((p.ancien_prix - p.prix) / p.ancien_prix) * 100, 2) if p.prix and p.ancien_prix else 0,
+                                    "ancien_prix": float(p.ancien_prix) if p.ancien_prix else None,
+                                    "image": p.image.url if p.image and hasattr(p.image, 'url') else None,
+                                    "boutique_url": reverse('boutique_contenu', args=[boutique.id]),
+                                    "produit_url": p.get_produit_url() if hasattr(p, 'get_produit_url') else '#',
+                                    "type_produit": p.type_produit if hasattr(p, 'type_produit') else '',
+                                    "etat": p.etat if hasattr(p, 'etat') else '',
+                                    "date_ajout": p.date_ajout if hasattr(p, 'date_ajout') else None,
+                                    "disponible": p.disponible if hasattr(p, 'disponible') else True
+                                } for p in filtered])
+                            except Exception as e:
+                                print(f"Erreur catégorie {categorie}: {str(e)}")
+                                continue
+                                
+                    except Exception as e:
+                        print(f"Erreur boutique {boutique.id}: {str(e)}")
+                        continue
+                
+                return produits_data
+                
+            except Exception as e:
+                print(f"Erreur majeure get_produits_premium: {str(e)}")
+                return {
+                    'promo': [], 'populaire': [], 'nouveaute': [],
+                    'occasion': [], 'reconditionne': [], 'neuf': []
+                }
+
+        # Fonction de filtrage robuste
+        def filtrer_produits(produits_queryset, request, force_categorie=None):
+            try:
+                categorie = force_categorie if force_categorie else request.GET.get('categorie', 'default')
+                search_query = request.GET.get('search', '').strip()
+                sort_by = request.GET.get('sort_by', 'default')
+
+                # Filtrage par catégorie avec gestion des erreurs
+                try:
+                    if categorie == "promo":
+                        produits_queryset = produits_queryset.filter(
+                            Q(type_produit=Produit.PROMO) | 
+                            Q(ancien_prix__isnull=False)
+                        )
+                    elif categorie == "populaire":
+                        produits_queryset = produits_queryset.filter(type_produit=Produit.POPULAIRE)
+                    elif categorie == "nouveaute":
+                        produits_queryset = produits_queryset.filter(type_produit=Produit.NOUVEAUTE)
+                    elif categorie == "occasion":
+                        produits_queryset = produits_queryset.filter(etat=Produit.OCCASION)
+                    elif categorie == "reconditionne":
+                        produits_queryset = produits_queryset.filter(etat=Produit.RECONDITIONNE)
+                    elif categorie == "neuf":
+                        produits_queryset = produits_queryset.filter(etat=Produit.NEUF)
+                    else:
+                        produits_queryset = produits_queryset.exclude(type_produit=Produit.PROMO)
+                except Exception as e:
+                    print(f"Erreur filtrage catégorie: {str(e)}")
+
+                # Filtre de recherche sécurisé
+                if search_query:
+                    produits_queryset = produits_queryset.filter(
+                        Q(nom__icontains=search_query) |
+                        Q(description__icontains=search_query) |
+                        Q(marque__icontains=search_query) |
+                        Q(tags__nom__icontains=search_query)
+                    ).distinct()
+
+                # Tri sécurisé
+                try:
+                    if sort_by == "price-asc":
+                        produits_queryset = produits_queryset.order_by('prix')
+                    elif sort_by == "price-desc":
+                        produits_queryset = produits_queryset.order_by('-prix')
+                    elif sort_by == "newest":
+                        produits_queryset = produits_queryset.order_by('-date_ajout')
+                    elif sort_by == "name-asc":
+                        produits_queryset = produits_queryset.order_by('nom')
+                    elif sort_by == "name-desc":
+                        produits_queryset = produits_queryset.order_by('-nom')
+                except Exception as e:
+                    print(f"Erreur tri: {str(e)}")
+                    produits_queryset = produits_queryset.order_by('-date_ajout')
+
+                return produits_queryset
+                
+            except Exception as e:
+                print(f"Erreur majeure filtrer_produits: {str(e)}")
+                return produits_queryset.none()
+
+        # Récupération des produits premium
+        produits_premium = get_produits_premium()
+
+        # 3. GESTION AJAX PRODUITS (version robuste)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('type') == 'produits':
+            def filtrer_produits_liste(liste_produits):
+                if not liste_produits:
+                    return []
+                    
+                try:
+                    filtered = []
+                    for p in liste_produits:
+                        try:
+                            if not p:
+                                continue
+                                
+                            # Vérification des champs obligatoires
+                            if not all(k in p for k in ['id', 'nom', 'prix']):
+                                continue
+                                
+                            filtered.append(p)
+                        except Exception as e:
+                            print(f"Erreur produit: {str(e)}")
+                            continue
+
+                    # Filtre par catégorie
+                    categorie = request.GET.get('categorie')
+                    if categorie == "promo":
+                        filtered = [p for p in filtered if p.get('type_produit') == Produit.PROMO or p.get('ancien_prix') is not None]
+                    elif categorie == "populaire":
+                        filtered = [p for p in filtered if p.get('type_produit') == Produit.POPULAIRE]
+                    elif categorie == "nouveaute":
+                        filtered = [p for p in filtered if p.get('type_produit') == Produit.NOUVEAUTE]
+                    elif categorie == "occasion":
+                        filtered = [p for p in filtered if p.get('etat') == Produit.OCCASION]
+                    elif categorie == "reconditionne":
+                        filtered = [p for p in filtered if p.get('etat') == Produit.RECONDITIONNE]
+                    elif categorie == "neuf":
+                        filtered = [p for p in filtered if p.get('etat') == Produit.NEUF]
+
+                    # Filtre de recherche sécurisé
+                    search = request.GET.get('search', '').strip()
+                    if search:
+                        filtered = [p for p in filtered if (
+                            search.lower() in p.get("nom", "").lower() or 
+                            search.lower() in p.get("description", "").lower() or
+                            search.lower() in p.get("marque", "").lower()
+                        )]
+
+                    # Tri sécurisé
+                    sort_by = request.GET.get('sort_by', 'default')
+                    try:
+                        if sort_by == "price-asc":
+                            filtered.sort(key=lambda x: float(x.get('prix', 0)))
+                        elif sort_by == "price-desc":
+                            filtered.sort(key=lambda x: float(x.get('prix', 0)), reverse=True)
+                        elif sort_by == "newest":
+                            filtered.sort(key=lambda x: x.get('date_ajout', ''), reverse=True)
+                        elif sort_by == "name-asc":
+                            filtered.sort(key=lambda x: x.get('nom', '').lower())
+                        elif sort_by == "name-desc":
+                            filtered.sort(key=lambda x: x.get('nom', '').lower(), reverse=True)
+                    except Exception as e:
+                        print(f"Erreur tri: {str(e)}")
+
+                    return filtered
+                    
+                except Exception as e:
+                    print(f"Erreur majeure filtrer_produits_liste: {str(e)}")
+                    return []
+
+            try:
+                categorie = request.GET.get('categorie')
+                produits_html = ""
+                default_context = {"produits": []}
+
+                if categorie == 'promo':
+                    produits = filtrer_produits_liste(produits_premium.get('promo', []))[:14]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                elif categorie == 'populaire':
+                    produits = filtrer_produits_liste(produits_premium.get('populaire', []))[:8]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                elif categorie == 'nouveaute':
+                    produits = filtrer_produits_liste(produits_premium.get('nouveaute', []))[:8]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                elif categorie == 'occasion':
+                    produits = filtrer_produits_liste(produits_premium.get('occasion', []))[:8]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                elif categorie == 'reconditionne':
+                    produits = filtrer_produits_liste(produits_premium.get('reconditionne', []))[:8]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                elif categorie == 'neuf':
+                    produits = filtrer_produits_liste(produits_premium.get('neuf', []))[:8]
+                    produits_html = render_to_string('liste_produits.html', {"produits": produits} or default_context)
+                else:
+                    context = {
+                        "produitsPromo": filtrer_produits_liste(produits_premium.get('promo', []))[:14],
+                        "produitsPopulaires": filtrer_produits_liste(produits_premium.get('populaire', []))[:8],
+                        "produitsNouveautes": filtrer_produits_liste(produits_premium.get('nouveaute', []))[:8],
+                        "produitsOccasion": filtrer_produits_liste(produits_premium.get('occasion', []))[:8],
+                        "produitsReconditionne": filtrer_produits_liste(produits_premium.get('reconditionne', []))[:8],
+                        "produitsNeufs": filtrer_produits_liste(produits_premium.get('neuf', []))[:8],
+                    }
+                    produits_html = render_to_string('liste_produits.html', context or default_context)
+                
+                return JsonResponse({"produits_html": produits_html})
+                
+            except Exception as e:
+                print(f"Erreur génération réponse AJAX: {str(e)}")
+                return JsonResponse({"error": "Une erreur est survenue"}, status=500)
+
+        # 4. GESTION AJAX BOUTIQUES
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:
+                boutiques_html = render_to_string('boutiques_list.html', {
+                    'boutiques': boutiques_data,
+                    'num_pages': paginator.num_pages,
+                    'current_page': boutiques_page.number,
+                    'page_range': list(paginator.page_range),
+                })
+                return JsonResponse({
+                    "boutiques": boutiques_html,
+                    "num_pages": paginator.num_pages,
+                    "current_page": boutiques_page.number,
+                    "page_range": list(paginator.page_range),
+                })
+            except Exception as e:
+                print(f"Erreur boutiques AJAX: {str(e)}")
+                return JsonResponse({"error": "Erreur chargement boutiques"}, status=500)
+
+        # 5. CONTEXTE FINAL
+        context = {
+            "boutiques": boutiques_data,
+            "num_pages": paginator.num_pages,
+            "current_page": boutiques_page.number,
+            "page_range": paginator.page_range,
+            "produitsPromo": produits_premium.get('promo', [])[:14],
+            "produitsPopulaires": produits_premium.get('populaire', [])[:8],
+            "produitsNouveautes": produits_premium.get('nouveaute', [])[:8],
+            "produitsOccasion": produits_premium.get('occasion', [])[:8],
+            "produitsReconditionne": produits_premium.get('reconditionne', [])[:8],
+            "produitsNeufs": produits_premium.get('neuf', [])[:8],
+        }
+
+        return render(request, 'home.html', context)
+        
+    except Exception as e:
+        print(f"ERREUR GLOBALE: {str(e)}")
+        # Retourner une réponse minimale même en cas d'erreur grave
+        return render(request, 'home.html', {
+            "boutiques": [],
+            "produitsPromo": [],
+            "produitsPopulaires": [],
+            "produitsNouveautes": [],
+            "produitsOccasion": [],
+            "produitsReconditionne": [],
+            "produitsNeufs": [],
+            "error": "Une erreur est survenue"
         })
 
-        # Si la boutique est premium, récupérer ses 10 premiers produits mis en avant
-        if boutique.premium:
-            produits_premium = Produit.objects.filter(
-                utilisateur=boutique.utilisateur, 
-                mise_en_avant="OUI"  # Filtre sur les produits mis en avant
-            ).order_by('id')[:10]
 
-            def format_produits(produits):
-                return [
-                    {
-                        "nom": produit.nom,
-                        "prix": produit.prix,
-                        "image": produit.image.url if produit.image else None,
-                        "boutique_url": reverse('boutique_contenu', args=[boutique.id]),
-                        "produit_url": produit.get_produit_url(),  # Ajout de l'URL absolue du produit
-                    }
-                    for produit in produits
-                ]
-
-            # Ajout des produits de chaque boutique dans les listes respectives
-            if boutique == boutiques_premium[0]:
-                produits_boutique1 = format_produits(produits_premium)
-            elif boutique == boutiques_premium[1]:
-                produits_boutique2 = format_produits(produits_premium)
-            elif boutique == boutiques_premium[2]:
-                produits_boutique3 = format_produits(produits_premium)
-            elif boutique == boutiques_premium[3]:
-                produits_boutique4 = format_produits(produits_premium)
-            elif boutique == boutiques_premium[4]:
-                produits_boutique5 = format_produits(produits_premium)
-            elif boutique == boutiques_premium[5]:
-                produits_boutique6 = format_produits(produits_premium)
-
-            # Ajouter tous les produits dans la liste produits_ok
-            produits_ok.extend(produits_boutique1)
-            produits_ok.extend(produits_boutique2)
-            produits_ok.extend(produits_boutique3)
-            produits_ok.extend(produits_boutique4)
-            produits_ok.extend(produits_boutique5)
-            produits_ok.extend(produits_boutique6)
-
-    # Récupérer les données de la session si elles existent
-    total_produits_ajoutes = request.session.get('total_produits_ajoutes', 0)  # Nombre total de produits ajoutés
-    produit_data = request.session.get('produit_data', [])  # Données des produits ajoutés (nom, image, etc.)
-
-    context = {
-        "boutiques": boutiques_data,  # Boutiques publiées
-        "produits_premium": produits_premium_data,  # Produits mis en avant des boutiques premium
-        "produits_ok": produits_ok,  # Liste globale de tous les produits des boutiques premium
-        "total_produits_ajoutes": total_produits_ajoutes,  # Inclure le total des produits ajoutés
-        "produit_data": produit_data,  # Inclure les informations des produits
-    }
-
-    return render(request, 'home.html', context)
 
 
 
@@ -98,7 +330,8 @@ def home(request):
 
 def rechercher_boutiques_ajax(request):
     """
-    Recherche des boutiques selon trois critères (produits_vendus, description, nom_boutique) et retourne les résultats en JSON.
+    Recherche des boutiques selon trois critères (produits_vendus, description, nom_boutique)
+    et retourne les résultats en JSON. Si aucune recherche n'est effectuée, retourne les 10 premières boutiques.
     """
     query = request.GET.get('query', '').strip()  # Valeur de la recherche
 
@@ -112,6 +345,9 @@ def rechercher_boutiques_ajax(request):
             Q(produits_vendus__icontains=query) |
             Q(utilisateur__nom_boutique__icontains=query)
         )
+    else:
+        # Si aucune recherche, ne retourner que les 10 premières boutiques
+        boutiques = boutiques[:10]
 
     # Construction de la réponse JSON
     boutiques_data = []
@@ -124,4 +360,7 @@ def rechercher_boutiques_ajax(request):
             "page_html_path": reverse('boutique_contenu', args=[boutique.id]),
         })
     
-    return JsonResponse({"boutiques": boutiques_data})
+    # Générer le rendu HTML des boutiques
+    boutiques_modal = render_to_string('boutiques_modal.html', {'boutiques': boutiques_data}, request=request)
+    
+    return JsonResponse({"boutiques_modal": boutiques_modal, "boutiques": boutiques_data})

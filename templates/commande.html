@@ -3,133 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commande - Confirmation</title>
+    <title>Nouvelle Commande Reçue</title>
     {% load static %}
-
     <style>
+        /* Styles de base */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #F3F4F6;
+            color: #374151;
             margin: 0;
             padding: 0;
+            line-height: 1.5;
         }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+        
+        /* Notification toast */
+        .order-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border-left: 4px solid #4F46E5;
+            display: none;
         }
-        h1 {
-            color: #4CAF50;
-            text-align: center;
-            font-size: 24px;
+        
+        .order-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+            display: block;
         }
-        p {
+        
+        .notification-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .notification-icon {
+            background: #4F46E5;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
             font-size: 16px;
-            line-height: 1.6;
-            color: #555;
         }
-        .client-info {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+        
+        .notification-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0;
         }
-        .client-info p {
-            margin: 5px 0;
+        
+        .notification-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #6B7280;
+            cursor: pointer;
+            font-size: 18px;
         }
-        .order-summary {
-            margin-top: 20px;
+        
+        .notification-body {
+            font-size: 14px;
+            color: #4B5563;
         }
-        .product-item {
+        
+        .notification-product {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #E5E7EB;
         }
-        .product-info {
-            flex-grow: 1;
-            margin-left: 15px;
-        }
-        .product-info h4 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .product-info p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .total-price {
+        
+        .notification-total {
+            font-weight: 600;
+            color: #111827;
+            margin-top: 8px;
             text-align: right;
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #d4a017; /* Jaune foncé */
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 30px;
-            background-color: #4CAF50;
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .cta-button:hover {
-            background-color: #45a049;
-        }
-
-        /* Responsive design */
-        @media (max-width: 600px) {
-            .product-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Nouvelle commande reçue !</h1>
-
-        <p>Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
-
-        <div class="client-info">
-            <h2>Informations du client</h2>
-            <p><strong>Nom:</strong> {{ client_nom }}</p>
-            <p><strong>Numéro de commande:</strong> {{ client_numero }}</p>
-            <p><strong>Lieu de livraison:</strong> {{ lieu_de_livraison }}</p>  <!-- Ajout du lieu de livraison -->
+    <!-- Audio pour la notification -->
+    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+    
+    <!-- Notification toast -->
+    <div class="order-notification" id="order-notification">
+        <div class="notification-header">
+            <div class="notification-icon">🛒</div>
+            <h3 class="notification-title">Nouvelle commande !</h3>
+            <button class="notification-close" onclick="closeNotification()">×</button>
         </div>
-
-        <div class="order-summary">
-            <h2>Récapitulatif des produits commandés</h2>
-            {% for produit in produits_info %}
-                <div class="product-item">
-                    <div class="product-info">
-                        <h4>{{ produit.nom }}</h4>
-                        {% if produit.type == 'variante' %}
-                            <p><strong>Taille:</strong> {{ produit.taille }}</p>
-                            <p><strong>Couleur:</strong> {{ produit.couleur }}</p>
-                        {% endif %}
-                        <p><strong>Prix:</strong> <span style="color: #d4a017;">{{ produit.prix }} {{ devise }}</span></p>
-                    </div>
-                </div>
-            {% endfor %}
+        <div class="notification-body">
+            <div>Client: <strong>{{ client_nom }}</strong></div>
+            <div>Commande #<strong>{{ client_numero }}</strong></div>
+            <div class="notification-product">
+                <span>{{ produits_info.0.nom }}{% if produits_info|length > 1 %} +{{ produits_info|length|add:"-1" }} autres{% endif %}</span>
+                <span>{{ total_prix }} {{ devise }}</span>
+            </div>
+            <div class="notification-total">Total: {{ total_prix }} {{ devise }}</div>
         </div>
-
-        <div class="total-price">
-            <p><strong>Total Commande:</strong> <span style="color: #d4a017;">{{ total_prix }} {{ devise }}</span></p>
-        </div>
-
-        <p>Pour gérer cette commande, connectez-vous à votre <a href="http://{{ domain }}{% url 'table' %}" class="cta-button">Tableau de bord</a>.</p>
     </div>
 
+    <!-- Container principal de l'email -->
+    <div style="max-width: 640px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+        <!-- En-tête -->
+        <div style="background: #4F46E5; padding: 24px 32px; color: white; text-align: center;">
+            <h1 style="margin: 0; font-size: 22px; font-weight: 600;">Nouvelle commande reçue !</h1>
+        </div>
+        
+        <!-- Contenu -->
+        <div style="padding: 32px;">
+            <p style="font-size: 16px; color: #374151; margin-bottom: 24px;">Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
+            
+            <!-- Carte informations client -->
+            <div style="background: #F9FAFB; border-radius: 8px; padding: 24px; margin-bottom: 24px; border: 1px solid #E5E7EB;">
+                <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Informations du client</h2>
+                <div style="display: grid; grid-template-columns: 120px 1fr; gap: 12px;">
+                    <div style="font-weight: 500; color: #6B7280;">Nom:</div>
+                    <div style="font-weight: 400;">{{ client_nom }}</div>
+                    
+                    <div style="font-weight: 500; color: #6B7280;">Numéro de commande:</div>
+                    <div style="font-weight: 400;">{{ client_numero }}</div>
+                    
+                    <div style="font-weight: 500; color: #6B7280;">Lieu de livraison:</div>
+                    <div style="font-weight: 400;">{{ lieu_de_livraison }}</div>
+                </div>
+            </div>
+            
+            <!-- Carte produits -->
+            <div style="background: #F9FAFB; border-radius: 8px; padding: 24px; margin-bottom: 24px; border: 1px solid #E5E7EB;">
+                <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Récapitulatif des produits</h2>
+                <div style="margin-top: 16px;">
+                    {% for produit in produits_info %}
+                        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #E5E7EB;">
+                            <div>
+                                <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 500;">{{ produit.nom }}</h4>
+                                {% if produit.type == 'variante' %}
+                                    <div style="font-size: 14px; color: #6B7280; margin: 4px 0;">
+                                        <div><strong>Taille:</strong> {{ produit.taille }}</div>
+                                        <div><strong>Couleur:</strong> {{ produit.couleur }}</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div style="font-weight: 600; color: #F59E0B; white-space: nowrap; margin-left: 16px;">{{ produit.prix }} {{ devise }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Total -->
+                <div style="text-align: right; font-size: 18px; font-weight: 600; margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+                    <strong>Total Commande:</strong> <span style="color: #F59E0B;">{{ total_prix }} {{ devise }}</span>
+                </div>
+            </div>
+            
+            <!-- Bouton CTA -->
+            <div style="text-align: center; margin-top: 32px;">
+                <p>Pour gérer cette commande, connectez-vous à votre tableau de bord :</p>
+                <a href="http://{{ domain }}{% url 'table' %}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; font-weight: 500; border-radius: 6px;">Accéder au tableau de bord</a>
+            </div>
+        </div>
+        
+        <!-- Pied de page -->
+        <div style="text-align: center; padding: 24px; color: #6B7280; font-size: 14px;">
+            <p>© {% now "Y" %} Votre entreprise. Tous droits réservés.</p>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour jouer le son de notification
+        function playNotificationSound() {
+            const sound = document.getElementById('notification-sound');
+            if (!sound) return;
+
+            // Réinitialiser et jouer le son
+            sound.currentTime = 0;
+            sound.volume = 0.7; // Volume à 70% pour éviter d'être trop fort
+            
+            // Essayer de jouer le son immédiatement
+            const playPromise = sound.play();
+            
+            // Gérer les erreurs de lecture automatique
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Lecture automatique empêchée - attendre une interaction utilisateur");
+                    // Activer le son au premier clic
+                    document.addEventListener('click', enableSound, { once: true });
+                });
+            }
+            
+            function enableSound() {
+                sound.play().catch(e => console.log("Impossible de jouer le son:", e));
+            }
+        }
+
+        // Afficher la notification
+        function showNotification() {
+            const notification = document.getElementById('order-notification');
+            notification.classList.add('show');
+            playNotificationSound();
+            
+            // Fermer automatiquement après 8 secondes
+            setTimeout(() => {
+                closeNotification();
+            }, 8000);
+        }
+
+        // Fermer la notification
+        function closeNotification() {
+            const notification = document.getElementById('order-notification');
+            notification.classList.remove('show');
+        }
+
+        // Afficher la notification lorsque la page est chargée
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(showNotification, 1000); // Délai de 1s pour l'effet
+        });
+    </script>
 </body>
 </html>

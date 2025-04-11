@@ -23,8 +23,12 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = ['10.5.50.36', '127.0.0.1']
-
+ALLOWED_HOSTS = [
+    '10.5.50.71',        # Votre adresse IP Wi-Fi actuelle (peut changer)
+    '127.0.0.1',         # Localhost
+    'localhost',         # Alias pour 127.0.0.1
+    '192.168.19.163',
+]     
 
 
 # Authentication Backends
@@ -92,7 +96,7 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'boutiques',
+        'NAME': 'warabaguinee',
         'USER': 'root',
         'PASSWORD': '2003',
         'HOST': '127.0.0.1',

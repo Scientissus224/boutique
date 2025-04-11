@@ -1,185 +1,701 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription | WarabaShop</title>
-    {% load widget_tweaks %}
+    <head>
+                <title>WarabaGuinée | Inscription</title>
+                <link rel="icon" type="image/png" sizes="32x32" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="48x48" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="96x96" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="192x192" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="512x512" href="/static/lo.jpeg">
+                
     {% load static %}
+    {% load widget_tweaks %}
     <!-- Bootstrap CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Pour l'icône -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <meta name="csrf-token" content="{{ csrf_token }}"> <!-- Ajoute le token CSRF -->
+     <link rel="stylesheet" href="{% static 'homeCss/slider.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/titre.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/sidebar.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/boutique.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/produit.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/footer.css' %}">
+     <link rel="stylesheet" href="{% static 'homeCss/transaction.css' %}">
+     
+
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <!-- Custom Styles -->
-     <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #000;
-            color: white;
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
-        /* Styles de la navbar */
+
+        
+        
+        body {
+            width: 100%;  /* S'assure que la largeur est toujours de 100% */
+            height: 100%;  /* S'assure que la hauteur est toujours de 100% */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Empêche le débordement horizontal */
+            font-family: 'Roboto', sans-serif;  /* Utilisation d'une police moderne et lisible */
+            background-color: #fff;  /* Fond noir */
+            color: #fff;  /* Texte en blanc pour un bon contraste */
+            line-height: 1.6;  /* Espacement entre les lignes pour une meilleure lisibilité */
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+    
+        html{
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth; /* Défilement doux */
+            overflow-x: hidden; /* Empêche le débordement horizontal */
+        }
+        
+/* ---------------------------------- Style global pour la navbar---------------------------------------------- */
+:root {
+    --primary-color: #FF6F00;
+    --secondary-color: #FF9800;
+    --background-color: rgba(0, 0, 0, 0.9);
+    --text-color: #fff;
+    --blur-intensity: 15px;
+    --shadow-intensity: 0 4px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Styles de base de la navbar */
 .navbar {
+    background: var(--background-color);
+    backdrop-filter: blur(var(--blur-intensity));
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    background-color: transparent;
-    color: white;
-    border-bottom: 2px solid #FF6F00; /* Orange foncé en bas */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-intensity);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 70px;
+    overflow: hidden; /* Empêche les éléments de dépasser */
 }
 
-.navbar:hover {
-    background-color: rgba(0, 0, 0, 0.7);
+/* Animation au scroll */
+.navbar.scrolled {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 6px 35px rgba(0, 0, 0, 0.3);
+    height: 60px; /* Hauteur réduite au scroll */
+    padding: 0 2rem;
 }
 
-/* Logo */
-.logo-container {
+/* Logo et nom de la marque */
+.navbar-brand {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 5px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 1rem;
+    text-decoration: none;
+    padding-right: 0.5rem;
 }
 
-.logo {
-    width: 80px;  /* Augmentation de la taille du logo */
-    height: 80px;
-    object-fit: contain;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
+.nav-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 20px rgba(255, 111, 0, 0.3);
 }
 
-.platform-name {
-    font-size: 28px;
-    font-weight: 600;
-    color: #FF6F00;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: color 0.3s ease, transform 0.3s ease;
+.nav-logo:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 25px rgba(255, 111, 0, 0.5);
+    border-color: var(--secondary-color);
+}
+
+.brand-name {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 15px rgba(255, 111, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.brand-name:hover {
+    color: var(--secondary-color);
+    text-shadow: 0 0 20px rgba(255, 111, 0, 0.5);
+}
+
+/* Barre de recherche modernisée */
+.search-wrapper {
+    flex: 0.8;
+    max-width: 300px;
+    margin: 0 2.5rem;
+    transform-origin: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.search-box {
+    position: relative;
+    width: 100%;
+}
+
+.search-input-nav {
+    width: 100%;
+    padding: 8px 35px 8px 40px; /* Ajustement pour l'icône et le texte */
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 111, 0, 0.2);
+    border-radius: 25px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-input-nav:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(255, 111, 0, 0.2);
+    transform: scale(1.02);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    pointer-events: none; /* Empêche l'icône d'interférer avec le clic */
+}
+
+/* Bouton pour effacer la recherche */
+.btn-clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.btn-clear-search:hover {
+    color: var(--primary-color);
+}
+
+.search-input-nav:not(:placeholder-shown) + .search-icon + .btn-clear-search {
+    opacity: 1; /* Afficher le bouton lorsque la recherche n'est pas vide */
 }
 
 /* Menu principal */
-.nav-links {
-    display: flex;
-    gap: 20px;
-}
-
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    font-size: 18px;
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.nav-links a:hover {
-    background-color: #FF6F00;
-    color: black;
-    transform: scale(1.05);
-}
-
-
-
-/* Icônes */
-.icons {
+.nav-menu {
     display: flex;
     align-items: center;
+    gap: 1.5rem;
+    margin: 0 1rem;
 }
 
-button {
-    background: none;
-    border: none;
-    color: white;
-    margin: 0 10px;
-    font-size: 24px;
-    transition: transform 0.3s, color 0.3s;
-}
-
-button:hover {
-    transform: scale(1);
-    color: #FF6F00;
-}
-
-/* Style de base */
 .nav-links {
     display: flex;
-    justify-content: flex-end;
-    gap: 20px;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
-.hamburger {
-    display: none; /* Cacher le hamburger par défaut */
-    background: transparent;
+.nav-links::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.nav-links:hover::after {
+    width: 100%;
+}
+
+.nav-links:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+/* Bouton de contact */
+.contact-link {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+    background: linear-gradient(135deg, #128C7E, #075E54);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+/* Bouton de connexion */
+.auth-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    margin-left: auto;
+}
+
+.auth-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    z-index: -1;
+    transition: transform 0.3s ease;
+    transform: scaleX(0);
+    transform-origin: right;
+}
+
+.auth-btn:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.auth-btn:hover {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Menu hamburger */
+.hamburger-btn {
+    display: none;
+    background: none;
     border: none;
-    font-size: 30px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
     cursor: pointer;
+    z-index: 2001;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-left: 1rem;
 }
 
-/* Pour les petits écrans */
-@media screen and (max-width: 768px) {
-    .nav-links {
-        display: none; /* Cacher les liens par défaut sur les petits écrans */
-        flex-direction: column;
+.hamburger-btn:hover {
+    background: rgba(255, 111, 0, 0.1);
+    transform: scale(1.1);
+}
+
+/* Styles pour les petits écrans */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .navbar-brand {
+        flex: 1;
+        gap: 0.8rem;
+        order: 1;
+    }
+
+    .hamburger-btn {
+        display: flex;
+        order: 2;
+        margin-left: auto;
+        padding: 0.5rem;
         align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 111, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .search-wrapper {
+        flex: 1 100%;
+        order: 3;
+        max-width: 100%;
+        margin: 0.5rem auto; /* Marge réduite pour rester dans la navbar */
+        width: 90%;
+        text-align: center;
+    }
+
+    .search-box {
         width: 100%;
     }
 
-    .hamburger {
-        display: block; /* Afficher le bouton hamburger */
+    .search-input-nav {
+        width: 100%;
+        padding: 8px 35px 8px 40px; /* Ajustement pour l'icône et le texte */
     }
 
-    .nav-links.active {
-        display: flex; /* Afficher les liens lorsque le menu est actif */
-    }
-}
-
-/* Styles pour les écrans petits */
-@media (max-width: 768px) {
-    .nav-links {
+    .nav-menu {
         display: none;
         flex-direction: column;
         width: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
+        margin: 0;
+        padding: 1rem 0;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
         position: absolute;
-        top: 60px;
+        top: 70px;
         left: 0;
-        padding: 10px;
+        right: 0;
+        z-index: 1000;
     }
 
-    .nav-links a {
-        padding: 15px;
-        text-align: center;
-        width: 100%;
-    }
-
-
-    .navbar.active .nav-links {
+    .nav-menu.show {
         display: flex;
+        animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .nav-links {
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .user-menu {
+        display: none;
+    }
+
+    .auth-buttons {
+        display: none;
     }
 }
 
-/* Logo et autres éléments */
-@media (max-width: 480px) {
-    .logo {
-        width: 60px;
-        height: 60px;
+/* Animation du menu mobile */
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-
-    .platform-name {
-        font-size: 22px;
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
-      /* Conteneur du formulaire */
+
+/* Mode clair */
+[data-theme="light"] .navbar {
+    background: linear-gradient(90deg, #FFB6C1, #ADD8E6); /* Rose clair vers bleu pastel */
+}
+
+[data-theme="light"] .navbar a {
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="light"] .navbar .brand-name {
+    color: #FF4500; /* Nom du logo en orange foncé */
+}
+
+/* Mode sombre */
+[data-theme="dark"] .navbar {
+    background: linear-gradient(90deg, #000000, #00FFFF);
+}
+/* ----------------Animation d'apparition fluide  du modla-----------------------------------------*/
+
+   /* ===== Styles pour les thèmes ===== */
+:root {
+    /* Couleurs principales */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #2d3436;
+    --text-secondary: #6c757d;
+    --text-tertiary: #95a5a6;
+
+    /* Couleurs d'accent */
+    --accent-primary: #FF6F00;
+    --accent-secondary: #FFA726;
+    --accent-hover: #FF9800;
+
+    /* Couleurs des composants */
+    --navbar-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: #ffffff;
+    --card-hover: #f8f9fa;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --footer-bg: #f8f9fa;
+    --section-bg: #ffffff;
+    --modal-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #dee2e6;
+    --button-bg: #FF6F00;
+    --button-text: #ffffff;
+    --button-hover: #FFA726;
+}
+
+[data-theme="dark"] {
+    /* Couleurs principales */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #404040;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-tertiary: #95a5a6;
+
+    /* Couleurs des composants */
+    --navbar-bg: rgba(0, 0, 0, 0.95);
+    --card-bg: #2d2d2d;
+    --card-hover: #404040;
+    --border-color: #404040;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --footer-bg: #1a1a1a;
+    --section-bg: #2d2d2d;
+    --modal-bg: #2d2d2d;
+    --input-bg: #404040;
+    --input-border: #505050;
+}
+
+
+
+    /* Application des variables aux éléments */
+
+
+    /* Sidebar */
+    .mobile-sidebar {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .sidebar-link {
+        color: var(--text-primary);
+    }
+
+    .sidebar-link:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--accent-primary);
+    }
+
+/* ---------------------------------------light et dark pour le header des boutiques------------------------------------------------------ */
+
+    /* Bouton de thème flottant */
+    .theme-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        background: var(--bg-secondary);
+        border: 2px solid var(--accent-primary);
+        color: var(--accent-primary);
+        padding: 1rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .theme-toggle:hover {
+        transform: scale(1.1);
+        background: var(--accent-primary);
+        color: var(--button-text);
+    }
+
+    .theme-toggle i {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .theme-toggle:hover i {
+        transform: rotate(180deg);
+    }
+
+
+    /* Adaptation du thème pour mobile */
+    @media (max-width: 768px) {
+        .theme-toggle {
+            display: none;
+        }
+
+        .mobile-sidebar .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .mobile-sidebar .theme-toggle i {
+            font-size: 1.2rem;
+        }
+
+    }
+
+    
+
+   
+   
+/*----------------------------------------------Style de l'icône de thème----------------------------------------------------------*/
+.theme-icon {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.theme-icon i {
+    font-size: 1.5rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.theme-icon:hover {
+    transform: scale(1.1);
+    background: var(--accent-secondary);
+}
+
+/*--------------------------------------------------Style pour le mode clair---------------------------------------------------------------------------- */
+
+
+/* Style pour le mode clair - Footer */
+[data-theme="light"] footer {
+    background: linear-gradient(90deg, #ADD8E6, #FFB6C1); /* Dégradé bleu pastel vers rose clair */
+    color: #333; /* Texte en gris foncé pour une bonne lisibilité */
+}
+
+[data-theme="light"] footer p,
+[data-theme="light"] footer a {
+    color: #333; /* Texte en gris foncé pour une bonne lisibilité */
+}
+
+[data-theme="light"] footer a:hover {
+    color: #FF4500; /* Texte en orange foncé au survol */
+}
+
+[data-theme="light"] .footer-section h3 {
+    color: #FF4500; /* Orange foncé */
+}
+
+[data-theme="light"] .social-icons a {
+    color: #FF4500; /* Orange foncé */
+}
+
+[data-theme="light"] .social-icons a:hover {
+    color: #333; /* Gris foncé au survol */
+}
+
+/* Style pour le mode sombre - Footer */
+[data-theme="dark"] footer {
+    background: linear-gradient(90deg, #000000, #00FFFF);
+    color: #FFFFFF; /* Texte en blanc pour bien ressortir */
+}
+
+[data-theme="dark"] footer p,
+[data-theme="dark"] footer a {
+    color: #FFFFFF; /* Texte en blanc */
+}
+
+[data-theme="dark"] footer a:hover {
+    color: #FF4500; /* Texte en orange foncé au survol */
+}
+
+[data-theme="dark"] .footer-section h3 {
+    color: #FF4500; /* Orange foncé */
+}
+
+[data-theme="dark"] .social-icons a {
+    color: #FF4500; /* Orange foncé */
+}
+
+[data-theme="dark"] .social-icons a:hover {
+    color: #FFFFFF; /* Blanc au survol */
+}
+
+/* Style spécifique pour le thème sombre */
+[data-theme="dark"] .theme-icon {
+    background: #2C3E50;
+    transition: background 0.3s ease-in-out;
+}
+
+[data-theme="dark"] .theme-icon i {
+    color: #fff;
+}
+
+[data-theme="dark"] .theme-icon:hover {
+    background: #34495E;
+}
+
+
+
+/*----------------------------------------- Styles modal général communs pour les cartes de boutique dans le modal------------------------- */
+ /* Conteneur du formulaire */
 .form-container {
-    background: #2a2a2a;
+    background: var(--form-bg, #2a2a2a);
     padding: 20px;
     border-radius: 10px;
+    border: 1px solid var(--form-border, #444); /* Bordure pour le conteneur */
+    box-shadow: 0 4px 12px var(--form-shadow, rgba(0, 0, 0, 0.3)); /* Ombre pour le conteneur */
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transition fluide */
 }
 
 /* Espacement entre les champs du formulaire */
@@ -190,16 +706,18 @@ button:hover {
 /* Uniformiser la largeur et la hauteur des champs */
 .form-control,
 .form-control-password {
-    background-color: #333;
-    color: white;
-    border: 1px solid #444;
+    background-color: var(--input-bg, #333);
+    color: var(--input-text, white);
+    border: 1px solid var(--input-border, #444);
     height: 45px;
     width: 100%; /* Assure que chaque champ prend 100% de la largeur du conteneur */
+    padding-right: 40px; /* Espace pour l'icône */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Transition fluide */
 }
 
 /* Style spécifique pour le champ de mot de passe */
 .form-control-password::placeholder {
-    color: white;
+    color: var(--input-text, white);
 }
 
 /* Gestion des erreurs dans le formulaire */
@@ -225,7 +743,7 @@ button:hover {
 
 /* Style pour les placeholders */
 ::placeholder {
-    color: white; /* Couleur blanche pour le placeholder */
+    color: var(--input-text, white); /* Couleur blanche pour le placeholder */
     opacity: 1;
 }
 
@@ -237,8 +755,8 @@ button:hover {
 }
 
 .form-control-password:hover {
-    background-color: white;
-    color: black; /* Texte visible en noir quand le champ est actif */
+    background-color: var(--input-hover-bg, white);
+    color: var(--input-hover-text, black); /* Texte visible en noir quand le champ est actif */
     border-color: #ff7043;
     box-shadow: 0 0 5px rgba(255, 112, 67, 0.5);
 }
@@ -247,12 +765,14 @@ button:hover {
 .form-group label {
     display: block; /* Mettre les labels sur une ligne distincte */
     margin-bottom: 5px; /* Espacement entre le label et le champ */
+    color: var(--label-text, white);
 }
 
 /* Style du bouton primaire */
 .btn-primary {
     background-color: #ff7043;
     border-color: #ff7043;
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transition fluide */
 }
 
 .btn-primary:hover {
@@ -266,440 +786,763 @@ button:hover {
     width: 55px;
     height: 55px;
     object-fit: cover;
-    border: 2px solid #fff;
-    transition: transform 0.3s ease-in-out;
+    border: 2px solid var(--logo-border, #fff);
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease; /* Transition fluide */
 }
 
 .logo-img:hover {
     transform: scale(1.1);
 }
 
-/* Positionner l'icône de l'œil à droite du champ de mot de passe */
+/* Positionner l'icône de l'œil à l'intérieur du champ de mot de passe */
+.input-group {
+    position: relative;
+}
+
 .input-group-append {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
+    color: var(--icon-color, white);
+    transition: color 0.3s ease; /* Transition fluide */
 }
 
-  /* Footer Styling */
-  footer {
-    background-color: #000; /* Fond noir pur */
-    padding: 40px 20px;
-    text-align: center;
-    border-top: 3px solid #FF4500; /* Orange foncé */
+
+:root {
+    --bg-color: rgba(255, 255, 255, 0.97);
+    --text-color: #333;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+    --mobile-breakpoint: 768px;
 }
 
-.footer-container {
-    max-width: 1200px;
-    margin: auto;
+.messages-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
-    text-align: left;
+    padding-top: 20px;
+    z-index: 9999;
+    pointer-events: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Logo */
-.footer-logo {
-    text-align: center;
-    margin-bottom: 20px;
+.messages-container {
+    max-width: 600px;
+    width: 90%;
+    pointer-events: auto;
+    padding: 10px;
 }
 
-.footer-logo img {
-        width: 80px;  /* Augmentation de la taille du logo */
-        height: 80px;
-        object-fit: contain;
-        border-radius: 50%;
-        transition: transform 0.3s ease;
-}
-
-.footer-section {
-    flex: 1;
-    min-width: 250px;
-    margin: 10px;
-}
-
-.footer-section h3 {
-    color: #FF4500; /* Orange foncé */
+.notification-modal {
+    position: relative;
     margin-bottom: 15px;
-    font-size: 22px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.footer-section p, .footer-section a {
-    color: #ddd;
+.notification-modal.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.notification-modal.closing {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+}
+
+.notification-icon {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    color: var(--primary-color, #4e73ff);
+}
+
+.notification-content {
+    padding-left: 40px;
+    padding-right: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
     font-size: 16px;
-    text-decoration: none;
-    transition: 0.3s ease-in-out;
-}
-
-.footer-section a:hover {
-    color: #FF4500;
-}
-
-.social-icons {
+    opacity: 0.6;
+    transition: all 0.2s ease-out;
+    color: inherit;
+    width: 28px;
+    height: 28px;
     display: flex;
-    gap: 15px;
-    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    touch-action: manipulation;
 }
 
-.social-icons a {
-    color: #FF4500;
-    font-size: 22px;
-    transition: transform 0.3s ease-in-out;
+.close-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
 }
 
-.social-icons a:hover {
-    color: #fff;
-    transform: scale(1.2);
+.notification-modal[data-theme="dark"] .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.footer-bottom {
-    text-align: center;
-    padding: 15px;
-    background-color: #000;
-    font-size: 14px;
-    margin-top: 20px;
-    border-top: 1px solid #FF4500;
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--progress-gradient);
+    transform-origin: left;
+    transition: width 5s linear;
 }
 
-/* Responsive */
+/* Effet de "glow" subtil */
+.notification-modal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Animation d'entrée spécifique pour chaque notification */
+.notification-modal:nth-child(1) { transition-delay: 0.1s; }
+.notification-modal:nth-child(2) { transition-delay: 0.2s; }
+.notification-modal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .footer-container {
-        text-align: center;
+    .messages-overlay {
+        padding-top: 10px;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
     }
-
-    .footer-section {
-        flex: 100%;
-        margin-bottom: 20px;
+    
+    .messages-container {
+        width: 95%;
+        max-width: 100%;
+        padding: 5px;
     }
-
-    .social-icons {
-        justify-content: center;
-    }
-}
-
-     /* Boîte de notification */
-     .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 300px;
-        background-color: rgba(255, 255, 255, 0.9); /* Fond plus clair avec transparence */
-        color: #333; /* Texte en noir pour contraster avec le fond */
+    
+    .notification-modal {
         padding: 15px;
+        margin-bottom: 10px;
         border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus nette pour ressortir sur fond sombre */
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.5s ease-in-out;
-        z-index: 9999;
     }
     
-    .notification.show {
-        opacity: 1;
-        transform: translateX(0);
+    .notification-icon {
+        left: 15px;
+        top: 15px;
+        font-size: 20px;
     }
     
-    .notification.hide {
-        opacity: 0;
-        transform: translateX(100%);
+    .notification-content {
+        padding-left: 35px;
+        padding-right: 15px;
+        font-size: 14px;
     }
     
-    /* Bouton de fermeture */
     .close-btn {
-        background: none;
-        border: none;
-        color: #333; /* Couleur du texte du bouton */
-        font-size: 1.5rem;
-        cursor: pointer;
-        position: absolute;
         top: 10px;
         right: 10px;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
     }
     
-    /* Style pour les messages d'erreur, succès, etc. */
-    .alert.success {
-        background-color: #4CAF50; /* Vert pour le succès */
+    .progress-bar {
+        height: 2px;
     }
-    
-    .alert.warning {
-        background-color: #ff9800; /* Orange pour l'avertissement */
-    }
-    
-    .alert.error {
-        background-color: #f44336; /* Rouge pour l'erreur */
-    }
-    
-    /* Styles de transition au survol du bouton de fermeture */
-    .close-btn:hover {
-        color: #ff7043;
-    }
-   </style>
-</head>
-<body>
-  <!-- Notification messages -->
-  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
-  {% if messages %}
-  <div class="messages">
-      {% for message in messages %}
-      <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} notification show" id="notification-{{ forloop.counter }}">
-          <span>{{ message }}</span>
-          <button class="close-btn" onclick="closeNotification(this)">×</button>
-      </div>
-      {% endfor %}
-  </div>
-{% endif %}
+}
 
- <!-- Navbar -->
+@media (max-width: 480px) {
+    .notification-modal {
+        padding: 12px;
+    }
+    
+    .notification-icon {
+        left: 12px;
+        top: 12px;
+        font-size: 18px;
+    }
+    
+    .notification-content {
+        padding-left: 30px;
+        padding-right: 10px;
+    }
+    
+    .notification-modal::after {
+        display: none; /* Supprime l'effet glow sur petits écrans */
+    }
+}
+
+/* Support pour les appareils tactiles */
+@media (hover: none) {
+    .close-btn {
+        opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .notification-modal[data-theme="dark"] .close-btn {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Amélioration pour les très grands écrans */
+@media (min-width: 1600px) {
+    .messages-container {
+        max-width: 700px;
+    }
+}
+/* Thème clair */
+[data-theme="light"] {
+    --form-bg: #ffffff;
+    --form-border: #cccccc; /* Bordure claire */
+    --form-shadow: rgba(0, 0, 0, 0.1); /* Ombre légère */
+    --input-bg: #f5f5f5;
+    --input-text: #333333;
+    --input-border: #cccccc;
+    --input-hover-bg: #e0e0e0;
+    --input-hover-text: #000000;
+    --label-text: #333333;
+    --icon-color: #333333;
+    --logo-border: #333333;
+}
+
+/* Thème sombre */
+[data-theme="dark"] {
+    --form-bg: #2a2a2a;
+    --form-border: #444444; /* Bordure sombre */
+    --form-shadow: rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+    --input-bg: #333333;
+    --input-text: #ffffff;
+    --input-border: #444444;
+    --input-hover-bg: #ffffff;
+    --input-hover-text: #000000;
+    --label-text: #ffffff;
+    --icon-color: #ffffff;
+    --logo-border: #ffffff;
+}
+</style>
+
+</head>
+
+<body>
+    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+    {% if messages %}
+    <div class="messages-overlay" id="messages-overlay">
+      <div class="messages-container">
+          {% for message in messages %}
+              <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+                  <div class="notification-icon">
+                      <i class="fas fa-robot pulse"></i>
+                  </div>
+                  
+                  <div class="notification-content">
+                      <div class="message">
+                          {{ message }}
+                      </div>
+                  </div>
+                  
+                  <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                      <i class="fas fa-times"></i>
+                  </button>
+                  
+                  <div class="progress-bar"></div>
+              </div>
+          {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
 <!-- Navbar -->
 <nav class="navbar">
-    <div class="logo-container">
-        <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
-        <span class="platform-name">WarabaGuinee</span>
-    </div>
+    <!-- Logo et nom de la plateforme -->
+    <a href="/" class="navbar-brand">
+        <img src="{% static 'lo.jpeg' %}" alt="Logo" class="nav-logo">
+        <span class="brand-name">WarabaGuinée</span>
+    </a>
 
     <!-- Menu principal -->
-    <div class="nav-links">
-        <a href="{% url 'accueil' %}" class="home-link">
-            <i class="fa fa-home"></i> Accueil
+    <div class="nav-menu">
+        <a href="{% url 'accueil' %}" class="nav-links">
+            <i class="fas fa-home"></i> <!-- Icône Accueil -->
+            <span>Accueil</span>
         </a>
-        <a href="{% url 'login' %}" class="login-link">
-            <i class="fa fa-sign-in-alt"></i> Se connecter
+        <a href="{% url 'inscription' %}" class="nav-links">
+            <i class="fas fa-user-plus"></i> <!-- Icône pour l'inscription -->
+            <span>Inscription</span>
         </a>
-        <a href="{% url 'inscription' %}" class="signup-link">
-            <i class="fa fa-user-plus"></i> Créer un compte
+        <a href="{% url 'login' %}" class="nav-links">
+            <i class="fas fa-sign-in-alt"></i> <!-- Icône Connexion -->
+            <span>Connexion</span>
+        </a>
+        <a href="{% url 'password_reset' %}" class="nav-links">
+            <i class="fas fa-key"></i> <!-- Icône pour la réinitialisation du mot de passe -->
+            <span>Mot de passe oublié</span>
+        </a>
+        <a href="" class="nav-links">
+            <i class="fas fa-question-circle"></i> <!-- Icône Aide -->
+            <span>Aide</span>
+        </a>
+        <a href="" class="nav-links">
+            <i class="fas fa-info-circle"></i> <!-- Icône À propos -->
+            <span>À propos</span>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="nav-links contact-link">
+            <i class="fab fa-whatsapp"></i> <!-- Icône WhatsApp -->
+            <span>Contact</span>
         </a>
     </div>
+    
 
-    <!-- Menu hamburger -->
-    <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+    <!-- Menu hamburger pour mobile (3 tirets) -->
+    <button class="hamburger-btn" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i> <!-- Icône hamburger à 3 tirets -->
+    </button>
 </nav>
 
+<!-- Ajouter l'icône de thème flottante juste avant la fermeture du body -->
+<div class="theme-icon theme-desktop" id="theme-toggle-desktop">
+    <i class="fas fa-moon"></i>
+</div>
+<!-- Inscription Section -->
+<div class="container py-5" style="margin-top: 100px;">
+    <h2 class="text-center mb-4">
+        <i class="bi bi-shop"></i> Créer votre compte boutique
+    </h2>        
 
-
-
-    <!-- Inscription Section -->
-    <div class="container py-5">
-        <h2 class="text-center mb-4">
-            <i class="bi bi-shop"></i> Créer votre compte boutique
-        </h2>        
-
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-12">
-                <div class="form-container">
-                    <form method="POST">
-                        {% csrf_token %}
-                    
-                        <div class="form-group">
-                            <label for="id_nom_complet"><i class="bi bi-person-fill"></i> Nom complet</label>
-                            {{ form.nom_complet|add_class:"form-control {% if form.nom_complet.errors %}is-invalid{% endif %}" }}
-                            {% if form.nom_complet.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.nom_complet.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-12">
+            <div class="form-container">
+                <form method="POST" id="registerForm">
+                    {% csrf_token %}
+                
+                    <div class="form-group">
+                        <label for="id_nom_complet"><i class="bi bi-person-fill"></i> Nom complet</label>
+                        {{ form.nom_complet|add_class:"form-control {% if form.nom_complet.errors %}is-invalid{% endif %}" }}
+                        {% if form.nom_complet.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.nom_complet.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_numero"><i class="bi bi-telephone-fill"></i> Numéro de téléphone</label>
+                        {{ form.numero|add_class:"form-control {% if form.numero.errors %}is-invalid{% endif %}" }}
+                        {% if form.numero.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.numero.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_nom_boutique"><i class="bi bi-shop-window"></i> Nom de la boutique</label>
+                        {{ form.nom_boutique|add_class:"form-control {% if form.nom_boutique.errors %}is-invalid{% endif %}" }}
+                        {% if form.nom_boutique.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.nom_boutique.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_email"><i class="bi bi-envelope-fill"></i> Adresse email</label>
+                        {{ form.email|add_class:"form-control {% if form.email.errors %}is-invalid{% endif %}" }}
+                        {% if form.email.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.email.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_password1"><i class="bi bi-lock-fill"></i> Mot de passe</label>
+                        <div class="input-group">
+                            {{ form.password1|add_class:"form-control-password {% if form.password1.errors %}is-invalid{% endif %}" }}
+                            <span class="input-group-append" onclick="togglePassword('password1')">
+                                <i id="eye1" class="bi bi-eye-fill"></i>
+                            </span>
                         </div>
-                    
-                        <div class="form-group">
-                            <label for="id_numero"><i class="bi bi-telephone-fill"></i> Numéro de téléphone</label>
-                            {{ form.numero|add_class:"form-control {% if form.numero.errors %}is-invalid{% endif %}" }}
-                            {% if form.numero.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.numero.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                        {% if form.password1.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.password1.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_password2"><i class="bi bi-lock-fill"></i> Confirmer le mot de passe</label>
+                        <div class="input-group">
+                            {{ form.password2|add_class:"form-control-password {% if form.password2.errors %}is-invalid{% endif %}" }}
+                            <span class="input-group-append" onclick="togglePassword('password2')">
+                                <i id="eye2" class="bi bi-eye-fill"></i>
+                            </span>
                         </div>
-                    
-                        <div class="form-group">
-                            <label for="id_nom_boutique"><i class="bi bi-shop-window"></i> Nom de la boutique</label>
-                            {{ form.nom_boutique|add_class:"form-control {% if form.nom_boutique.errors %}is-invalid{% endif %}" }}
-                            {% if form.nom_boutique.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.nom_boutique.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    
-                        <div class="form-group">
-                            <label for="id_email"><i class="bi bi-envelope-fill"></i> Adresse email</label>
-                            {{ form.email|add_class:"form-control {% if form.email.errors %}is-invalid{% endif %}" }}
-                            {% if form.email.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.email.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    
-                        <div class="form-group">
-                            <label for="id_password1"><i class="bi bi-lock-fill"></i> Mot de passe</label>
-                            <div class="input-group">
-                                {{ form.password1|add_class:"form-control-password {% if form.password1.errors %}is-invalid{% endif %}" }}
-                                <span class="input-group-append" onclick="togglePassword('password1')">
-                                    <i id="eye1" class="bi bi-eye-fill"></i>
-                                </span>
-                            </div>
-                            {% if form.password1.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.password1.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    
-                        <div class="form-group">
-                            <label for="id_password2"><i class="bi bi-lock-fill"></i> Confirmer le mot de passe</label>
-                            <div class="input-group">
-                                {{ form.password2|add_class:"form-control-password {% if form.password2.errors %}is-invalid{% endif %}" }}
-                                <span class="input-group-append" onclick="togglePassword('password2')">
-                                    <i id="eye2" class="bi bi-eye-fill"></i>
-                                </span>
-                            </div>
-                            {% if form.password2.errors %}
-                                <ul class="errorlist">
-                                    {% for error in form.password2.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
-                    </form>
-                    
-                </div>
+                        {% if form.password2.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.password2.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                        <span id="submitText">S'inscrire</span>
+                        <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </form>
             </div>
+            
         </div>
     </div>
+</div>
+<!------------------------------ footer ------------------- -------------- --> 
+<footer>
+    <div class="footer-logo">
+        <img src="{% static 'lo.jpeg' %}" alt="WarabaGuinée Logo" class="logo">
+    </div>
 
-    <footer>
-        <div class="footer-logo">
-            <img src="{% static 'lo.jpeg' %}" alt="WarabaGuinée Logo" class="logo">
+    <div class="footer-container">
+        
+        <!-- Section À propos -->
+        <div class="footer-section">
+            <h3>À propos de WarabaGuinée</h3>
+            <p>WarabaGuinée révolutionne le commerce en ligne en Guinée avec une plateforme rapide, sécurisée et accessible à tous. Nous permettons aux entreprises de gérer leur boutique en ligne et aux clients d'acheter en toute simplicité.</p>
         </div>
-    
-        <div class="footer-container">
-            
-            <!-- Section Inscription -->
-            <div class="footer-section">
-                <h3>Créez votre compte</h3>
-                <p>Rejoignez WarabaGuinée et découvrez un univers de services adaptés à vos besoins. Inscrivez-vous et commencez à explorer.</p>
-                <p><a href="{% url 'inscription' %}">Créer un compte maintenant</a></p>
-            </div>
-    
-            <!-- Section Liens utiles -->
-            <div class="footer-section">
-                <h3>Inscription</h3>
-                <p><a href="{% url 'inscription' %}">Créer un compte</a></p>
-                <p><a href="{% url 'login' %}">Se connecter</a></p>
-                <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
-                <p><a href="{% url 'accueil' %}">Retour à l'accueil</a></p>
-            </div>
-            
-    
-            <!-- Section Contact -->
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Conakry, Guinée</p>
-                <p><i class="fas fa-phone"></i> +224 622 00 00 00</p>
-                <p><i class="fas fa-envelope"></i> contact@warabaguinee.com</p>
-            </div>
-    
-            <!-- Section Réseaux sociaux -->
-            <div class="footer-section">
-                <h3>Suivez-nous</h3>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
-                    <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a> <!-- Lien vers YouTube -->
-                    <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a> <!-- Lien vers TikTok -->
-                    
-                </div>
-            </div>
-    
+
+        <!-- Section Liens rapides -->
+        <div class="footer-section">
+            <h3>Liens rapides</h3>
+            <p><a href="#">Accueil</a></p>
+            <p><a href="#">Boutiques</a></p>
+            <p><a href="#">Nos services</a></p>
+            <p><a href="#">Contact</a></p>
+            <p><a href="#">FAQ</a></p>
+            <p><a href="#">Conditions générales</a></p>
         </div>
-    
-        <div class="footer-bottom" style="color: white;">
-            &copy; 2025 WarabaGuinée - Tous droits réservés.
+
+        <!-- Section Gestion des boutiques -->
+        <div class="footer-section">
+            <h3>Gestion des boutiques</h3>
+            <p><a href="#">Créer une boutique</a></p>
+            <p><a href="#">Tableau de bord vendeur</a></p>
+            <p><a href="#">Mes produits</a></p>
+            <p><a href="#">Gestion des commandes</a></p>
+            <p><a href="#">Assistance vendeur</a></p>
         </div>
-    </footer>
-    
-    
+
+        <!-- Section Support client -->
+        <div class="footer-section">
+            <h3>Support client</h3>
+            <p><a href="#">Assistance technique</a></p>
+            <p><a href="#">Politique de retour</a></p>
+            <p><a href="#">Foire aux questions</a></p>
+            <p><a href="#">Centre d'aide</a></p>
+        </div>
+
+        <!-- Section Méthodes de paiement -->
+        <div class="footer-section">
+            <h3>Méthodes de paiement</h3>
+            <p>Nous acceptons les paiements via Orange Money pour garantir une expérience d'achat fluide :</p>
+            <p><i class="fas fa-mobile-alt"></i> Orange Money</p>
+        </div>
+
+        <!-- Section Sécurité et confidentialité -->
+        <div class="footer-section">
+            <h3>Sécurité & Confidentialité</h3>
+            <p>Nous assurons la sécurité de vos paiements et la protection de vos données personnelles. Découvrez notre <a href="#">Politique de confidentialité</a>.</p>
+            <p>Paiements sécurisés grâce à <i class="fas fa-mobile-alt"></i> Orange Money.</p>
+        </div>
+
+        <!-- Section Réseaux sociaux -->
+        <div class="footer-section">
+            <h3>Suivez-nous</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
+                <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+
+        <!-- Section Nouvelles mises à jour -->
+        <div class="footer-section">
+            <h3>Plateforme en développement</h3>
+            <p>Nous sommes une plateforme en pleine évolution ! Restez informés sur nos nouveautés, mises à jour et services à venir en nous suivant sur nos réseaux sociaux.</p>
+            <p>Merci de faire partie de notre aventure naissante !</p>
+        </div>
+
+        <!-- Section Soutenir la plateforme -->
+        <div class="footer-section">
+            <h3>Soutenez notre croissance</h3>
+            <p>En tant que plateforme en développement, nous apprécions chaque retour et suggestion. Contactez-nous pour partager vos idées et contribuer à améliorer l'expérience.</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom" style="color: white;background: transparent;">
+        &copy; 2025 WarabaGuinée - Tous droits réservés.
+    </div>
+</footer>
+
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Fonction pour afficher/masquer le mot de passe
-        function togglePassword(passwordId) {
-            var passwordField = document.getElementById('id_' + passwordId);
-            var eyeIcon = document.getElementById('eye' + (passwordId === 'password1' ? '1' : '2'));
-            
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                eyeIcon.classList.remove('bi-eye-fill');
-                eyeIcon.classList.add('bi-eye-slash-fill');
-            } else {
-                passwordField.type = "password";
-                eyeIcon.classList.remove('bi-eye-slash-fill');
-                eyeIcon.classList.add('bi-eye-fill');
-            }
+   <script src="{% static 'homeJs/navbar.js' %}"></script>
+   <script src="{% static 'homeJs/sidebar.js' %}"></script>
+   <script src="{% static 'homeJs/themes.js' %}"></script>
+   <script src="{% static 'homeJs/changeThemeIcone.js' %}"></script>
+   <script>
+    // Gestion du spinner pendant l'envoi
+    document.getElementById('registerForm').addEventListener('submit', function() {
+        document.getElementById('spinner').classList.remove('d-none');
+        document.getElementById('submitText').classList.add('d-none');
+        document.getElementById('submitBtn').disabled = true;
+    });
+
+    // Fonction existante pour afficher/masquer le mot de passe (conservée telle quelle)
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(`id_${fieldId}`);
+        const eyeIcon = document.getElementById(`eye${fieldId.includes('1') ? '1' : '2'}`);
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.remove('bi-eye-fill');
+            eyeIcon.classList.add('bi-eye-slash-fill');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('bi-eye-slash-fill');
+            eyeIcon.classList.add('bi-eye-fill');
         }
-
-         // Fonction pour fermer une notification
-function closeNotification(element) {
-    const notification = element.parentElement;
-    notification.classList.add('hide');
-    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-}
-
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
-}
-
-// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
-    });
-});
-
-// Fonction pour afficher une notification avec animation et son
-function showNotification(element) {
-    const notification = element;
-    notification.classList.add('show');
-    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
+    }
+</script>
     
-    // Ajouter un délai avant de masquer la notification
-    setTimeout(() => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    }, 5000); // La notification disparaît après 5 secondes
-}
-
-// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-setTimeout(() => {
-    const notifications = document.querySelectorAll('.notification');
-    notifications.forEach(notification => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
+   <script>
+    // Configuration des thèmes
+    const themes = {
+        light: {
+            bg: 'rgba(255, 255, 255, 0.97)',
+            text: '#333',
+            border: 'rgba(0, 0, 0, 0.1)',
+            progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+        },
+        dark: {
+            bg: 'rgba(30, 30, 30, 0.97)',
+            text: '#fff',
+            border: 'rgba(255, 255, 255, 0.1)',
+            progress: 'linear-gradient(90deg, rgba(100, 149, 237, 0.8), rgba(0, 191, 255, 0.8))'
+        }
+    };
+  
+    // Fonction pour jouer le son avec gestion moderne des erreurs
+    function playNotificationSound() {
+        const sound = document.getElementById('notification-sound');
+        if (!sound) return;
+  
+        const playSound = () => {
+            sound.currentTime = 0;
+            sound.volume = 0.8;
+            sound.play().catch(e => console.debug("Sound play prevented:", e));
+        };
+  
+        // Essayer de jouer immédiatement
+        playSound();
+        
+        // Si bloqué, attendre une interaction utilisateur
+        if (sound.paused) {
+            const enableSound = () => {
+                playSound();
+                document.removeEventListener('click', enableSound);
+                document.removeEventListener('keydown', enableSound);
+            };
+            document.addEventListener('click', enableSound, { once: true });
+            document.addEventListener('keydown', enableSound, { once: true });
+        }
+    }
+  
+    // Fermeture de notification avec animation fluide
+    function closeNotification(closeButton) {
+        const notification = closeButton.closest('.notification-modal');
+        if (!notification) return;
+        
+        notification.classList.add('closing');
+        setTimeout(() => {
+            notification.classList.remove('show', 'closing');
+            notification.remove();
+        }, 300);
+    }
+  
+    // Affichage de notification avec effets modernes
+    function showNotification(notificationElement) {
+        // Appliquer le thème
+        const theme = notificationElement.dataset.theme || 'light';
+        const themeConfig = themes[theme];
+        
+        notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+        notificationElement.style.setProperty('--text-color', themeConfig.text);
+        notificationElement.style.setProperty('--border-color', themeConfig.border);
+        notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+  
+        // Animation d'entrée
+        notificationElement.classList.add('show');
+        playNotificationSound();
+        
+        // Barre de progression animée
+        const progressBar = notificationElement.querySelector('.progress-bar');
+        if (progressBar) {
+            progressBar.style.width = '100%';
+            setTimeout(() => {
+                progressBar.style.transition = 'width 5s linear';
+                progressBar.style.width = '0%';
+            }, 50);
+        }
+  
+        // Fermeture automatique après délai
+        let timeoutId = setTimeout(() => {
+            notificationElement.classList.add('closing');
+            setTimeout(() => notificationElement.remove(), 300);
+        }, 5000);
+  
+        // Réinitialiser le timeout si la souris entre
+        notificationElement.addEventListener('mouseenter', () => {
+            clearTimeout(timeoutId);
+            if (progressBar) progressBar.style.transition = 'none';
+        });
+  
+        // Redémarrer le timeout si la souris sort
+        notificationElement.addEventListener('mouseleave', () => {
+            if (progressBar) {
+                const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+                progressBar.style.transition = `width ${remaining}ms linear`;
+                progressBar.style.width = '0%';
+            }
+            timeoutId = setTimeout(() => {
+                notificationElement.classList.add('closing');
+                setTimeout(() => notificationElement.remove(), 300);
+            }, progressBar ? remaining : 5000);
+        });
+    }
+  
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.notification-modal').forEach(notification => {
+            showNotification(notification);
+        });
     });
-}, 5000); // La notification disparaît après 5 secondes
+  
+    // Gestion des clics en dehors pour fermer
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.notification-modal')) {
+            document.querySelectorAll('.notification-modal.show').forEach(modal => {
+                modal.classList.add('closing');
+                setTimeout(() => modal.remove(), 300);
+            });
+        }
+    });
+  </script> 
+  
+   
+<div class="sidebar-overlay"></div>
+<div class="mobile-sidebar">
+    <button class="sidebar-close">
+        <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="sidebar-header">
+        <img src="{% static 'lo.jpeg' %}" alt="Logo" class="sidebar-logo">
+        <span class="sidebar-brand">WarabaGuinée</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <a href="{% url 'accueil' %}" class="sidebar-link">
+            <i class="fas fa-home"></i> <!-- Icône Accueil -->
+            <span>Accueil</span>
+        </a>
+        <a href="{% url 'login' %}" class="sidebar-link">
+            <i class="fas fa-sign-in-alt"></i> <!-- Icône Connexion -->
+            <span>Connexion</span>
+        </a>
+        <a href="{% url 'inscription' %}" class="sidebar-link">
+            <i class="fas fa-user-plus"></i> <!-- Icône Inscription -->
+            <span>Inscription</span>
+        </a>
+        <a href="" class="sidebar-link">
+            <i class="fas fa-key"></i> <!-- Icône Réinitialisation du mot de passe -->
+            <span>Mot de passe oublié</span>
+        </a>
+        <a href="" class="sidebar-link">
+            <i class="fas fa-question-circle"></i> <!-- Icône Aide -->
+            <span>Aide</span>
+        </a>
+        <a href="" class="sidebar-link">
+            <i class="fas fa-info-circle"></i> <!-- Icône À propos -->
+            <span>À propos</span>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="sidebar-link">
+            <i class="fab fa-whatsapp"></i> <!-- Icône WhatsApp -->
+            <span>Contact</span>
+        </a>
+    </nav>
+</div>  
 
-
-function toggleMenu() {
-    const navLinks = document.querySelector('.nav-links');
-    navLinks.classList.toggle('active');
-}
-
-    </script>
 </body>
 </html>

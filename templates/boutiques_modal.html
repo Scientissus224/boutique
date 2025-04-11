@@ -1,0 +1,33 @@
+<div class="boutiques" id="boutiques-container">
+    <!-- Spinner de chargement -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Contenu des boutiques -->
+    {% for boutique in boutiques %}
+        <div class="boutique">
+            <div class="boutique-card p-2">
+                <div class="logo-container_b">
+                    <img src="{{ boutique.logo|default:'path/to/default/logo.png' }}" alt="Logo de la boutique">
+                </div>
+
+                <div class="boutique-info">
+                    <h3>{{ boutique.nom_boutique }}</h3>
+                    <p>{{ boutique.description }}</p>
+
+                    {% if boutique.type_boutique %}
+                    <p><strong>Type de boutique :</strong> {{ boutique.type_boutique }}</p>
+                    {% endif %}
+
+                    <a href="{{ boutique.page_html_path }}" class="boutique-link">
+                        <i class="fas fa-sign-out-alt door-icon"></i>
+                        Ouvrir
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+    <p>Aucune boutique trouvée.</p>
+    {% endfor %}
+</div>

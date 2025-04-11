@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect  , get_object_or_404
+from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 from shop.forms import (
     DeviseUpdateForm,
@@ -17,6 +18,7 @@ from shop.models import (
     NavbarSettings,
     BoutiqueSettings,
     BoutiqueNavCusor,
+    Boutique,
 
 )
 
@@ -36,6 +38,7 @@ def parametres(request):
 
     # Récupération ou initialisation des instances liées à l'utilisateur
     localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
+    boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
     devise_instance, _ = Devise.objects.get_or_create(utilisateur=utilisateur, defaults={'devise': 'GNF'})
     navbar_instance, _ = NavbarSettings.objects.get_or_create(utilisateur=utilisateur, defaults={'couleur_fond': '#FFFFFF'})
     shop_nom_color_instance, _ = BoutiqueSettings.objects.get_or_create(utilisateur=utilisateur, defaults={'couleur_texte': '#FFFFFF'})
@@ -47,6 +50,14 @@ def parametres(request):
         'ville': localisation.ville if localisation else 'N/A',
         'quartier': localisation.quartier if localisation else 'N/A',
         'repere': localisation.repere if localisation else 'N/A',  # Ajout du champ repère
+        'ouvert_24h':localisation.ouvert_24h if localisation else 'N/A',
+        'heure_ouverture':localisation.heure_ouverture if localisation else 'N/A',
+        'heure_fermeture':localisation.heure_fermeture if localisation else 'N/A',
+        'ferme_jour_ferie':localisation.ferme_jour_ferie if localisation else 'N/A',
+        'jour_ouverture': getattr(localisation, 'jour_ouverture', None) if localisation else None,
+        'jour_fermeture': getattr(localisation, 'jour_fermeture', None) if localisation else None,
+
+        
     }
     ancienne_devise = devise_instance.devise
     ancienne_navbar = navbar_instance.couleur_fond
@@ -54,7 +65,7 @@ def parametres(request):
     ancien_cursor_nav = shop_cursor_nav_instance.couleur_texte_cursor
     
     # Initialisation des formulaires
-    form = MiseAJourUtilisateurForm(request.POST or None, instance=utilisateur)
+    form = MiseAJourUtilisateurForm(request.POST or None, request.FILES or None, instance=utilisateur)
     form_localisation = MiseAJourLocalisationForm(request.POST or None, instance=localisation)
     form_devise = DeviseUpdateForm(request.POST or None, instance=devise_instance, user=utilisateur)
     form_navbar = NavbarSettingsForm(request.POST or None, instance=navbar_instance, user=utilisateur)
@@ -93,6 +104,7 @@ def parametres(request):
             messages.error(request, "Une ou plusieurs erreurs se sont produites. Veuillez vérifier vos informations.")
 
     # Préparation des données pour le template
+    current_site = get_current_site(request)
     context = {
         'form': form,
         'form_localisation': form_localisation,
@@ -105,12 +117,17 @@ def parametres(request):
             'email': utilisateur.email,
             'numero': utilisateur.numero,
             'boutique': utilisateur.nom_boutique,
+            'logo': utilisateur.logo_boutique.url if utilisateur.logo_boutique else None,
+            'url_boutique': boutique.get_absolute_url(current_site) if boutique else None,
         },
         'localisation': anciennes_localisations,  # Mise à jour des anciennes localisations
         'ancienne_devise': ancienne_devise,
         'ancien_navbar': ancienne_navbar,
         'ancien_shop_nom_color': ancien_shop_nom_color,
         'ancien_cursor_nav': ancien_cursor_nav,
+        'jour_ouverture': getattr(localisation, 'jour_ouverture', None) if localisation else None,
+        'jour_fermeture': getattr(localisation, 'jour_fermeture', None) if localisation else None,
+
     }
 
     return render(request, 'parametres.html', context)

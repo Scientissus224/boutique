@@ -1,149 +1,690 @@
-<div class="container">
-    <h2 class="section-title">Détails de la commande</h2>
-
-    <!-- Informations du client -->
-    <div class="client-info">
-        <h3 class="section-title">Informations du client</h3>
-        <p><strong>Nom:</strong> <span class="client-name">{{ client_nom }}</span></p>
-        <p><strong>Numéro de commande:</strong> <span class="client-numero">{{ client_numero }}</span></p>
-        <p><strong>Lieu de livraison:</strong> <span class="delivery-address">{{ lieu_de_livraison }}</span></p>  <!-- Ajout du lieu de livraison -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% load custom_filters %}
+<div class="modern-command-container">
+    <!-- Header with animated icon -->
+    <div class="command-header">
+        <div class="icon-wrapper animate-bounce">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <div>
+            <h1 class="command-title">Détails de votre commande</h1>
+            <p class="command-subtitle">N° {{ commande_numero }} • {{ commande_date }}</p>
+        </div>
     </div>
 
-    <!-- Récapitulatif des produits commandés -->
-    <div class="order-summary">
-        <h3 class="section-title">Produits commandés</h3>
-        
-        <!-- Conteneur défilable pour les produits -->
-        <div class="product-scroll-container">
-            <div class="product-grid">
-                {% for produit in produits_info %}
-                    <div class="product-item">
-                        <div class="product-info">
-                            <h4 class="product-name">{{ produit.nom }}</h4>
-                            
-                            <!-- Affichage de l'image du produit -->
-                            {% if produit.image %}
-                                <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="product-image">
-                            {% endif %}
+    <!-- Status timeline -->
+    <div class="status-timeline">
+        <div class="timeline-step active">
+            <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+            <span>Commande passée</span>
+        </div>
+        <div class="timeline-step {{ commande_statut|lower|active_si:'en traitement' }}">
+            <div class="step-icon"><i class="fas fa-cog"></i></div>
+            <span>En préparation</span>
+        </div>
+        <div class="timeline-step {{ commande_statut|lower|active_si:'expédiée' }}">
+            <div class="step-icon"><i class="fas fa-truck"></i></div>
+            <span>Expédiée</span>
+        </div>
+        <div class="timeline-step {{ commande_statut|lower|active_si:'livrée' }}">
+            <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+            <span>Livrée</span>
+        </div>
+    </div>
 
-                            <!-- Détails du produit -->
-                            {% if produit.type == 'variante' %}
-                                <p><strong>Taille:</strong> {{ produit.taille }}</p>
-                                <p><strong>Couleur:</strong> {{ produit.couleur }}</p>
-                            {% endif %}
-                            <p><strong>Prix:</strong> <span class="product-price">{{ produit.prix }} {{ devise }}</span></p>
-                        </div>
+
+    <!-- Client card with glassmorphism effect -->
+    <div class="glass-card client-card">
+        <div class="card-header">
+            <i class="fas fa-user-circle"></i>
+            <h3>Informations client</h3>
+            <div class="status-badge {{ commande_statut|lower }}">{{ commande_statut }}</div>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-user-tag"></i></div>
+                    <div>
+                        <p class="info-label">Nom complet</p>
+                        <p class="info-value">{{ client_nom }}</p>
                     </div>
-                {% endfor %}
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div>
+                        <p class="info-label">Téléphone</p>
+                        <p class="info-value">{{ client_numero }}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div>
+                        <p class="info-label">Adresse</p>
+                        <p class="info-value">{{ lieu_de_livraison }}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-credit-card"></i></div>
+                    <div>
+                        <p class="info-label">Paiement</p>
+                        <p class="info-value">{{ methode_paiement }} • {{ paiement_statut }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Total de la commande -->
-    <div class="order-total">
-        <h3 class="total-text">Total de la commande: <span class="total-price">{{ total_prix }} {{ devise }}</span></h3>
+    <!-- Products section with horizontal scroll on mobile -->
+    <div class="glass-card products-section">
+        <div class="card-header">
+            <i class="fas fa-box-open"></i>
+            <h3>Articles ({{ produits_info|length }})</h3>
+        </div>
+        <div class="products-container">
+            {% for produit in produits_info %}
+            <div class="product-card">
+                <div class="product-image-container">
+                    {% if produit.image %}
+                    <img src="{{ produit.image }}" alt="{{ produit.nom }}" loading="lazy">
+                    {% else %}
+                    <div class="image-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h4 class="product-name">{{ produit.nom }}</h4>
+                    <p class="product-ref">Réf: {{ produit.reference|default:"N/A" }}</p>
+                    
+                    {% if produit.type == 'variante' %}
+                    <div class="product-attributes">
+                        <span class="attribute-chip"><i class="fas fa-ruler-combined"></i> {{ produit.taille|default:"N/A" }}</span>
+                        <span class="attribute-chip"><i class="fas fa-palette"></i> {{ produit.couleur|default:"N/A" }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="quantity-price">
+                        <span class="quantity">x{{ produit.quantite|default:"1" }}</span>
+                        <div class="price-container">
+                            <span class="current-price">{{ produit.prix }} {{ devise }}</span>
+                            {% if produit.prix_original %}
+                            <span class="original-price">{{ produit.prix_original }} {{ devise }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Summary cards in grid layout -->
+    <div class="summary-grid">
+        <div class="glass-card summary-card">
+            <div class="card-header">
+                <i class="fas fa-box"></i>
+                <h3>Résumé</h3>
+            </div>
+            <div class="summary-item">
+                <span>Sous-total</span>
+                <span>{{ sous_total }} {{ devise }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Livraison</span>
+                <span>{{ frais_livraison }} {{ devise }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Remise</span>
+                <span class="discount">-{{ remise }} {{ devise }}</span>
+            </div>
+        </div>
+        
+        <div class="glass-card total-card accent">
+            <div class="card-header">
+                <i class="fas fa-wallet"></i>
+                <h3>Total</h3>
+            </div>
+            <div class="total-amount">
+                <span>{{ total_prix }} {{ devise }}</span>
+                <small>TTC</small>
+            </div>
+            <button class="action-button">
+                <i class="fas fa-print"></i> Imprimer
+            </button>
+            <button class="action-button secondary">
+                <i class="fas fa-headset"></i> Support
+            </button>
+        </div>
     </div>
 </div>
 
 <style>
-    .container {
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --primary-light: #a5b4fc;
+        --secondary: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --gray: #94a3b8;
+        --glass: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.4);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        color: var(--dark);
+        padding: 20px;
+    }
+    
+    .modern-command-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 20px;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        gap: 1.5rem;
     }
-
-    .section-title {
-        color: #1a3d6d; /* Bleu foncé */
-        font-size: 1.5rem;
-        margin-bottom: 10px;
+    
+    /* Header styles */
+    .command-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 0.5rem;
     }
-
-    .client-info p {
-        font-size: 1rem;
-        color: #000;
-        margin: 5px 0;
+    
+    .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
     }
-
-    /* Nouveau style pour le nom, numéro du client et lieu de livraison */
-    .client-name, .client-numero, .delivery-address {
-        color: #4caf50; /* Vert (ou une autre couleur de ton choix) */
-        font-size: 1.2rem; /* Augmentation de la taille de la police */
-        font-weight: bold;
+    
+    .animate-bounce {
+        animation: bounce 2s infinite;
     }
-
-    /* Grid pour les produits */
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        width: 100%;
+    
+    .command-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
     }
-
-    .product-item {
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        padding: 10px;
+    
+    .command-subtitle {
+        color: var(--gray);
+        font-size: 0.95rem;
+        margin-top: 0.3rem;
+    }
+    
+    /* Status timeline */
+    .status-timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 2rem 0;
+    }
+    
+    .status-timeline::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #e2e8f0;
+        z-index: 1;
+        border-radius: 2px;
+    }
+    
+    .timeline-step {
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
+        z-index: 2;
+        flex: 1;
     }
-
-    .product-info {
+    
+    .timeline-step.active span {
+        color: var(--dark);
+        font-weight: 500;
+    }
+    
+    .timeline-step:not(.active) span {
+        color: var(--gray);
+    }
+    
+    .timeline-step.active .step-icon {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .timeline-step:not(.active) .step-icon {
+        background: white;
+        color: var(--gray);
+        border-color: #e2e8f0;
+    }
+    
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid;
+        margin-bottom: 0.5rem;
         font-size: 1rem;
-        color: #000;
+    }
+    
+    .timeline-step span {
+        font-size: 0.85rem;
+        text-align: center;
+        max-width: 80px;
+    }
+    
+    /* Glass card effect */
+    .glass-card {
+        background: var(--glass);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        overflow: hidden;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+    }
+    
+    .glass-card.accent {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(79, 70, 229, 0.2));
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: rgba(255, 255, 255, 0.4);
+        border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .card-header i {
+        font-size: 1.2rem;
+        color: var(--primary);
+    }
+    
+    .card-header h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-right: auto;
+    }
+    
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.en.traitement {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    
+    .status-badge.expédiée {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    
+    .status-badge.livrée {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Client info grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .info-item {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-bottom: 0.2rem;
+    }
+    
+    .info-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--dark);
+    }
+    
+    /* Products section */
+    .products-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1.5rem 1.5rem;
+    }
+    
+    .product-card {
+        display: flex;
+        gap: 1.25rem;
+        padding: 1.25rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+    
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .product-image-container {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .product-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .image-placeholder {
+        color: #e2e8f0;
+        font-size: 1.8rem;
+    }
+    
+    .product-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .product-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.1rem;
+    }
+    
+    .product-ref {
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+    
+    .product-attributes {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0.5rem 0;
+    }
+    
+    .attribute-chip {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        background: #f1f5f9;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .attribute-chip i {
+        font-size: 0.6rem;
+        color: var(--gray);
+    }
+    
+    .quantity-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+    
+    .quantity {
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+    
+    .price-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .current-price {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .original-price {
+        font-size: 0.7rem;
+        color: var(--gray);
+        text-decoration: line-through;
+    }
+    
+    /* Summary grid */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #e2e8f0;
+        font-size: 0.9rem;
+    }
+    
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+    
+    .discount {
+        color: var(--secondary);
+        font-weight: 500;
+    }
+    
+    .total-card {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .total-card .card-header i {
+        color: white;
+    }
+    
+    .total-card .card-header h3 {
+        color: white;
+    }
+    
+    .total-amount {
+        padding: 1.5rem;
         text-align: center;
     }
-
-    .product-name {
-        font-weight: bold;
-        color: #000;
-        margin-bottom: 10px;
+    
+    .total-amount span {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1;
     }
-
-    .product-image {
-        max-width: 100px;
-        margin-bottom: 10px;
+    
+    .total-amount small {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
     }
-
-    .product-price {
-        color: #d45716; /* Orange foncé pour le prix */
-        font-weight: bold;
+    
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        margin: 0 1.5rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        background: white;
+        color: var(--primary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
-
-    .order-total {
-        margin-top: 30px;
+    
+    .action-button:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
     }
-
-    .total-text {
-        font-size: 1.5rem;
-        color: #000;
+    
+    .action-button.secondary {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
-
-    .total-price {
-        color: #d45716; /* Orange foncé pour le total */
-        font-weight: bold;
+    
+    .action-button.secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
     }
-
-    /* Conteneur défilable pour les produits */
-    .product-scroll-container {
-        max-height: 500px; /* Hauteur maximale de la zone défilable */
-        overflow-y: auto;  /* Ajout de la barre de défilement verticale */
-        padding-right: 10px; /* Espace pour la barre de défilement */
-    }
-
-    /* Responsivité pour les petits écrans */
-    @media (max-width: 1200px) {
-        .product-grid {
-            grid-template-columns: repeat(2, 1fr);
+    
+    /* Animations */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
         }
     }
-
-    @media (max-width: 600px) {
-        .product-grid {
+    
+    /* Responsive design */
+    @media (max-width: 1024px) {
+        .summary-grid {
             grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .command-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            font-size: 2rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .status-timeline {
+            margin: 1.5rem 0;
+        }
+        
+        .timeline-step span {
+            font-size: 0.7rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        body {
+            padding: 15px;
+        }
+        
+        .command-title {
+            font-size: 1.5rem;
+        }
+        
+        .status-timeline {
+            gap: 0.5rem;
+        }
+        
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 0.8rem;
+        }
+        
+        .product-card {
+            flex-direction: column;
+        }
+        
+        .product-image-container {
+            width: 100%;
+            height: 120px;
+        }
+        
+        .quantity-price {
+            margin-top: 0.5rem;
         }
     }
 </style>

@@ -142,15 +142,23 @@
 
 .logo-container {
     text-align: center;
-    padding: 15px;
-}
-
-.logo {
+    padding: 5px;
+  }
+  
+  .logo {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 3px solid #000;
-}
+    border: 4px solid #FF8C00;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.3);
+  }
 
 .menu-btn {
     background: none;
@@ -294,136 +302,224 @@
 
 
 
-/* Style général de la notification */
-.notification-box {
-  position: fixed;
-  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
-  right: 10px;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
-  color: #fff;
-  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
-  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
-}
-
-/* Pointe de la boîte */
-.notification-box:after {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
-  z-index: 9999;
-}
-
-/* Icône futuriste de robot */
-.notification-box i {
-  font-size: 2.5rem; /* Taille plus grande pour l'icône */
-  margin-right: 20px;
-  color: #00ffcc; /* Couleur cybernétique verte */
-  animation: glow 1.5s infinite alternate; /* Effet de lueur */
-}
-
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem; /* Agrandit la taille du texte */
-  flex-grow: 1;
-  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
-  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
-  color: #fff; /* Assure que le texte est bien visible */
-}
-
-/* Bouton de fermeture */
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  padding: 5px;
-}
-
-.close-btn:hover {
-  color: #00ffcc; /* Couleur hover dynamique */
-  transform: scale(1.2);
-}
-
-/* Styles responsive */
-@media (max-width: 768px) {
-  .notification-box {
-    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
-    right: 5px; /* Réduit l'espacement sur les petits écrans */
-    padding: 12px 18px;
-    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+:root {
+    --bg-color: rgba(255, 255, 255, 0.97);
+    --text-color: #333;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+    --mobile-breakpoint: 768px;
   }
-
-  .notification-box i {
-    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  
+  .messages-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    z-index: 9999;
+    pointer-events: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
-
-  .notification-box .message {
-    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  
+  .messages-container {
+    max-width: 600px;
+    width: 90%;
+    pointer-events: auto;
+    padding: 10px;
   }
-
+  
+  .notification-modal {
+    position: relative;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .notification-modal.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  
+  .notification-modal.closing {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  
+  .notification-icon {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    color: var(--primary-color, #4e73ff);
+  }
+  
+  .notification-content {
+    padding-left: 40px;
+    padding-right: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
   .close-btn {
-    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: all 0.2s ease-out;
+    color: inherit;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    touch-action: manipulation;
   }
-}
-
-@media (max-width: 480px) {
-  .notification-box {
-    top: 5%; /* Réduit encore la distance du haut */
-    right: 5px; /* Garde une marge minimale à droite */
-    padding: 8px 15px;
-    width: 90%; /* Largeur ajustée pour les petits écrans */
+  
+  .close-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
   }
-
-  .notification-box i {
-    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--progress-gradient);
+    transform-origin: left;
+    transition: width 5s linear;
   }
-
-  .notification-box .message {
-    font-size: 1rem; /* Réduit encore la taille du texte */
+  
+  /* Effet de "glow" subtil */
+  .notification-modal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
   }
-
-  .close-btn {
-    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  
+  /* Animation d'entrée spécifique pour chaque notification */
+  .notification-modal:nth-child(1) { transition-delay: 0.1s; }
+  .notification-modal:nth-child(2) { transition-delay: 0.2s; }
+  .notification-modal:nth-child(3) { transition-delay: 0.3s; }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .messages-overlay {
+        padding-top: 10px;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+    
+    .messages-container {
+        width: 95%;
+        max-width: 100%;
+        padding: 5px;
+    }
+    
+    .notification-modal {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+    }
+    
+    .notification-icon {
+        left: 15px;
+        top: 15px;
+        font-size: 20px;
+    }
+    
+    .notification-content {
+        padding-left: 35px;
+        padding-right: 15px;
+        font-size: 14px;
+    }
+    
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .progress-bar {
+        height: 2px;
+    }
   }
-}
-
-/* Animation de lueur pour l'icône */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  
+  @media (max-width: 480px) {
+    .notification-modal {
+        padding: 12px;
+    }
+    
+    .notification-icon {
+        left: 12px;
+        top: 12px;
+        font-size: 18px;
+    }
+    
+    .notification-content {
+        padding-left: 30px;
+        padding-right: 10px;
+    }
+    
+    .notification-modal::after {
+        display: none; /* Supprime l'effet glow sur petits écrans */
+    }
   }
-  100% {
-    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  
+  /* Support pour les appareils tactiles */
+  @media (hover: none) {
+    .close-btn {
+        opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+        background: rgba(0, 0, 0, 0.1);
+    }
   }
-}
-
-/* Styles des notifications */
-.notification.show {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateY(-50%) translateX(100%);
-}
+  
+  /* Amélioration pour les très grands écrans */
+  @media (min-width: 1600px) {
+    .messages-container {
+        max-width: 700px;
+    }
+  }
 .separator {
     height: 20px;
     background-color: #f4f4f4;
@@ -1008,27 +1104,182 @@ html, body {
     }
 }
 
+
+
+/* Style amélioré pour le modal - Version décalée à droite */
+.modal.fade .modal-dialog {
+    animation: modalFadeIn 0.3s ease-out;
+    transform: translateX(15%) translateY(0); /* Décalage de 15% vers la droite */
+}
+
+.modal.show .modal-dialog {
+    transform: translateX(15%) translateY(0);
+}
+
+.modal-content {
+    border-radius: 0.8rem;
+    overflow: hidden;
+    margin-left: auto; /* Aide à centrer le décalage */
+    margin-right: 0;
+}
+
+.modal-xl {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Le reste de vos styles inchangés */
+.modal-header {
+    padding: 1.2rem 1.5rem;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-label {
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateX(15%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(15%) translateY(0); }
+}
+
+.btn-primary {
+    background-color: #3a7bd5;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #2c65c4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bi {
+    font-size: 1.1em;
+}
+
+/* Styles des colonnes */
+.col-lg-4 {
+    transition: all 0.3s ease;
+}
+
+.col-lg-4 > div {
+    height: 100%;
+    border: 1px solid #e9ecef;
+}
+
+/* Responsive design */
+@media (max-width: 1600px) {
+    .modal.fade .modal-dialog,
+    .modal.show .modal-dialog {
+        transform: translateX(10%) translateY(0); /* Réduit le décalage sur écrans moyens */
+    }
+}
+
+@media (max-width: 1400px) {
+    .modal.fade .modal-dialog,
+    .modal.show .modal-dialog {
+        transform: translateX(5%) translateY(0); /* Réduit encore le décalage */
+    }
+}
+
+@media (max-width: 1200px) {
+    .modal.fade .modal-dialog,
+    .modal.show .modal-dialog {
+        transform: translateX(0) translateY(0); /* Annule le décalage sur petits écrans */
+    }
+    
+    .modal-xl {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 992px) {
+    .row.g-3 > .col-lg-4 {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .col-lg-4 > div {
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem auto;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* Titres des sections */
+h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+}
     </style>
 </head>
 <body>
-  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+   
+<audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
-  {% if messages %}
-      <div class="messages">
-          {% for message in messages %}
-              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                  <!-- Icône futuriste de robot -->
-                  <i class="fas fa-robot"></i>
+{% if messages %}
+<div class="messages-overlay" id="messages-overlay">
+  <div class="messages-container">
+      {% for message in messages %}
+          <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+              <div class="notification-icon">
+                  <i class="fas fa-robot pulse"></i>
+              </div>
+              
+              <div class="notification-content">
                   <div class="message">
                       {{ message }}
                   </div>
-                  <button class="close-btn" onclick="closeNotification(this)">
-                      <i class="fas fa-times"></i>
-                  </button>
               </div>
-          {% endfor %}
-      </div>
-  {% endif %}
+              
+              <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                  <i class="fas fa-times"></i>
+              </button>
+              
+              <div class="progress-bar"></div>
+          </div>
+      {% endfor %}
+  </div>
+</div>
+{% endif %}
 
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -1087,62 +1338,304 @@ html, body {
                 
                <!-- Conteneur de l'image et des informations -->
           <div class="row justify-content-center">
-            <!-- Image principale à gauche (maintenant à droite) -->
-            <div class="col-12 col-md-6 mb-4">
-                <div class="product-main-image">
-                    {% if produit.image %}
-                        <img src="{{ produit.image.url }}" alt="Image de {{ produit.nom }}" class="img-fluid">
-                    {% else %}
-                        <div class="no-image-placeholder">
-                            <i class="fas fa-image fa-3x"></i>
-                            <p>Aucune image disponible</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-          
-                    <!-- Informations du produit à droite (maintenant à gauche) -->
-            <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-start">
-                <h3 class="mb-3">{{ produit.nom|default:"Nom non disponible" }}</h3>
-
-                <!-- Prix avec une couleur orange foncé -->
-                <p>GNF <strong>Prix :</strong> 
-                    <span class="text-orange font-weight-bold" style="font-size: 1.5rem; color: #D55F0A;">{{ produit.prix|default:"Non spécifié" }} {{ devise }}</span>
-                </p>
-
-                <!-- Quantité -->
-                <p><i class="bi bi-box"></i> <strong>Quantité :</strong> {{ produit.quantite_stock|default:"Non spécifiée" }}</p>
-                
-                <!-- Référence -->
-                <p><i class="bi bi-tag"></i> <strong>Référence :</strong> {{ produit.reference|default:"Non spécifiée" }}</p>
-
-                <!-- Disponibilité -->
-                <p>
-                    <i class="bi bi-check-circle"></i> <strong>Disponibilité :</strong>
-                    {% if produit.quantite_stock %}
-                        {% if produit.quantite_stock > 0 %}
-                            <span class="text-success">En stock</span>
+                        <!-- Image principale à gauche (maintenant à droite) -->
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="product-main-image">
+                        {% if produit.image %}
+                            <img src="{{ produit.image.url }}" alt="Image de {{ produit.nom }}" class="img-fluid">
                         {% else %}
-                            <span class="text-danger">Rupture de stock</span>
+                            <div class="no-image-placeholder">
+                                <i class="fas fa-image fa-3x"></i>
+                                <p>Aucune image disponible</p>
+                            </div>
                         {% endif %}
-                    {% else %}
-                        <span>Non spécifiée</span>
-                    {% endif %}
-                </p>
-                
-                <!-- Poids avec une taille et couleur augmentée -->
-                <p><i class="bi bi-weight"></i> <strong>Poids :</strong> 
-                    <span style="font-size: 1.2rem;">{{ produit.poids|default:"Non spécifié" }} kg</span>
-                </p>
-                
-                <!-- État -->
-                <p><i class="bi bi-gear"></i> <strong>État :</strong> {{ produit.etat|default:"Non spécifié" }}</p>
-                
-                <!-- Description -->
-                <p><i class="bi bi-file-earmark-text"></i> <strong>Description :</strong> {{ produit.description|default:"Non disponible" }}</p>
-            </div>
+                    </div>
+                </div>
 
-          </div>
+ <!-- Informations du produit -->
+<div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-start">
+    <div class="d-flex justify-content-between w-100 align-items-center mb-3">
+        <h3 class="mb-0">{{ produit.nom|default:"Nom non disponible" }}</h3>
+    </div>
+
+    <div class="w-100 mb-4">
+        <!-- Vérifier si le produit est en promotion -->
+        {% if produit.ancien_prix %}
+            <!-- Affichage du prix barré pour la promotion -->
+            <p class="mb-1">
+                <i class="bi bi-tag-fill text-danger me-2"></i>
+                <strong>Ancien Prix :</strong>
+                <span class="text-muted" style="text-decoration: line-through;">
+                    {{ produit.ancien_prix|default:"Non spécifié" }} {{ devise }}
+                </span>
+            </p>
+        {% endif %}
+        
+        <!-- Prix actuel -->
+        <p class="mb-1">
+            <i class="bi bi-currency-exchange text-success me-2"></i>
+            <strong>Prix :</strong> 
+            <span class="text-orange fw-bold" style="font-size: 1.3rem; color: #D55F0A;">
+                {{ produit.prix|default:"Non spécifié" }} {{ devise }}
+            </span>
+        </p>
+    </div>
+
+    <div class="row w-100 g-3 mb-4">
+        <!-- Colonne 1 -->
+        <div class="col-md-6">
+            <!-- Quantité -->
+            <p class="mb-2">
+                <i class="bi bi-box-seam text-primary me-2"></i>
+                <strong>Quantité :</strong> {{ produit.quantite_stock|default:"Non spécifiée" }}
+            </p>
+            
+            <!-- Référence -->
+            <p class="mb-2">
+                <i class="bi bi-upc-scan text-info me-2"></i>
+                <strong>Référence :</strong> {{ produit.reference|default:"Non spécifiée" }}
+            </p>
+            
+            <!-- Poids -->
+            <p class="mb-2">
+                <i class="bi bi-speedometer2 text-warning me-2"></i>
+                <strong>Poids :</strong> {{ produit.poids|default:"Non spécifié" }} kg
+            </p>
+        </div>
+        
+        <!-- Colonne 2 -->
+        <div class="col-md-6">
+            <!-- Disponibilité -->
+            <p class="mb-2">
+                <i class="bi bi-check2-circle text-success me-2"></i>
+                <strong>Disponibilité :</strong>
+                {% if produit.quantite_stock %}
+                    {% if produit.quantite_stock > 0 %}
+                        <span class="text-success">En stock</span>
+                    {% else %}
+                        <span class="text-danger">Rupture de stock</span>
+                    {% endif %}
+                {% else %}
+                    <span>Non spécifiée</span>
+                {% endif %}
+            </p>
+            
+            <!-- État -->
+            <p class="mb-2">
+                <i class="bi bi-clipboard-check text-secondary me-2"></i>
+                <strong>État :</strong> {{ produit.etat|default:"Non spécifié" }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Description -->
+    <div class="w-100 mb-3">
+        <p class="mb-1">
+            <i class="bi bi-card-text text-dark me-2"></i>
+            <strong>Description :</strong>
+        </p>
+        <div class="ps-4">
+            {{ produit.description|default:"Non disponible" }}
+        </div>
+    </div>
+
+    <!-- Bouton d'édition en bas -->
+    <div class="w-100 mt-3 text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProduitModal">
+            <i class="bi bi-pencil-square me-2"></i>Éditer le produit
+        </button>
+    </div>
+</div>
+
+<!-- Modal d'édition du produit en 3 colonnes avec décalage à droite -->
+<div class="modal fade" id="editProduitModal" tabindex="-1" aria-labelledby="editProduitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editProduitModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i>Éditer le produit
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <!-- Colonne 1 - Informations principales -->
+                        <div class="col-lg-4">
+                            <div class="h-100 p-3 rounded-3" style="background-color: #f8f9fa;">
+                                <h6 class="mb-3 text-primary">
+                                    <i class="bi bi-info-circle-fill me-2"></i>Informations principales
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.nom.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-tag me-2"></i>{{ produit_form.nom.label }}
+                                    </label>
+                                    {{ produit_form.nom }}
+                                    {% if produit_form.nom.help_text %}
+                                        <small class="form-text text-muted">{{ produit_form.nom.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.reference.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-upc-scan me-2"></i>{{ produit_form.reference.label }}
+                                    </label>
+                                    {{ produit_form.reference }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.type_produit.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-grid me-2"></i>{{ produit_form.type_produit.label }}
+                                    </label>
+                                    {{ produit_form.type_produit }}
+                                    {% if produit_form.type_produit.help_text %}
+                                        <small class="form-text text-muted">{{ produit_form.type_produit.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.etat.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-clipboard-check me-2"></i>{{ produit_form.etat.label }}
+                                    </label>
+                                    {{ produit_form.etat }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.mise_en_avant.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-star me-2"></i>{{ produit_form.mise_en_avant.label }}
+                                    </label>
+                                    {{ produit_form.mise_en_avant }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.description.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-card-text me-2"></i>{{ produit_form.description.label }}
+                                    </label>
+                                    {{ produit_form.description }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne 2 - Prix & Stock -->
+                        <div class="col-lg-4">
+                            <div class="h-100 p-3 rounded-3" style="background-color: #f8f9fa;">
+                                <h6 class="mb-3 text-success">
+                                    <i class="bi bi-cash-stack me-2"></i>Prix & Stock
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.prix.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-currency-euro me-2"></i>{{ produit_form.prix.label }}
+                                    </label>
+                                    {{ produit_form.prix }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.ancien_prix.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-tag-fill me-2"></i>{{ produit_form.ancien_prix.label }}
+                                    </label>
+                                    {{ produit_form.ancien_prix }}
+                                    {% if produit_form.ancien_prix.help_text %}
+                                        <small class="form-text text-muted">{{ produit_form.ancien_prix.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.quantite_stock.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-box-seam me-2"></i>{{ produit_form.quantite_stock.label }}
+                                    </label>
+                                    {{ produit_form.quantite_stock }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.poids.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-speedometer2 me-2"></i>{{ produit_form.poids.label }}
+                                    </label>
+                                    {{ produit_form.poids }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.dimensions.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-aspect-ratio me-2"></i>{{ produit_form.dimensions.label }}
+                                    </label>
+                                    {{ produit_form.dimensions }}
+                                    <small class="form-text text-muted">Format: Longueur x Hauteur x Profondeur (en cm)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.marque.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-bookmark me-2"></i>{{ produit_form.marque.label }}
+                                    </label>
+                                    {{ produit_form.marque }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne 3 - Médias & Relations -->
+                        <div class="col-lg-4">
+                            <div class="h-100 p-3 rounded-3" style="background-color: #f8f9fa;">
+                                <h6 class="mb-3 text-info">
+                                    <i class="bi bi-images me-2"></i>Médias & Relations
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.image.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-image me-2"></i>{{ produit_form.image.label }}
+                                    </label>
+                                    {{ produit_form.image }}
+                                    {% if produit.image %}
+                                        <div class="mt-2">
+                                            <img src="{{ produit.image.url }}" alt="Image actuelle" class="img-thumbnail" style="max-height: 100px;">
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" name="image-clear" id="image-clear">
+                                                <label class="form-check-label" for="image-clear">
+                                                    Supprimer l'image actuelle
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.video_promotionnelle.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-film me-2"></i>{{ produit_form.video_promotionnelle.label }}
+                                    </label>
+                                    {{ produit_form.video_promotionnelle }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ produit_form.tags.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-tags me-2"></i>{{ produit_form.tags.label }}
+                                    </label>
+                                    {{ produit_form.tags }}
+                                    <small class="form-text text-muted">Maintenez Ctrl/Cmd pour sélectionner plusieurs tags</small>
+                                </div>
+                                
+                                <!-- Espace pour les messages d'erreur -->
+                                <div class="alert alert-danger d-none" id="form-errors">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <span id="error-message"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer border-top-0 bg-light mt-4">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Annuler
+                        </button>
+                        <button type="submit" name="editer_produit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
         <!-- Sous-images -->
         <div class="col-12 mt-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1490,49 +1983,6 @@ g                                        </div>
       }
     }
 
-             // Fonction pour fermer une notification
-    function closeNotification(element) {
-        const notification = element.parentElement;
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-    }
-
-    // Fonction pour jouer le son de notification
-    function playNotificationSound() {
-        var sound = document.getElementById('notification-sound');
-        sound.play();
-    }
-
-    // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-    document.addEventListener('DOMContentLoaded', function () {
-        const notifications = document.querySelectorAll('.notification.show');
-        notifications.forEach(notification => {
-            playNotificationSound();  // Jouer le son lorsque la notification est affichée
-        });
-    });
-
-    // Fonction pour afficher une notification avec animation et son
-    function showNotification(element) {
-        const notification = element;
-        notification.classList.add('show');
-        playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-        
-        // Ajouter un délai avant de masquer la notification
-        setTimeout(() => {
-            notification.classList.add('hide');
-            setTimeout(() => notification.remove(), 300); // Suppression après transition
-        }, 10000); // La notification disparaît après 5 secondes
-    }
-
-    // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-    setTimeout(() => {
-        const notifications = document.querySelectorAll('.notification');
-        notifications.forEach(notification => {
-            notification.classList.add('hide');
-            setTimeout(() => notification.remove(), 300); // Suppression après transition
-        });
-    }, 10000); // La notification disparaît après 5 secondes
-
 
     var modal = new bootstrap.Modal(document.getElementById('addImageModal'));
             document.getElementById('addImageBtn').addEventListener('click', function () {
@@ -1546,7 +1996,122 @@ g                                        </div>
 
 
     </script>
-
+    <script>
+        // Configuration des thèmes
+    const themes = {
+      light: {
+          bg: 'rgba(255, 255, 255, 0.97)',
+          text: '#333',
+          border: 'rgba(0, 0, 0, 0.1)',
+          progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+      }
+    };
+    
+    // Fonction pour jouer le son avec gestion moderne des erreurs
+    function playNotificationSound() {
+      const sound = document.getElementById('notification-sound');
+      if (!sound) return;
+    
+      const playSound = () => {
+          sound.currentTime = 0;
+          sound.volume = 0.8;
+          sound.play().catch(e => console.debug("Sound play prevented:", e));
+      };
+    
+      // Essayer de jouer immédiatement
+      playSound();
+      
+      // Si bloqué, attendre une interaction utilisateur
+      if (sound.paused) {
+          const enableSound = () => {
+              playSound();
+              document.removeEventListener('click', enableSound);
+              document.removeEventListener('keydown', enableSound);
+          };
+          document.addEventListener('click', enableSound, { once: true });
+          document.addEventListener('keydown', enableSound, { once: true });
+      }
+    }
+    
+    // Fermeture de notification avec animation fluide
+    function closeNotification(closeButton) {
+      const notification = closeButton.closest('.notification-modal');
+      if (!notification) return;
+      
+      notification.classList.add('closing');
+      setTimeout(() => {
+          notification.classList.remove('show', 'closing');
+          notification.remove();
+      }, 300);
+    }
+    
+    // Affichage de notification avec effets modernes
+    function showNotification(notificationElement) {
+      // Appliquer le thème light par défaut
+      const themeConfig = themes.light;
+      
+      notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+      notificationElement.style.setProperty('--text-color', themeConfig.text);
+      notificationElement.style.setProperty('--border-color', themeConfig.border);
+      notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+    
+      // Animation d'entrée
+      notificationElement.classList.add('show');
+      playNotificationSound();
+      
+      // Barre de progression animée
+      const progressBar = notificationElement.querySelector('.progress-bar');
+      if (progressBar) {
+          progressBar.style.width = '100%';
+          setTimeout(() => {
+              progressBar.style.transition = 'width 5s linear';
+              progressBar.style.width = '0%';
+          }, 50);
+      }
+    
+      // Fermeture automatique après délai
+      let timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, 5000);
+    
+      // Réinitialiser le timeout si la souris entre
+      notificationElement.addEventListener('mouseenter', () => {
+          clearTimeout(timeoutId);
+          if (progressBar) progressBar.style.transition = 'none';
+      });
+    
+      // Redémarrer le timeout si la souris sort
+      notificationElement.addEventListener('mouseleave', () => {
+          if (progressBar) {
+              const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+              progressBar.style.transition = `width ${remaining}ms linear`;
+              progressBar.style.width = '0%';
+          }
+          timeoutId = setTimeout(() => {
+              notificationElement.classList.add('closing');
+              setTimeout(() => notificationElement.remove(), 300);
+          }, progressBar ? remaining : 5000);
+      });
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.notification-modal').forEach(notification => {
+          showNotification(notification);
+      });
+    });
+    
+    // Gestion des clics en dehors pour fermer
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.notification-modal')) {
+          document.querySelectorAll('.notification-modal.show').forEach(modal => {
+              modal.classList.add('closing');
+              setTimeout(() => modal.remove(), 300);
+          });
+      }
+    });
+        </script>   
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

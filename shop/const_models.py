@@ -164,7 +164,7 @@ PRODUITS_VENDUS_CHOICES = [
 
  # Liste complète de couleurs avec leurs codes hexadécimaux
 COULEURS = [
-        ('', ''),
+        ("","" ),
         ('#FF5733', 'Rouge Orangée'),
         ('#FF6347', 'Tomate'),
         ('#FF4500', 'Rouge Orange'),

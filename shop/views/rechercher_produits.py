@@ -1,58 +1,43 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
 from shop.models import Produit, Utilisateur, Devise
 
 def rechercher_produits(request, utilisateur_id):
-    # Récupérer l'utilisateur
-    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Récupérer l'utilisateur
+        utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
 
-    # Récupérer la devise de l'utilisateur connecté
-    devise_utilisateur = get_object_or_404(Devise, utilisateur=utilisateur).devise
+        # Récupérer la devise de l'utilisateur connecté
+        devise_utilisateur = get_object_or_404(Devise, utilisateur=utilisateur).devise
 
-    # Obtenir les paramètres de recherche depuis la requête GET
-    nom_produit = request.GET.get('nom', '').strip()  # Nom du produit à rechercher
-    prix_min = request.GET.get('prix_min', None)  # Filtre de prix minimum
-    prix_max = request.GET.get('prix_max', None)  # Filtre de prix maximum
+        # Obtenir les paramètres de recherche depuis la requête GET
+        nom_produit = request.GET.get('nom', '').strip()
+        prix_min = request.GET.get('prix_min')
+        prix_max = request.GET.get('prix_max')
 
-    # Construire la requête de filtrage de base
-    produits = Produit.objects.filter(utilisateur=utilisateur)
+        # Construire la requête de filtrage de base
+        produits = Produit.objects.filter(utilisateur=utilisateur)
 
-    # Appliquer les filtres si des valeurs sont fournies
-    if nom_produit:  # Si un nom est fourni, filtrer par nom
-        produits = produits.filter(nom__icontains=nom_produit)
+        if nom_produit:
+            produits = produits.filter(nom__icontains=nom_produit)
+        
+        if prix_min:
+            try:
+                prix_min = float(prix_min)
+                produits = produits.filter(prix__gte=prix_min)
+            except ValueError:
+                pass
+        
+        if prix_max:
+            try:
+                prix_max = float(prix_max)
+                produits = produits.filter(prix__lte=prix_max)
+            except ValueError:
+                pass
+        
+        # Rendre le template avec les produits filtrés
+        produits_html = render_to_string('boutique_produits.html', {"produits": produits, "devise": devise_utilisateur})
+        return JsonResponse({"produits_html": produits_html})
     
-    if prix_min:  # Si un prix minimum est fourni, filtrer par prix minimum
-        try:
-            prix_min = float(prix_min)  # Convertir en float pour éviter les erreurs
-            produits = produits.filter(prix__gte=prix_min)
-        except ValueError:
-            pass  # Si le prix minimum est invalide, on ignore ce filtre
-    
-    if prix_max:  # Si un prix maximum est fourni, filtrer par prix maximum
-        try:
-            prix_max = float(prix_max)  # Convertir en float pour éviter les erreurs
-            produits = produits.filter(prix__lte=prix_max)
-        except ValueError:
-            pass  # Si le prix maximum est invalide, on ignore ce filtre
-
-    # Si aucun produit n'est trouvé, renvoyer une réponse vide
-    if not produits.exists():
-        return JsonResponse({'produits': []})
-
-    # Créer une liste de dictionnaires avec les résultats
-    resultat = [
-        {
-            'id': produit.pk,
-            'nom': produit.nom,
-            'description': produit.description,
-            'prix': str(produit.prix),
-            'image_url': produit.image.url if produit.image else None,
-            'quantite_stock': produit.quantite_stock,
-            'url': produit.get_produit_url(),
-            'devise': devise_utilisateur,  # Ajouter la devise de l'utilisateur
-        }
-        for produit in produits
-    ]
-
-    # Retourner les résultats sous forme de JSON
-    return JsonResponse({'produits': resultat})
+    return JsonResponse({"error": "Requête invalide"}, status=400)

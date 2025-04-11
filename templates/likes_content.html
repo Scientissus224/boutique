@@ -1,0 +1,88 @@
+
+<div class="liked-products-grid">
+    {% for produit in produits %}
+    <div class="liked-product-card" data-product-id="{{ produit.id }}">
+        <!-- Case de sélection -->
+        <div class="selection-checkbox">
+            <input type="checkbox" id="select-{{ produit.id }}" class="product-select">
+            <label for="select-{{ produit.id }}"></label>
+        </div>
+
+        <!-- Image du produit -->
+        <div class="product-media">
+            <a href="{{ produit.url }}" class="product-link">
+                <div class="image-wrapper">
+                    <img src="{{ produit.image }}" alt="{{ produit.nom }}" class="product-image" loading="lazy">
+                    <div class="image-overlay"></div>
+                    <div class="product-badge">Favori</div>
+                </div> 
+            </a>
+        </div>
+
+        <!-- Détails du produit -->
+        <div class="product-details">
+            <!-- Titre et catégorie -->
+            <div class="product-category">Électronique</div>
+            <h3 class="product-title">
+                <a href="{{ produit.url }}">{{ produit.nom|truncatechars:50 }}</a>
+            </h3>
+            
+            <!-- Évaluation -->
+            <div class="product-rating">
+                <div class="stars" style="--rating: 4.5;"></div>
+                <span class="reviews">(24 avis)</span>
+            </div>
+            
+            <!-- Prix -->
+            <div class="product-pricing">
+                <span class="current-price">{{ produit.prix }} {{ devise }}</span>
+                {% if produit.ancien_prix %}
+                <span class="old-price">{{ produit.ancien_prix }} {{ devise }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Stock et livraison -->
+            <div class="product-info">
+                <span class="stock-info {% if produit.disponible %}in-stock{% else %}out-of-stock{% endif %}">
+                    {% if produit.disponible %}
+                        <i class="fas fa-check-circle"></i> En stock
+                    {% else %}
+                        <i class="fas fa-times-circle"></i> Rupture
+                    {% endif %}
+                </span>
+                <span class="delivery-info">
+                    <i class="fas fa-shipping-fast"></i> Livraison gratuite
+                </span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="product-actions">
+            <button class="action-btn quick-view-btn" title="Voir rapidement">
+                <i class="fas fa-eye"></i>
+            </button>   
+        {% if produit.is_liked %}
+            <span class="in-cart-icon" title="Déjà dans votre panier">
+                <i class="fas fa-check-circle"></i>
+            </span>
+        {% else %}
+            <button class="action-btn cart-btn" title="Ajouter au panier">
+                <i class="fas fa-shopping-cart"></i>
+            </button>
+        {% endif %}
+            
+            <button class="action-btn delete-btn" title="Supprimer">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-likes">
+        <div class="empty-content">
+            <i class="fas fa-heart-broken"></i>
+            <h3>Votre liste de favoris est vide</h3>
+            <p>Les produits que vous aimez apparaîtront ici</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>

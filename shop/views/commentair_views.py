@@ -4,8 +4,9 @@ from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models import Avg
-from shop.models import Commentaire, Produit,Boutique
+from shop.models import Commentaire, Produit,Boutique,Localisation
 from django.db.models import Avg
+from django.urls import reverse
 import re
 
 # Fonction pour valider l'email
@@ -45,11 +46,12 @@ def envoyer_email_commentaire(boutique, produit_nom, commentaire, note, utilisat
 
 
 
-def poster_commentaire(request, produit_id):
-    produit = get_object_or_404(Produit, id=produit_id)
+def poster_commentaire(request, produit_identifiant):
+    produit = get_object_or_404(Produit, identifiant=produit_identifiant)
     utilisateur = produit.utilisateur  # Utilisateur du produit (le vendeur)
-     # Récupérer la boutique lié à cet utilisateur
+    # Récupérer la boutique lié à cet utilisateur
     boutique_id = get_object_or_404(Boutique, utilisateur_id=utilisateur.id)
+    localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
     boutique = utilisateur.nom_boutique
     utilisateur_mail = utilisateur.email
     produit_nom = produit.nom  # Nom du produit à inclure dans l'email
@@ -64,7 +66,7 @@ def poster_commentaire(request, produit_id):
             # Validation des champs obligatoires
             if not commentaire:
                 messages.error(request, "Le champ commentaire est obligatoire.")
-                return redirect('poster_commentaire', produit_id=produit_id)  # Redirection avec produit_id
+                return redirect('poster_commentaire', produit_identifiant=produit.identifiant)
 
             # Validation de la note
             try:
@@ -77,19 +79,19 @@ def poster_commentaire(request, produit_id):
             
             if not email_envoye:
                 messages.error(request, "Erreur lors de l'envoi de l'email. Le commentaire n'a pas été enregistré.")
-                return redirect('poster_commentaire', produit_id=produit_id)  # Redirection avec produit_id
+                return redirect('poster_commentaire', produit_identifiant=produit.identifiant)
 
             # Sauvegarde du commentaire SEULEMENT si l'email est bien envoyé
             Commentaire.objects.create(
                 utilisateur=utilisateur,
-                produit=produit,  # Lien avec le produit
+                produit=produit,
                 commentaire=commentaire,
                 note=note,
-                image_profil=image_profil if image_profil else None  # Si une image est envoyée, l'ajouter, sinon None
+                image_profil=image_profil if image_profil else None
             )
 
             messages.success(request, "Votre commentaire a été ajouté avec succès !")
-            return redirect('poster_commentaire', produit_id=produit_id)  # Redirection avec produit_id
+            return redirect('poster_commentaire', produit_identifiant=produit.identifiant)
 
         except ValidationError as e:
             messages.error(request, str(e))
@@ -97,30 +99,34 @@ def poster_commentaire(request, produit_id):
             messages.error(request, f"Erreur : {e}")
             print(e)
 
-        return redirect('poster_commentaire', produit_id=produit_id)  # Redirection avec produit_id
+        return redirect('poster_commentaire', produit_identifiant=produit.identifiant)
 
     # Récupération des commentaires existants pour affichage
     commentaires = Commentaire.objects.filter(produit=produit).order_by('-date_commentaire') 
 
-    # Calcul de la moyenne des notes des commentaires
-    moyenne_notes = commentaires.aggregate(Avg('note'))['note__avg'] or 0  # Si pas de commentaires, la moyenne est 0
+    # Calcul de la moyenne des notes
+    moyenne_notes = commentaires.aggregate(Avg('note'))['note__avg'] or 0
 
-    # Calcul des étoiles pour l'affichage de la moyenne
-    etoiles_moyenne = round(moyenne_notes)  # Arrondir la moyenne à l'entier le plus proche
-
-    # Plage pour les étoiles
+    # Calcul des étoiles pour l'affichage
+    etoiles_moyenne = round(moyenne_notes)
     etoiles_range = range(1, 6)
 
-    # Calcul des étoiles pour chaque commentaire
     for commentaire in commentaires:
         commentaire.etoiles = '★' * commentaire.note + '☆' * (5 - commentaire.note)
 
     return render(request, "commentaires.html", {
-        "produit": produit,  # Passer le produit pour l'affichage de l'image et de la description
+        "produit": produit,
         "commentaires": commentaires,
+        'utilisateur_email': utilisateur.email,
+        'utilisateur_numero': utilisateur.numero,
+        "localisation": localisation,
+        'logo': utilisateur.logo_boutique.url if utilisateur.logo_boutique else None,
+        'shop_name': utilisateur.nom_boutique,
         "moyenne_notes": moyenne_notes,
-        "etoiles_moyenne": etoiles_moyenne,  # Passer la moyenne des étoiles calculées
-        "etoiles_range": etoiles_range,  # Passer la plage des étoiles pour l'affichage dans le template
-        'user_id':utilisateur.id,
-        'boutique_id':boutique_id.pk
+        "etoiles_moyenne": etoiles_moyenne,
+        "etoiles_range": etoiles_range,
+        'user_id': utilisateur.id,
+        "home_boutique": reverse('boutique_contenu', args=[boutique_id.identifiant]),
+        'boutique_id': boutique_id.pk,
+        'utilisateur_identifiant': utilisateur.identifiant_unique
     })

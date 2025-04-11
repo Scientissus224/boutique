@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panier</title>
+    <head>
+        <head>
+            <head>
+                <title>WarabaGuinée</title>
+                <link rel="icon" type="image/png" sizes="32x32" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="48x48" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="96x96" href="/sta nbhi j^$=ûiopà)^tic/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="192x192" href="/static/lo.jpeg">
+                <link rel="icon" type="image/png" sizes="512x512" href="/static/lo.jpeg">
+            </head>
+            
+        </head>
+        
+    </head>
     {% load static %}
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <!-- Google Fonts (Material Icons) -->
+   <!-- Meta Informations -->
+<meta name="csrf-token" content="{{ csrf_token }}"> <!-- Ajoute le token CSRF -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Fonts (Material Icons) -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <!-- jQuery -->
@@ -29,24 +45,129 @@
 
 <!-- FontAwesome Kit (remplacez YOUR_KIT_CODE par votre clé) -->
 <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+
     <style>
-        *{
-            padding: 0; margin: 0;
-            font-family:'Poppins', sans-serif;
+         /* Global navbar styles */
+         *,
+        *::before,
+        *::after {
             box-sizing: border-box;
-            transition: all.2 linear;
-            text-decoration: none;
-            list-style-type: none;border:none;
-        } 
-        body {
-            background-color: #000;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            transition: background-color 0.3s ease-in-out;
-            margin: 0;
-            padding: 0;
         }
-        /* Styles de la navbar */
+        :root {
+            --background-color: #ffffff; /* Couleur de fond par défaut (light) */
+            --text-color: #000000; /* Couleur du texte par défaut (light) */
+            --overlay-color: rgba(0, 0, 0, 0.5); /* Couleur de l'overlay par défaut (light) */
+            --button-bg-color: #ff6347; /* Couleur de fond du bouton par défaut (light) */
+            --button-hover-bg-color: #ff4500; /* Couleur de fond du bouton au survol (light) */
+            --dot-color: #000000; /* Couleur des points par défaut (light) */
+            --active-dot-color: #ff6347; /* Couleur du point actif par défaut (light) */
+            --shadow-color: rgba(255, 102, 0, 0.5); /* Couleur de l'ombre par défaut (light) */
+            --bullet-color: rgba(0, 0, 0, 0.6); /* Couleur des bullets par défaut (light) */
+            --active-bullet-color: #ff6600; /* Couleur du bullet actif par défaut (light) */
+            --icon-color: #FF8C00; /* Couleur des icônes par défaut (light) */
+            --card-bg-color: #f9f9f9; /* Couleur de fond des cartes (light) */
+        }
+        
+        [data-theme="dark"] {
+            --background-color: #121212; /* Couleur de fond pour le thème dark */
+            --text-color: #ffffff; /* Couleur du texte pour le thème dark */
+            --overlay-color: rgba(255, 255, 255, 0.5); /* Couleur de l'overlay pour le thème dark */
+            --button-bg-color: #ff6347; /* Couleur de fond du bouton pour le thème dark */
+            --button-hover-bg-color: #ff4500; /* Couleur de fond du bouton au survol pour le thème dark */
+            --dot-color: #ffffff; /* Couleur des points pour le thème dark */
+            --active-dot-color: #ff6347; /* Couleur du point actif pour le thème dark */
+            --shadow-color: rgba(255, 102, 0, 0.7); /* Couleur de l'ombre pour le thème dark */
+            --bullet-color: rgba(255, 255, 255, 0.8); /* Couleur des bullets pour le thème dark */
+            --active-bullet-color: #ff6600; /* Couleur du bullet actif pour le thème dark */
+            --icon-color: #FF8C00; /* Couleur des icônes pour le thème dark */
+            --card-bg-color: #1e1e1e; /* Couleur de fond des cartes (dark) */
+        }
+        body {
+                    font-family: 'Roboto', sans-serif;
+                    line-height: 1.6;
+                    transition: background-color 0.3s, color 0.3s;
+                    background-color: var(--background-color);
+                    color: var(--text-primary);
+                    transition: all 0.3s ease;
+        }
+
+            
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+            /* Styles pour l'icône de basculement de mode */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Cacher l'icône sur les petits écrans */
+        @media (max-width: 768px) {
+            .theme-toggle {
+                display: none;
+            }
+        }
+
+        /* Styles pour l'icône de basculement de mode dans la sidebar mobile */
+        .theme-toggle-mobile {
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 20px auto; /* Centrer l'icône dans la sidebar */
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Mode sombre */
+        [data-theme="dark"] .theme-toggle {
+            background-color: #000;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Animation de l'icône */
+        .theme-toggle i {
+            font-size: 24px;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        /* Effet de rotation au changement de thème */
+        .theme-toggle:active i {
+            transform: rotate(180deg);
+        }
+
+        /* Changement de couleur pour une meilleure visibilité */
+        [data-theme="dark"] .theme-toggle i {
+            color: #ffcc00; /* Jaune pour mieux contraster */
+        }
+
+        [data-theme="light"] .theme-toggle i {
+            color: #222; /* Gris foncé pour plus de lisibilité */
+        }
+
+/* Styles de la navbar ---------------------------*/
+/* Styles de base de la navbar */
 .navbar {
     position: fixed;
     top: 0;
@@ -56,7 +177,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -64,151 +184,294 @@
     flex-wrap: nowrap;
 }
 
-.navbar-header {
-    display: flex;
-    align-items: center;
-    min-width: 200px;
+/* Styles pour le mode clair */
+[data-theme="light"] .navbar {
+    background: linear-gradient(90deg, #FFB6C1, #ADD8E6); /* Dégradé rose clair vers bleu pastel */
 }
 
-.search-container {
-    flex: 0 1 400px;
-    margin: 0.5rem 2rem;
-    position: relative;
+[data-theme="light"] .navbar a {
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="light"] .navbar .brand-name {
+    color: #FF4500; /* Nom du logo en orange foncé */
+}
+
+[data-theme="light"] .navbar .nav-link {
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="light"] .navbar .nav-link:hover {
+    background: rgba(255, 111, 0, 0.1); /* Fond orange clair au survol */
+    color: #FF6F00; /* Texte orange au survol */
+}
+
+[data-theme="light"] .navbar .search-input {
+    background: rgba(255, 255, 255, 0.9); /* Fond blanc pour la recherche */
+    color: #000000; /* Texte en noir */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Bordure légère */
+}
+
+[data-theme="light"] .navbar .search-input:focus {
+    border-color: #FF6F00; /* Bordure orange au focus */
+    box-shadow: 0 0 10px rgba(255, 111, 0, 0.2); /* Ombre orange au focus */
+}
+
+[data-theme="light"] .navbar .search-input::placeholder {
+    color: rgba(0, 0, 0, 0.6); /* Placeholder en gris foncé */
+}
+
+[data-theme="light"] .navbar .nav-link.panier {
+    background-color: #FF6F00; /* Fond orange pour le panier */
+    color: #ffffff; /* Icône blanche */
+}
+
+[data-theme="light"] .navbar .nav-link.panier:hover {
+    background-color: #FF4500; /* Orange plus foncé au survol */
+}
+
+/* Styles pour le mode sombre */
+[data-theme="dark"] .navbar {
+    background: linear-gradient(90deg, #000000, #00FFFF); /* Dégradé noir vers cyan */
+}
+
+[data-theme="dark"] .navbar a {
+    color: #ffffff; /* Texte en blanc */
+}
+
+[data-theme="dark"] .navbar .brand-name {
+    color: #00FFFF; /* Cyan pour le nom de la marque */
+}
+
+[data-theme="dark"] .navbar .nav-link {
+    color: #ffffff; /* Texte en blanc */
+}
+
+[data-theme="dark"] .navbar .nav-link:hover {
+    background: rgba(0, 255, 255, 0.1); /* Fond cyan clair au survol */
+    color: #00FFFF; /* Texte cyan au survol */
+}
+
+[data-theme="dark"] .navbar .search-input {
+    background: rgba(0, 0, 0, 0.8); /* Fond noir pour la recherche */
+    color: #ffffff; /* Texte en blanc */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Bordure légère */
+}
+
+[data-theme="dark"] .navbar .search-input:focus {
+    background: rgba(0, 0, 0, 0.9); /* Fond noir plus intense au focus */
+    border-color: #00FFFF; /* Bordure cyan au focus */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Ombre cyan au focus */
+}
+
+[data-theme="dark"] .navbar .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7); /* Placeholder en gris clair */
+}
+
+[data-theme="dark"] .navbar .nav-link.panier {
+    background-color: #00FFFF; /* Fond cyan pour le panier */
+    color: #000000; /* Icône noire */
+}
+
+[data-theme="dark"] .navbar .nav-link.panier:hover {
+    background-color: #00CED1; /* Cyan plus foncé au survol */
+}
+
+/* Styles pour le logo et le nom de la marque */
+.navbar-brand {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);
+    gap: 1.2rem;
+    text-decoration: none;
+}
+
+.nav-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+    border: 2px solid #FF6F00;
+    box-shadow: 0 4px 20px rgba(255, 111, 0, 0.3);
+    background: linear-gradient(45deg, rgba(255, 111, 0, 0.1), rgba(255, 255, 255, 0.1));
+    padding: 4px;
+}
+
+.nav-logo:hover {
+    transform: scale(1.1);
+    border-color: #FF9800;
+    box-shadow: 0 6px 25px rgba(255, 111, 0, 0.5);
+}
+
+.brand-name {
+    color: #FF6F00;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
+}
+
+/* Styles pour la barre de recherche */
+.search-wrapper {
+    max-width: 400px;
+    margin: 0 2rem;
+    flex-grow: 1;
+}
+
+.search-box {
+    position: relative;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 45px 12px 40px; /* Plus d'espace à gauche */
     border-radius: 25px;
-    padding: 5px 15px;
-    max-width: 300px;
+    font-size: 16px;
     transition: all 0.3s ease;
 }
 
-.search-container:focus-within {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
-}
-
-.search-bar {
-    background: transparent;
-    border: none;
-    padding: 8px 0;
-    color: white;
-    width: 100%;
-    font-size: 14px;
-    outline: none;
-}
-
-.search-bar::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-.nav-link i {
-    font-size: 20px; /* Taille augmentée pour un meilleur visuel */
-    margin-right: 8px;
-}
 .search-icon {
-    background: transparent;
-    border: none;
+    position: absolute;
+    left: 15px; /* Ajustement de la position */
+    top: 50%;
+    transform: translateY(-50%);
     color: #FF6F00;
-    padding: 8px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
-.search-icon:hover {
-    transform: scale(1.1);
-    color: #FFA726;
-}
-
-.nav-links {
+/* Styles pour les liens de navigation */
+.nav-menu {
     display: flex;
     align-items: center;
     gap: 1.5rem;
 }
 
-.nav-item {
+.nav-link {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.8rem;
     padding: 0.8rem 1.2rem;
-    color: #fff;
-    text-decoration: none;
     border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
-.nav-item:hover {
-    background: rgba(255, 111, 0, 0.15);
-    color: #FF6F00;
+.nav-link:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 111, 0, 0.1);
 }
 
-.whatsapp-link {
-    background: linear-gradient(135deg, #25D366, #128C7E);
+.nav-link i {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+/* Styles spécifiques pour le panier */
+.nav-link.panier {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cart-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ff3d00;
     color: white;
-    font-weight: 600;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 50%;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translate(30%, -35%);
 }
 
-.whatsapp-link:hover {
-    background: linear-gradient(135deg, #128C7E, #075E54);
-    transform: translateY(-2px) scale(1.02);
-}
-
-.hamburger {
+/* Styles pour le bouton hamburger (mobile) */
+.hamburger-btn {
     display: none;
+    background: none;
+    border: none;
+    color: #FF6F00;
     font-size: 1.5rem;
-    color: #d35400;
     cursor: pointer;
-    padding: 0.5rem;
+    z-index: 2001;
     transition: all 0.3s ease;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-    .navbar {
-        padding: 1rem;
-    }
-    
-    .nav-item {
-        padding: 0.7rem 1rem;
-        font-size: 1rem;
-    }
-}
-
 @media (max-width: 768px) {
     .navbar {
-        padding: 0.8rem 1rem;
+        padding: 0.8rem;
         flex-wrap: wrap;
-        gap: 0.5rem;
     }
 
-    .nav-links {
-        position: fixed;
-        top: 70px;
+    .nav-menu {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 1rem 0;
+        background: rgba(0, 0, 0, 0.98);
+        position: absolute;
+        top: 100%;
         left: 0;
         right: 0;
-        flex-direction: column;
-        background: rgba(0, 0, 0, 0.98);
-        padding: 1rem;
-        gap: 0.5rem;
-        transform: translateY(-100%);
+        transform-origin: top;
         opacity: 0;
-        transition: all 0.3s ease;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
     }
 
-    .nav-links.active {
-        transform: translateY(0);
+    .nav-menu.show {
+        display: flex;
         opacity: 1;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(0);
     }
 
-    .hamburger {
+    .search-wrapper {
+        order: 3;
+        flex: 1 1 100%;
+        margin: 0.8rem 0;
+    }
+
+    .hamburger-btn {
         display: block;
+        order: 2;
+    }
+
+    .user-menu {
+        order: 1;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 0.8rem 2rem;
+        border-radius: 0;
+        white-space: normal;
+    }
+    .brand-name {
+        color: #FF6F00;
+        font-size:16px;
+        font-weight: 600;
+        text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
     }
 }
 
+/* Animation pour le menu déroulant */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -220,79 +483,9 @@
     }
 }
 
-/* Logo */
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
+.nav-menu.show {
+    animation: slideDown 0.3s ease-in-out;
 }
-
-.logo {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-}
-
-.logo-container:hover .logo {
-    transform: scale(1.1) rotate(5deg);
-}
-
-@media (max-width: 480px) {
-    .logo {
-        width: 50px;
-        height: 50px;
-    }
-} 
-/* Style amélioré pour la barre de recherche */
-.search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
-    margin-top: -20px;
-    background-color: transparent;
-    border-bottom: none;
-    flex-shrink: 0;
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Style pour la barre de recherche principale (navbar) */
-.search-bar {
-    width: 100%;
-    max-width: 400px;
-    padding: 12px 45px 12px 20px;
-    border: 2px solid rgba(211, 84, 0, 0.3);
-    border-radius: 25px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-
-    /* Style moderne pour la barre de recherche */
-    .search-input {
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid rgba(255, 111, 0, 0.3);
-        border-radius: 25px;
-        padding: 12px 20px;
-        color: white;
-        width: 100%;
-        transition: all 0.3s ease;
-    }
-
-    .search-input:focus {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: #FF6F00;
-        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
-    }
 
     /* Style pour le modal */
     .modal-content {
@@ -312,203 +505,6 @@
             opacity: 1;
             transform: scale(1);
         }
-    }
-
-    /* Effet de parallaxe pour le header */
-    .header-section {
-        position: relative;
-        overflow: hidden;
-        padding: 150px 0;
-        background-attachment: fixed;
-        background-position: center;
-        background-size: cover;
-    }
-
-    /* Style pour les sections */
-    .section {
-        padding: 80px 0;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, rgba(255, 111, 0, 0.1), transparent);
-        z-index: -1;
-    }
-
-    /* Styles de base de la navbar */
-    .navbar {
-        background-color: rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 1rem 2rem;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Logo et nom de la marque */
-    .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        text-decoration: none;
-    }
-
-    .nav-logo {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-        border: 2px solid #FF6F00;
-        box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
-        padding: 2px;
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .nav-logo:hover {
-        transform: scale(1.1);
-        border-color: #FF9800;
-        box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
-    }
-
-    .brand-name {
-        color: #FF6F00;
-        font-size: 1.8rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
-    }
-
-    @media (max-width: 768px) {
-        .navbar-brand {
-            gap: 0.8rem;
-        }
-
-        .brand-name {
-            font-size: 1.4rem;
-        }
-    }
-
-    /* Barre de recherche */
-    .search-wrapper {
-        flex: 0 1 400px;
-        margin: 0 2rem;
-    }
-
-    .search-box {
-        position: relative;
-        width: 100%;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 0.8rem 1rem 0.8rem 3rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 25px;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-
-    .search-input:focus {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: #FF6F00;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(255, 111, 0, 0.2);
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #FF6F00;
-        font-size: 1rem;
-    }
-
-    /* Menu principal */
-    .nav-menu {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #fff;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        white-space: nowrap;  /* Empêche le texte de passer à la ligne */
-    }
-
-    .nav-link:hover {
-        color: #FF6F00;
-        background: rgba(255, 111, 0, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .contact-link {
-        background: linear-gradient(135deg, #25D366, #128C7E);
-        color: white;
-    }
-
-    .contact-link:hover {
-        background: linear-gradient(135deg, #128C7E, #075E54);
-        color: white;
-        transform: translateY(-2px) scale(1.05);
-    }
-
-    /* Menu utilisateur */
-    .user-menu {
-        margin-left: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-  /* Style du compteur du panier dans la navbar*/
-.navbar-panier{
-    position: absolute;
-    transform: translate(3px,-14px);
-    background-color: #ff3d00; /* Rouge vif pour attirer l'attention */
-    color: white;
-    width: 16px;  /* Augmenter la taille pour éviter le débordement */
-    height:18px; /* Augmenter la taille pour éviter le débordement */
-    font-size: 14px; /* Taille de police plus grande pour s'adapter */
-    font-weight: bold;
-    text-align: center;
-    line-height: -30px;  /* Centrer verticalement le texte */
-    border-radius: 50%; /* Cercle parfait */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
-}
-    /* Menu hamburger */
-    .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        color: #FF6F00;
-        font-size: 1.5rem;
-        cursor: pointer;
-        z-index: 2001;
-        transition: all 0.3s ease;
     }
 
     /* Responsive design */
@@ -586,45 +582,8 @@
     }
 
 
-    /* Style de la barre de recherche dans la navbar */
-    .navbar .search-wrapper {
-        max-width: 400px;
-        margin: 0 2rem;
-    }
 
-    .navbar .search-box {
-        position: relative;
-        width: 100%;
-    }
-
-    .navbar .search-input {
-        width: 100%;
-        padding: 8px 40px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 111, 0, 0.2);
-        border-radius: 20px;
-        color: #fff;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-    }
-
-    .navbar .search-input:focus {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: #FF6F00;
-        box-shadow: 0 0 10px rgba(255, 111, 0, 0.15);
-    }
-
-    .navbar .search-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #FF6F00;
-        font-size: 1rem;
-    }
-
-   
-    /* Styles pour la sidebar mobile */
+    /* Styles de base pour la sidebar mobile */
     .mobile-sidebar {
         position: fixed;
         top: 0;
@@ -639,11 +598,11 @@
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
         overflow-y: auto;
     }
-
+    
     .mobile-sidebar.active {
         left: 0;
     }
-
+    
     /* Overlay pour la sidebar */
     .sidebar-overlay {
         position: fixed;
@@ -658,12 +617,51 @@
         visibility: hidden;
         transition: all 0.3s ease;
     }
-
+    
+    
+    /* Icône du panier */
+    .cart-container .fa-cart-shopping {
+        font-size: 1.2rem; /* Taille de l'icône */
+        color: #FF6F00; /* Couleur de l'icône */
+        display: flex; /* Utilisation de flexbox pour centrer */
+        align-items: center; /* Centre verticalement */
+        justify-content: center; /* Centre horizontalement */
+        margin-left:5px;
+    }
+    
+    
+    /* Styles pour le thème dark */
+    [data-theme="dark"] .cart-container {
+        background-color: rgba(255, 111, 0, 0.1); /* Fond légèrement orange */
+    }
+    
+    [data-theme="dark"] .cart-container .fa-cart-shopping {
+        color: #FF6F00; /* Icône orange */
+    }
+    
+    [data-theme="dark"] .cart-container .cart-count {
+        background-color: red; /* Compteur orange */
+        color: #fff; /* Texte blanc */
+    }
+    
+    /* Styles pour le thème light */
+    [data-theme="light"] .cart-container {
+        background-color: rgba(211, 84, 0, 0.1); /* Fond légèrement orange foncé */
+    }
+    
+    [data-theme="light"] .cart-container .fa-cart-shopping {
+        color: #D35400; /* Icône orange foncé */
+    }
+    
+    [data-theme="light"] .cart-container .cart-count {
+        background-color: red; /* Compteur orange foncé */
+        color: #fff; /* Texte blanc */
+    }
     .sidebar-overlay.active {
         opacity: 1;
         visibility: visible;
     }
-
+    
     /* Style des éléments de la sidebar */
     .sidebar-header {
         display: flex;
@@ -672,26 +670,36 @@
         border-bottom: 1px solid rgba(255, 111, 0, 0.2);
         margin-bottom: 20px;
     }
-
+    
     .sidebar-logo {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 15px;
+        width: 40px; /* Largeur du logo */
+        height: 40px; /* Hauteur du logo */
+        margin-right: 15px; /* Espacement entre le logo et le texte */
+        border-radius:5px; /* Pas de bord arrondi */
+        background-color: #FF6F00; /* Couleur de fond du logo */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem; /* Taille de l'icône ou du texte à l'intérieur du logo */
+        color: white; /* Couleur du texte ou de l'icône */
+        font-weight: bold; /* Texte en gras */
+        text-transform: uppercase; /* Texte en majuscules */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère pour un effet moderne */
     }
-
+    
     .sidebar-brand {
-        color: #FF6F00;
-        font-size: 1.2rem;
-        font-weight: 600;
+        color: #FF6F00; /* Couleur du texte de la marque */
+        font-size: 1.2rem; /* Taille du texte */
+        font-weight: 600; /* Texte en gras */
+        text-transform: uppercase; /* Texte en majuscules */
+        letter-spacing: 1px; /* Espacement entre les lettres */
     }
-
     .sidebar-nav {
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
-
+    
     .sidebar-link {
         display: flex;
         align-items: center;
@@ -700,817 +708,602 @@
         text-decoration: none;
         border-radius: 10px;
         transition: all 0.3s ease;
+        position: relative; /* Pour positionner le compteur */
     }
-
+    
     .sidebar-link i {
         margin-right: 15px;
         font-size: 1.2rem;
         width: 24px;
         text-align: center;
     }
-
+    
     .sidebar-link:hover {
         background: rgba(255, 111, 0, 0.1);
         color: #FF6F00;
         transform: translateX(5px);
     }
-
-    .sidebar-auth {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 111, 0, 0.2);
+    
+    /* Styles pour le thème light */
+    [data-theme="light"] .mobile-sidebar {
+        background: rgba(255, 255, 255, 0.95);
     }
-
-    .sidebar-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .sidebar-close:hover {
-        color: #FF6F00;
-        transform: rotate(90deg);
-    }
-
-    /* Modification du bouton hamburger */
-    .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        color: #FF6F00;
-        font-size: 1.5rem;
-        cursor: pointer;
-        z-index: 2001;
-        transition: all 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-        .hamburger-btn {
-            display: block;
-        }
-        
-        .nav-menu {
-            display: none;
-        }
-        
-        .auth-buttons {
-            display: none;
-        }
-    }
-
-    /* Changer la couleur du titre "Nos Boutiques" */
-    .responsive-title {
+    
+    [data-theme="light"] .sidebar-brand {
         color: #D35400; /* Orange foncé */
     }
-
-    @media (min-width: 1200px) {
-        .produits-container {
-            gap: 40px; /* Augmentation de l'espacement pour les grands écrans */
-        }
+    
+    [data-theme="light"] .sidebar-link {
+        color: #333;
     }
-
-    @media (max-width: 768px) {
-        .produit {
-            margin-right: 0; /* Supprime la marge à droite sur les petits écrans */
-        }
+    
+    [data-theme="light"] .sidebar-link:hover {
+        background: rgba(255, 111, 0, 0.1);
+        color: #D35400;
     }
-
-    /* Ajout d'une animation pour les produits */
-    .produit-carousel-item {
+    
+    /* Styles pour le thème dark */
+    [data-theme="dark"] .mobile-sidebar {
+        background: rgba(0, 0, 0, 0.95);
+    }
+    
+    [data-theme="dark"] .sidebar-brand {
+        color: #FF6F00;
+    }
+    
+    [data-theme="dark"] .sidebar-link {
+        color: #fff;
+    }
+    
+    [data-theme="dark"] .sidebar-link:hover {
+        background: rgba(255, 111, 0, 0.1);
+        color: #FF6F00;
+    }
+    
+    
+    
+    
+    [data-theme="light"] .theme-toggle-mobile i {
+        color: #D35400;
+    }
+    
+    
+    
+    /* Conteneur principal pour les icônes */
+    .icons-container {
         display: flex;
-        flex-direction: column;
+        background: rgba(255, 111, 0, 0.1);
+        border-radius: 50px;
+        padding: 8px 15px;
+        margin: 10px 0;
+        justify-content: space-around;
         align-items: center;
-        transition: transform 0.3s ease; /* Animation fluide */
-        margin: 10px; /* Espacement entre les produits */
-    }
-
-    .produit-carousel-item:hover {
-        transform: scale(1.05); /* Légère augmentation de la taille au survol */
-    }
-
-    /* Responsive pour les petits écrans */
-    @media (max-width: 768px) {
-        .produit-carousel-track {
-            display: flex;
-            flex-direction: column; /* Affichage en colonne pour éviter la superposition */
-            align-items: center; /* Centrer les éléments */
-        }
-
-        .produit-carousel-item {
-            width: 90%; /* Largeur ajustée pour les petits écrans */
-            margin: 10px 0; /* Espacement vertical */
-        }
-    }
-        
-        .container {
-            margin-top: 30px;
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 20px;
-        }
-        
-        /* Titre centré avec icône de panier */
-        h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            color: #ff7043;
-            margin-bottom: 30px;
-        }
-        
-        .cart-icon {
-            margin-left: 10px;
-        }
-        
-        /* Tableau de produits */
-/* Conteneur du tableau pour l'effet responsive */
-.table-container {
-    width: 100%;
-    max-width: 100%; /* Empêche le débordement du tableau */
-    overflow-x: auto; /* Permet de faire défiler le tableau horizontalement sur les petits écrans */
-    margin: 0 auto; /* Centre le conteneur du tableau */
-    padding: 0 10px; /* Espacement autour du tableau */
-    box-sizing: border-box;
-}
-
-/* Style du tableau */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 auto; /* Centre le tableau */
-}
-
-/* Style des th et td */
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #444;
-    white-space: nowrap; /* Empêche le contenu de se répartir sur plusieurs lignes */
-    overflow: hidden; /* Cache tout contenu qui déborde */
-    text-overflow: ellipsis; /* Ajoute des points de suspension quand le texte est trop long */
-}
-
-/* Style pour l'en-tête */
-th {
-    background-color: #333;
-    color: #ff7043;
-}
-
-/* Style pour les cellules */
-td {
-    background-color: #2a2a2a;
-    color: white;
-}
-
-/* Style des images dans le tableau */
-td img {
-    max-width: 100px;
-    height: auto;
-}
-
-/* Style du bouton de suppression */
-.remove-btn {
-    background-color: #f44336;
-    border: none;
-    padding: 12px 25px;
-    color: white;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    cursor: pointer;
-    display: inline-block; /* Permet d'ajuster la taille et éviter qu'il ne prenne trop de place */
-    text-align: center;
-}
-
-/* Media Query pour les écrans plus petits (ex: Android) */
-@media (max-width: 600px) {
-    .remove-btn {
-        padding: 10px 20px; /* Réduire le padding sur petits écrans */
-        font-size: 1rem; /* Réduire la taille de la police pour l'adapter aux petits écrans */
-        border-radius: 4px; /* Légère réduction du rayon des bords pour mieux s'adapter */
-    }
-
-    /* Adapter le conteneur du tableau */
-    .table-container {
-        padding: 0; /* Retirer le padding pour mieux occuper l'espace sur petits écrans */
-    }
-
-    /* Adapter le tableau */
-    table {
-        width: 100%;
-        table-layout: fixed; /* Fixer la largeur des colonnes */
-    }
-
-    /* Ajuster les cellules sur petits écrans */
-    th, td {
-        padding: 8px; /* Réduire le padding des cellules */
-        white-space: normal; /* Permettre au texte de se casser et d'être visible */
-        overflow-wrap: break-word; /* Casser le mot si nécessaire pour éviter le débordement */
-    }
-}
-
-.order-form {
-    background-color: #333;
-    padding: 20px;
-    margin-top: 20px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-}
-
-.order-form h3 {
-    font-size: 1.8rem;
-    color: #ff7043;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-
-      /* Formulaire */
-.order-form {
-    background-color: #333;
-    padding: 20px;
-    margin-top: 20px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-}
-
-/* Titre du formulaire */
-.order-form h3 {
-    font-size: 1.8rem;
-    color: #ff7043;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-/* Champs de saisie (input et textarea) */
-.order-form input, .order-form textarea {
-    width: 100%;  /* Utiliser 100% de la largeur du conteneur */
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ff7043;
-    background-color: #2a2a2a;
-    color: white;
-    font-size: 1.2rem;
-    box-sizing: border-box;  /* Pour que le padding n'affecte pas la largeur totale */
-}
-
-/* Bouton de soumission */
-.order-form button {
-    background-color: #ff7043;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-}
-
-/* Focus sur les champs et le bouton */
-.order-form input:focus, .order-form button:focus {
-    outline: none;
-    border-color: #ff6f40; /* Changer la couleur de bordure au focus */
-}
-
-/* Media Query pour les écrans plus petits (ex: Android) */
-@media (max-width: 600px) {
-    .order-form {
-        padding: 15px; /* Réduire le padding pour plus d'espace sur les petits écrans */
+        gap: 15px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
-    .order-form input, .order-form textarea {
-        font-size: 1rem; /* Réduire la taille de la police pour une meilleure lisibilité sur mobile */
-    }
-    
-    .order-form button {
-        font-size: 1rem; /* Ajuster la taille du bouton */
-        padding: 12px; /* Un peu plus d'espace pour le bouton */
-    }
-}
-
-        
- /* Conteneur pour l'icône du panier */
-.cart-icon-container {
-    position: fixed; /* Rendre l'icône fixe sur l'écran */
-    bottom: 20px; /* Placer l'icône en bas */
-    right: 20px; /* Placer l'icône à droite */
-    z-index: 9999; /* S'assurer qu'elle est au-dessus des autres éléments */
-    animation: bounce 2s ease-in-out infinite; /* Animation plus lente et fluide */
-}
-
-/* Icône de panier */
-.cart-icon {
-    font-size: 40px; /* Taille réduite */
-    color: #ff5733; /* Couleur de l'icône */
-    cursor: pointer;
-}
-
-/* Animation de rebond adoucie */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-8px); /* Réduction du rebond */
-    }
-}
-
-/* Compteur du panier */
-.cart-icon-container .cart-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 3px;
-    font-size: 10px;
-    font-weight: bold;
-    min-width: 18px;
-    text-align: center;
-}
-
-/* Faciliter le clic sur l'icône */
-.cart-icon-container a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    line-height: 50px;
-}
-
-/* Styles responsive pour tablettes */
-@media (max-width: 768px) {
-    .cart-icon-container {
-        bottom: 15px;
-        right: 15px;
-    }
-
-    .cart-icon {
-        font-size: 35px; /* Réduction sur tablette */
-    }
-
-    .cart-count {
-        font-size: 9px;
-        padding: 2px 5px;
-    }
-
-    .cart-icon-container a {
-        width: 45px;
-        height: 45px;
-        line-height: 45px;
-    }
-}
-
-/* Styles responsive pour mobiles */
-@media (max-width: 480px) {
-    .cart-icon-container {
-        bottom: 10px;
-        right: 10px;
-    }
-
-    .cart-icon {
-        font-size: 30px; /* Réduction sur mobile */
-    }
-
-    .cart-count {
-        font-size: 8px;
-        padding: 2px 5px;
-    }
-
-    .cart-icon-container a {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-    }
-}
-
-#total-container {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #D65E00; /* Orange foncé */
-}
-
-/* Styles de transition au survol du bouton de fermeture */
-.close-btn:hover {
-    color: #ff7043;
-}
-.nav-panier {
-    position: absolute;
-    transform: translateY(-19px);
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    width:18px;
-    height: 18px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 18px; /* Centre le texte verticalement */
-}
-@media (max-width: 768px) {
-    .nav-panier {
-        width:12px;
-        height: 14px;
+    /* Style des liens icônes */
+    .icon-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        font-size:14px;
-        line-height: 16px; /* Centre le texte verticalement */
+        transition: all 0.3s ease;
     }
-}
-/* Ajuste la taille selon tes besoins icone de panier dans la page */
-@media (min-width: 1024px) { /* Ajuste la taille selon tes besoins */
-    .cart-icon-container {
-        display: none;
+    
+    /* Style des icônes */
+    .icon-link i {
+        font-size: 1.2rem;
+        color: #FF6F00;
     }
+    
+    /* Style des compteurs */
+    .icon-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        font-weight: bold;
+    }
+    
+    /* Effet hover */
+    .icon-link:hover {
+        background: rgba(255, 111, 0, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .icon-link:hover i {
+        color: #FF6F00;
+    }
+    
+    /* Styles pour le thème dark */
+    [data-theme="dark"] .icons-container {
+        background: rgba(255, 111, 0, 0.15);
+    }
+    
+    [data-theme="dark"] .icon-link i {
+        color: #FF6F00;
+    }
+    
+    [data-theme="dark"] .icon-link:hover {
+        background: rgba(255, 111, 0, 0.3);
+    }
+    
+    /* Styles pour le thème light */
+    [data-theme="light"] .icons-container {
+        background: rgba(211, 84, 0, 0.1);
+    }
+    
+    [data-theme="light"] .icon-link i {
+        color: #D35400;
+    }
+    
+    [data-theme="light"] .icon-link:hover {
+        background: rgba(211, 84, 0, 0.2);
+    }
+    
+    [data-theme="light"] .icon-link:hover i {
+        color: #D35400;
+    }
+    /* Conteneur du panier */
+    .cart-container {
+        position: relative; /* Permet de positionner le compteur en absolu */
+        display: flex; /* Utilisation de flexbox pour centrer */
+        align-items: center; /* Centre verticalement les éléments */
+        justify-content: center; /* Centre horizontalement les éléments */
+        background-color: rgba(255, 111, 0, 0.1); /* Couleur de fond du conteneur */
+        padding: 10px; /* Espacement interne */
+        border-radius: 50%; /* Forme ronde */
+        width: 40px; /* Largeur fixe */
+        height: 40px; /* Hauteur fixe */
+        transition: background-color 0.3s ease; /* Transition fluide */
+    }
+    
+    /* Icône du panier */
+    .cart-container .fa-cart-shopping {
+        font-size: 1.2rem; /* Taille de l'icône */
+        color: #FF6F00; /* Couleur de l'icône */
+        display: flex; /* Utilisation de flexbox pour centrer */
+        align-items: center; /* Centre verticalement */
+        justify-content: center; /* Centre horizontalement */
+    }
+    
+    /* Compteur de panier */
+    .cart-container .cart-count {
+        position: absolute; /* Position absolue par rapport au conteneur */
+        top: 0; /* Aligné en haut */
+        right: 0; /* Aligné à droite */
+        transform: translate(50%, -50%); /* Décalage pour toucher le bord */
+        background-color: #FF6F00; /* Couleur de fond du compteur */
+        color: #fff; /* Couleur du texte */
+        font-size: 0.8rem; /* Taille du texte */
+        padding: 4px 8px; /* Espacement interne */
+        border-radius: 50%; /* Forme ronde */
+        min-width: 20px; /* Largeur minimale */
+        height: 20px; /* Hauteur fixe */
+        display: flex; /* Utilisation de flexbox pour centrer */
+        align-items: center; /* Centre verticalement */
+        justify-content: center; /* Centre horizontalement */
+        text-align: center; /* Centrage du texte */
+    }
+    
+    /* Styles pour le thème dark */
+    [data-theme="dark"] .cart-container {
+        background-color: rgba(255, 111, 0, 0.1); /* Fond légèrement orange */
+    }
+    
+    [data-theme="dark"] .cart-container .fa-cart-shopping {
+        color: #FF6F00; /* Icône orange */
+    }
+    
+    [data-theme="dark"] .cart-container .cart-count {
+        background-color: #FF6F00; /* Compteur orange */
+        color: #fff; /* Texte blanc */
+    }
+    
+    /* Styles pour le thème light */
+    [data-theme="light"] .cart-container {
+        background-color: rgba(211, 84, 0, 0.1); /* Fond légèrement orange foncé */
+    }
+    
+    [data-theme="light"] .cart-container .fa-cart-shopping {
+        color: #D35400; /* Icône orange foncé */
+    }
+    
+    [data-theme="light"] .cart-container .cart-count {
+        background-color: #D35400; /* Compteur orange foncé */
+        color: #fff; /* Texte blanc */
+    }
+    
+    /* Compteur du panier */
+    .cart-count {
+        position: absolute;
+        background: #FF6F00;
+        color: #fff;
+        font-size: 0.8rem;
+        padding: 2px 6px;
+        border-radius: 50%;
+    }
+    
+/* ---------------------------------Espacement vertical--------------------------------------------- */
+ /* Variables CSS pour les thèmes */
+:root {
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --input-background: #f5f5f5;
+    --input-border: #e0e0e0;
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --modal-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --modal-border-radius: 12px;
 }
 
+[data-theme="dark"] {
+    --background-color: #1e1e1e;
+    --text-color: #f5f5f5;
+    --input-background: #2d2d2d;
+    --input-border: #444444;
+    --primary-color: #1a73e8;
+    --primary-hover: #1557b0;
+    --modal-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
 
-/* Modal */
-.modal {
-    display: none; /* Cacher le modal par défaut */
+/* Style spécifique pour la modal produit panier */
+.modal-produit-panier {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre */
+    background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    animation: fadeIn 0.5s ease-out; /* Animation d'apparition */
+    z-index: 1000;
 }
 
-/* Animation d'apparition */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* Modal */
-/* Modal spécifique à la confirmation de commande */
-#confirmation-modal-boutique {
-    display: none; /* Cacher le modal par défaut */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre */
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: fadeIn 0.5s ease-out; /* Animation d'apparition */
-}
-
-/* Animation d'apparition */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-#confirmation-modal-boutique .modal-content-confirmation  {
-    background-color: #333;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    color: white;
-    width: 80%;
-    max-width: 500px;
-    animation: zoomIn 0.5s ease-out; /* Animation de zoom */
+.modal-produit-panier-content {
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: var(--modal-border-radius);
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
+    margin: auto;
+    box-shadow: var(--modal-shadow);
+    color: var(--text-color);
 }
 
-/* Animation de zoom */
-@keyframes zoomIn {
-    from {
-        transform: scale(0.7);
-    }
-    to {
-        transform: scale(1);
-    }
-}
-
-/* Titre du modal */
-#confirmation-modal-boutique .modal-content h2 {
-    color: #ff7043;
-}
-
-/* Icône de fermeture */
-#confirmation-modal-boutique .close-btn {
-    color: #ff7043;
-    font-size: 2rem;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
-
-/* Icône WhatsApp */
-#confirmation-modal-boutique .whatsapp-icons {
-    margin-top: 20px;
-    animation: pulse 1.5s infinite; /* Animation de pulsation */
-}
-
-#confirmation-modal-boutique .whatsapp-icons a {
-    display: inline-block;
-    text-decoration: none;
-}
-
-#confirmation-modal-boutique .whatsapp-icons i {
-    font-size: 3rem;
-    color: #25d366;
-    transition: transform 0.3s;
-    animation: pulse 1.5s infinite; /* Ajouter animation pulsée */
-}
-
-#confirmation-modal-boutique .whatsapp-icons i:hover {
-    transform: scale(1.1);
-}
-
-#confirmation-modal-boutique .whatsapp-text {
-    display: block;
-    font-size: 1.2rem;
-    color: white;
-    margin-top: 10px;
-}
-
-/* Animation pulsation */
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.7;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Icône de validation */
-#confirmation-modal-boutique .fa-check-circle {
-    font-size: 3rem;
-    color: #4CAF50;
-    margin-top: 20px;
-}
-
-/* Media Query pour les écrans plus petits (ex: Android) */
-@media (max-width: 600px) {
-    #confirmation-modal-boutique .modal-content-confirmation {
-        width: 90%; /* Réduire la largeur du modal sur les petits écrans */
-        padding: 20px;
-    }
-
-    #confirmation-modal-boutique .whatsapp-icons i {
-        font-size: 2.5rem;
-    }
-
-    #confirmation-modal-boutique .whatsapp-text {
-        font-size: 1rem;
-    }
-
-    #confirmation-modal-boutique .fa-check-circle {
-        font-size: 2rem; /* Réduire la taille de l'icône sur petits écrans */
-    }
-}
-/*---------------------------------------------Gestion du modla Fond noir clair pour le modal ------------------------------------------------------*/
-.modal-content {
-    background-color: #1e1e1e;
-    color: #fff;
-    border: none;
-}
-
-/* ✅ Organisation des produits */
-.product-section-modal {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* ✅ Centrage des produits */
-    align-items: flex-start;
-    gap: 15px; /* ✅ Espacement uniforme */
-    width: 100%;
-    padding: 10px;
-}
-
-/* ✅ Chaque produit garde son espace */
-.product-item-modal {
-    flex: 1 1 calc(50% - 15px); /* ✅ 2 produits par ligne */
-    max-width: 300px; /* ✅ Taille normale même avec 1 ou 2 produits */
-    box-sizing: border-box;
-    padding: 10px;
-    text-align: center;
-    background-color: transparent;
-    transition: transform 0.2s ease-in-out;
-}
-
-.product-item-modal:hover {
-    transform: translateY(-5px);
-}
-
-/* ✅ Taille des images maintenue */
-.product-image-modal {
-    width: 100%;
-    height: auto;
-    max-height: 200px; /* ✅ Garde une taille correcte */
-    min-height: 180px;
-    object-fit: contain;
-    margin-bottom: 5px;
-}
-
-/* ✅ Sur grands écrans, ne pas rapetisser les produits */
-@media (min-width: 992px) {
-    .product-section-modal {
-        justify-content: flex-start; /* ✅ Garde un alignement naturel */
-    }
-
-    .product-item-modal {
-        flex: 1 1 auto; /* ✅ Garde une bonne taille même avec 1 produit */
-        max-width: 250px; /* ✅ Pas trop grand */
-    }
-}
-
-/* ✅ Sur petits écrans (2 colonnes) */
-@media (max-width: 768px) {
-    .product-section-modal {
-        justify-content: space-between; /* ✅ Évite les gros espaces vides */
-    }
-
-    .product-item-modal {
-        flex: 1 1 calc(50% - 10px);
-        min-width: 150px;
-    }
-}
-
-/* ✅ Sur très petits écrans (1 colonne si nécessaire) */
-@media (max-width: 480px) {
-    .product-item-modal {
-        flex: 1 1 100%;
-    }
-}
-
-/* ✅ Autres styles */
-.product-info-modal {
-    font-size: 12px;
-    color: white;
-}
-
-.product-name-modal {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: white;
-}
-
-.product-price {
-    color: #cc5500;
-}
-
-.product-icon-eye {
-    font-size: 18px;
-    margin-top: 10px;
-    color: white;
-    cursor: pointer;
-}
-
-.product-icon-eye:hover {
-    color: #dddddd;
-}
-
-.modal-background {
-    background-color: #000;
-}
-
-/* Style de la modal-header */
-.modal-header {
+.modal-produit-panier-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
-/* ✅ Ajustements pour petits écrans */
-@media (max-width: 576px) {
-    .modal-header {
-        flex-direction: row;
+.modal-produit-panier-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.modal-produit-panier-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.modal-produit-panier-close-btn:hover {
+    color: var(--primary-color);
+}
+
+.modal-produit-panier-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-produit-panier-search-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.modal-produit-panier-search-input {
+    flex: 2;
+}
+
+.modal-produit-panier-price-input {
+    flex: 1;
+}
+
+.modal-produit-panier-search-input input,
+.modal-produit-panier-price-input input {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--input-background);
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    color: var(--text-color);
+}
+
+.modal-produit-panier-search-input input:focus,
+.modal-produit-panier-price-input input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+.modal-produit-panier-search-input input::placeholder,
+.modal-produit-panier-price-input input::placeholder {
+    color: #999;
+}
+
+.modal-produit-panier-apply-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-produit-panier-apply-btn:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+.modal-produit-panier-product-section {
+    margin-top: 20px;
+}
+
+.modal-produit-panier-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* Responsive pour grands écrans */
+@media (min-width: 1200px) {
+    .modal-produit-panier-content {
+        max-width: 1400px;
+        padding: 30px;
     }
 
-    .modal-title {
-        font-size: 1rem;
-        margin-bottom: 0;
+    .modal-produit-panier-title {
+        font-size: 2rem;
     }
 
-    .btn-danger {
-        font-size: 1rem;
-        padding: 0.5rem;
-        width: auto;
-        height: auto;
+    .modal-produit-panier-search-input input,
+    .modal-produit-panier-price-input input {
+        padding: 14px;
+        font-size: 1.1rem;
     }
 
-    .btn-danger i {
-        font-size: 1rem;
+    .modal-produit-panier-apply-btn {
+        padding: 14px 28px;
+        font-size: 1.1rem;
     }
 }
 
-/* ✅ Sur grands écrans */
-@media (min-width: 576px) {
-    .modal-title {
-        font-size: 1.25rem;
-    }
-
-    .btn-danger {
-        font-size: 1.25rem;
-        padding: 0.75rem 1.25rem;
-    }
-
-    .btn-danger i {
-        font-size: 1.4rem;
-    }
-}
-
-/* ✅ Sur Android, le modal couvre toute la page */
+/* Responsive pour petits écrans */
 @media (max-width: 768px) {
-    .modal-content {
-        width: 100vw;
-        height: 100vh;
-        max-width: none;
-        max-height: none;
+    .modal-produit-panier-content {
+        width: 100%;
+        height: 100%;
         border-radius: 0;
+        padding: 10px;
+        max-width: none;
+    }
+
+    .modal-produit-panier-title {
+        font-size: 1.2rem;
+    }
+
+    .modal-produit-panier-search-filters {
+        flex-direction: row;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .modal-produit-panier-search-input {
+        flex: 2;
+        min-width: 50%;
+    }
+
+    .modal-produit-panier-price-input {
+        flex: 1;
+        min-width: 20%;
+    }
+
+    .modal-produit-panier-search-input input,
+    .modal-produit-panier-price-input input {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .modal-produit-panier-apply-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        flex: 1;
+        min-width: 100%;
     }
 }
-@media (max-width: 768px) {
-    .d-flex.flex-wrap {
+
+/* Responsive pour très petits écrans */
+@media (max-width: 480px) {
+    .modal-produit-panier-content {
+        padding: 5px;
+    }
+
+    .modal-produit-panier-title {
+        font-size: 1rem;
+    }
+
+    .modal-produit-panier-search-filters {
         flex-direction: column;
-        align-items: center;
+        gap: 8px;
     }
-    .position-relative {
+
+    .modal-produit-panier-search-input,
+    .modal-produit-panier-price-input,
+    .modal-produit-panier-apply-btn {
         width: 100%;
-        max-width: 250px;
-        min-width: 200px;
+        min-width: auto;
     }
-    .form-control {
-        width: 100%;
-        padding-left: 40px;
+
+    .modal-produit-panier-search-input input,
+    .modal-produit-panier-price-input input {
+        padding: 6px;
+        font-size: 0.8rem;
     }
-    .position-absolute {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: gray;
-    }
-    .btn-primary {
-        width: auto;
-        min-width: 100px;
-    }
-    .modal-body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .product-section .row {
-        justify-content: center;
-    }
-    .product-section .row > div {
-        flex: 1 1 auto;
-        max-width: 300px;
+
+    .modal-produit-panier-apply-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
     }
 }
-/* Footer Styling amélioré */
+/* Footer Styling amélioré----------------------------------- */
+/* Styles de base pour le footer */
 .footer {
-    background: linear-gradient(to top, #111, #000); /* Dégradé du noir vers un gris foncé */
+    background: linear-gradient(to top, #111, #000);
     color: #fff;
     padding: 50px 20px;
     font-family: 'Arial', sans-serif;
-    border-top-left-radius: 30px; /* Coins arrondis en haut */
-    border-top-right-radius: 30px;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
+/* Mode clair pour le footer */
+[data-theme="light"] .footer {
+    background: linear-gradient(to top, #FFB6C1, #ADD8E6); /* Dégradé rose clair vers bleu pastel */
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="light"] .footer-section h4 {
+    color: #FF4500; /* Orange foncé pour les titres */
+    border-bottom: 2px solid #FF6F00; /* Bordure orange */
+}
+
+[data-theme="light"] .footer-section ul li a {
+    color: #FF6F00; /* Liens en orange */
+}
+
+[data-theme="light"] .footer-section ul li a:hover {
+    color: #000000; /* Texte en noir au survol */
+}
+
+[data-theme="light"] .social-links a {
+    color: #FF6F00; /* Icônes en orange */
+}
+
+[data-theme="light"] .social-links a:hover {
+    color: #000000; /* Icônes en noir au survol */
+}
+
+[data-theme="light"] .newsletter-form input[type="email"] {
+    border: 2px solid #FF6F00; /* Bordure orange */
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="light"] .newsletter-form button {
+    background-color: #FF6F00; /* Bouton orange */
+    color: #ffffff; /* Texte en blanc */
+}
+
+[data-theme="light"] .newsletter-form button:hover {
+    background-color: #FF4500; /* Orange plus foncé au survol */
+}
+
+[data-theme="light"] .footer-bottom {
+    color: #000000; /* Texte en noir */
+    border-top: 1px solid rgba(0, 0, 0, 0.2); /* Bordure légère */
+}
+
+/* Mode sombre pour le footer */
+[data-theme="dark"] .footer {
+    background: linear-gradient(to top, #1a1a1a, #2a2a2a); /* Dégradé gris foncé */
+    color: #ffffff; /* Texte en blanc */
+}
+
+[data-theme="dark"] .footer-section h4 {
+    color: #00FFFF; /* Cyan pour les titres */
+    border-bottom: 2px solid #00FFFF; /* Bordure cyan */
+}
+
+[data-theme="dark"] .footer-section p, 
+[data-theme="dark"] .footer-section ul {
+    color: #e0e0e0; /* Texte en gris clair */
+}
+
+[data-theme="dark"] .footer-section ul li a {
+    color: #00FFFF; /* Liens en cyan */
+}
+
+[data-theme="dark"] .footer-section ul li a:hover {
+    color: #ffffff; /* Texte en blanc au survol */
+}
+
+[data-theme="dark"] .social-links a {
+    color: #00FFFF; /* Icônes en cyan */
+}
+
+[data-theme="dark"] .social-links a:hover {
+    color: #ffffff; /* Icônes en blanc au survol */
+}
+
+[data-theme="dark"] .newsletter-form input[type="email"] {
+    border: 2px solid #00FFFF; /* Bordure cyan */
+    color: #ffffff; /* Texte en blanc */
+    background-color: rgba(255, 255, 255, 0.1); /* Fond légèrement transparent */
+}
+
+[data-theme="dark"] .newsletter-form button {
+    background-color: #00FFFF; /* Bouton cyan */
+    color: #000000; /* Texte en noir */
+}
+
+[data-theme="dark"] .newsletter-form button:hover {
+    background-color: #00CED1; /* Cyan plus foncé au survol */
+}
+
+[data-theme="dark"] .footer-bottom {
+    color: #e0e0e0; /* Texte en gris clair */
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Bordure légère */
+}
+
+[data-theme="dark"] .footer-bottom a {
+    color: #00FFFF; /* Liens en cyan */
+}
+
+[data-theme="dark"] .footer-bottom a:hover {
+    color: #ffffff; /* Texte en blanc au survol */
+}
+
+/* Conteneur du footer */
 .footer-container {
     display: flex;
     flex-wrap: wrap;
@@ -1530,14 +1323,11 @@ td img {
 .footer-section h4 {
     font-size: 1.3rem;
     margin-bottom: 15px;
-    color: #FF6600;; /* Orange foncé pour attirer l'attention */
-    border-bottom: 2px solid #ff9900;
     padding-bottom: 5px;
     display: inline-block;
 }
 
-.footer-section p,
-.footer-section ul {
+.footer-section p, .footer-section ul {
     font-size: 1rem;
     margin: 0;
     line-height: 1.8;
@@ -1554,16 +1344,14 @@ td img {
 
 .footer-section ul li a {
     text-decoration: none;
-    color: #ffcc00;
     transition: all 0.3s ease-in-out;
 }
 
 .footer-section ul li a:hover {
-    color: #fff;
     transform: translateX(5px);
 }
 
-/* Icônes des réseaux sociaux */
+/* Liens sociaux */
 .social-links {
     display: flex;
     align-items: center;
@@ -1572,28 +1360,54 @@ td img {
 
 .social-links a {
     font-size: 1.7rem;
-    color: #ffcc00;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .social-links a:hover {
     transform: scale(1.3);
-    color: #fff;
 }
 
-/* Pied de page */
+/* Formulaire de newsletter */
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+}
+
+.newsletter-form input[type="email"] {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Section du bas du footer */
 .footer-bottom {
     text-align: center;
     margin-top: 30px;
     font-size: 0.9rem;
-    border-top: 1px solid #444;
     padding-top: 15px;
-    color: #bbb;
+}
+
+.footer-bottom a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom a:hover {
+    color: #FF6F00; /* Orange au survol */
 }
 
 /* Responsive Design */
-
-/* Tablettes (max 1024px) */
 @media screen and (max-width: 1024px) {
     .footer-container {
         flex-direction: column;
@@ -1611,7 +1425,6 @@ td img {
     }
 }
 
-/* Smartphones (max 768px) */
 @media screen and (max-width: 768px) {
     .footer-container {
         padding: 0 15px;
@@ -1621,8 +1434,7 @@ td img {
         font-size: 1.1rem;
     }
 
-    .footer-section p,
-    .footer-section ul {
+    .footer-section p, .footer-section ul {
         font-size: 0.9rem;
     }
 
@@ -1635,16 +1447,18 @@ td img {
         font-size: 1.4rem;
     }
 }
-
-
-
-/* Conteneur pour l'icône du panier */
+/* Conteneur pour l'icône du panier ----------------------------------*/
 .cart-icon-container {
     position: fixed;
     bottom: 50px; /* Ajustement de la hauteur */
     right: 20px; /* Placer l'icône à droite */
     z-index: 9998;
     animation: bounce 3s ease-in-out infinite; /* Animation plus fluide */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px; /* Largeur fixe pour le conteneur */
+    height: 50px; /* Hauteur fixe pour le conteneur */
 }
 
 /* Icône de panier */
@@ -1652,9 +1466,13 @@ td img {
     font-size: 40px; /* Réduction de la taille */
     color: #FF8C00; /* Orange foncé */
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
-/* Compteur du panier */
 /* Compteur du panier */
 .cart-icon-container .cart-count {
     position: absolute;
@@ -1675,6 +1493,7 @@ td img {
     border: 2px solid #fff; /* Bordure blanche pour un effet pro */
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour un effet moderne */
 }
+
 /* Animation de rebond adoucie */
 @keyframes bounce {
     0%, 100% {
@@ -1690,6 +1509,8 @@ td img {
     .cart-icon-container {
         bottom: 40px;
         right: 15px;
+        width: 45px;
+        height: 45px;
     }
 
     .cart-icon {
@@ -1707,6 +1528,8 @@ td img {
     .cart-icon-container {
         bottom: 30px;
         right: 10px;
+        width: 40px;
+        height: 40px;
     }
 
     .cart-icon {
@@ -1718,183 +1541,1559 @@ td img {
         padding: 2px 5px;
     }
 }
+ 
+/*----------------------Whatsapp icon-----------------*/
+ 
+
+@media (min-width: 1024px) { /* Ajuste la taille selon tes besoins */
+    .cart-icon-container {
+        display: none;
+    }
+}
+
+
+
+:root {
+    /* Light theme (default) */
+    --primary-dark: #c2410c;
+    --primary: #ea580c;
+    --primary-light: #fdba74;
+    --primary-extra-light: #ffedd5;
+    --text-dark: #1f2937;
+    --text-medium: #4b5563;
+    --text-light: #9ca3af;
+    --bg-light: #f9fafb;
+    --bg-dark: #ffffff;
+    --border-color: #e5e7eb;
+    --card-bg: #ffffff;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #ea580c;
+}
+
+[data-theme="dark"] {
+    /* Dark theme */
+    --primary-dark: #fdba74;
+    --primary: #ea580c;
+    --primary-light: #9a3412;
+    --primary-extra-light: #431407;
+    --text-dark: #f9fafb;
+    --text-medium: #d1d5db;
+    --text-light: #9ca3af;
+    --bg-light: #111827;
+    --bg-dark: #1f2937;
+    --border-color: #374151;
+    --card-bg: #1f2937;
+    --success-color: #34d399;
+    --error-color: #f87171;
+    --warning-color: #fbbf24;
+    --info-color: #fdba74;
+}
+
+.panier-container {
+    width: 100%;
+    margin: 100px auto 50px;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+}
+
+.modern-cart {
+    background: var(--card-bg);
+    border-radius: 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    border: 1px solid var(--border-color);
+}
+
+.cart-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 24px 32px;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart-icon {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+}
+
+.item-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    margin-top: 18px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 30%;
+    background: white;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.cart-products {
+    padding: 16px;
+}
+
+.product-card {
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-light);
+}
+
+/* Correction pour les images en mode dark */
+.product-image-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-light); /* Utilise la couleur de fond du thème */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color); /* Bordure cohérente avec le thème */
+}
+
+.product-image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    padding: 5px; /* Espacement intérieur réduit */
+    background-color: transparent; /* Fond transparent */
+}
+
+[data-theme="dark"] .product-image {
+    mix-blend-mode: normal;
+    filter: brightness(0.95) contrast(1.05); /* Légère correction de luminosité */
+    padding: 0; /* Pas de padding supplémentaire en dark */
+    background-color: transparent;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--success-color);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.product-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-top {
+    flex-grow: 1;
+}
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.product-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-right: 15px;
+    text-decoration: none;
+    transition: color 0.2s;
+    flex-grow: 1;
+}
+
+.product-name:hover {
+    color: var(--primary);
+}
+
+.product-price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    white-space: nowrap;
+}
+
+.product-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: var(--text-medium);
+}
+
+.product-sku {
+    opacity: 0.8;
+}
+
+.product-stock {
+    font-weight: 500;
+}
+
+.in-stock {
+    color: var(--success-color);
+}
+
+.product-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--success-color);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.product-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.compare-btn, .wishlist-btn, .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-medium);
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+
+.compare-btn svg, .wishlist-btn svg, .remove-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.compare-btn:hover {
+    color: var(--info-color);
+    background: rgba(234, 88, 12, 0.1);
+    transform: scale(1.1);
+}
+
+.wishlist-btn:hover {
+    color: var(--error-color);
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.1);
+}
+
+.remove-btn:hover {
+    color: var(--error-color);
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.1);
+}
+
+.cart-summary {
+    padding: 24px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    margin: 24px 16px;
+    border: 1px solid var(--border-color);
+}
+
+.summary-section {
+    margin-bottom: 24px;
+}
+
+.summary-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-totals {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.total-row {
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.total-price {
+    color: var(--primary-dark);
+}
+
+.secure-checkout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--success-color);
+    font-weight: 500;
+}
+
+.secure-checkout svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.cart-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.continue-btn, .checkout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 1rem;
+}
+
+.continue-btn {
+    background: var(--card-bg);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.continue-btn:hover {
+    background: rgba(234, 88, 12, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.1);
+}
+
+.checkout-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(234, 88, 12, 0.3);
+}
+
+.checkout-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+}
+
+.arrow-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.empty-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
+    color: var(--text-light);
+    opacity: 0.6;
+}
+
+.empty-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.5;
+}
+
+.empty-title {
+    font-size: 1.75rem;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.empty-message {
+    color: var(--text-medium);
+    margin-bottom: 32px;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+.recommendations {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 32px;
+}
+
+.recommendations h4 {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.recommended-products {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.recommended-product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 120px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.recommended-product:hover {
+    transform: translateY(-5px);
+}
+
+.recommended-product img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.recommended-product span {
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--text-medium);
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(234, 88, 12, 0.3);
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+}
+
+.store-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+/* Theme switcher */
+.theme-switcher {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.theme-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.theme-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Confirmation overlay */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.confirm-overlay.show {
+    opacity: 1;
+}
+
+.confirm-box {
+    background: var(--card-bg);
+    padding: 32px;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.confirm-overlay.show .confirm-box {
+    transform: translateY(0);
+}
+
+.confirm-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    color: var(--error-color);
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.5;
+}
+
+.confirm-box h3 {
+    margin: 0 0 12px;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.confirm-box p {
+    color: var(--text-medium);
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.cancel-btn, .confirm-btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+    min-width: 100px;
+}
+
+.cancel-btn {
+    background: var(--card-bg);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+    background: var(--bg-light);
+    border-color: var(--text-light);
+}
+
+.confirm-btn {
+    background: var(--error-color);
+    color: white;
+    border: none;
+}
+
+.confirm-btn:hover {
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .modern-cart {
+        border-radius: 16px;
+        margin: 0 auto;
+        max-width: 1400px;
+        width: calc(100% - 80px);
+    }
+    
+    .panier-container {
+        padding: 0 40px;
+    }
+
+    .product-card {
+        padding: 32px;
+    }
+
+    .cart-header {
+        padding: 28px 40px;
+    }
+
+    .cart-summary {
+        padding: 32px;
+        margin: 32px 24px;
+    }
+
+    .cart-footer {
+        padding: 32px;
+    }
+
+    .product-image-container {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .modern-cart {
+        max-width: 1500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .panier-container {
+        margin-top: 80px;
+        padding: 0;
+    }
+    
+    .modern-cart {
+        border-radius: 0;
+    }
+    
+    .cart-header {
+        padding: 20px;
+    }
+    
+    .product-card {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .product-image-container {
+        width: 100%;
+        height: 180px;
+        margin: 0 auto;
+    }
+    
+    .product-image {
+        max-width: 60%;
+        max-height: 80%;
+    }
+    
+    .product-actions {
+        justify-content: flex-start;
+    }
+    
+    .cart-footer {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .continue-btn, .checkout-btn {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .theme-switcher {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .theme-btn {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-title {
+        font-size: 1.5rem;
+    }
+    
+    .product-card {
+        padding: 16px;
+    }
+    
+    .product-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .product-price {
+        align-self: flex-start;
+    }
+    
+    .product-image-container {
+        height: 150px;
+    }
+
+    .product-image {
+        max-width: 50%;
+    }
+    
+    .confirm-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .cancel-btn, .confirm-btn {
+        width: 100%;
+    }
+
+    .theme-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .theme-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+
+
+
+:root {
+    /* Light theme */
+    --form-bg: #ffffff;
+    --form-text: #2c3e50;
+    --form-border: #e0e0e0;
+    --form-input-bg: #f9f9f9;
+    --form-icon: #7f8c8d;
+    --form-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --form-shadow-hover: 0 10px 35px rgba(0, 0, 0, 0.15);
+    --primary-gradient: linear-gradient(135deg, #3498db, #2c3e50);
+    --primary-gradient-hover: linear-gradient(135deg, #2980b9, #1a252f);
+    --focus-border: #3498db;
+    --focus-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    --header-icon: #3498db;
+  }
+  
+  [data-theme="dark"] {
+    /* Dark theme */
+    --form-bg: #2d3748;
+    --form-text: #f7fafc;
+    --form-border: #4a5568;
+    --form-input-bg: #4a5568;
+    --form-icon: #a0aec0;
+    --form-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    --form-shadow-hover: 0 10px 35px rgba(0, 0, 0, 0.4);
+    --primary-gradient: linear-gradient(135deg, #2b6cb0, #1a365d);
+    --primary-gradient-hover: linear-gradient(135deg, #2c5282, #2a4365);
+    --focus-border: #63b3ed;
+    --focus-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+    --header-icon: #63b3ed;
+  }
+  
+  /* Styles modernes */
+  .order-form-container {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 15px;
+  }
+  
+  .order-form-card {
+      background: var(--form-bg);
+      border-radius: 12px;
+      box-shadow: var(--form-shadow);
+      padding: 25px;
+      transition: all 0.3s ease;
+      color: var(--form-text);
+  }
+  
+  .order-form-card:hover {
+      box-shadow: var(--form-shadow-hover);
+  }
+  
+  .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      color: var(--form-text);
+  }
+  
+  .form-header i {
+      font-size: 24px;
+      margin-right: 15px;
+      color: var(--header-icon);
+  }
+  
+  .form-header h3 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+  }
+  
+  .modern-form .form-group {
+      position: relative;
+      margin-bottom: 20px;
+  }
+  
+  .modern-form .form-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--form-icon);
+      font-size: 16px;
+  }
+  
+  .modern-form input {
+      width: 100%;
+      padding: 14px 20px 14px 45px;
+      border: 1px solid var(--form-border);
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+      background-color: var(--form-input-bg);
+      color: var(--form-text);
+  }
+  
+  .modern-form input::placeholder {
+      color: var(--form-icon);
+      opacity: 0.8;
+  }
+  
+  .modern-form input:focus {
+      border-color: var(--focus-border);
+      box-shadow: var(--focus-shadow);
+      outline: none;
+      background-color: var(--form-bg);
+  }
+  
+  .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+  }
+  
+  .submit-btn:hover {
+      background: var(--primary-gradient-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Animations communes (déjà définies dans le modal) */
+
+:root {
+    /* Couleurs light theme */
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --secondary-text: #666666;
+    --border-color: #eeeeee;
+    --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    --close-btn-bg-hover: #f5f5f5;
+    --secondary-btn-bg: #f8f9fa;
+    --secondary-btn-hover: #e2e6ea;
+    --overlay-color: rgba(0, 0, 0, 0.6);
+    
+    /* Couleurs communes */
+    --success-color: #28a745;
+    --success-light: rgba(40, 167, 69, 0.1);
+    --error-color: #dc3545;
+    --error-light: rgba(220, 53, 69, 0.1);
+    --warning-color: #ffc107;
+    --warning-light: rgba(255, 193, 7, 0.1);
+    --whatsapp-color: #25D366;
+    --whatsapp-hover: #128C7E;
+  }
+  
+  [data-theme="dark"] {
+    /* Couleurs dark theme */
+    --bg-color: #2d3748;
+    --text-color: #f7fafc;
+    --secondary-text: #cbd5e0;
+    --border-color: #4a5568;
+    --modal-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --close-btn-bg-hover: #4a5568;
+    --secondary-btn-bg: #4a5568;
+    --secondary-btn-hover: #718096;
+    --overlay-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  /* Modal moderne */
+  .modern-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--overlay-color);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+      backdrop-filter: blur(5px);
+  }
+  
+  .modal-content {
+      background: var(--bg-color);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: var(--modal-shadow);
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      color: var(--text-color);
+  }
+  
+  .modal-body {
+      padding: 40px 30px;
+      text-align: center;
+  }
+  
+  .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--secondary-text);
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+  }
+  
+  .close-btn:hover {
+      color: var(--text-color);
+      background: var(--close-btn-bg-hover);
+  }
+  
+  .icon-container {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 36px;
+  }
+  
+  .icon-container.pulse {
+      animation: pulse 1.5s infinite;
+  }
+  
+  .success-content .icon-container {
+      background-color: var(--success-light);
+      color: var(--success-color);
+  }
+  
+  .alert-message.error .icon-container {
+      background-color: var(--error-light);
+      color: var(--error-color);
+  }
+  
+  .alert-message.warning .icon-container {
+      background-color: var(--warning-light);
+      color: var(--warning-color);
+  }
+  
+  .modal-body h2 {
+      margin: 0 0 15px;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      font-weight: 600;
+  }
+  
+  .modal-body p {
+      color: var(--secondary-text);
+      line-height: 1.5;
+      margin-bottom: 25px;
+  }
+  
+  .success-text {
+      font-size: 1rem;
+  }
+  
+  .modal-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--success-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 200px;
+  }
+  
+  .modal-btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  }
+  
+  .modal-btn.secondary {
+      background: var(--secondary-btn-bg);
+      color: var(--text-color);
+      margin-top: 15px;
+  }
+  
+  .modal-btn.secondary:hover {
+      background: var(--secondary-btn-hover);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .whatsapp-action {
+      margin: 25px 0;
+      padding: 20px 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+  }
+  
+  .whatsapp-desc {
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      color: var(--secondary-text);
+  }
+  
+  .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      background: var(--whatsapp-color);
+      color: white;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+  }
+  
+  .whatsapp-btn:hover {
+      background: var(--whatsapp-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  }
+  
+  .whatsapp-btn i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+      .modal-body {
+          padding: 30px 20px;
+      }
+      
+      .modal-body h2 {
+          font-size: 1.3rem;
+      }
+      
+      .icon-container {
+          width: 70px;
+          height: 70px;
+          font-size: 32px;
+      }
+  }
+
+
+
+ /* Variables communes */
+:root {
+    --like-color-light: #FF6347;
+    --like-color-dark: #00FFFF;
+    --count-bg:#ff3d00;
+    --count-text: white;
+}
+
+/* Style de base */
+.nav-link.likes {
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    width:50px;
+    height:50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    background:#FF6347;
+    text-align:center;
+    padding: 10px; /* Espacement interne */
+}
+.nav-link.likes i {
+ margin-left:5px;
+ 
+}
+.nav-link.likes .count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--count-bg);
+    color: var(--count-text);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem; /* Taille du texte */
+    padding: 4px 8px; /* Espacement interne */
+}
+
+/* Effets hover */
+
+.nav-link.likes  i {
+    color:white;
+}
+[data-theme="light"] .navbar .nav-link.likes:hover:hover {
+    background-color: #FF4500; /* Orange plus foncé au survol */
+}
+/* Thème sombre */
+[data-theme="dark"] .nav-link.likes i {
+    color: #001F3F;
+}
+[data-theme="dark"] .nav-link.likes {
+    color: #001F3F;
+    background:#00FFFF;
+}
+
+[data-theme="dark"] .nav-link.likes .count {
+    background: var(--count-bg);
+    color: white;
+    border-color: #001F3F;
+}
+ 
+
+
+/* Caché par défaut sur desktop */
+.mobile-cart-fab {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.cart-fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cart-fab:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.cart-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+/* Nouveau style pour le badge mobile - Orange vif contrasté */
+.cart-counter-mobil {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: red; /* Orange vif Material Design */
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid white;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Animation micro-interaction */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.cart-fab:hover .cart-icon {
+    animation: bounce 0.6s ease;
+}
+
+/* Affichage seulement sur mobile */
+@media (max-width: 768px) {
+    .mobile-cart-fab {
+        display: block;
+    }
+}
+
+/* Animation du badge */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.pulse-badge {
+    animation: pulse 0.5s ease-in-out;
+}
 
 </style>
 </head>
+
 <body>
-    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
-<!-- Navbar -->
-<nav class="navbar">
-    <!-- Logo et nom de la plateforme -->
-    <a class="navbar-brand">
-        <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="logo">
-        <span class="brand-name">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
-    </a>
-
-    <!-- Barre de recherche centrale -->
-    <div class="search-wrapper">
-        <div class="search-box">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="search-input" placeholder="Rechercher un produit..." class="search-input"
-            onfocus="openModal()">
+    <nav class="navbar">
+        <!-- Logo et nom de la plateforme -->
+        <a class="navbar-brand">
+            <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="nav-logo">
+            <span class="brand-name">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+        </a>
+    
+        <!-- Barre de recherche centrale -->
+        <div class="search-wrapper">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="Rechercher un produit..." class="search-input" onfocus="openModalProduitPanier()">
+            </div>
         </div>
-    </div>
-
-    <!-- Menu principal -->
-    <div class="nav-menu">
-        <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="nav-link">
-            <i class="fas fa-home"></i>
-            <span>Accueil</span>
-        </a>
-        <a href="#produits" class="nav-link">
-            <i class="fa fa-box"></i> Produits
-        </a>
-        <a href="#localisation" class="nav-link">
-            <i class="fa fa-map-marker-alt"></i> Localisation
-        </a>
-        <a href="#" class="nav-link">
-            <i class="fa fa-shopping-cart"></i> Panier
-            <div id="cart-count-nav" class="cart-count navbar-panier">0</div>
-        </a>
-        
-        <a href="https://api.whatsapp.com/send/?phone=224610253216" class="nav-link contact-link">
-            <i class="fab fa-whatsapp"></i>
-            <span>Contact</span>
-        </a>
-    </div>
-    <!-- Menu hamburger pour mobile -->
-    <button class="hamburger-btn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-</nav>
+    
+        <!-- Menu principal -->
+        <div class="nav-menu">
+            <a href="{{home_boutique}}" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+            </a>
+            <a href="{% url 'panier' utilisateur_identifiant=utilisateur_identifiant %}" class="nav-link panier">
+                <i class="fa-solid fa-cart-shopping"></i> <!-- Icône du panier -->
+                <div id="cart-count-nav" class="cart-count">0</div> <!-- Compteur de panier -->
+            </a>
+            <a href="{% url 'likes_site' utilisateur_identifiant=utilisateur_identifiant %}" class="nav-link likes">
+                <i class="fa-solid fa-heart"></i>
+                <div id="likes-count-nav" class="count">0</div>
+            </a>        
+            <a href="https://api.whatsapp.com/send/?phone=224{{utilisateur_numero}}" class="nav-link contact-link">
+                <i class="fab fa-whatsapp"></i>
+                <span>Contact</span>
+            </a>
+        </div>
+    
+        <!-- Menu hamburger pour mobile -->
+        <button class="hamburger-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+  
    <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
    <div id="user-data" data-user-id="{{user_id}}"></div>
 
-   <div class="container" style="margin-top: 200px;">
-    <h2>Votre Panier <i class="fas fa-shopping-cart icon"></i></h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Nom</th>
-                    <th>Prix</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="cart-items">
-                <!-- Les lignes des produits et variantes seront ajoutées ici via AJAX -->
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Total -->
-    <div id="total-container" class="text-center">
-        <h3>Total : <span id="total-price">0.00</span> {{ devise }}</h3>
-    </div>
-    
-    <!-- Son de confirmation -->
-    <audio id="confirmation-sound" src="{% static 'not.mp3' %}" preload="auto"></audio>
-    
-    <!-- Nouvelle icône de panier avec le compteur -->
-    <div class="cart-icon-container">
-        <a href="{% url 'panier' user_id%}">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-        </a>
-        <div id="cart-count" class="cart-count">0</div>
-    </div>
-    
-    <!-- Affichage du total du panier -->
-    <div id="total-panier"></div>
-    
-    <!-- Formulaire d'envoi de la commande -->
-    <div class="order-form">
-        <h3>Envoyer votre commande</h3>
-        <form method="post" action="{% url 'envoyer_commande' user_id=user_id %}">
+ <!-- Icône de basculement de mode -->
+<div id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fas fa-moon"></i> <!-- Icône de lune par défaut -->
+</div>
+
+<!-- Icône de panier moderne responsive -->
+<div class="mobile-cart-fab">
+    <a href="{% url 'panier' utilisateur_identifiant=utilisateur_identifiant %}" aria-label="Panier" class="cart-fab">
+        <span class="cart-counter-mobil">0</span>
+        <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M17 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.75 1.03H8.1l-.9 1.63-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3.31 5H1M7 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l2.36 5Z"/>
+        </svg>
+    </a>
+</div>
+
+ <!-----------------------------Section des sliders des produits--------------------------->
+  <!-- Ajouter l'ID utilisateur dans un attribut 'data' -->
+<div id="user-data" data-user-id="{{ user_id }}"></div>
+
+<div class="panier-contenair" style="margin-top: 200px;">
+    <!-- Contenu chargé dynamiquement -->
+</div>
+
+<!-- Bouton optionnel pour rafraîchissement manuel -->
+<button data-refresh-cart class="btn btn-sm btn-secondary">
+    <i class="fas fa-sync-alt"></i> Actualiser
+</button>
+
+ <!-- Formulaire modernisé -->
+<div class="order-form-container">
+    <div class="order-form-card">
+        <div class="form-header">
+            <i class="fas fa-paper-plane"></i>
+            <h3>Envoyer votre commande</h3>
+        </div>
+        <form method="post" action="{% url 'envoyer_commande' user_id=user_id %}" class="modern-form" id="commande-form">
             {% csrf_token %}
-            <input type="text" name="name" placeholder="Nom du client" required>
-            <input type="text" name="phone" placeholder="Numéro du client" required>
-            <input type="text" name="lieu_de_livraison" placeholder="Lieu de livraison" required>
-            <button type="submit">Envoyer la commande</button>
-        </form>
-    </div>
-    
-   <!-- Modal de confirmation de commande -->
-<div id="confirmation-modal-boutique" class="modal">
-    <div class="modal-content-confirmation">
-        {% if messages %}
-            {% for message in messages %}
-                {% if 'error' in message.tags or 'warning' in message.tags %}
-                    <div class="alert {{ message.tags }} notification show">
-                        <i class="fa {% if 'error' in message.tags %}fa-exclamation-circle{% else %}fa-exclamation-triangle{% endif %}"></i>
-                        <span>{{ message }}</span>
-                    </div>
-                {% else %}
-                    <h2>Confirmation</h2>
-                    <p id="modal-message">Merci pour votre commande.</p>
-                    <div class="messages">
-                        <div class="alert {{ message.tags }} notification show">
-                            <span>{{ message }}</span>
-                        </div>
-                    </div>
-                    <p>Pour finaliser votre commande, cliquez sur l'icône WhatsApp ci-dessous.</p>
-                    <div class="whatsapp-icons">
-                        <a href="https://api.whatsapp.com/send/?phone=224{{numero}}&text=Bonjour,%20j'ai%20effectué%20une%20commande%20sur%20votre%20boutique%20{{boutique}}.%20J'aimerais%20savoir%20si%20ma%20commande%20a%20été%20bien%20prise%20en%20compte%20et%20quelles%20sont%20les%20étapes%20suivantes.%20Merci%20beaucoup!&type=phone_number&app_absent=0" target="_blank">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                        <span class="whatsapp-text">Valider la commande</span>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-        <span class="close-btn" onclick="closeModal()">×</span>
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="name" placeholder="Nom du client" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-phone"></i>
+                <input type="text" name="phone" placeholder="Numéro du client" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" name="lieu_de_livraison" placeholder="Lieu de livraison" required>
+            </div>
+            <button type="submit" class="submit-btn" id="submit-button">
+                <i class="fas fa-paper-plane"></i> Envoyer la commande
+                <span class="spinner hidden" id="submit-spinner"></span>
+            </button>
+        </form>        
     </div>
 </div>
-    <!-- Modal de filtrage et recherche -->
-<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-xl modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="productModalLabel">Filtrer et rechercher des produits</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" style="color: #d35400; font-size: 1.5rem;"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Barre de recherche et filtres alignés sur une ligne -->
-                <div class="d-flex flex-wrap align-items-center w-100 mb-3 gap-2 flex-md-nowrap justify-content-center" style="margin-top: 10px;">
-                    <div class="position-relative flex-grow-1" style="max-width: 250px; min-width: 200px;">
-                        <input id="search-input-modal" class="form-control text-center" type="search" placeholder="🔍 Rechercher un produit..." aria-label="Search" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
-                        <i class="fas fa-search position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
-                    </div>
-                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
-                        <input type="number" id="min-price" class="form-control text-center" placeholder="💰 Prix min" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
-                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
-                    </div>
-                    <div class="position-relative flex-grow-1" style="max-width: 180px; min-width: 150px;">
-                        <input type="number" id="max-price" class="form-control text-center" placeholder="💰 Prix max" oninput="performSearch(event)" style="height: 40px; font-size: 0.9rem; padding-left: 40px;">
-                        <i class="fas fa-dollar-sign position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: gray;"></i>
-                    </div>
-                    <button class="btn btn-primary d-flex align-items-center justify-content-center" onclick="applyFilter()" style="height: 40px; border-radius: 8px; background-color: #007bff; min-width: 100px;">
-                        <i class="fas fa-filter text-white me-2"></i> Appliquer
-                    </button>
+<!-- Modal ultra moderne -->
+<div id="confirmation-modal-boutique" class="modern-modal">
+    <div class="modal-content">
+        <div class="modal-body">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'error' in message.tags or 'warning' in message.tags %}
+                        <div class="alert-message {{ message.tags }}">
+                            <div class="icon-container">
+                                <i class="fas {% if 'error' in message.tags %}fa-times-circle{% else %}fa-exclamation-triangle{% endif %}"></i>
+                            </div>
+                            <h2>{% if 'error' in message.tags %}Erreur{% else %}Attention{% endif %}</h2>
+                            <p>{{ message }}</p>
+                            <button class="modal-btn" onclick="closeModal()">Compris</button>
+                        </div>
+                    {% else %}
+                        <div class="success-content">
+                            <div class="icon-container pulse">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h2>Commande confirmée!</h2>
+                            <p class="success-text">Merci pour votre confiance. Votre commande a bien été enregistrée.</p>
+                            
+                            <div class="whatsapp-action">
+                                <p class="whatsapp-desc">Finalisez votre commande en cliquant sur WhatsApp</p>
+                                <a href="https://api.whatsapp.com/send/?phone=224{{utilisateur_numero}}&text=Bonjour,%20j'ai%20effectu%C3%A9%20une%20commande%20sur%20votre%20boutique%20{{ boutique }}.%20J'aimerais%20savoir%20si%20ma%20commande%20a%20%C3%A9t%C3%A9%20bien%20prise%20en%20compte%20et%20quelles%20sont%20les%20%C3%A9tapes%20suivantes.%20Merci%20beaucoup!&type=phone_number&app_absent=0" target="_blank" class="whatsapp-btn">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                            </div>
+                            <button class="modal-btn secondary" onclick="closeModal()">Fermer</button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <button class="close-btn" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+<!-- Modal de recherche produits -->
+<div id="modal-produit-panier" class="modal-produit-panier">
+    <div class="modal-produit-panier-content">
+        <div class="modal-produit-panier-header">
+            <h5 class="modal-produit-panier-title">Filtrer et rechercher des produits</h5>
+            <button type="button" class="modal-produit-panier-close-btn" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-produit-panier-body">
+            <!-- Barre de recherche et filtres -->
+            <div class="modal-produit-panier-search-filters">
+                <div class="modal-produit-panier-search-input">
+                    <input id="modal-produit-panier-search-input" type="search" placeholder="🔍 Rechercher un produit..." aria-label="Search">
                 </div>
-                <div id="modal-product-container" class="product-section-modal mt-3">
-                    <div class="row" id="product-container-modal" style="max-height: 50vh; overflow-y: auto; display: flex; justify-content: center;">
-                        <!-- Les produits filtrés ou recherchés apparaîtront ici -->
-                    </div>
+                <div class="modal-produit-panier-price-input">
+                    <input type="number" id="modal-produit-panier-min-price" placeholder="💰 Prix min">
+                </div>
+                <div class="modal-produit-panier-price-input">
+                    <input type="number" id="modal-produit-panier-max-price" placeholder="💰 Prix max">
+                </div>
+                <button class="modal-produit-panier-apply-btn">
+                    <span>Appliquer</span>
+                </button>
+            </div>
+            <div id="modal-produit-panier-product-container" class="modal-produit-panier-product-section">
+                <div class="modal-produit-panier-product-grid" id="modal-produit-panier-product-container">
+                    <!-- Les produits filtrés ou recherchés apparaîtront ici -->
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-</div>
-<!-----------------------------Section du footer--------------------------->
-<footer class="footer">
+ <!-----------------------------Section du footer--------------------------->
+ <footer class="footer">
     <div class="footer-container">
         <!-- Section Contact -->
         <div class="footer-section">
             <h4>Contactez-nous</h4>
-            
             {% if utilisateur_email %}
                 <p>Email : {{ utilisateur_email }}</p>
             {% else %}
@@ -1913,471 +3112,1030 @@ td img {
                 <p>Adresse : Non disponible</p>
             {% endif %}
         </div>
-
-        <!-- Section Liens utiles -->
-        <div class="footer-section">
-            <h4>Liens utiles</h4>
-            <ul>
-                <li><a href="#produits">Nos produits</a></li>
-                <li><a href="#localisation">Notre localisation</a></li>
-            </ul>
-        </div>
-
         <!-- Section Réseaux sociaux -->
         <div class="footer-section">
             <h4>Suivez-nous</h4>
             <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
+                 <a href="https://www.facebook.com/profile.php?id=61572862923573&mibextid=ZbWKwL"><i class="fab fa-facebook"></i></a>
+                <a href="https://x.com/warabaguinee?t=OYWsxA-GIp7q-o_RqBBxfg&s=09"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.instagram.com/waraba_guinee?igsh=YW41eHdycW9vOXFh"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/waraba-guinee-b97a7634a"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.youtube.com/channel/UCzD7sydRdbR9e6jTgtZG7GQ"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@warabaguinee"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
+
+        <!-- Section Paiement sécurisé -->
+        <div class="footer-section">
+            <h4>Paiement sécurisé</h4>
+            <p>Nous offrons des options de paiement sécurisé via Orange Money.</p>
+        </div>
     </div>
+    
+    <!-- Footer bottom section -->
     <div class="footer-bottom">
         <p>&copy; 2025 Boutique Moderne. Tous droits réservés.</p>
+        <p><a href="#privacy-policy">Politique de confidentialité</a> | <a href="#terms-of-service">Conditions d'utilisation</a></p>
     </div>
 </footer>
+<!-- Ajout de Font Awesome si besoin -->
+<script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
 
-<!-----------------------------Section du footer--------------------------->
+<!-- Ajout de jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Ajout de Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'homeJs/navigateurControle.js' %}"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script src="{% static 'homeJs/navigateurControle.js' %}"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ---------------------------// API gestion des categories produits  ---------------------------------->
 <script>
-    function toggleMenu() {
-        const navbarLinks = document.querySelector('.navbar-links');
-        navbarLinks.classList.toggle('show'); // Bascule la classe "show"
-    }
-    
-    
-    //panier à jour 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Appel AJAX pour obtenir le nombre total d'articles dans le panier
-        fetch('/obtenir-panier/')
-            .then(response => response.json())
-            .then(data => {
-                // Mettre à jour le compteur du panier avec le nombre d'articles
-                const cartCount = document.querySelector('#cart-count');
-                const sidebarCount = document.querySelector('#sidebar-count');
-                const cartCountNav = document.querySelector('#cart-count-nav');
-                cartCount.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier
-                cartCountNav.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier pour la navbar
-                sidebarCount.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier pour le sidebar
-            })
-            .catch(error => {
-                console.error('Erreur lors de la récupération du panier:', error);
-            });
-    });
-    
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Vérifier la présence du token CSRF dans la balise meta
-        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfTokenElement) {
-            console.error('Token CSRF introuvable dans la balise meta.');
-            return;
-        }
-    
-        const csrfToken = csrfTokenElement.getAttribute('content');
-    
-        // Récupérer le panier via AJAX dès que la page est chargée
-        fetch('/obtenir_panier_table/')
-            .then(response => response.json())
-            .then(data => {
-                const cartItemsContainer = document.getElementById('cart-items');
-                const totalPriceElement = document.getElementById('total-price');
-                let totalPrice = 0;
-    
-                // Vider le tableau avant de remplir
-                cartItemsContainer.innerHTML = '';
-    
-                // Afficher les produits dans le panier
-                data.produits.forEach(item => {
-                    let row = document.createElement('tr');
-                    if (item.type === 'produit') {
-                        row.innerHTML = `
-                            <td><img src="${item.image}" alt="${item.nom}"></td>
-                            <td>${item.nom}</td>
-                            <td>${item.prix} {{ devise }}</td>
-                            <td>
-                                <button class="remove-btn" data-id="${item.id}" data-type="produit">Retirer</button>
-                            </td>
-                        `;
-                    } else if (item.type === 'variante') {
-                        row.innerHTML = `
-                            <td><img src="${item.image}" alt="${item.nom}"></td>
-                            <td>${item.nom} - ${item.taille} (${item.couleur})</td>
-                            <td>${item.prix} {{ devise }}</td>
-                            <td>
-                                <button class="remove-btn" data-id="${item.id}" data-type="variante">Retirer</button>
-                            </td>
-                        `;
+    (function() {
+        'use strict';
+
+        // Configuration centrale
+        const CONFIG = {
+            RETRY_DELAY: 3000,
+            MAX_RETRIES: 3,
+            ANIMATION_DURATION: 1000,
+            ERROR_VALUES: {
+                LIKES: 0,
+                CART_ITEMS: 0
+            },
+            SELECTORS: {
+                LIKES: {
+                    NAV: "#likes-count-nav",
+                    SIDEBAR: "#sidebar-like-count"
+                },
+                CART: {
+                    SIDEBAR: "#car-count-sidebar",
+                    NAV: "#cart-count-nav",
+                    MOBILE: ".cart-counter-mobil"
+                }
+            }
+        };
+
+        // Fonction de mise à jour avec réessais
+        function updateWithRetry(url, successHandler, errorHandler, retryCount = 0) {
+            $.ajax({
+                url: url,
+                method: "GET",
+                dataType: "json",
+                timeout: 10000,
+                success: successHandler,
+                error: function(xhr, status, error) {
+                    if (retryCount < CONFIG.MAX_RETRIES) {
+                        setTimeout(() => {
+                            updateWithRetry(url, successHandler, errorHandler, retryCount + 1);
+                        }, CONFIG.RETRY_DELAY);
+                    } else {
+                        errorHandler();
                     }
-                    cartItemsContainer.appendChild(row);
-                    totalPrice += parseFloat(item.prix);
-                });
-    
-                // Afficher le total
-                totalPriceElement.textContent = totalPrice.toFixed(2);
-    
-                // Ajouter un écouteur d'événement à chaque bouton
-                document.querySelectorAll('.remove-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        // Récupérer les données du bouton
-                        const id = this.getAttribute('data-id');
-                        const dataType = this.getAttribute('data-type');
-    
-                        // Déterminer le type (isProduit ou isVariante)
-                        const isVariante = dataType === 'variante';
-                        const isProduit = dataType === 'produit';
-    
-                        // Vérification de l'ID et type avant de procéder
-                        if (id && id !== 'undefined' && (isProduit || isVariante)) {
-                            retirerElement(id, isVariante, csrfToken, totalPriceElement); // Passer l'élément du totalPriceElement
-                        } else {
-                            console.error('Erreur : ID ou type non valide');
+                }
+            });
+        }
+
+        // Fonction générique pour mettre à jour les éléments
+        function updateElements(values, selectors, animationClass = '') {
+            Object.entries(selectors).forEach(([key, selector]) => {
+                const elements = $(selector);
+                const currentValue = elements.first().text();
+                const newValue = values[key] || CONFIG.ERROR_VALUES[key] || 0;
+
+                elements.text(newValue);
+
+                // Animation si la valeur a changé et est > 0
+                if (animationClass && newValue > 0 && currentValue !== String(newValue)) {
+                    elements.addClass(animationClass);
+                    setTimeout(() => {
+                        elements.removeClass(animationClass);
+                    }, CONFIG.ANIMATION_DURATION);
+                }
+            });
+        }
+
+        // Mise à jour des likes
+        function updateLikes() {
+            updateWithRetry(
+                "/obtenir_like/",
+                function(data) {
+                    updateElements(
+                        {
+                            NAV: data.total_likes,
+                            SIDEBAR: data.total_likes
+                        },
+                        CONFIG.SELECTORS.LIKES,
+                        "pulse"
+                    );
+                },
+                function() {
+                    updateElements(
+                        {
+                            NAV: CONFIG.ERROR_VALUES.LIKES,
+                            SIDEBAR: CONFIG.ERROR_VALUES.LIKES
+                        },
+                        CONFIG.SELECTORS.LIKES
+                    );
+                }
+            );
+        }
+
+        // Mise à jour du panier
+        function updateCartCount() {
+            updateWithRetry(
+                "/obtenir_panier/",
+                function(data) {
+                    updateElements(
+                        {
+                            SIDEBAR: data.total_articles,
+                            NAV: data.total_articles,
+                            MOBILE: data.total_articles
+                        },
+                        CONFIG.SELECTORS.CART,
+                        "pulse"
+                    );
+                },
+                function() {
+                    updateElements(
+                        {
+                            SIDEBAR: CONFIG.ERROR_VALUES.CART_ITEMS,
+                            NAV: CONFIG.ERROR_VALUES.CART_ITEMS,
+                            MOBILE: CONFIG.ERROR_VALUES.CART_ITEMS
+                        },
+                        CONFIG.SELECTORS.CART
+                    );
+                }
+            );
+        }
+
+        // Initialisation
+        $(document).ready(function() {
+            try {
+                updateLikes();
+                updateCartCount();
+            } catch (e) {
+                console.error("Erreur d'initialisation:", e);
+            }
+        });
+
+        // Écoute des événements personnalisés
+        $(document)
+            .on('cartUpdated', updateCartCount)
+            .on('likesUpdated', updateLikes);
+
+        // Export pour débogage (optionnel)
+        window.debugCounters = {
+            updateLikes,
+            updateCartCount
+        };
+    })();
+</script>
+<script>
+    (function() {
+        'use strict';
+
+        // 1. Initialisation sécurisée du spinner
+        function initSpinner() {
+            if (!document.getElementById('modern-spinner-overlay')) {
+                const spinnerHTML = `
+                    <div id="modern-spinner-overlay" style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(255, 255, 255, 0.8);
+                        display: none;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                        backdrop-filter: blur(2px);
+                    ">
+                        <div class="spinner-core" style="
+                            width: 60px;
+                            height: 60px;
+                            border: 5px solid #f3f3f3;
+                            border-top: 5px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        "></div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', spinnerHTML);
+            }
+        }
+
+        // 2. Injection des styles avec vérification d'existence
+        function injectStyles() {
+            if (!document.getElementById('dynamic-spinner-styles')) {
+                const style = document.createElement('style');
+                style.id = 'dynamic-spinner-styles';
+                style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    
+                    .form-disabled {
+                        opacity: 0.7;
+                        pointer-events: none;
+                    }
+                    
+                    #modern-spinner-overlay {
+                        transition: opacity 0.3s ease;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // 3. Gestion robuste des formulaires
+        function handleFormSubmission() {
+            const commandeForm = document.getElementById('commande-form');
+            
+            if (commandeForm) {
+                commandeForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const spinnerOverlay = document.getElementById('modern-spinner-overlay');
+                    if (!spinnerOverlay) return;
+                    
+                    // Double vérification des éléments
+                    const form = this;
+                    const submitButton = form.querySelector('[type="submit"]');
+                    
+                    // Désactivation sécurisée
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.setAttribute('data-original-text', submitButton.textContent);
+                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+                    }
+                    
+                    spinnerOverlay.style.display = 'flex';
+                    document.body.classList.add('form-disabled');
+                    
+                    // Soumission avec gestion d'erreur
+                    setTimeout(() => {
+                        try {
+                            if (form.checkValidity()) {
+                                form.submit();
+                            } else {
+                                throw new Error('Formulaire invalide');
+                            }
+                        } catch (error) {
+                            console.error('Erreur de soumission:', error);
+                            spinnerOverlay.style.display = 'none';
+                            document.body.classList.remove('form-disabled');
+                            
+                            if (submitButton) {
+                                submitButton.disabled = false;
+                                submitButton.textContent = submitButton.getAttribute('data-original-text');
+                            }
+                            
+                            // Afficher un message d'erreur utilisateur
+                            alert('Une erreur est survenue. Veuillez réessayer.');
                         }
+                    }, 150);
+                });
+            }
+        }
+
+        // 4. Gestion modale améliorée
+        function setupModal() {
+            const modal = document.getElementById('confirmation-modal-boutique');
+            
+            if (modal) {
+                // Ouverture modale conditionnelle
+                const shouldOpen = document.querySelector('.alert-message, .success-content') !== null;
+                if (shouldOpen) {
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                // Fermeture modale sécurisée
+                const closeModal = () => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                };
+                
+                // Gestionnaires d'événements protégés
+                document.querySelectorAll('.modal-btn, .close-btn').forEach(btn => {
+                    btn.removeEventListener('click', closeModal); // Nettoyage préalable
+                    btn.addEventListener('click', closeModal);
+                });
+                
+                // Fermeture au clic externe
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+        }
+
+        // 5. Initialisation séquentielle sécurisée
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initSpinner();
+                injectStyles();
+                handleFormSubmission();
+                setupModal();
+            } catch (error) {
+                console.error('Erreur d\'initialisation:', error);
+                // Fallback minimaliste
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    form.addEventListener('submit', () => {
+                        alert('Chargement en cours...');
                     });
                 });
-            })
-            .catch(error => console.error('Erreur lors du chargement du panier:', error));
-    });
-    
-    // Fonction pour retirer un élément du panier
-    function retirerElement(id, isVariante, csrfToken, totalPriceElement) {
-        // Déterminer l'URL de la requête en fonction de si c'est un produit ou une variante
-        const url = isVariante ? `/retirer_variante/${id}/` : `/retirer_produit/${id}/`;
-    
-        // Afficher l'URL dans la console pour déboguer
-        console.log('URL de la requête:', url);
-    
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken  // Ajouter le token CSRF dans les en-têtes
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur lors du retrait de l\'élément');
             }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'removed_from_cart') {
-                // Jouer le son de confirmation
-                const confirmationSound = document.getElementById('confirmation-sound');
-                confirmationSound.play();  // Joue le son lorsque l'élément est retiré
-    
-                // Retirer la ligne correspondante au produit ou à la variante
-                const rowToRemove = document.querySelector(`[data-id="${id}"]`).closest('tr');
-                const itemPrice = parseFloat(rowToRemove.querySelector('td:nth-child(3)').textContent.replace('{{ devise }}', '').trim());
-                rowToRemove.remove();  // Retirer la ligne du tableau
-    
-                // Recalculer le prix total
-                let currentTotalPrice = parseFloat(totalPriceElement.textContent);
-                currentTotalPrice -= itemPrice;  // Réduire le prix de l'élément retiré
-                totalPriceElement.textContent = currentTotalPrice.toFixed(2);  // Mettre à jour l'affichage du total
-    
-                // Mettre à jour le compteur de l'icône panier
-                updateCartCount();
-            } else {
-                console.error('Erreur lors du retrait de l\'élément');
+        });
+
+        // 6. Gestion des erreurs non capturées (safety net)
+        window.addEventListener('error', function(event) {
+            console.error('Erreur non capturée:', event.error);
+            const spinner = document.getElementById('modern-spinner-overlay');
+            if (spinner) spinner.style.display = 'none';
+            document.body.classList.remove('form-disabled');
+        });
+    })();
+</script>
+
+<script>
+    // Fonction utilitaire pour récupérer les cookies avec sécurisation améliorée
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Vérification stricte pour éviter les faux positifs
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
-        })
-        .catch(error => {
-            // Affichage de l'erreur dans la console et alerte pour l'utilisateur
-            console.error('Erreur AJAX:', error);
-            alert('Une erreur est survenue. Veuillez réessayer.');
+        }
+        return cookieValue;
+    }
+    
+    // Fonction pour afficher un message d'erreur stylisé avec gestion améliorée
+    function afficherErreur(message, isFatal = false) {
+        // Nettoyage préalable pour éviter les doublons
+        $('.alert.alert-danger').remove();
+        
+        const errorHtml = `
+            <div class="alert alert-danger ${isFatal ? 'fatal-error' : ''}" role="alert">
+                <i class="fas fa-exclamation-circle"></i> ${message}
+                <button onclick="location.reload()" class="btn btn-sm btn-link">Réessayer</button>
+            </div>
+        `;
+        
+        $('.panier-contenair').html(errorHtml);
+        
+        if (isFatal) {
+            $('.cart-counter, #cart-count-nav, .cart-counter-mobil').text('0');
+            $('.panier-contenair').addClass('panier-vide');
+        }
+    }
+    
+    // Fonction pour afficher le spinner avec gestion de cache
+    let spinnerTimeout;
+    function showSpinner(customMessage = '') {
+        // Annule tout spinner précédent en attente
+        if (spinnerTimeout) clearTimeout(spinnerTimeout);
+        
+        const defaultMessage = customMessage || 'Chargement en cours...';
+        $('.panier-contenair').html(`
+            <div class="text-center py-4 spinner-container">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p class="mt-2">${defaultMessage}</p>
+            </div>
+        `);
+        
+        return new Promise(resolve => {
+            spinnerTimeout = setTimeout(resolve, 1000);
         });
     }
     
-    // Fonction pour mettre à jour le compteur du panier
-    function updateCartCount() {
-        fetch('/obtenir-panier/')
-            .then(response => response.json())
-            .then(data => {
-                const cartCount = document.querySelector('#cart-count');
-                const cartCountNav = document.querySelector('#cart-count-nav');
-                if (cartCount && cartCountNav) {
-                    cartCount.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier
-                    cartCountNav.textContent = data.total_articles;  // Mettre à jour le nombre d'articles dans le panier pour la navbar
+    // Fonction principale pour charger le panier avec gestion améliorée des états
+    async function chargerPanier() {
+        try {
+            // Affiche le spinner avec un léger délai pour éviter le clignotement sur les connexions rapides
+            await new Promise(resolve => setTimeout(resolve, 50));
+            await showSpinner();
+            
+            const response = await $.ajax({
+                url: '/obtenir_panier_table/',
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                timeout: 10000, // 10 secondes timeout
+                headers: {
+                    'Cache-Control': 'no-cache'
                 }
-            })
-            .catch(error => {
-                console.error('Erreur lors de la récupération du panier:', error);
             });
-    }
-
     
-  
-    
-       // ---------------------------Script d'affichage et de gestion du modal------------------------------
-       function playNotificationSound() {
-        var sound = document.getElementById('notification-sound');
-        if (sound) {
-            sound.play(); // Jouer le son
-        }}
-       function showModal() {
-        const modal = document.getElementById('confirmation-modal-boutique');  // Changer l'ID ici
-        modal.style.display = 'flex';
-        setTimeout(() => modal.classList.add('show'), 100);
-        playNotificationSound(); // Jouer le son lors de l'affichage du modal
-    }
-    
-    function closeModal() {
-        const modal = document.getElementById('confirmation-modal-boutique');  // Changer l'ID ici
-        modal.classList.remove('show');
-        setTimeout(() => modal.style.display = 'none', 300);
-    }
-    
-    // Affichage automatique du modal après soumission de la commande
-    window.addEventListener('load', () => {
-        if (document.querySelector('.messages')) {
-            showModal();
-        }
-    });
-    
-
-</script>
-<script>
-    // Gestion du menu mobile
-    function toggleMenu() {
-        const navbar = document.querySelector('.navbar');
-        const navLinks = document.querySelector('.nav-links');
-        const hamburger = document.querySelector('.hamburger i');
-        
-        navLinks.classList.toggle('active');
-        navbar.classList.toggle('mobile-active');
-        
-        // Animation de l'icône du menu
-        if (navLinks.classList.contains('active')) {
-            hamburger.classList.remove('fa-bars');
-            hamburger.classList.add('fa-times');
-        } else {
-            hamburger.classList.add('fa-bars');
-            hamburger.classList.remove('fa-times');
+            if (response.status === 'success') {
+                updateCartUI(response);
+            } else {
+                afficherErreur(response.message || 'Erreur lors du chargement du panier');
+            }
+        } catch (error) {
+            handleAjaxError(error);
+        } finally {
+            if (spinnerTimeout) clearTimeout(spinnerTimeout);
         }
     }
-
-    // Gestion du scroll pour la navbar
-    let lastScroll = 0;
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        const currentScroll = window.pageYOffset;
+    
+    // Mise à jour de l'interface du panier avec animations améliorées
+    function updateCartUI(response) {
+        if (!response.panier_html) {
+            console.error('Réponse invalide:', response);
+            afficherErreur('Format de données invalide');
+            return;
+        }
+    
+        $('.panier-contenair')
+            .hide()
+            .html(response.panier_html)
+            .fadeIn(300, function() {
+                // Déclenche un recalcul des styles pour forcer le rendu
+                $(this).css('opacity', '1');
+            });
         
-        if (currentScroll <= 0) {
-            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        const nbArticles = response.data?.articles?.length || 0;
+        updateCartCounters(nbArticles);
+        
+        $('.panier-contenair').toggleClass('panier-vide', nbArticles === 0);
+    }
+    
+    // Mise à jour des compteurs de panier avec animation améliorée
+    function updateCartCounters(count) {
+        const counters = $('.cart-counter, #car-count-sidebar, #cart-count-nav, .cart-counter-mobil');
+        const currentCount = parseInt(counters.first().text()) || 0;
+        
+        // Animation seulement si le count change
+        if (currentCount !== count) {
+            counters.text(count);
+            
+            if (count > 0) {
+                counters.addClass('pulse');
+                setTimeout(() => counters.removeClass('pulse'), 1000);
+            }
+        }
+    }
+    
+    // Gestion des erreurs AJAX avec plus de détails
+    function handleAjaxError(error) {
+        console.error('Erreur AJAX:', error);
+        
+        let errorMessage = 'Erreur inconnue';
+        if (error.status === 0) {
+            errorMessage = 'Problème de connexion - Vérifiez votre réseau';
+        } else if (error.status === 500) {
+            errorMessage = 'Erreur serveur - Veuillez réessayer plus tard';
+        } else if (error.statusText === 'timeout') {
+            errorMessage = 'Temps écoulé - Le serveur met trop de temps à répondre';
+        } else if (error.responseJSON?.message) {
+            errorMessage = error.responseJSON.message;
+        }
+        
+        afficherErreur(errorMessage, error.status !== 404);
+    }
+    
+    // Fonction pour confirmer la suppression avec gestion améliorée des événements
+    function confirmRemove(itemId, itemType) {
+        const overlay = $('#confirm-overlay');
+        if (!overlay.length) {
+            console.error('Overlay de confirmation introuvable');
             return;
         }
         
-        if (currentScroll > lastScroll && !navbar.classList.contains('mobile-active')) {
-            // Scroll vers le bas
-            navbar.style.transform = 'translateY(-100%)';
-        } else {
-            // Scroll vers le haut
-            navbar.style.transform = 'translateY(0)';
-            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.15)';
+        overlay.css('display', 'flex');
+        setTimeout(() => overlay.addClass('show'), 10);
+        
+        overlay.data({
+            itemId: itemId,
+            itemType: itemType
+        });
+        
+        // Nettoyage des événements précédents pour éviter les doublons
+        $('#confirm-cancel').off('click').on('click', () => hideOverlay(overlay));
+        $('#confirm-remove').off('click').on('click', () => proceedWithRemoval(overlay));
+    }
+    
+    // Cacher l'overlay de confirmation avec gestion améliorée
+    function hideOverlay(overlay) {
+        overlay.removeClass('show');
+        setTimeout(() => {
+            overlay.css('display', 'none');
+            overlay.removeData('itemId').removeData('itemType');
+        }, 300);
+    }
+    
+    // Procéder à la suppression avec validation
+    function proceedWithRemoval(overlay) {
+        const csrfToken = getCookie('csrftoken');
+        const { itemId, itemType } = overlay.data();
+        
+        if (!itemId || !itemType) {
+            console.error('Données manquantes pour la suppression');
+            return;
         }
         
-        lastScroll = currentScroll;
+        hideOverlay(overlay);
+        retirerElementDuPanier(itemId, itemType, csrfToken);
+    }
+    
+    // Fonction pour supprimer un élément du panier avec gestion améliorée
+    async function retirerElementDuPanier(itemId, itemType, csrfToken) {
+        if (!csrfToken) {
+            afficherErreur('Erreur de sécurité - Token manquant', true);
+            return;
+        }
+    
+        try {
+            const url = `/retirer-du-panier/${itemId}/${itemType}/`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin'
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.status === 'removed_from_cart') {
+                await handleSuccessfulRemoval(itemId, data);
+            } else if (data.status === 'not_in_cart') {
+                console.warn('Item n\'était pas dans le panier');
+                mettreAJourInterface(data);
+            } else {
+                throw new Error(data.message || 'Statut de réponse inattendu');
+            }
+        } catch (error) {
+            handleRemovalError(error);
+        }
+    }
+    
+    // Gestion de la suppression réussie avec animation améliorée
+    async function handleSuccessfulRemoval(itemId, data) {
+        const itemCard = $(`[data-id="${itemId}"]`);
+        if (itemCard.length) {
+            itemCard.css({
+                transition: 'all 0.3s ease',
+                transform: 'translateX(100%)',
+                opacity: '0'
+            });
+            
+            await new Promise(resolve => setTimeout(resolve, 300));
+            itemCard.remove();
+        }
+        
+        mettreAJourInterface(data);
+        await refreshCartAfterRemoval();
+    }
+    
+    // Rafraîchir le panier après suppression avec gestion d'état
+    async function refreshCartAfterRemoval() {
+        try {
+            await showSpinner('Mise à jour du panier...');
+            const response = await $.get('/obtenir_panier_table/');
+            
+            if (response.panier_html) {
+                $('.panier-contenair').html(response.panier_html);
+            } else {
+                throw new Error('Réponse invalide du serveur');
+            }
+        } catch (error) {
+            handleAjaxError(error);
+        }
+    }
+    
+    // Gestion des erreurs de suppression avec feedback utilisateur
+    function handleRemovalError(error) {
+        console.error('Erreur de suppression:', error);
+        
+        const errorMessage = error.message.includes('réseau') 
+            ? 'Problème de connexion - Vérifiez votre réseau' 
+            : error.message.includes('Token') 
+                ? 'Erreur de sécurité - Veuillez actualiser la page'
+                : 'Échec de la suppression - Veuillez réessayer';
+        
+        $('.panier-contenair').prepend(`
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                ${errorMessage}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `);
+    }
+    
+    // Mise à jour complète de l'interface avec validation
+    function mettreAJourInterface(data) {
+        if (!data || typeof data.total_articles === 'undefined') {
+            console.error('Données de mise à jour invalides:', data);
+            return;
+        }
+    
+        // Mise à jour du nombre d'articles
+        $('.item-count').text(`${data.total_articles} article(s)`);
+        
+        // Mise à jour des totaux avec vérification
+        if (data.new_total !== undefined) {
+            $('.total-price, .subtotal-price').each(function() {
+                $(this).text(`${data.new_total} ${$(this).data('currency') || 'FG'}`);
+            });
+        }
+        
+        // Mise à jour des compteurs avec animation
+        updateCartCounters(data.total_articles);
+        
+        // Gestion du panier vide
+        $('.panier-contenair').toggleClass('panier-vide', data.total_articles === 0);
+    }
+    
+    // Initialisation du document avec gestion améliorée des événements
+    $(document).ready(function() {
+        // Chargement initial avec vérification de l'état
+        if ($('.panier-contenair').length) {
+            chargerPanier();
+        } else {
+            console.warn('Conteneur du panier introuvable');
+        }
+        
+        // Gestion des événements avec délégation améliorée
+        $(document)
+            .on('ajax:success', '[data-ajax-cart]', function(e, data) {
+                if (data.status === 'success') {
+                    chargerPanier();
+                }
+            })
+            .on('click', '[data-refresh-cart]', function(e) {
+                e.preventDefault();
+                chargerPanier();
+            });
+        
+        // Gestion des erreurs AJAX globales avec filtrage
+        $(document).ajaxError(function(event, jqxhr, settings) {
+            if (settings.url.includes('/panier/') || settings.url === '/obtenir_panier_table/') {
+                handleAjaxError(jqxhr);
+            }
+        });
+    });
+    
+    // Expose les fonctions nécessaires globalement pour les événements HTML
+    window.confirmRemove = confirmRemove;
+</script>
+
+<!-- //------------------- Récupérer l'ID de l'utilisateur Gestion Modal-----------------------------------  -->
+<script>
+ // Fonction pour ouvrir le modal
+function openModalProduitPanier() {
+    document.getElementById('modal-produit-panier').style.display = 'flex';
+}
+
+// Fermer le modal avec le bouton de fermeture
+document.querySelector('.modal-produit-panier-close-btn').addEventListener('click', function() {
+    document.getElementById('modal-produit-panier').style.display = 'none';
+});
+
+// Fermer le modal en cliquant en dehors
+window.addEventListener('click', function(event) {
+    if (event.target === document.getElementById('modal-produit-panier')) {
+        document.getElementById('modal-produit-panier').style.display = 'none';
+    }
+});
+   
+</script>
+<script>
+const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
+
+if (!user_id) {
+    console.error("Utilisateur ID est manquant");
+}
+
+$(document).ready(function () {
+    // Fonction pour récupérer et afficher les produits
+    function chargerProduits() {
+        let nom_produit = $('#modal-produit-panier-search-input').val().trim();
+        let prix_min = $('#modal-produit-panier-min-price').val();
+        let prix_max = $('#modal-produit-panier-max-price').val();
+
+        console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
+
+        // Afficher un indicateur de chargement en réduisant l'opacité
+        $('#modal-produit-panier-product-container').css('opacity', '0.5');
+
+        $.ajax({
+            url: '/produits/recherche/' + user_id + '/',
+            type: 'GET',
+            data: {
+                'nom': nom_produit,
+                'prix_min': prix_min,
+                'prix_max': prix_max
+            },
+            success: function (response) {
+                console.log("✅ Réponse AJAX reçue :", response);
+
+                if (response.produits_html) {
+                    $('#modal-produit-panier-product-container').html(response.produits_html).css('opacity', '1');
+
+                    // Vérifier si aucun produit n'a été retourné
+                    if ($('#modal-produit-panier-product-container').html().trim() === '') {
+                        $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+                    }
+                } else {
+                    console.error("⚠️ Réponse inattendue du serveur :", response);
+                    alert("Une erreur s'est produite.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("❌ Erreur AJAX :", {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText
+                });
+                alert("Une erreur s'est produite lors du chargement des produits.");
+            }
+        });
+    }
+
+    // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
+    $('.modal-produit-panier-apply-btn').on('click', function () {
+        chargerProduits();
     });
 
-    // Fermer le menu mobile lors du clic sur un lien
-    document.querySelectorAll('.nav-links .nav-item').forEach(link => {
-        link.addEventListener('click', () => {
+    // Optionnel: Ajouter la recherche lors de la touche Entrée
+    $('#modal-produit-panier-search-input').on('keypress', function(e) {
+        if (e.which === 13) {
+            chargerProduits();
+        }
+    });
+});
+</script>
+    <script>
+        // Gestion du menu mobile
+        function toggleMenu() {
+            const navbar = document.querySelector('.navbar');
             const navLinks = document.querySelector('.nav-links');
             const hamburger = document.querySelector('.hamburger i');
+            
+            navLinks.classList.toggle('active');
+            navbar.classList.toggle('mobile-active');
+            
+            // Animation de l'icône du menu
             if (navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                document.querySelector('.navbar').classList.remove('mobile-active');
+                hamburger.classList.remove('fa-bars');
+                hamburger.classList.add('fa-times');
+            } else {
                 hamburger.classList.add('fa-bars');
                 hamburger.classList.remove('fa-times');
             }
+        }
+
+        // Gestion du scroll pour la navbar
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll <= 0) {
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                return;
+            }
+            
+            if (currentScroll > lastScroll && !navbar.classList.contains('mobile-active')) {
+                // Scroll vers le bas
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll vers le haut
+                navbar.style.transform = 'translateY(0)';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.15)';
+            }
+            
+            lastScroll = currentScroll;
         });
-    });
 
+        // Fermer le menu mobile lors du clic sur un lien
+        document.querySelectorAll('.nav-links .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.querySelector('.nav-links');
+                const hamburger = document.querySelector('.hamburger i');
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    document.querySelector('.navbar').classList.remove('mobile-active');
+                    hamburger.classList.add('fa-bars');
+                    hamburger.classList.remove('fa-times');
+                }
+            });
+        });
 
-</script>
+   
+    </script>
 
-<script>
-    // Gestion du menu hamburger
-    function toggleMenu() {
-        const navMenu = document.querySelector('.nav-menu');
-        const hamburgerBtn = document.querySelector('.hamburger-btn');
-        
-        navMenu.classList.toggle('show');
-        hamburgerBtn.classList.toggle('active');
-        
-        // Empêcher le défilement de la page quand le menu est ouvert
-        document.body.style.overflow = navMenu.classList.contains('show') ? 'hidden' : '';
-    }
-
-    // Fermer le menu mobile lors du clic sur un lien
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
+    <script>
+        // Gestion du menu hamburger
+        function toggleMenu() {
             const navMenu = document.querySelector('.nav-menu');
             const hamburgerBtn = document.querySelector('.hamburger-btn');
             
-            if (navMenu.classList.contains('show')) {
+            navMenu.classList.toggle('show');
+            hamburgerBtn.classList.toggle('active');
+            
+            // Empêcher le défilement de la page quand le menu est ouvert
+            document.body.style.overflow = navMenu.classList.contains('show') ? 'hidden' : '';
+        }
+
+        // Fermer le menu mobile lors du clic sur un lien
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.querySelector('.nav-menu');
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                
+                if (navMenu.classList.contains('show')) {
+                    navMenu.classList.remove('show');
+                    hamburgerBtn.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Fermer le menu mobile lors du redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const navMenu = document.querySelector('.nav-menu');
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                
                 navMenu.classList.remove('show');
                 hamburgerBtn.classList.remove('active');
                 document.body.style.overflow = '';
             }
         });
-    });
-
-    // Fermer le menu mobile lors du redimensionnement de la fenêtre
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            const navMenu = document.querySelector('.nav-menu');
-            const hamburgerBtn = document.querySelector('.hamburger-btn');
-            
-            navMenu.classList.remove('show');
-            hamburgerBtn.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-</script>
+    </script>
 
 
 
 <!-- Sidebar mobile -->
+
 <div class="sidebar-overlay"></div>
 <div class="mobile-sidebar">
-<div class="sidebar-header">
-    <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="sidebar-logo">
-    <span class="sidebar-brand">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
-</div>
+    <div class="sidebar-header">
+        <img src="{% if logo %}{{ logo }}{% else %}{% static 'logo2.png' %}{% endif %}" alt="Logo de la boutique" class="sidebar-logo">
+        <span class="sidebar-brand">{% if shop_name %}{{ shop_name }}{% else %}Nom de la boutique{% endif %}</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <a href="{{home_boutique}}" class="sidebar-link">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        
+        <!-- Conteneur pour les icônes like et panier -->
+        <div class="icons-container">
+            <a href="{% url 'likes_site' utilisateur_identifiant=utilisateur_identifiant %}" class="icon-link like-container" style="text-decoration: none;">
+                <i class="fa-solid fa-heart"></i>
+                <div id="sidebar-like-count" class="icon-count">0</div>
+            </a>
+            <a href="{% url 'panier' utilisateur_identifiant=utilisateur_identifiant %}" class="icon-link cart-container"style="text-decoration: none;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <div id="car-count-sidebar" class="icon-count">0</div>
+            </a>
+        </div>
+        
+        <a href="https://api.whatsapp.com/send/?phone=224{{utilisateur_numero}}" class="sidebar-link">
+            <i class="fab fa-whatsapp"></i>
+            <span>Contact</span>
+        </a>
+    </nav>
 
-<nav class="sidebar-nav">
-    <a href="{% url 'boutique_contenu' boutique_id=boutique_id %}" class="sidebar-link">
-        <i class="fas fa-home"></i>
-        <span>Accueil</span>
-    </a>
-    <a href="#product" class="sidebar-link">
-        <i class="fas fa-box"></i>
-        <span>Produits</span>
-    </a>
-    <a href="#localisation" class="sidebar-link">
-        <i class="fa fa-map-marker-alt"></i> Localisation
-    </a>
-    <a href="#" class="sidebar-link">
-        <i class="fa fa-shopping-cart"></i> Panier
-        <div id="sidebar-count" class="cart-count navbar-panier" style="font-size:12px;">0</div>
-    </a>
-    <a href="https://api.whatsapp.com/send/?phone=224610253216" class="sidebar-link">
-        <i class="fab fa-whatsapp"></i>
-        <span>Contact</span>
-    </a>
-</nav>
+    <!-- Icône de basculement de mode dans la sidebar -->
+    <div id="theme-toggle-mobile" class="theme-toggle-mobile">
+        <i id="theme-icon-mobile" class="fas fa-moon"></i>
+    </div>
 </div>
-
 <script>
 // Gestion de la sidebar mobile
 document.addEventListener('DOMContentLoaded', function() {
-const hamburgerBtn = document.querySelector('.hamburger-btn');
-const sidebar = document.querySelector('.mobile-sidebar');
-const overlay = document.querySelector('.sidebar-overlay');
-const sidebarClose = document.querySelector('.sidebar-close');
-const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const sidebar = document.querySelector('.mobile-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const sidebarClose = document.querySelector('.sidebar-close');
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
-function toggleSidebar() {
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-}
+    function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
 
-hamburgerBtn.addEventListener('click', toggleSidebar);
-overlay.addEventListener('click', toggleSidebar);
-sidebarClose.addEventListener('click', toggleSidebar);
+    hamburgerBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+    sidebarClose.addEventListener('click', toggleSidebar);
 
-// Fermer la sidebar lors du clic sur un lien
-sidebarLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        toggleSidebar();
+    // Fermer la sidebar lors du clic sur un lien
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            toggleSidebar();
+        });
     });
-});
 });
 </script>
+
+
 <script>
-     //<!-------------------------------- Modal de recherche de produit et filtrage Pour la recherche------------------------------------------> 
-function openModal() {
-    if (!document.getElementById('productModal').classList.contains('show')) {
-      const modal = new bootstrap.Modal(document.getElementById('productModal'));
-      modal.show();
-    }
-  }
-  
-  function performSearch(event) {
-    event.preventDefault(); // Empêche le comportement par défaut du formulaire
-    const searchQuery = document.getElementById('search-input-modal').value.trim();
-    const minPrice = document.getElementById('min-price').value.trim();
-    const maxPrice = document.getElementById('max-price').value.trim();
-  
-    if (searchQuery === "" && minPrice === "" && maxPrice === "") return;  // Ne pas faire de recherche sans critère
-  
-    const validMinPrice = minPrice !== "" ? minPrice : undefined;
-    const validMaxPrice = maxPrice !== "" ? maxPrice : undefined;
-  
-    const userId = document.getElementById('user-data').getAttribute('data-user-id');
-  
-    $.ajax({
-      url: `/recherche-produit/${userId}/`,
-      data: {
-        'nom': searchQuery,
-        'prix_min': validMinPrice,
-        'prix_max': validMaxPrice
-      },
-      success: function(response) {
-        if (response.produits && response.produits.length > 0) {
-          updateModalProducts(response.produits);
-        } else {
-          console.log('Aucun produit trouvé');
+    document.addEventListener('DOMContentLoaded', function() {
+        const html = document.documentElement; // On cible <html> et non <body>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeIconMobile = document.getElementById('theme-icon-mobile');
+    
+        // Vérifier le mode enregistré ou définir par défaut
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        themeIcon.classList.toggle('fa-sun', savedTheme === 'light');
+        themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
+        if (themeIconMobile) {
+            themeIconMobile.classList.toggle('fa-sun', savedTheme === 'light');
+            themeIconMobile.classList.toggle('fa-moon', savedTheme === 'dark');
         }
-      },
-      error: function(error) {
-        console.error('Erreur AJAX:', error);
-      }
+    
+        // Fonction pour basculer entre les thèmes
+        function toggleTheme() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+            html.setAttribute('data-theme', newTheme);
+            themeIcon.classList.toggle('fa-sun', newTheme === 'light');
+            themeIcon.classList.toggle('fa-moon', newTheme === 'dark');
+            if (themeIconMobile) {
+                themeIconMobile.classList.toggle('fa-sun', newTheme === 'light');
+                themeIconMobile.classList.toggle('fa-moon', newTheme === 'dark');
+            }
+            localStorage.setItem('theme', newTheme);
+        }
+    
+        // Ajouter l'événement de clic à l'icône originale
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+    
+        // Ajouter l'événement de clic à l'icône dans la sidebar mobile
+        if (themeToggleMobile) {
+            themeToggleMobile.addEventListener('click', toggleTheme);
+        }
     });
-  }
-  
-  function updateModalProducts(produits) {
-    const productContainer = document.getElementById('product-container-modal');
-    productContainer.innerHTML = '';
-  
-    if (produits.length > 0) {
-      produits.forEach(product => {
-        const productElement = createProductElement(product);
-        const colDiv = document.createElement('div');
-        colDiv.classList.add('col-6', 'col-lg-2', 'mb-4');
-        colDiv.appendChild(productElement);
-        productContainer.appendChild(colDiv);
-      });
-    } else {
-      productContainer.innerHTML = '<p>Aucun produit trouvé</p>';
+</script>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+    // Sélectionner tous les liens dans la sidebar
+    const sidebarLinks = document.querySelectorAll(".mobile-sidebar .sidebar-link");
+
+    // Sélectionner la sidebar et l'overlay
+    const mobileSidebar = document.querySelector(".mobile-sidebar");
+    const sidebarOverlay = document.querySelector(".sidebar-overlay");
+
+    // Fonction pour fermer la sidebar
+    function closeSidebar() {
+        mobileSidebar.classList.remove("active");
+        sidebarOverlay.classList.remove("active");
+        document.body.style.overflow = "auto"; // Réactiver le scroll sur le body
     }
-  }
-  
-  function createProductElement(product) {
-    const div = document.createElement('div');
-    div.classList.add('product-item-modal');
-    div.dataset.name = product.nom.toLowerCase();
-    div.dataset.price = product.prix;
-  
-    div.innerHTML = `
-     <a href="${product.url}" class="product-link">
-        <img src="${product.image_url || ''}" alt="${product.nom}" class="product-image-modal">
-      </a>
-      <div class="product-info-modal">
-        <div class="product-name-modal">${product.nom}</div>
-        <div class="product-price">${product.prix} ${product.devise}</div>
-      </div>
-      <a href="${product.url}" class="product-link">
-        <div class="product-icon-eye">👁️</div>
-      </a>
-      
-    `;
-    return div;
-  }
+
+    // Ajouter un écouteur d'événements à chaque lien
+    sidebarLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+            // Empêcher le comportement par défaut si nécessaire
+            e.preventDefault();
+
+            // Fermer la sidebar
+            closeSidebar();
+
+            // Rediriger vers l'URL du lien après un court délai (optionnel)
+            setTimeout(() => {
+                window.location.href = link.href;
+            }, 300); // 300ms de délai pour la fermeture de la sidebar
+        });
+    });
+
+    // Fermer la sidebar en cliquant sur l'overlay (optionnel)
+    sidebarOverlay.addEventListener("click", closeSidebar);
+});
 </script>
 </body>
 </html>
-

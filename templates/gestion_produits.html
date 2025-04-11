@@ -279,137 +279,226 @@ transform: scale(1.1);
   }
 }
 
-/* Style général de la notification */
-.notification-box {
-  position: fixed;
-  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
-  right: 10px;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
-  color: #fff;
-  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
-  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
-}
 
-/* Pointe de la boîte */
-.notification-box:after {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
-  z-index: 9999;
-}
-
-/* Icône futuriste de robot */
-.notification-box i {
-  font-size: 2.5rem; /* Taille plus grande pour l'icône */
-  margin-right: 20px;
-  color: #00ffcc; /* Couleur cybernétique verte */
-  animation: glow 1.5s infinite alternate; /* Effet de lueur */
-}
-
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem; /* Agrandit la taille du texte */
-  flex-grow: 1;
-  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
-  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
-  color: #fff; /* Assure que le texte est bien visible */
-}
-
-/* Bouton de fermeture */
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  padding: 5px;
-}
-
-.close-btn:hover {
-  color: #00ffcc; /* Couleur hover dynamique */
-  transform: scale(1.2);
-}
-
-/* Styles responsive */
-@media (max-width: 768px) {
-  .notification-box {
-    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
-    right: 5px; /* Réduit l'espacement sur les petits écrans */
-    padding: 12px 18px;
-    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+:root {
+    --bg-color: rgba(255, 255, 255, 0.97);
+    --text-color: #333;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+    --mobile-breakpoint: 768px;
   }
-
-  .notification-box i {
-    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  
+  .messages-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    z-index: 9999;
+    pointer-events: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
-
-  .notification-box .message {
-    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  
+  .messages-container {
+    max-width: 600px;
+    width: 90%;
+    pointer-events: auto;
+    padding: 10px;
   }
-
+  
+  .notification-modal {
+    position: relative;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .notification-modal.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  
+  .notification-modal.closing {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  
+  .notification-icon {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    color: var(--primary-color, #4e73ff);
+  }
+  
+  .notification-content {
+    padding-left: 40px;
+    padding-right: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
   .close-btn {
-    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: all 0.2s ease-out;
+    color: inherit;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    touch-action: manipulation;
   }
-}
-
-@media (max-width: 480px) {
-  .notification-box {
-    top: 5%; /* Réduit encore la distance du haut */
-    right: 5px; /* Garde une marge minimale à droite */
-    padding: 8px 15px;
-    width: 90%; /* Largeur ajustée pour les petits écrans */
+  
+  .close-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
   }
-
-  .notification-box i {
-    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--progress-gradient);
+    transform-origin: left;
+    transition: width 5s linear;
   }
-
-  .notification-box .message {
-    font-size: 1rem; /* Réduit encore la taille du texte */
+  
+  /* Effet de "glow" subtil */
+  .notification-modal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
   }
-
-  .close-btn {
-    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  
+  /* Animation d'entrée spécifique pour chaque notification */
+  .notification-modal:nth-child(1) { transition-delay: 0.1s; }
+  .notification-modal:nth-child(2) { transition-delay: 0.2s; }
+  .notification-modal:nth-child(3) { transition-delay: 0.3s; }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .messages-overlay {
+        padding-top: 10px;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+    
+    .messages-container {
+        width: 95%;
+        max-width: 100%;
+        padding: 5px;
+    }
+    
+    .notification-modal {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+    }
+    
+    .notification-icon {
+        left: 15px;
+        top: 15px;
+        font-size: 20px;
+    }
+    
+    .notification-content {
+        padding-left: 35px;
+        padding-right: 15px;
+        font-size: 14px;
+    }
+    
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .progress-bar {
+        height: 2px;
+    }
   }
-}
-
-/* Animation de lueur pour l'icône */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  
+  @media (max-width: 480px) {
+    .notification-modal {
+        padding: 12px;
+    }
+    
+    .notification-icon {
+        left: 12px;
+        top: 12px;
+        font-size: 18px;
+    }
+    
+    .notification-content {
+        padding-left: 30px;
+        padding-right: 10px;
+    }
+    
+    .notification-modal::after {
+        display: none; /* Supprime l'effet glow sur petits écrans */
+    }
   }
-  100% {
-    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
+  
+  /* Support pour les appareils tactiles */
+  @media (hover: none) {
+    .close-btn {
+        opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+        background: rgba(0, 0, 0, 0.1);
+    }
   }
-}
-
-/* Styles des notifications */
-.notification.show {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateY(-50%) translateX(100%);
-}
-
+  
+  /* Amélioration pour les très grands écrans */
+  @media (min-width: 1600px) {
+    .messages-container {
+        max-width: 700px;
+    }
+  }
+  
 /* Style pour le bouton de fermeture du sidebar */
 .sidebar-close {
   display: none; /* Caché par défaut sur grands écrans */
@@ -542,24 +631,33 @@ transform: scale(1.1);
     </style>
 </head>
 <body>
-  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
-  {% if messages %}
-      <div class="messages">
+    {% if messages %}
+    <div class="messages-overlay" id="messages-overlay">
+      <div class="messages-container">
           {% for message in messages %}
-              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                  <!-- Icône futuriste de robot -->
-                  <i class="fas fa-robot"></i>
-                  <div class="message">
-                      {{ message }}
+              <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+                  <div class="notification-icon">
+                      <i class="fas fa-robot pulse"></i>
                   </div>
-                  <button class="close-btn" onclick="closeNotification(this)">
+                  
+                  <div class="notification-content">
+                      <div class="message">
+                          {{ message }}
+                      </div>
+                  </div>
+                  
+                  <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
                       <i class="fas fa-times"></i>
                   </button>
+                  
+                  <div class="progress-bar"></div>
               </div>
           {% endfor %}
       </div>
-  {% endif %}
+    </div>
+    {% endif %}
 
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -579,18 +677,11 @@ transform: scale(1.1);
     <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
     <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
     <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-    <a href=""><i class="fas fa-map"></i> Lieux</a>
-    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
     <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
     <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
     <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
-    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
-    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
     <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
     <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
-    <a href=""><i class="fas fa-bell"></i> Notifications</a>
     <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
     <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
@@ -881,142 +972,160 @@ transform: scale(1.1);
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: #ff6600;"></button>
           </div>
           <div class="modal-body">
-              <form method="POST" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <div class="row g-3">
-                      <!-- Nom du produit -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_nom" class="form-label">Nom du produit</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-cube"></i></span>
-                              {{ form.nom|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Prix -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_prix" class="form-label">Prix</label>
-                          <div class="input-group">
-                              <span class="input-group-text">GNF</span>
-                              {{ form.prix|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Quantité en stock -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_quantite_stock" class="form-label">Quantité en stock</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-cogs"></i></span>
-                              {{ form.quantite_stock|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Référence (Facultative) -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_reference" class="form-label">Référence (Facultatif)</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                              {{ form.reference|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Marque -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_marque" class="form-label">Marque</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                              {{ form.marque|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Poids -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_poids" class="form-label">Poids (kg)</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                              {{ form.poids|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Dimensions -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_dimensions" class="form-label">Dimensions</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                              {{ form.dimensions|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- État -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_etat" class="form-label">État</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-                              {{ form.etat|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Vidéo promotionnelle -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_video_promotionnelle" class="form-label">Vidéo promotionnelle</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-video"></i></span>
-                              {{ form.video_promotionnelle|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Mise en avant -->
-                      <div class="col-12 col-md-6 col-lg-4">
-                          <label for="id_mise_en_avant" class="form-label">Mise en avant</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-star"></i></span>
-                              {{ form.mise_en_avant|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Tags -->
-                      <div class="col-12">
-                          <label for="id_tags" class="form-label">Tags</label>
-                          <div class="form-check">
-                              {{ form.tags|add_class:"form-check-input border" }}
-                          </div>
-                      </div>
-
-                      <!-- Image principale -->
-                      <div class="col-12 col-md-6">
-                          <label for="id_image" class="form-label">Image principale</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-image"></i></span>
-                              {{ form.image|add_class:"form-control border" }}
-                          </div>
-                      </div>
-
-                      <!-- Description -->
-                      <div class="col-12">
-                          <label for="id_description" class="form-label">Description</label>
-                          <div class="input-group">
-                              <span class="input-group-text"><i class="fas fa-align-left"></i></span>
-                              {{ form.description|add_class:"form-control border" }}
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Affichage des erreurs -->
-                  {% if form.errors %}
-                      <ul class="alert alert-danger">
-                          {% for field in form %}
-                              {% for error in field.errors %}
-                                  <li>{{ error }}</li>
-                              {% endfor %}
-                          {% endfor %}
-                      </ul>
-                  {% endif %}
-
-                  <!-- Bouton soumettre centré -->
-                  <div class="d-flex justify-content-center mt-4">
-                      <button type="submit" class="btn btn-dark btn-lg" name="ajouter" style="border-radius: 30px; padding: 10px 20px; background: #ff6600; border: none;">Ajouter</button>
-                  </div>
-              </form>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <!-- Nom du produit -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_nom" class="form-label">Nom du produit</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-cube"></i></span>
+                            {{ form.nom|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Prix -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_prix" class="form-label">Prix</label>
+                        <div class="input-group">
+                            <span class="input-group-text">GNF</span>
+                            {{ form.prix|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Ancien Prix (Si promo) -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_ancien_prix" class="form-label">Ancien Prix (Si promo)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">GNF</span>
+                            {{ form.ancien_prix|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Quantité en stock -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_quantite_stock" class="form-label">Quantité en stock</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                            {{ form.quantite_stock|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Référence (Facultative) -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_reference" class="form-label">Référence (Facultatif)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            {{ form.reference|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Marque -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_marque" class="form-label">Marque</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            {{ form.marque|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Poids -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_poids" class="form-label">Poids (kg)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                            {{ form.poids|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Dimensions -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_dimensions" class="form-label">Dimensions</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            {{ form.dimensions|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Type de produit -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_type_produit" class="form-label">Type de produit</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            {{ form.type_produit|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- État -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_etat" class="form-label">État</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                            {{ form.etat|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Vidéo promotionnelle -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_video_promotionnelle" class="form-label">Vidéo promotionnelle</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-video"></i></span>
+                            {{ form.video_promotionnelle|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Mise en avant -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="id_mise_en_avant" class="form-label">Mise en avant</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-star"></i></span>
+                            {{ form.mise_en_avant|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Tags -->
+                    <div class="col-12">
+                        <label for="id_tags" class="form-label">Tags</label>
+                        <div class="form-check">
+                            {{ form.tags|add_class:"form-check-input border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Image principale -->
+                    <div class="col-12 col-md-6">
+                        <label for="id_image" class="form-label">Image principale</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-image"></i></span>
+                            {{ form.image|add_class:"form-control border" }}
+                        </div>
+                    </div>
+            
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label for="id_description" class="form-label">Description</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            {{ form.description|add_class:"form-control border" }}
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Affichage des erreurs -->
+                {% if form.errors %}
+                    <ul class="alert alert-danger">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            
+                <!-- Bouton soumettre centré -->
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-dark btn-lg" name="ajouter" style="border-radius: 30px; padding: 10px 20px; background: #ff6600; border: none;">Ajouter</button>
+                </div>
+            </form>            
           </div>
       </div>
   </div>
@@ -1042,62 +1151,6 @@ function toggleSidebar() {
   }
 }
 
-// Fonction pour afficher/masquer la description flottante
-// Fonction pour afficher ou masquer la description
-function toggleDescription(imageId) {
-  var descElement = document.getElementById('desc' + imageId);
-  var buttonElement = document.getElementById('toggleDesc' + imageId);
-  
-  if (descElement.style.display === "none") {
-      descElement.style.display = "block";
-      buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
-  } else {
-      descElement.style.display = "none";
-      buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
-  }
-}
-             // Fonction pour fermer une notification
-function closeNotification(element) {
-    const notification = element.parentElement;
-    notification.classList.add('hide');
-    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-}
-
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
-}
-
-// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
-    });
-});
-
-// Fonction pour afficher une notification avec animation et son
-function showNotification(element) {
-    const notification = element;
-    notification.classList.add('show');
-    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-    
-    // Ajouter un délai avant de masquer la notification
-    setTimeout(() => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    }, 10000); // La notification disparaît après 5 secondes
-}
-
-// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-setTimeout(() => {
-    const notifications = document.querySelectorAll('.notification');
-    notifications.forEach(notification => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    });
-}, 10000); // La notification disparaît après 5 secondes
 
 
 // Script pour appliquer un filtre avec la barre de recherche
@@ -1115,6 +1168,122 @@ document.querySelector('#search').addEventListener('input', function() {
   });
 });
   </script>
+  <script>
+    // Configuration des thèmes
+const themes = {
+  light: {
+      bg: 'rgba(255, 255, 255, 0.97)',
+      text: '#333',
+      border: 'rgba(0, 0, 0, 0.1)',
+      progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+  }
+};
+
+// Fonction pour jouer le son avec gestion moderne des erreurs
+function playNotificationSound() {
+  const sound = document.getElementById('notification-sound');
+  if (!sound) return;
+
+  const playSound = () => {
+      sound.currentTime = 0;
+      sound.volume = 0.8;
+      sound.play().catch(e => console.debug("Sound play prevented:", e));
+  };
+
+  // Essayer de jouer immédiatement
+  playSound();
+  
+  // Si bloqué, attendre une interaction utilisateur
+  if (sound.paused) {
+      const enableSound = () => {
+          playSound();
+          document.removeEventListener('click', enableSound);
+          document.removeEventListener('keydown', enableSound);
+      };
+      document.addEventListener('click', enableSound, { once: true });
+      document.addEventListener('keydown', enableSound, { once: true });
+  }
+}
+
+// Fermeture de notification avec animation fluide
+function closeNotification(closeButton) {
+  const notification = closeButton.closest('.notification-modal');
+  if (!notification) return;
+  
+  notification.classList.add('closing');
+  setTimeout(() => {
+      notification.classList.remove('show', 'closing');
+      notification.remove();
+  }, 300);
+}
+
+// Affichage de notification avec effets modernes
+function showNotification(notificationElement) {
+  // Appliquer le thème light par défaut
+  const themeConfig = themes.light;
+  
+  notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+  notificationElement.style.setProperty('--text-color', themeConfig.text);
+  notificationElement.style.setProperty('--border-color', themeConfig.border);
+  notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+
+  // Animation d'entrée
+  notificationElement.classList.add('show');
+  playNotificationSound();
+  
+  // Barre de progression animée
+  const progressBar = notificationElement.querySelector('.progress-bar');
+  if (progressBar) {
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+          progressBar.style.transition = 'width 5s linear';
+          progressBar.style.width = '0%';
+      }, 50);
+  }
+
+  // Fermeture automatique après délai
+  let timeoutId = setTimeout(() => {
+      notificationElement.classList.add('closing');
+      setTimeout(() => notificationElement.remove(), 300);
+  }, 5000);
+
+  // Réinitialiser le timeout si la souris entre
+  notificationElement.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      if (progressBar) progressBar.style.transition = 'none';
+  });
+
+  // Redémarrer le timeout si la souris sort
+  notificationElement.addEventListener('mouseleave', () => {
+      if (progressBar) {
+          const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+          progressBar.style.transition = `width ${remaining}ms linear`;
+          progressBar.style.width = '0%';
+      }
+      timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, progressBar ? remaining : 5000);
+  });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.notification-modal').forEach(notification => {
+      showNotification(notification);
+  });
+});
+
+// Gestion des clics en dehors pour fermer
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.notification-modal')) {
+      document.querySelectorAll('.notification-modal.show').forEach(modal => {
+          modal.classList.add('closing');
+          setTimeout(() => modal.remove(), 300);
+      });
+  }
+});
+    </script>   
 
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

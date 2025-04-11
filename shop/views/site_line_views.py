@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from shop.models import Boutique, Produit, ProduitImage, SliderImage, Localisation, LocalImages
 from shop.forms import BoutiqueUpdateForm
@@ -79,19 +78,18 @@ def gestion_boutique(request):
             if statut_publication == "publié":
                 boutique.publier = True
                 boutique = form.save()
-                return JsonResponse({"status": "success", "message": "La boutique a été publiée avec succès."})
+                messages.success(request, "La boutique a été publiée avec succès.")
+                return redirect('gestion_boutique')
             elif statut_publication == "chargé":
                 boutique = form.save(commit=False)
                 boutique.publier = False
                 boutique.save()
-                return JsonResponse({"status": "load", "message": "Les informations de la boutique ont été chargées avec succès."})
+                messages.success(request, "Les informations de la boutique ont été chargées avec succès.")
+                return redirect('gestion_boutique')
         else:
-            errors = form.errors.as_json()
-            return JsonResponse({
-                "status": "error",
-                "message": "Erreur lors de la validation du formulaire.",
-                "errors": errors
-            }, status=400)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
 
     return render(request, 'gestion_boutique.html', {
         'form': form,

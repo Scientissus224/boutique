@@ -3,8 +3,16 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from shop.models import Utilisateur, Client, InformationsSupplementaires, SupportClient
+import urllib.request
 
 def login(request):
+    # Vérification de la connexion internet
+    try:
+        urllib.request.urlopen('https://www.google.com', timeout=5)
+    except:
+        messages.error(request, "Veuillez vous connecter à internet pour accéder à cette page.")
+        return render(request, 'login.html')
+    
     if request.method == 'POST':
         # Récupération des informations du formulaire
         username = request.POST.get('username', '').strip()
@@ -41,16 +49,8 @@ def login(request):
 
                         messages.success(request, f"Bienvenue, {user.nom_complet} dans votre boutique '{user.nom_boutique}' !")
 
-                        # Redirection en fonction du type de boutique
-                        if infos.type_boutique == 'petite':
-                            return redirect('table_petite')
-                        elif infos.type_boutique == 'croissance':
-                            return redirect('table_croissance')
-                        elif infos.type_boutique == 'grande':
-                            return redirect('table')
-                        else:
-                            messages.error(request, "Le type de boutique est invalide.")
-                            return redirect('login')
+                        # Redirection vers la table principale pour tous les types de boutique
+                        return redirect('table')
 
                     except InformationsSupplementaires.DoesNotExist:
                         # Aucun enregistrement trouvé pour les informations supplémentaires

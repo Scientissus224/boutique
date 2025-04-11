@@ -8,10 +8,16 @@ from .views import (
 
     # Vues de gestion des produits et du panier
     gestion_produits,
+    obtenir_produits_ajax,
     gestion_slider,
     gestion_localisation,
     afficher_produits_panier,
-    afficher_session_id,
+    ajouter_produit_aux_likes,
+    retirer_produit_des_likes,
+    obtenir_like,
+     likes_site,
+     obtenir_produits_likes,
+    reinitialiser_compteurs,
     detail_produits,
     afficher_produit,
     boutique_contenu,
@@ -21,8 +27,7 @@ from .views import (
     reinitialiser_panier,
     obtenir_panier,
     obtenir_panier_table,
-    retirer_produit_du_panier,
-    retirer_variante_du_panier,
+    retirer_du_panier,
     envoyer_commande,
     rechercher_produits,
     commandes_utilisateur,
@@ -34,6 +39,7 @@ from .views import (
      vente_list,
      mise_a_jour_quantite,
      custom_404,
+     demo_interactive,
 
     # Vues liées à la gestion du site
     home,

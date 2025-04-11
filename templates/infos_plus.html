@@ -3,252 +3,842 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Informations Supplémentaires</title>
+  <title>Configuration Boutique</title>
   {% load widget_tweaks %}
+  {% load static %}
 
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- Select2 amélioré -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css">
 
   <style>
-    body {
-      background: #000000; /* Fond noir brillant */
-      background-image: linear-gradient(135deg, #000000, #333333); /* Dégradé pour un effet brillant */
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center; /* Centrage vertical */
-      padding: 20px;
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --accent: #06b6d4;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --gray: #94a3b8;
     }
-    .form-container {
-      width: 100%;
-      max-width: 900px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      color: #fff;
-      position: relative;
-    }
-    .form-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .form-header i {
-      font-size: 2rem;
-      color: #ff8c00; /* Couleur orange foncé */
-    }
-    .form-header h4 {
-      font-size: 1.75rem;
-      font-weight: 500;
-      margin-top: 10px;
-      color: #ff8c00; /* Couleur orange foncé */
-    }
-    .form-label {
-      font-weight: 500;
-    }
-    .form-control {
-      border: none;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      text-align: left;
-    }
-    .form-control:focus {
-      box-shadow: none;
-      background: rgba(255, 255, 255, 0.3);
-    }
-    .btn-primary {
-      background: #ff8c00; /* Couleur orange foncé */
-      border: none;
-      border-radius: 25px;
-      padding: 10px 30px;
-    }
-    .btn-primary:hover {
-      background: #e07b00; /* Teinte légèrement plus foncée pour le survol */
-    }
-    .progress-container {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-      margin-top: 20px;
-      height: 10px;
-    }
-    .progress-bar {
+    
+    html, body {
       height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--dark), #1e293b);
+      font-family: 'Inter', sans-serif;
+      color: var(--light);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .fullpage-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+    }
+    
+    .header-bar {
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
       width: 0;
-      border-radius: 5px;
       transition: width 0.5s ease;
     }
-    .messages {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1050;
-      width: 100%;
-      max-width: 350px;
+    
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
     }
-    .notification {
-      background: linear-gradient(135deg, #ff8c00, #e07b00);
-      color: #fff;
-      padding: 15px 20px;
-      border-radius: 10px;
+    
+    .config-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 1200px;
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .config-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .config-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, var(--accent), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .config-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+    
+    /* Styles améliorés pour Select2 */
+    .select2-container .select2-selection--single {
+      height: 56px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .select2-container--open .select2-selection--single {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: var(--light);
+      line-height: 1.5;
+      padding-left: 0;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 54px;
+      right: 12px;
+    }
+    
+    .select2-dropdown {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .select2-results__option {
+      padding: 12px 16px;
+      color: var(--light);
+      transition: all 0.2s ease;
+    }
+    
+    .select2-results__option--highlighted {
+      background: rgba(99, 102, 241, 0.7);
+      color: white;
+    }
+    
+    .select2-results__option[aria-selected=true] {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .select2-search--dropdown {
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .select2-search--dropdown .select2-search__field {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    
+    .btn-continue {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      font-weight: 600;
       font-size: 1rem;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-      border: 1px solid #e07b00;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    
+    .btn-continue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-continue i {
+      margin-right: 10px;
+    }
+    
+    .progress-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    
+    .progress-text {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--gray);
     }
-    .close-btn {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.25rem;
-      cursor: pointer;
+    
+    .progress-bar-full {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
     }
-    @media (max-width: 768px) {
-      .form-container {
-        padding: 20px;
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 10px;
+      width: 0;
+      transition: width 0.5s ease, background 0.5s ease;
+    }
+    
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+    }
+    
+    .progress-step {
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .config-card {
+        padding: 2rem;
       }
-      .form-header h4 {
+      
+      .config-title {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1.5rem;
+      }
+      
+      .config-card {
+        padding: 1.5rem;
+        border-radius: 18px;
+      }
+      
+      .config-title {
+        font-size: 1.75rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .main-content {
+        padding: 1rem;
+      }
+      
+      .config-card {
+        padding: 1.25rem;
+        border-radius: 16px;
+      }
+      
+      .config-title {
         font-size: 1.5rem;
       }
-      .btn-primary {
-        padding: 8px 25px;
-        font-size: 0.9rem;
+    }¨
+
+
+    :root {
+      --bg-color: rgba(255, 255, 255, 0.97);
+      --text-color: #333;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+      --mobile-breakpoint: 768px;
+    }
+    
+    .messages-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 20px;
+      z-index: 9999;
+      pointer-events: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .messages-container {
+      max-width: 600px;
+      width: 90%;
+      pointer-events: auto;
+      padding: 10px;
+    }
+    
+    .notification-modal {
+      position: relative;
+      margin-bottom: 15px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-30px) scale(0.95);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .notification-modal.show {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    
+    .notification-modal.closing {
+      transform: translateY(-20px) scale(0.95);
+      opacity: 0;
+    }
+    
+    .notification-icon {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      font-size: 24px;
+      color: var(--primary-color, #4e73ff);
+    }
+    
+    .notification-content {
+      padding-left: 40px;
+      padding-right: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.6;
+      transition: all 0.2s ease-out;
+      color: inherit;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      touch-action: manipulation;
+    }
+    
+    .close-btn:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background: var(--progress-gradient);
+      transform-origin: left;
+      transition: width 5s linear;
+    }
+    
+    /* Effet de "glow" subtil */
+    .notification-modal::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+    }
+    
+    /* Animation d'entrée spécifique pour chaque notification */
+    .notification-modal:nth-child(1) { transition-delay: 0.1s; }
+    .notification-modal:nth-child(2) { transition-delay: 0.2s; }
+    .notification-modal:nth-child(3) { transition-delay: 0.3s; }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .messages-overlay {
+          padding-top: 10px;
+          align-items: center;
+          justify-content: flex-start;
+          flex-direction: column;
+      }
+      
+      .messages-container {
+          width: 95%;
+          max-width: 100%;
+          padding: 5px;
+      }
+      
+      .notification-modal {
+          padding: 15px;
+          margin-bottom: 10px;
+          border-radius: 10px;
+      }
+      
+      .notification-icon {
+          left: 15px;
+          top: 15px;
+          font-size: 20px;
+      }
+      
+      .notification-content {
+          padding-left: 35px;
+          padding-right: 15px;
+          font-size: 14px;
+      }
+      
+      .close-btn {
+          top: 10px;
+          right: 10px;
+          width: 24px;
+          height: 24px;
+          font-size: 14px;
+      }
+      
+      .progress-bar {
+          height: 2px;
       }
     }
+    
     @media (max-width: 480px) {
-      .form-container {
-        max-width: 90%;
+      .notification-modal {
+          padding: 12px;
+      }
+      
+      .notification-icon {
+          left: 12px;
+          top: 12px;
+          font-size: 18px;
+      }
+      
+      .notification-content {
+          padding-left: 30px;
+          padding-right: 10px;
+      }
+      
+      .notification-modal::after {
+          display: none; /* Supprime l'effet glow sur petits écrans */
+      }
+    }
+    
+    /* Support pour les appareils tactiles */
+    @media (hover: none) {
+      .close-btn {
+          opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+          background: rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    /* Amélioration pour les très grands écrans */
+    @media (min-width: 1600px) {
+      .messages-container {
+          max-width: 700px;
       }
     }
 
-    /* Styles pour l'icône et le bouton retour */
-    .icon-link {
-      display: flex;
-      align-items: center;
-      color: #ff8c00; /* Couleur orange foncée */
-      font-size: 1.2rem;
-      text-decoration: none;
-      margin-top: 20px;
+
+      /* Style optionnel pour le bouton pendant le chargement */
+      .btn-continue.loading {
+        opacity: 0.8;
+        cursor: not-allowed;
     }
-    .icon-link i {
-      margin-right: 8px;
-      font-size: 1.5rem;
-    }
-    .icon-link:hover {
-      color: #e07b00;
-    }
+    
   </style>
 </head>
 <body>
-  {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-    <div class="notification" id="notification-{{ forloop.counter }}">
-      <span>{{ message }}</span>
-      <button class="close-btn" onclick="closeNotification(this)">&times;</button>
-    </div>
-    {% endfor %}
+
+  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+
+{% if messages %}
+<div class="messages-overlay" id="messages-overlay">
+  <div class="messages-container">
+      {% for message in messages %}
+          <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+              <div class="notification-icon">
+                  <i class="fas fa-robot pulse"></i>
+              </div>
+              
+              <div class="notification-content">
+                  <div class="message">
+                      {{ message }}
+                  </div>
+              </div>
+              
+              <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                  <i class="fas fa-times"></i>
+              </button>
+              
+              <div class="progress-bar"></div>
+          </div>
+      {% endfor %}
   </div>
-  {% endif %}
-
-  <div class="form-container">
-    <div class="form-header">
-      <i class="fas fa-info-circle"></i>
-      <h4>Informations Supplémentaires</h4>
-    </div>
-
-    <form method="POST" action="{% url 'informations_supplementaires' utilisateur.id %}">
-      {% csrf_token %}
-
-      {% if form.errors %}
-      <div class="alert alert-danger">
-        <strong>Erreur !</strong> Veuillez corriger les erreurs ci-dessous.
-      </div>
-      {% endif %}
-
-      <!-- Grille pour afficher les champs dans des colonnes -->
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="id_type_boutique" class="form-label">Type de Boutique</label>
-          {{ form.type_boutique|add_class:"form-control" }}
+</div>
+{% endif %}
+  <div class="fullpage-container">
+    <div class="header-bar" id="header-progress"></div>
+    
+    <div class="main-content">
+      <div class="config-card animate__animated animate__fadeIn">
+        <div class="config-header">
+          <h1 class="config-title">Configuration de votre boutique</h1>
+          <p class="config-subtitle">Complétez ces informations pour personnaliser votre expérience sur notre plateforme</p>
         </div>
-        <div class="col-md-4 mb-3">
-          <label for="id_produits_vendus" class="form-label">Produits Vendus</label>
-          {{ form.produits_vendus|add_class:"form-control" }}
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="id_source_decouverte" class="form-label">Découverte de la plateforme</label>
-          {{ form.source_decouverte|add_class:"form-control" }}
-        </div>
+
+        <form method="POST" action="{% url 'informations_supplementaires' utilisateur.id %}" id="configForm">
+          {% csrf_token %}
+      
+          {% if form.errors %}
+          <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle me-2"></i>
+              <strong>Attention</strong> - Veuillez vérifier les informations saisies
+          </div>
+          {% endif %}
+      
+          <div class="form-grid">
+              <div class="form-group">
+                  <label for="id_type_boutique" class="form-label">
+                      <i class="fas fa-store me-2"></i>Type de boutique
+                  </label>
+                  {{ form.type_boutique|add_class:"form-select select-enhanced" }}
+              </div>
+              
+              <div class="form-group">
+                  <label for="id_produits_vendus" class="form-label">
+                      <i class="fas fa-boxes me-2"></i>Produits vendus
+                  </label>
+                  {{ form.produits_vendus|add_class:"form-select select-enhanced" }}
+              </div>
+              
+              <div class="form-group">
+                  <label for="id_source_decouverte" class="form-label">
+                      <i class="fas fa-compass me-2"></i>Comment nous avez-vous découvert ?
+                  </label>
+                  {{ form.source_decouverte|add_class:"form-select select-enhanced" }}
+              </div>
+          </div>
+      
+          <div class="progress-container">
+              <div class="progress-text">
+                  <span>Progression</span>
+                  <span id="progress-percent">0%</span>
+              </div>
+              <div class="progress-bar-full">
+                  <div class="progress-fill" id="progress-fill"></div>
+                  <div class="progress-steps">
+                      <div class="progress-step"></div>
+                      <div class="progress-step"></div>
+                      <div class="progress-step"></div>
+                  </div>
+              </div>
+          </div>
+      
+          <div class="text-center">
+              <button type="submit" class="btn btn-continue" id="submitBtn">
+                  <span id="submitText">
+                      <i class="fas fa-arrow-right me-2"></i> Continuer la configuration
+                  </span>
+                  <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+          </div>
+      </form>
+      
       </div>
-
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary">Envoyer</button>
-      </div>
-    </form>
-
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-
-    <div class="text-center mt-3">
-        <a href="/" class="icon-link">
-            <i class="bi bi-house-door"></i> Retour à la page d'accueil
-        </a>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/fr.js"></script>
   <script>
-    function updateProgress() {
-      const typeBoutique = document.getElementById("id_type_boutique").value;
-      const produitsVendus = document.getElementById("id_produits_vendus").value;
-      const sourceDecouverte = document.getElementById("id_source_decouverte").value;
-      let progress = 0;
-      const progressBar = document.getElementById("progress-bar");
+    // Gestion du spinner pendant l'envoi
+    document.getElementById('configForm').addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const text = document.getElementById('submitText');
+        
+        // Afficher le spinner et masquer le texte
+        spinner.classList.remove('d-none');
+        text.classList.add('d-none');
+        btn.disabled = true;
+        
+        // Optionnel: Changer le style du bouton pendant le chargement
+        btn.classList.add('loading');
+    });
+</script>
+  <script>
+    
+    // Configuration des thèmes
+const themes = {
+  light: {
+      bg: 'rgba(255, 255, 255, 0.97)',
+      text: '#333',
+      border: 'rgba(0, 0, 0, 0.1)',
+      progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+  }
+};
 
-      if (typeBoutique) progress += 33;
-      if (produitsVendus) progress += 33;
-      if (sourceDecouverte) progress += 34;
+// Fonction pour jouer le son avec gestion moderne des erreurs
+function playNotificationSound() {
+  const sound = document.getElementById('notification-sound');
+  if (!sound) return;
 
-      progressBar.style.width = progress + "%";
-      if (progress === 33) {
-        progressBar.style.backgroundColor = "red";
-      } else if (progress === 66) {
-        progressBar.style.backgroundColor = "darkorange";
-      } else if (progress === 100) {
-        progressBar.style.backgroundColor = "green";
+  const playSound = () => {
+      sound.currentTime = 0;
+      sound.volume = 0.8;
+      sound.play().catch(e => console.debug("Sound play prevented:", e));
+  };
+
+  // Essayer de jouer immédiatement
+  playSound();
+  
+  // Si bloqué, attendre une interaction utilisateur
+  if (sound.paused) {
+      const enableSound = () => {
+          playSound();
+          document.removeEventListener('click', enableSound);
+          document.removeEventListener('keydown', enableSound);
+      };
+      document.addEventListener('click', enableSound, { once: true });
+      document.addEventListener('keydown', enableSound, { once: true });
+  }
+}
+
+// Fermeture de notification avec animation fluide
+function closeNotification(closeButton) {
+  const notification = closeButton.closest('.notification-modal');
+  if (!notification) return;
+  
+  notification.classList.add('closing');
+  setTimeout(() => {
+      notification.classList.remove('show', 'closing');
+      notification.remove();
+  }, 300);
+}
+
+// Affichage de notification avec effets modernes
+function showNotification(notificationElement) {
+  // Appliquer le thème light par défaut
+  const themeConfig = themes.light;
+  
+  notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+  notificationElement.style.setProperty('--text-color', themeConfig.text);
+  notificationElement.style.setProperty('--border-color', themeConfig.border);
+  notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+
+  // Animation d'entrée
+  notificationElement.classList.add('show');
+  playNotificationSound();
+  
+  // Barre de progression animée
+  const progressBar = notificationElement.querySelector('.progress-bar');
+  if (progressBar) {
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+          progressBar.style.transition = 'width 5s linear';
+          progressBar.style.width = '0%';
+      }, 50);
+  }
+
+  // Fermeture automatique après délai
+  let timeoutId = setTimeout(() => {
+      notificationElement.classList.add('closing');
+      setTimeout(() => notificationElement.remove(), 300);
+  }, 5000);
+
+  // Réinitialiser le timeout si la souris entre
+  notificationElement.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      if (progressBar) progressBar.style.transition = 'none';
+  });
+
+  // Redémarrer le timeout si la souris sort
+  notificationElement.addEventListener('mouseleave', () => {
+      if (progressBar) {
+          const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+          progressBar.style.transition = `width ${remaining}ms linear`;
+          progressBar.style.width = '0%';
       }
-    }
+      timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, progressBar ? remaining : 5000);
+  });
+}
 
-    document.getElementById("id_type_boutique").addEventListener("change", updateProgress);
-    document.getElementById("id_produits_vendus").addEventListener("change", updateProgress);
-    document.getElementById("id_source_decouverte").addEventListener("change", updateProgress);
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.notification-modal').forEach(notification => {
+      showNotification(notification);
+  });
+});
 
-    function closeNotification(element) {
-      const notification = element.parentElement;
-      notification.style.opacity = "0";
-      setTimeout(() => notification.remove(), 300);
-    }
-
-    setTimeout(() => {
-      document.querySelectorAll('.notification').forEach(notification => {
-        notification.style.opacity = "0";
-        setTimeout(() => notification.remove(), 300);
+// Gestion des clics en dehors pour fermer
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.notification-modal')) {
+      document.querySelectorAll('.notification-modal.show').forEach(modal => {
+          modal.classList.add('closing');
+          setTimeout(() => modal.remove(), 300);
       });
-    }, 5000);
+  }
+});
+    </script>   
+  <script>
+    $(document).ready(function() {
+      // Initialisation des selects avec Select2
+      $('.select-enhanced').select2({
+        language: 'fr',
+        minimumResultsForSearch: 1,
+        width: '100%',
+        dropdownAutoWidth: true,
+        dropdownParent: $('.config-card'),
+        templateResult: formatOption,
+        templateSelection: formatOption
+      });
+      
+      // Formatage des options pour plus de visibilité
+      function formatOption(option) {
+        if (!option.id) return option.text;
+        
+        var iconClass = '';
+        if (option.element.parentElement.label) {
+          const label = $(option.element.parentElement.label);
+          if (label.find('i').length) {
+            iconClass = label.find('i').attr('class');
+          }
+        }
+        
+        return $(
+          '<span><i class="' + iconClass + ' me-2"></i>' + option.text + '</span>'
+        );
+      }
+      
+      // Gestion de la progression
+      function updateProgress() {
+        const fields = [
+          $("#id_type_boutique"),
+          $("#id_produits_vendus"),
+          $("#id_source_decouverte")
+        ];
+        
+        const filledFields = fields.filter(field => field.val() && field.val().trim() !== "").length;
+        const progress = Math.round((filledFields / fields.length) * 100);
+        
+        // Animation de la barre de progression
+        $("#progress-fill").css('width', progress + '%');
+        $("#header-progress").css('width', progress + '%');
+        $("#progress-percent").text(progress + '%');
+        
+        // Changement de couleur en fonction de la progression
+        if (progress < 33) {
+          $("#progress-fill").css('background', '#ef4444');
+        } else if (progress < 66) {
+          $("#progress-fill").css('background', 'linear-gradient(90deg, #f59e0b, #f97316)');
+        } else {
+          $("#progress-fill").css('background', 'linear-gradient(90deg, var(--accent), var(--primary))');
+        }
+      }
+      
+      // Écouteurs d'événements
+      $('.select-enhanced').on('change', function() {
+        updateProgress();
+        $(this).css('border-color', $(this).val() ? 'var(--accent)' : 'rgba(255, 255, 255, 0.2)');
+      });
+      
+      // Initialisation
+      updateProgress();
+      
+      // Met en valeur les champs remplis
+      $('.select-enhanced').each(function() {
+        if ($(this).val()) {
+          $(this).next('.select2-container').find('.select2-selection').css('border-color', 'var(--accent)');
+        }
+      });
+    });
   </script>
 </body>
 </html>

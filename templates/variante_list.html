@@ -1,0 +1,52 @@
+  <!-- Image du produit -->
+  <div class="product-image">
+    {% if produit.image %}
+        <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
+    {% else %}
+        <p>Aucune image disponible pour ce produit.</p>
+    {% endif %}
+</div>
+
+<!-- Informations sur le produit -->
+<div class="product-info">
+    <!-- Nom du produit -->
+    <h2>{{ produit.nom }}</h2>
+
+    <!-- Prix du produit -->
+    <div class="price">
+        {% if produit.type_produit == 'Promo' and produit.ancien_prix %}
+            <div class="promo-price">
+                <span class="current-price">{{ produit.prix }} {{ devise }}</span>
+                <span class="old-price">{{ produit.ancien_prix }} {{ devise }}</span>
+                <span class="promo-badge">PROMO</span>
+            </div>
+        {% elif produit.prix %}
+            <span class="price-value">{{ produit.prix }} {{ devise }}</span>
+        {% else %}
+            <span class="price-value">Prix non disponible</span>
+        {% endif %}
+    </div>
+
+    <!-- État du produit -->
+    <div class="state">{{ produit.etat|default:"État non spécifié" }}</div>
+
+    <!-- Description du produit -->
+    <div class="description">{{ produit.description|default:"Aucune description disponible" }}</div>
+
+    <!-- Icône pour voir les avis -->
+
+
+    <!-- Si le produit est déjà dans le panier -->
+    {% if produit.id in request.session.session_id %}
+        <div class="ajouter">
+            <i class="fas fa-check icon-cart"></i> <span>Déjà au panier</span>
+        </div>
+    {% else %}
+        <!-- Bouton pour ajouter au panier -->
+        <div id="add-to-cart">
+            <a href="javascript:void(0);" class="add-to-cart-btn-produit" data-produit-id="{{ produit.id }}" aria-label="Ajouter au Panier">
+                <i class="fas fa-cart-plus icon-cart"></i> Ajouter au Panier
+            </a>
+        </div>
+    {% endif %}
+</div>

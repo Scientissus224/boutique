@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils import timezone
 from .models import (
     Utilisateur,
     NavbarSettings,
@@ -24,13 +25,14 @@ from .models import (
     Boutique,
     SupportClient,
     Vente,
+    VenteAttente,
 
 )
 
 # Configuration de l'administration pour le modèle Utilisateur
 class UtilisateurAdmin(UserAdmin):
     # Liste des champs à afficher dans l'interface d'administration
-    list_display = ('identifiant_unique', 'nom_complet', 'nom_boutique', 'email', 'produits_vendus', 'is_active', 'is_staff', 'date_joined', 'statut_validation_compte')
+    list_display = ('identifiant_unique', 'nom_complet', 'nom_boutique', 'email', 'produits_vendus', 'logo_boutique', 'is_active', 'is_staff', 'date_joined', 'statut_validation_compte')
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'groups')
     search_fields = ('identifiant_unique', 'email', 'nom_complet', 'nom_boutique', 'produits_vendus')  # Mise à jour ici
     ordering = ('identifiant_unique',)
@@ -38,16 +40,17 @@ class UtilisateurAdmin(UserAdmin):
     # Définir les champs à afficher dans les formulaires de création et de modification
     fieldsets = (
         (None, {'fields': ('username', 'password')}),  # Les champs de base
-        ('Informations personnelles', {'fields': ('identifiant_unique', 'nom_complet', 'email', 'nom_boutique', 'numero', 'produits_vendus', 'statut_validation_compte')}),  # Mise à jour ici
+        ('Informations personnelles', {'fields': ('identifiant_unique', 'nom_complet', 'email', 'nom_boutique', 'numero', 'produits_vendus', 'statut_validation_compte', 'logo_boutique')}),  # Mise à jour ici
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),  # Permissions
         ('Dates', {'fields': ('last_login', 'date_joined')}),  # Dates
     )
     add_fieldsets = (
         (None, {'fields': ('username', 'password1', 'password2')}),  # Les champs pour la création
-        ('Informations personnelles', {'fields': ('identifiant_unique', 'nom_complet', 'email', 'nom_boutique', 'numero', 'produits_vendus')}),  # Mise à jour ici
+        ('Informations personnelles', {'fields': ('identifiant_unique', 'nom_complet', 'email', 'nom_boutique', 'numero', 'produits_vendus', 'statut_validation_compte', 'logo_boutique')}),  # Mise à jour ici
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),  # Permissions
         ('Dates', {'fields': ('last_login', 'date_joined')}),  # Dates
     )
+
 
 @admin.register(UtilisateurTemporaire)
 class UtilisateurTemporaireAdmin(admin.ModelAdmin):
@@ -110,13 +113,42 @@ admin.site.register(Client, ClientAdmin)
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'prix', 'disponible', 'quantite_stock', 'utilisateur', 'reference', 'mise_en_avant', 'date_ajout')
-    list_filter = ('disponible', 'utilisateur', 'etat', 'tags', 'mise_en_avant')
-    search_fields = ('nom', 'description', 'utilisateur__nom_complet', 'reference')
+    list_display = ('identifiant', 'nom', 'prix', 'ancien_prix', 'type_produit', 'disponible', 'quantite_stock', 'utilisateur', 'reference', 'mise_en_avant', 'date_ajout')
+    list_filter = ('disponible', 'utilisateur', 'etat', 'tags', 'mise_en_avant', 'type_produit')
+    search_fields = ('nom', 'description', 'utilisateur__nom_complet', 'reference', 'identifiant')
     ordering = ('nom',)
-    list_editable = ('disponible', 'mise_en_avant')  # Ajout de mise_en_avant pour modification rapide
-    filter_horizontal = ('tags',)  # Pour un champ M2M (Many-to-Many) comme les tags
+    list_editable = ('disponible', 'mise_en_avant', 'type_produit', 'ancien_prix')
+    filter_horizontal = ('tags',)
+    readonly_fields = ('identifiant',)  # L'identifiant est en lecture seule
 
+    fieldsets = (
+        (None, {
+            'fields': ('identifiant', 'utilisateur', 'nom', 'description', 'image')
+        }),
+        ('Détails du produit', {
+            'fields': ('prix', 'ancien_prix', 'type_produit', 'quantite_stock', 'reference', 'marque')
+        }),
+        ('Caractéristiques', {
+            'fields': ('poids', 'dimensions', 'etat', 'video_promotionnelle')
+        }),
+        ('Options', {
+            'fields': ('disponible', 'mise_en_avant', 'tags')
+        }),
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        """ Rend les champs promotionnels obligatoires si le produit est une promo """
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+        if obj and obj.type_produit == 'Promo':
+            return readonly_fields
+        return readonly_fields + ['ancien_prix']
+
+@admin.register(VenteAttente)
+class VenteAttenteAdmin(admin.ModelAdmin):
+    list_display = ('nom_produit', 'utilisateur', 'produit', 'prix_achat', 'prix_vente', 'quantite_vendue', 'date_vente')
+    search_fields = ('nom_produit', 'utilisateur__nom_complet', 'produit__nom')
+    list_filter = ('date_vente', 'utilisateur') 
+      
 @admin.register(Vente)
 class VenteAdmin(admin.ModelAdmin):
     list_display = ('nom_produit', 'utilisateur', 'prix_achat', 'prix_vente', 'quantite_vendue', 'statut', 'date_vente')
@@ -161,11 +193,23 @@ class DeviseAdmin(admin.ModelAdmin):
 class SliderImageAdmin(admin.ModelAdmin):
     list_display = ('title', 'utilisateur', 'image')
     search_fields = ('title', 'utilisateur__nom_complet')
-
+    
+    
 @admin.register(Localisation)
 class LocalisationAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'lien_maps', 'ville', 'quartier', 'repere')  # Ajout du champ 'repere'
-    search_fields = ('utilisateur__nom_complet', 'ville', 'quartier', 'repere')  # Ajout du champ 'repere'
+    list_display = ('utilisateur', 'lien_maps', 'ville', 'quartier', 'repere', 'jour_ouverture', 'jour_fermeture', 'heure_ouverture', 'heure_fermeture')
+    search_fields = ('ville', 'quartier', 'repere')
+    list_filter = ('ville', 'quartier')
+    fieldsets = (
+        ('Localisation', {
+            'fields': ('utilisateur', 'lien_maps', 'ville', 'quartier', 'repere')
+        }),
+        ('Horaires', {
+            'fields': ('jour_ouverture', 'jour_fermeture', 'heure_ouverture', 'heure_fermeture', 'ouvert_24h', 'ferme_jour_ferie'),
+            'classes': ('collapse',)
+        }),
+    )
+
 
 @admin.register(LocalImages)
 class LocalImagesAdmin(admin.ModelAdmin):
@@ -224,14 +268,73 @@ class BoutiqueSettingsAdmin(admin.ModelAdmin):
     list_filter = ('couleur_texte_cursor',)  # Filtre par couleur de texte
     
 #-------------------------------------Génération de la boutique ---------------------  
-
 @admin.register(Boutique)
 class BoutiqueAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'publier', 'date_publication', 'premium')  # Afficher utilisateur, statut de publication, date de publication et premium
-    search_fields = ('utilisateur__nom', 'description', 'premium')  # Permet de rechercher par nom de l'utilisateur, description et premium
-    list_filter = ('publier', 'date_publication', 'premium')  # Ajoute des filtres pour le statut, la date de publication et premium
-    readonly_fields = ('date_publication',)  # Rendre la date de publication non modifiable
+    list_display = ('utilisateur', 'identifiant', 'publier', 'date_publication', 'premium')
+    search_fields = ('utilisateur__nom', 'description', 'premium', 'identifiant')
+    list_filter = ('publier', 'date_publication', 'premium')
+    readonly_fields = ('date_publication', 'identifiant')  # Toujours en lecture seule
+    fieldsets = (
+        (None, {
+            'fields': ('utilisateur', 'identifiant', 'description', 'logo')
+        }),
+        ('Statut', {
+            'fields': ('publier', 'statut_publication', 'date_publication', 'premium')
+        }),
+        ('Contenu', {
+            'fields': ('html_contenu', 'produits_vendus')
+        }),
+    )
 
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Rend certains champs en lecture seule si la boutique est publiée
+        Version plus subtile qui permet certaines modifications même après publication
+        """
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+        
+        if obj and obj.publier:
+            # Champs qu'on veut verrouiller après publication
+            locked_fields = [
+                'utilisateur',       # Le propriétaire ne peut pas changer
+                'statut_publication', # Doit utiliser les actions dédiées
+                'identifiant'        # Déjà en readonly de base
+            ]
+            readonly_fields.extend(locked_fields)
+            
+            # Si premium, on verrouille aussi le statut premium
+            if obj.premium:
+                readonly_fields.append('premium')
+        
+        return tuple(set(readonly_fields))  # Évite les doublons
+
+    def save_model(self, request, obj, form, change):
+        """
+        Gestion personnalisée de la sauvegarde pour la cohérence des données
+        """
+        if obj.publier and not obj.date_publication:
+            obj.date_publication = timezone.now()
+        super().save_model(request, obj, form, change)
+
+    actions = ['publier_boutiques', 'depublier_boutiques']
+    
+    def publier_boutiques(self, request, queryset):
+        """Action admin pour publier des boutiques"""
+        updated = queryset.update(
+            publier=True,
+            statut_publication="publié",
+            date_publication=timezone.now()
+        )
+        self.message_user(request, f"{updated} boutiques publiées avec succès.")
+    
+    def depublier_boutiques(self, request, queryset):
+        """Action admin pour dépublier des boutiques"""
+        updated = queryset.update(
+            publier=False,
+            statut_publication="chargé",
+            date_publication=None
+        )
+        self.message_user(request, f"{updated} boutiques dépubliées avec succès.")
 #-------------------------------------Gestion des personnels du support client --------------------- 
 
 class SupportClientAdmin(admin.ModelAdmin):

@@ -1,0 +1,165 @@
+<div class="modern-cart">
+    <!-- Header du panier -->
+    <div class="cart-header">
+        <div class="header-content">
+            <h2 class="cart-title">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Votre Panier
+            </h2>
+            <span class="item-count">{{ produits|length }} article(s)</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    {% if not panier_vide %}
+    <!-- Liste des produits -->
+    <div class="cart-products">
+        {% for produit in produits %}
+        <div class="product-card" data-id="{{ produit.id }}">
+            <div class="product-image-container">
+                <img src="{{ produit.image }}" alt="{{ produit.nom }}" class="product-image" loading="lazy">
+                <div class="product-badge">Nouveau</div>
+            </div>
+            
+            <div class="product-info">
+                <div class="info-top">
+                    <div class="product-header">
+                        <a href="{{ produit.url }}" class="product-name">{{ produit.nom }}</a>
+                        <div class="product-price">{{ produit.prix }} {{ devise }}</div>
+                    </div>
+                    <div class="product-meta">
+                        <span class="product-sku">Réf: {{ produit.sku }}</span>
+                        <span class="product-stock in-stock">En stock</span>
+                    </div>
+                    <div class="product-features">
+                        <div class="feature">
+                            <svg viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Livraison gratuite
+                        </div>
+                        <div class="feature">
+                            <svg viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Retour gratuit
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="remove-btn" onclick="confirmRemove('{{ produit.id }}','{{ produit.type }}')" title="Supprimer">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Résumé et actions -->
+    <div class="cart-summary">
+        <div class="summary-totals">
+            <div class="summary-row">
+                <span>Sous-total</span>
+                <span class="subtotal-price">{{ total_prix }} {{ devise }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Livraison</span>
+                <span class="shipping-price">Gratuite</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <span class="total-price">{{ total_prix }} {{ devise }}</span>
+            </div>
+        </div>
+        
+        <div class="secure-checkout">
+            <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M12 2L4 7v12l8 5 8-5V7l-8-5zM12 22V12M20 7l-8 5-8-5" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <span>Paiement sécurisé SSL</span>
+        </div>
+    </div>
+
+    <div class="cart-footer">
+        <a href="{{url_boutique}}" class="continue-btn">
+            <svg viewBox="0 0 24 24" class="arrow-icon">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            Continuer mes achats
+        </a>
+        <button class="checkout-btn" id="commanderBtn">
+            <span>Envoi le formulaire de commande</span>
+            <svg viewBox="0 0 24 24" class="arrow-icon" style="transform: rotate(90deg);">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+        </button>       
+    </div>
+    {% else %}
+    <!-- Panier vide -->
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+            </svg>
+        </div>
+        <h3 class="empty-title">Votre panier est vide</h3>
+        <p class="empty-message">Commencez à shopper pour remplir votre panier</p>
+        <div class="recommendations">
+            <div style="text-align: center; padding: 25px; background: linear-gradient(to bottom, #f8f9fa, #e9ecef); border-radius: 12px; max-width: 600px; margin: 20px auto; font-family: 'Segoe UI', sans-serif; box-shadow: 0 6px 12px rgba(0,0,0,0.1);">
+
+                <!-- Camion de livraison réaliste -->
+            
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                    <span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.9em;">
+                        🚚 Véhicules dédiés
+                    </span>
+                    <span style="background: #17a2b8; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.9em;">
+                        ⏱️ Livraison express
+                    </span>
+                </div>
+            
+                <h3 style="color: #2c3e50; font-size: 1.8em; margin: 0 0 15px 0; font-weight: 700;">
+                    Votre commande livrée avec soin
+                </h3>
+            
+                <p style="color: #495057; font-size: 1.1em; line-height: 1.6; margin-bottom: 25px;">
+                    Notre flotte professionnelle assure une livraison <br>
+                    <strong style="color: #d63384;">rapide, sécurisée et suivie</strong> à votre porte
+                </p>
+            
+                <p style="font-size: 0.9em; color: #6c757d; margin-top: 25px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" width="16" style="vertical-align: middle;">
+                    Service disponible dans votre région
+                </p>
+            </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Overlay de confirmation -->
+<!-- Overlay de confirmation -->
+<div id="confirm-overlay" class="confirm-overlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
+        <h3>Supprimer cet article ?</h3>
+        <p>Cette action ne peut pas être annulée.</p>
+        <div class="confirm-buttons">
+            <button type="button" id="confirm-cancel" class="cancel-btn">Annuler</button>
+            <button type="button" id="confirm-remove" class="confirm-btn">Supprimer</button>
+        </div>
+    </div>
+</div>

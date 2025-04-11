@@ -1,60 +1,79 @@
 from django.shortcuts import get_object_or_404, render
-from shop.models import Produit, Variante, Utilisateur, Devise,Boutique
+from django.urls import reverse
+from shop.models import Produit, Variante, Utilisateur, Devise, Localisation, Boutique
 
-def afficher_produits_panier(request, utilisateur_id):
+
+def afficher_produits_panier(request, utilisateur_identifiant):
+    """
+    Affiche les produits du panier pour un utilisateur donné.
+    
+    Args:
+        request: Objet HttpRequest
+        utilisateur_identifiant (str): Identifiant unique de l'utilisateur
+        
+    Returns:
+        HttpResponse: Rendu du template avec les produits du panier
+    """
+    # Récupération de l'utilisateur et vérification d'existence
+    utilisateur = get_object_or_404(Utilisateur, identifiant_unique=utilisateur_identifiant)
+    boutique = get_object_or_404(Boutique, utilisateur__identifiant_unique=utilisateur_identifiant)
+    
+    # Récupération des données supplémentaires
+    localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
+    
+    # Construction du contexte
+    context = {
+        'utilisateur_email': utilisateur.email,
+        'shop_name': utilisateur.nom_boutique,
+        'user_id': utilisateur.id,
+        'numero': utilisateur.numero,
+        'logo': utilisateur.logo_boutique.url if utilisateur.logo_boutique else None,
+        "localisation": localisation,
+        'boutique': utilisateur.nom_boutique,
+        'boutique_id': boutique.pk,
+        "home_boutique": reverse('boutique_contenu', args=[boutique.identifiant]),
+        'utilisateur_numero': utilisateur.numero,
+        'utilisateur_identifiant': utilisateur_identifiant
+    }
+
+    return render(request, 'produits_panier.html', context)
+
+
+def likes_site(request, utilisateur_identifiant):
+    """
+    Affiche la page des likes du site pour un utilisateur donné.
+    
+    Args:
+        request: Objet HttpRequest
+        utilisateur_identifiant (str): Identifiant unique de l'utilisateur
+        
+    Returns:
+        HttpResponse: Rendu du template avec les likes du site
+    """
     # Récupérer l'utilisateur associé à l'id
-    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
-
-    # Récupérer les produits et variantes de cet utilisateur
-    produits = Produit.objects.filter(utilisateur=utilisateur)
-    variantes = Variante.objects.filter(produit__utilisateur=utilisateur, panier=True)
-      # Récupérer la boutique lié à cet utilisateur
-    boutique = get_object_or_404(Boutique, utilisateur_id=utilisateur_id)
-
-    produits_avec_variantes = []
-    produits_traités = set()  # Pour éviter les doublons de produits
-
-    # Gérer les produits avec `panier=True`
-    for produit in produits.filter(panier=True):
-        # Récupérer les variantes ayant `panier=True` pour ce produit
-        variantes_associees = variantes.filter(produit=produit)
-
-        if variantes_associees.exists():  # Si des variantes sont dans le panier
-            produits_avec_variantes.append({
-                'produit': produit,
-                'variantes': variantes_associees
-            })
-        else:  # Si aucune variante n'est dans le panier, ajouter uniquement le produit
-            produits_avec_variantes.append({
-                'produit': produit,
-                'variantes': []
-            })
-
-        # Marquer le produit comme traité
-        produits_traités.add(produit.id)
-
-    # Gérer les variantes seules (produits avec `panier=False`)
-    for variante in variantes.exclude(produit__id__in=produits_traités):
-        produits_avec_variantes.append({
-            'produit': None,  # Pas de produit parent
-            'variantes': [variante]
-        })
-
+    utilisateur = get_object_or_404(Utilisateur, identifiant_unique=utilisateur_identifiant)
+    
+    # Récupérer la boutique liée à cet utilisateur
+    boutique = get_object_or_404(Boutique, utilisateur_id=utilisateur.id)
+    localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
+    
     # Récupérer la devise de l'utilisateur
     devise = Devise.objects.filter(utilisateur=utilisateur).first()
     devise_utilisateur = devise.devise if devise else 'GNF'
-
-    # Passer toutes les informations au template
+    
+    # Préparer le contexte avec les informations de l'utilisateur
     context = {
-        'produits_panier': produits_avec_variantes,
+        'utilisateur_email': utilisateur.email,
+        'utilisateur_numero': utilisateur.numero,
+        'shop_name': utilisateur.nom_boutique,
+        'logo': utilisateur.logo_boutique.url if utilisateur.logo_boutique else None,
         'devise': devise_utilisateur,
-        'user_id': utilisateur_id,
-        'numero':utilisateur.numero,
-        'boutique':utilisateur.nom_boutique,
-        'boutique_id':boutique.pk,
-        'nom_boutique':utilisateur.nom_boutique,
-        'user_id': utilisateur_id
+        "localisation": localisation,
+        'user_id': utilisateur.id,
+        'boutique_id': boutique.pk,
+        "home_boutique": reverse('boutique_contenu', args=[boutique.identifiant]),
+        'utilisateur_identifiant': utilisateur.identifiant_unique
     }
-
-    # Rendu du template 'produits_panier.html' avec le contexte
-    return render(request, 'produits_panier.html', context)
+    
+    # Rendu du template avec le contexte
+    return render(request, 'likes_site.html', context)

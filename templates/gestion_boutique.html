@@ -312,116 +312,223 @@ transform: scale(1.1);
 }
 
 /* Pointe de la boîte */
-.notification-box:after {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
+:root {
+  --bg-color: rgba(255, 255, 255, 0.97);
+  --text-color: #333;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+  --mobile-breakpoint: 768px;
+}
+
+.messages-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
   z-index: 9999;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Icône futuriste de robot */
-.notification-box i {
-  font-size: 2.5rem; /* Taille plus grande pour l'icône */
-  margin-right: 20px;
-  color: #00ffcc; /* Couleur cybernétique verte */
-  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+.messages-container {
+  max-width: 600px;
+  width: 90%;
+  pointer-events: auto;
+  padding: 10px;
 }
 
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem; /* Agrandit la taille du texte */
-  flex-grow: 1;
-  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
-  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
-  color: #fff; /* Assure que le texte est bien visible */
+.notification-modal {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-30px) scale(0.95);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Bouton de fermeture */
+.notification-modal.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.notification-modal.closing {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
+.notification-icon {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  font-size: 24px;
+  color: var(--primary-color, #4e73ff);
+}
+
+.notification-content {
+  padding-left: 40px;
+  padding-right: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
-  color: #fff;
-  font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  padding: 5px;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: all 0.2s ease-out;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  touch-action: manipulation;
 }
 
 .close-btn:hover {
-  color: #00ffcc; /* Couleur hover dynamique */
-  transform: scale(1.2);
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
 }
 
-/* Styles responsive */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--progress-gradient);
+  transform-origin: left;
+  transition: width 5s linear;
+}
+
+/* Effet de "glow" subtil */
+.notification-modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Animation d'entrée spécifique pour chaque notification */
+.notification-modal:nth-child(1) { transition-delay: 0.1s; }
+.notification-modal:nth-child(2) { transition-delay: 0.2s; }
+.notification-modal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .notification-box {
-    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
-    right: 5px; /* Réduit l'espacement sur les petits écrans */
-    padding: 12px 18px;
-    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  .messages-overlay {
+      padding-top: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
   }
-
-  .notification-box i {
-    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  
+  .messages-container {
+      width: 95%;
+      max-width: 100%;
+      padding: 5px;
   }
-
-  .notification-box .message {
-    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  
+  .notification-modal {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
   }
-
+  
+  .notification-icon {
+      left: 15px;
+      top: 15px;
+      font-size: 20px;
+  }
+  
+  .notification-content {
+      padding-left: 35px;
+      padding-right: 15px;
+      font-size: 14px;
+  }
+  
   .close-btn {
-    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+  }
+  
+  .progress-bar {
+      height: 2px;
   }
 }
 
 @media (max-width: 480px) {
-  .notification-box {
-    top: 5%; /* Réduit encore la distance du haut */
-    right: 5px; /* Garde une marge minimale à droite */
-    padding: 8px 15px;
-    width: 90%; /* Largeur ajustée pour les petits écrans */
+  .notification-modal {
+      padding: 12px;
   }
-
-  .notification-box i {
-    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  
+  .notification-icon {
+      left: 12px;
+      top: 12px;
+      font-size: 18px;
   }
-
-  .notification-box .message {
-    font-size: 1rem; /* Réduit encore la taille du texte */
+  
+  .notification-content {
+      padding-left: 30px;
+      padding-right: 10px;
   }
+  
+  .notification-modal::after {
+      display: none; /* Supprime l'effet glow sur petits écrans */
+  }
+}
 
+/* Support pour les appareils tactiles */
+@media (hover: none) {
   .close-btn {
-    font-size: 1rem; /* Petite taille du bouton de fermeture */
+      opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+      background: rgba(0, 0, 0, 0.1);
   }
 }
 
-/* Animation de lueur pour l'icône */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+/* Amélioration pour les très grands écrans */
+@media (min-width: 1600px) {
+  .messages-container {
+      max-width: 700px;
   }
-  100% {
-    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
-  }
-}
-
-/* Styles des notifications */
-.notification.show {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateY(-50%) translateX(100%);
 }
 
  /* Style pour le champ description */
@@ -641,27 +748,135 @@ input, textarea, select {
     }
 }
 
+
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+}
+
+.card {
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.blur-circle {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  filter: blur(20px);
+  top: -50px;
+  right: -50px;
+}
+
+.alert-modern {
+  border: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.form-control, .form-select {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #4361ee;
+  box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+}
+
+#submitBtn {
+  transition: all 0.3s ease;
+  border: none;
+  background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+#submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+}
+
+.spinner-container {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.spinner-outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.spinner-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-loading #buttonText {
+  transform: translateX(-10px);
+}
+
+.btn-loading .spinner-container {
+  opacity: 1;
+}
+
     </style>
 </head>
 <body>
   <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
   {% if messages %}
-      <div class="messages">
-          {% for message in messages %}
-              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                  <!-- Icône futuriste de robot -->
-                  <i class="fas fa-robot"></i>
-                  <div class="message">
-                      {{ message }}
-                  </div>
-                  <button class="close-btn" onclick="closeNotification(this)">
-                      <i class="fas fa-times"></i>
-                  </button>
-              </div>
-          {% endfor %}
-      </div>
+  <div class="messages-overlay" id="messages-overlay">
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+                <div class="notification-icon">
+                    <i class="fas fa-robot pulse"></i>
+                </div>
+                
+                <div class="notification-content">
+                    <div class="message">
+                        {{ message }}
+                    </div>
+                </div>
+                
+                <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="progress-bar"></div>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
   {% endif %}
+  
 
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -678,15 +893,9 @@ input, textarea, select {
     <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
     <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
     <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-    <a href=""><i class="fas fa-map"></i> Lieux</a>
-    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
     <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
     <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
     <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
-    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
-    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
     <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
     <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
     <a href=""><i class="fas fa-bell"></i> Notifications</a>
@@ -698,84 +907,84 @@ input, textarea, select {
     
     <div class="content">
       <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="col-lg-5 col-md-6 col-sm-12">
-            <div class="card shadow-lg border-0">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 <!-- En-tête de la carte -->
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <div class="icon-container mb-2">
+                <div class="card-header bg-gradient-primary text-white text-center py-4 position-relative">
+                    <div class="blur-circle"></div>
+                    <div class="icon-container mb-3 position-relative">
                         <i class="fas fa-store fa-3x"></i>
                     </div>
-                    <h4 class="mb-0">Gérer votre Boutique</h4>
+                    <h3 class="mb-0 fw-bold position-relative">Gestion de Boutique</h3>
                 </div>
     
-                <!-- Corps de la carte -->
                 {% if statut_validation_compte == 'attente' %}
-                <!-- Message d'alerte si le compte est en attente de validation -->
-                <div class="alert alert-warning" style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 22px; margin-right: 10px;"></i>
-                    <p style="margin: 0;">
-                        🚨 Votre compte est en attente de validation ! Avant de publier votre boutique, veuillez contacter notre service client via l'option <strong>Support Client</strong> pour finaliser votre validation. 📞💬
-                    </p>
+                <!-- Message si compte en attente -->
+                <div class="alert alert-warning alert-modern m-4 rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-clock fa-xl me-3"></i>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1">Validation en attente</h5>
+                            <p class="mb-0">Veuillez finaliser la validation de votre compte.</p>
+                        </div>
+                    </div>
                 </div>
-            {% elif statut_validation_compte == 'invalider' %}
-                <!-- Message d'alerte si le compte est invalide -->
-                <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; display: flex; align-items: center;">
-                    <i class="fas fa-exclamation-circle" style="font-size: 22px; margin-right: 10px;"></i>
-                    <p style="margin: 0;">
-                        ⚠️ Votre compte a été invalidé. Veuillez contacter notre service client pour plus d'informations. 📞
-                    </p>
+                {% elif statut_validation_compte == 'invalider' %}
+                <!-- Message si compte invalide -->
+                <div class="alert alert-danger alert-modern m-4 rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-ban fa-xl me-3"></i>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1">Compte invalidé</h5>
+                            <p class="mb-0">Votre compte nécessite une vérification.</p>
+                        </div>
+                    </div>
                 </div>
-            {% else %}
-                <!-- Formulaire de gestion de la boutique si le compte est validé -->
+                {% else %}
+                <!-- Formulaire principal -->
                 <div class="card-body p-4">
-                    <h4 class="mb-3">Publier votre Boutique</h4>
                     <form id="boutiqueForm" method="POST" enctype="multipart/form-data" action="{% url 'gestion_boutique' %}">
                         {% csrf_token %}
                         {% for field in form %}
                             <div class="form-group mb-4">
                                 <label for="{{ field.id_for_label }}" class="form-label fw-bold d-flex align-items-center">
                                     {% if field.name == 'description' %}
-                                        <i class="fas fa-pencil-alt me-2 text-secondary"></i>
+                                        <i class="fas fa-align-left me-2 text-primary"></i>
                                     {% elif field.name == 'publier' %}
-                                        <i class="fas fa-paper-plane me-2 text-secondary"></i>
+                                        <i class="fas fa-bullhorn me-2 text-primary"></i>
                                     {% elif field.name == 'logo' %}
-                                        <i class="fas fa-file-upload me-2 text-secondary"></i>
+                                        <i class="fas fa-camera me-2 text-primary"></i>
                                     {% elif field.name == 'statut_publication' %}
-                                        <i class="fas fa-check-circle me-2 text-secondary"></i>
+                                        <i class="fas fa-toggle-on me-2 text-primary"></i>
                                     {% endif %}
                                     {{ field.label }}
-                                    {% if field.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
                                 </label>
                                 {{ field }}
                                 {% if field.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ field.errors|striptags }}
+                                    <div class="text-danger small mt-2 d-flex align-items-start">
+                                        <i class="fas fa-info-circle mt-1 me-1"></i>
+                                        <span>{{ field.errors|striptags }}</span>
                                     </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
             
-                        <div class="d-grid">
-                            <button id="submitBtn" type="submit" class="btn btn-primary btn-lg">Publier</button>
+                        <div class="d-grid mt-4">
+                            <button id="submitBtn" type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill position-relative">
+                                <span id="buttonText">Publier la boutique</span>
+                                <span id="submitSpinner" class="spinner-container">
+                                    <span class="spinner-outer"></span>
+                                    <span class="spinner-inner"></span>
+                                </span>
+                            </button>
                         </div>
                     </form>
-            
-                    <!-- Cercle de chargement -->
-                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-                        <div class="spinner-circle"></div>
-                    </div>
-            
-                    <!-- Zone pour les messages -->
-                    <div id="messageContainer" class="mt-4"></div>
                 </div>
-            {% endif %}
-            
-            
+                {% endif %}
             </div>
         </div>
     </div>
+    
     </div>
  <!-- Ajouter des sons -->
  <audio id="successSound" src="{% static 'scusses.mp3' %}" preload="auto"></audio>
@@ -785,7 +994,144 @@ input, textarea, select {
  <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  <script>
+    // Configuration des thèmes
+const themes = {
+  light: {
+      bg: 'rgba(255, 255, 255, 0.97)',
+      text: '#333',
+      border: 'rgba(0, 0, 0, 0.1)',
+      progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+  }
+};
+
+// Fonction pour jouer le son avec gestion moderne des erreurs
+function playNotificationSound() {
+  const sound = document.getElementById('notification-sound');
+  if (!sound) return;
+
+  const playSound = () => {
+      sound.currentTime = 0;
+      sound.volume = 0.8;
+      sound.play().catch(e => console.debug("Sound play prevented:", e));
+  };
+
+  // Essayer de jouer immédiatement
+  playSound();
+  
+  // Si bloqué, attendre une interaction utilisateur
+  if (sound.paused) {
+      const enableSound = () => {
+          playSound();
+          document.removeEventListener('click', enableSound);
+          document.removeEventListener('keydown', enableSound);
+      };
+      document.addEventListener('click', enableSound, { once: true });
+      document.addEventListener('keydown', enableSound, { once: true });
+  }
+}
+
+// Fermeture de notification avec animation fluide
+function closeNotification(closeButton) {
+  const notification = closeButton.closest('.notification-modal');
+  if (!notification) return;
+  
+  notification.classList.add('closing');
+  setTimeout(() => {
+      notification.classList.remove('show', 'closing');
+      notification.remove();
+  }, 300);
+}
+
+// Affichage de notification avec effets modernes
+function showNotification(notificationElement) {
+  // Appliquer le thème light par défaut
+  const themeConfig = themes.light;
+  
+  notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+  notificationElement.style.setProperty('--text-color', themeConfig.text);
+  notificationElement.style.setProperty('--border-color', themeConfig.border);
+  notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+
+  // Animation d'entrée
+  notificationElement.classList.add('show');
+  playNotificationSound();
+  
+  // Barre de progression animée
+  const progressBar = notificationElement.querySelector('.progress-bar');
+  if (progressBar) {
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+          progressBar.style.transition = 'width 5s linear';
+          progressBar.style.width = '0%';
+      }, 50);
+  }
+
+  // Fermeture automatique après délai
+  let timeoutId = setTimeout(() => {
+      notificationElement.classList.add('closing');
+      setTimeout(() => notificationElement.remove(), 300);
+  }, 5000);
+
+  // Réinitialiser le timeout si la souris entre
+  notificationElement.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      if (progressBar) progressBar.style.transition = 'none';
+  });
+
+  // Redémarrer le timeout si la souris sort
+  notificationElement.addEventListener('mouseleave', () => {
+      if (progressBar) {
+          const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+          progressBar.style.transition = `width ${remaining}ms linear`;
+          progressBar.style.width = '0%';
+      }
+      timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, progressBar ? remaining : 5000);
+  });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.notification-modal').forEach(notification => {
+      showNotification(notification);
+  });
+});
+
+// Gestion des clics en dehors pour fermer
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.notification-modal')) {
+      document.querySelectorAll('.notification-modal.show').forEach(modal => {
+          modal.classList.add('closing');
+          setTimeout(() => modal.remove(), 300);
+      });
+  }
+});
+    </script>   
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById("boutiqueForm");
+        const submitBtn = document.getElementById("submitBtn");
+        
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            // Activer l'état de chargement
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+            
+            // Simuler le chargement pendant 2 secondes
+            setTimeout(() => {
+                // Soumettre le formulaire
+                form.submit();
+            }, 2000);
+        });
+    });
+    </script>    
+  <script>
 
             // Fonction pour ouvrir et fermer le sidebar
 const menuBtn = document.querySelector('.menu-btn');
@@ -816,113 +1162,8 @@ function toggleDescription(imageId) {
       buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
   }
 }
-             // Fonction pour fermer une notification
-function closeNotification(element) {
-    const notification = element.parentElement;
-    notification.classList.add('hide');
-    setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-}
-
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
-}
-
-// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
-    });
-});
-
-// Fonction pour afficher une notification avec animation et son
-function showNotification(element) {
-    const notification = element;
-    notification.classList.add('show');
-    playNotificationSound();  // Jouer le son lors de l'affichage de la notification
     
-    // Ajouter un délai avant de masquer la notification
-    setTimeout(() => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    }, 10000); // La notification disparaît après 5 secondes
-}
 
-// Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-setTimeout(() => {
-    const notifications = document.querySelectorAll('.notification');
-    notifications.forEach(notification => {
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Suppression après transition
-    });
-}, 10000); // La notification disparaît après 5 secondes
-
-document.getElementById("boutiqueForm").addEventListener("submit", function (event) {
-      event.preventDefault(); // Empêche l'envoi classique du formulaire
-  
-      const form = this;
-      const formData = new FormData(form);
-      const loadingSpinner = document.getElementById("loadingSpinner");
-      const successSound = document.getElementById("successSound");
-      const loadSound = document.getElementById("loadSound");
-      const errorSound = document.getElementById("errorSound");
-      const messageContainer = document.getElementById("messageContainer");
-  
-      // Réinitialiser les messages affichés
-      messageContainer.innerHTML = "";
-  
-      // Afficher le cercle de chargement
-      loadingSpinner.style.display = "flex";
-  
-      // Envoyer les données via AJAX
-      fetch(form.action, {
-          method: "POST",
-          body: formData,
-          headers: {
-              "X-Requested-With": "XMLHttpRequest",
-          },
-      })
-          .then((response) => response.json())
-          .then((data) => {
-              // Attendre 4 secondes avant d'exécuter l'action
-              setTimeout(() => {
-                  // Cacher le cercle de chargement
-                  loadingSpinner.style.display = "none";
-  
-                  // Afficher le message et jouer le son correspondant
-                  if (data.status === "success") {
-                      successSound.play();
-                      messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                  } else if (data.status === "load") {
-                      loadSound.play();
-                      messageContainer.innerHTML = `<div class="alert alert-info">${data.message}</div>`;
-                  } else if (data.status === "error") {
-                      errorSound.play();
-                      messageContainer.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                  }
-  
-                  // Si une URL de redirection est fournie, rediriger après une pause
-                  if (data.redirect_url) {
-                      setTimeout(() => {
-                          window.location.href = data.redirect_url;
-                      }, 2000); // Délai avant la redirection
-                  }
-              }, 4000);
-          })
-          .catch((error) => {
-              console.error("Erreur :", error);
-  
-              // En cas d'erreur, cacher le cercle et afficher un message d'erreur après 4 secondes
-              setTimeout(() => {
-                  loadingSpinner.style.display = "none";
-                  errorSound.play();
-                  messageContainer.innerHTML = `<div class="alert alert-danger">Une erreur s'est produite. Veuillez réessayer.</div>`;
-              }, 4000);
-          });
-  });
-  
   </script>
 
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->

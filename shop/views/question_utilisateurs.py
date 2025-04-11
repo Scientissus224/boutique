@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, get_connection
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
+import socket
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from shop.models import UtilisateurTemporaire, InformationsSupplementairesTemporaire
 from shop.forms import InformationsSupplementairesForm
-from django.templatetags.static import static
 
 def informations_supplementaires_view(request, utilisateur_temporaire_id):
     """Vue pour collecter les informations supplémentaires."""
@@ -30,6 +30,7 @@ def informations_supplementaires_view(request, utilisateur_temporaire_id):
             informations_temporaire.utilisateur_temporaire = utilisateur_temporaire
             informations_temporaire.save()
 
+
             # Tenter d'envoyer l'email de bienvenue et confirmation
             try:
                 # Envoi de l'email combiné (bienvenue + activation)
@@ -46,22 +47,34 @@ def informations_supplementaires_view(request, utilisateur_temporaire_id):
 
     return render(request, 'infos_plus.html', {'form': form, 'utilisateur': utilisateur_temporaire})
 
+
+
+def is_connected():
+    """Vérifie si la machine est connectée à Internet."""
+    try:
+        # On essaie de se connecter à un serveur DNS connu (Google)
+        socket.create_connection(("8.8.8.8", 53), timeout=3)
+        return True
+    except OSError:
+        return False
+
 def send_welcome_and_confirmation_email(request, utilisateur_temporaire):
-    """Envoi de l'email combiné (bienvenue + activation)."""
-    current_site = get_current_site(request)
-    email_subject = 'Bienvenue sur WarabaShop !'
-
-    # Récupérer les informations supplémentaires de l'utilisateur
-    informations_temporaire = InformationsSupplementairesTemporaire.objects.get(utilisateur_temporaire=utilisateur_temporaire)
-
-    # URL pour le logo stocké dans le dossier static
-    logo_url = current_site.domain + static('/static/lo.jpeg')
+    """Envoi de l'email combiné (bienvenue + activation), si connexion Internet active."""
     
+    if not is_connected():
+        print("Pas de connexion Internet. L'email n'a pas été envoyé.")
+        return  # Tu peux aussi lever une exception personnalisée ou logger ça
+    
+    current_site = get_current_site(request)
+    email_subject = f"Bienvenue sur WarabaGuinée ! – {utilisateur_temporaire.identifiant_unique}"
 
-    # Préparer le message pour l'email de bienvenue avec le lien d'activation
+    informations_temporaire = InformationsSupplementairesTemporaire.objects.get(
+        utilisateur_temporaire=utilisateur_temporaire
+    )
+
     message = render_to_string('message.html', {
         'user': utilisateur_temporaire.nom_complet,
-        'boutique': utilisateur_temporaire.nom_boutique,  # Assurez-vous d'avoir accès au nom de la boutique
+        'boutique': utilisateur_temporaire.nom_boutique,
         'email': utilisateur_temporaire.email,
         'numero': utilisateur_temporaire.numero,
         'identifiant': utilisateur_temporaire.identifiant_unique,
@@ -69,17 +82,19 @@ def send_welcome_and_confirmation_email(request, utilisateur_temporaire):
         'produits_vendus': informations_temporaire.produits_vendus,
         'source_decouverte': informations_temporaire.source_decouverte,
         'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(utilisateur_temporaire.pk)),
+        'uid': urlsafe_base64_encode(force_bytes(utilisateur_temporaire.id)),
         'token': utilisateur_temporaire.token,
-        'logo_url': logo_url,  # Ajout de l'URL du logo
     })
 
-    # Envoi de l'email combiné
+    # Connexion SMTP explicite
+    connection = get_connection(fail_silently=False)
+
     email = EmailMessage(
-        email_subject,
-        message,
-        settings.EMAIL_HOST_USER,
-        [utilisateur_temporaire.email]
+        subject=email_subject,
+        body=message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[utilisateur_temporaire.email],
+        connection=connection
     )
     email.content_subtype = "html"
-    email.send(fail_silently=False)
+    email.send()

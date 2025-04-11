@@ -1,17 +1,18 @@
 from django.shortcuts import get_object_or_404, render
-from shop.models import Produit, ProduitImage, Variante, Utilisateur, Devise,Boutique
+from django.urls import reverse
+from shop.models import Produit, ProduitImage, Variante, Utilisateur, Devise,Boutique,Localisation
 
-def afficher_produit(request, produit_id, utilisateur_id):
+def afficher_produit(request, produit_identifiant, utilisateur_identifiant):
     
-    # Récupérer l'utilisateur associé à l'id
+    # Récupérer l'utilisateur associé à l'identifiant
+    utilisateur = get_object_or_404(Utilisateur, identifiant_unique=utilisateur_identifiant)
+    localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
     
-    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
+    # Récupérer la boutique liée à cet utilisateur
+    boutique = get_object_or_404(Boutique, utilisateur_id=utilisateur.id)
     
-    # Récupérer la boutique lié à cet utilisateur
-    boutique = get_object_or_404(Boutique, utilisateur_id=utilisateur_id)
-    
-    # Récupérer le produit lié à cet utilisateur
-    produit = get_object_or_404(Produit, id=produit_id, utilisateur=utilisateur)
+    # Récupérer le produit lié à cet utilisateur en utilisant l'identifiant UUID
+    produit = get_object_or_404(Produit, identifiant=produit_identifiant, utilisateur=utilisateur)
     
     # Récupérer l'image principale du produit
     image_principale = produit.image.url if produit.image else "https://via.placeholder.com/600x400?text=Image+non+disponible"
@@ -35,10 +36,17 @@ def afficher_produit(request, produit_id, utilisateur_id):
         'images': image_urls,  # Passer la liste des URLs des images
         'variantes': variantes,
         'devise': devise,
+        'utilisateur_email': utilisateur.email,
+        'utilisateur_numero': utilisateur.numero,
         'image': image_principale,
-        'utilisateur_id': utilisateur_id,
-        'boutique_id':boutique.pk,
-        'nom_boutique':utilisateur.nom_boutique,
+        "localisation": localisation,
+        'utilisateur_id': utilisateur.id,
+        'boutique_id': boutique.pk,
+        "home_boutique": reverse('boutique_contenu', args=[boutique.identifiant]),
+        'nom_boutique': utilisateur.nom_boutique,
+        'shop_name': utilisateur.nom_boutique,
+        'utilisateur_identifiant': utilisateur.identifiant_unique,
+        'logo': utilisateur.logo_boutique.url if utilisateur.logo_boutique else "https://via.placeholder.com/600x400?text=Image+non+disponible",
     }
     
     # Rendu du template 'produits_site.html' avec le contexte

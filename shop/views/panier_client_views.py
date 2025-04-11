@@ -1,6 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from shop.models import Produit, Variante
+from django.views.decorators.http import require_POST
+import logging
+
 
 def ajouter_produit_au_panier(request, produit_id):
     # Récupérer ou initialiser le panier de la session
@@ -12,8 +15,8 @@ def ajouter_produit_au_panier(request, produit_id):
     # Gestion de l'ajout d'un produit
     produit = get_object_or_404(Produit, id=produit_id)
     produit_key = f"produit-{produit.pk}"
-    # Initialiser le compteur s'il n'existe pas dans la session
-    compteur = request.session.get('compteur', 0)
+    # Initialiser le compteur_boutique s'il n'existe pas dans la session
+    compteur_boutique = request.session.get('compteur_boutique', 0)
 
     # Vérifier si le produit n'est pas déjà dans le panier
     if produit_key not in panier:
@@ -25,9 +28,9 @@ def ajouter_produit_au_panier(request, produit_id):
             'type': 'produit'
         }
         session_id.append(produit.pk)  # Ajouter l'ID à la session_id
-        # Incrémenter le compteur
-    compteur += 1
-    request.session['compteur'] = compteur  # Mise à jour du compteur dans la session
+        # Incrémenter le compteur_boutique seulement si nouveau produit
+        compteur_boutique += 1
+        request.session['compteur_boutique'] = compteur_boutique
 
     # Sauvegarder le panier dans la session
     request.session['panier'] = panier
@@ -37,8 +40,10 @@ def ajouter_produit_au_panier(request, produit_id):
     total_articles = len(panier)
 
     # Retourner la somme totale des articles distincts dans le panier
-    return JsonResponse({'total_articles': total_articles})
-
+    return JsonResponse({
+        'total_articles': total_articles,
+        'compteur_boutique': compteur_boutique
+    })
 
 def ajouter_variante_au_panier(request, variante_id):
     # Récupérer ou initialiser le panier de la session
@@ -48,15 +53,16 @@ def ajouter_variante_au_panier(request, variante_id):
     if not isinstance(session_id, list):  
         session_id = []  # Forcer session_id à être une liste
 
+    # Initialiser le compteur_boutique
+    compteur_boutique = request.session.get('compteur_boutique', 0)
+
     # Gestion de l'ajout d'une variante
     variante = get_object_or_404(Variante, id=variante_id)
     variante_key = f"variante-{variante.pk}"
-     # Initialiser le compteur s'il n'existe pas dans la session
-    compteur = request.session.get('compteur', 0)
 
     # Vérifier si la variante est déjà dans le panier
     if variante_key not in panier:
-        # Ajouter la variante au panier
+        # Ajouter la variante au panier 
         panier[variante_key] = {
             'taille': variante.taille,
             'couleur': variante.couleur,
@@ -66,124 +72,163 @@ def ajouter_variante_au_panier(request, variante_id):
             'type': 'variante'
         }
         session_id.append(variante.pk)
-        # Sauvegarder le panier dans la session
-         # Incrémenter le compteur
-        compteur += 1
-        request.session['compteur'] = compteur  # Mise à jour du compteur dans la session
+        
+        # Incrémenter le compteur seulement si nouvelle variante
+        compteur_boutique += 1
+        request.session['compteur_boutique'] = compteur_boutique
+        
+        # Sauvegarder les modifications de session
         request.session['panier'] = panier
         request.session['session_id'] = list(set(session_id))
 
-        # Retourner la réponse que la variante a été ajoutée
         return JsonResponse({
-            'status': 'added_to_cart',  # Indication que la variante a été ajoutée
-            'total_articles': len(panier)  # Nombre total d'articles distincts dans le panier
+            'status': 'added_to_cart',
+            'total_articles': len(panier),
+            'compteur_boutique': compteur_boutique
         })
     else:
-        # Retourner la réponse que la variante est déjà dans le panier
         return JsonResponse({
-            'status': 'already_in_cart',  # Indication que la variante est déjà dans le panier
-            'total_articles': len(panier)  # Nombre total d'articles distincts dans le panier
+            'status': 'already_in_cart',
+            'total_articles': len(panier),
+            'compteur_boutique': compteur_boutique
         })
 
 
-
-def retirer_produit_du_panier(request, produit_id):
-    """
-    Retirer un produit spécifique du panier stocké dans la session.
-    """
-    # Récupérer ou initialiser le panier depuis la session
+def retirer_du_panier(request, item_id, item_type):
+    # Récupérer le panier et les IDs de session
     panier = request.session.get('panier', {})
     session_id = request.session.get('session_id', [])
-
-    # Identifier la clé du produit dans le panier
-    produit_key = f"produit-{produit_id}"
-
-    if produit_key in panier:
-        # Supprimer le produit du panier
-        del panier[produit_key]
+    compteur_boutique = request.session.get('compteur_boutique', 0)
+    
+    # Créer la clé selon le type d'item (produit ou variante)
+    item_key = f"{item_type}-{item_id}"
+    
+    # Vérifier si l'item est dans le panier
+    if item_key in panier:
+        # Retirer l'item du panier
+        del panier[item_key]
         
-        if produit_id in session_id:  # Vérifie et supprime l'ID
-            session_id.remove(produit_id)
-         # Mise à jour du compteur (décrémentation)
-        compteur = request.session.get('compteur', 0)
-        if compteur > 0:
-            compteur -= 1  # Décrémenter le compteur
-        request.session['compteur'] = compteur
-        # Sauvegarder les modifications dans la session
+        # Retirer l'ID de la liste session_id
+        if int(item_id) in session_id:
+            session_id.remove(int(item_id))
+        
+        # Décrémenter le compteur_boutique si nécessaire
+        if compteur_boutique > 0:
+            compteur_boutique -= 1
+        
+        # Mettre à jour la session
         request.session['panier'] = panier
         request.session['session_id'] = session_id
-
-        # Log pour confirmer la suppression
-        print(f"Produit {produit_id} supprimé du panier.")
-
-        # Retourner un succès
-        return JsonResponse({
-            'status': 'removed_from_cart',
-            'total_articles': len(panier),
-            'message': f"Le produit {produit_id} a été retiré avec succès."
-        })
-    else:
-        # Log si le produit n'est pas trouvé
-        print(f"Produit {produit_id} non trouvé dans le panier.")
-
-        # Retourner une erreur si le produit n'existe pas
-        return JsonResponse({
-            'status': 'not_found',
-            'total_articles': len(panier),
-            'message': f"Le produit {produit_id} n'existe pas dans le panier."
-        })
-
-
-def retirer_variante_du_panier(request, variante_id):
-    """
-    Retirer une variante spécifique du panier stocké dans la session.
-    """
-    # Récupérer ou initialiser le panier depuis la session
-    panier = request.session.get('panier', {})
-    session_id = request.session.get('session_id', [])
-
-    # Identifier la clé de la variante dans le panier
-    variante_key = f"variante-{variante_id}"
-
-    if variante_key in panier:
-        # Supprimer la variante du panier
-        del panier[variante_key]
+        request.session['compteur_boutique'] = compteur_boutique
         
-        if variante_id in session_id:  # Vérifie et supprime l'ID
-            session_id.remove(variante_id)
-         # Mise à jour du compteur (décrémentation)
-        compteur = request.session.get('compteur', 0)
-        if compteur > 0:
-            compteur -= 1  # Décrémenter le compteur
-        request.session['compteur'] = compteur
-
-        # Sauvegarder les modifications dans la session
-        request.session['panier'] = panier
-        request.session['session_id'] = session_id
-
-        # Log pour confirmer la suppression
-        print(f"Variante {variante_id} supprimée du panier.")
-
-        # Retourner un succès
+        # Retourner une réponse de succès
         return JsonResponse({
             'status': 'removed_from_cart',
-            'total_articles': len(panier),
-            'message': f"La variante {variante_id} a été retirée avec succès."
+            'total_articles': len(panier)
         })
     else:
-        # Log si la variante n'est pas trouvée
-        print(f"Variante {variante_id} non trouvée dans le panier.")
-
-        # Retourner une erreur si la variante n'existe pas
+        # Retourner une réponse si l'item n'était pas dans le panier
         return JsonResponse({
-            'status': 'not_found',
-            'total_articles': len(panier),
-            'message': f"La variante {variante_id} n'existe pas dans le panier."
+            'status': 'not_in_cart',
+            'total_articles': len(panier)
         })
 
+def ajouter_produit_aux_likes(request, produit_id):
+    likes = request.session.get('likes', {})
+    likes_ids = request.session.get('likes_ids', [])
+    
+    if not isinstance(likes_ids, list):
+        likes_ids = []
 
-def afficher_session_id(request):
-    session_id = request.session.get('session_id', [])
-    compteur = request.session.get('compteur', 0)
-    print(session_id)  # Affichage dans le terminal
-    return JsonResponse({'session_id': session_id , 'compteur': compteur})  # Correction du retour JSON
+    produit = get_object_or_404(Produit, id=produit_id)
+    produit_key = str(produit.pk)  # Convertir en string pour la clé de session
+    
+    if produit_key not in likes:
+       
+        
+        likes[produit_key] = {
+            'nom': produit.nom,
+            'prix': str(produit.prix),
+            'image': produit.image.url if produit.image else None,
+            'type': 'produit'
+        }
+        
+        likes_ids.append(produit.pk)
+        request.session['compteur_likes'] = request.session.get('compteur_likes', 0) + 1
+
+    request.session['likes'] = likes
+    request.session['likes_ids'] = list(set(likes_ids))
+    request.session.modified = True
+
+    return JsonResponse({
+        'total_likes': len(likes),
+        'compteur_likes': request.session.get('compteur_likes', 0)
+    })
+    
+
+logger = logging.getLogger(__name__)
+
+@require_POST
+def retirer_produit_des_likes(request, produit_id):
+    # Initialisation avec valeurs par défaut et vérification de type
+    likes = request.session.get('likes', {})
+    likes_ids = request.session.get('likes_ids', [])
+    
+    # Conversion en liste si nécessaire (cas où likes_ids serait None ou autre type)
+    if not isinstance(likes_ids, list):
+        likes_ids = []
+        request.session['likes_ids'] = likes_ids
+
+    try:
+        produit = get_object_or_404(Produit, id=produit_id)
+        produit_key = str(produit.pk)
+        produit_id_int = produit.pk  # Version int de l'ID pour likes_ids
+        
+        # Vérification de l'existence dans les deux structures
+        produit_in_likes = produit_key in likes
+        produit_in_likes_ids = produit_id_int in likes_ids
+        
+        if produit_in_likes or produit_in_likes_ids:
+            # Suppression dans le dictionnaire likes
+            if produit_in_likes:
+                likes.pop(produit_key)
+            
+            # Suppression dans la liste likes_ids (en s'assurant que c'est bien un int)
+            if produit_in_likes_ids:
+                # Création d'une nouvelle liste sans l'ID à supprimer
+                likes_ids = [id for id in likes_ids if id != produit_id_int]
+            
+            # Mise à jour du compteur (version sécurisée)
+            compteur = request.session.get('compteur_likes', 0)
+            new_compteur = max(0, compteur - 1)
+            request.session['compteur_likes'] = new_compteur
+            
+            # Mise à jour session et sauvegarde
+            request.session['likes'] = likes
+            request.session['likes_ids'] = likes_ids
+            request.session.modified = True
+            
+            return JsonResponse({
+                'status': 'success',
+                'total_likes': len(likes),
+                'compteur_likes': new_compteur,
+                'message': 'Produit retiré des favoris',
+                'removed_from_likes': produit_in_likes,
+                'removed_from_likes_ids': produit_in_likes_ids
+            })
+        else:
+            return JsonResponse({
+                'status': 'not_found',
+                'total_likes': len(likes),
+                'compteur_likes': request.session.get('compteur_likes', 0),
+                'message': 'Produit non présent dans les favoris'
+            }, status=404)
+
+    except Exception as e:
+        logger.error(f"Erreur suppression favori {produit_id}: {str(e)}", exc_info=True)
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Erreur serveur',
+            'total_likes': len(likes),
+            'compteur_likes': request.session.get('compteur_likes', 0)
+        }, status=500)

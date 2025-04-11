@@ -1,0 +1,154 @@
+/* Styles Modernes avec préfixe WG (WarabaGuinée) pour éviter les conflits */
+.wg-hero-banner {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9f5ff 100%);
+    border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+    padding: 3rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.wg-main-message {
+    font-size: 2.1rem;
+    color: #1a2b3c;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+    line-height: 1.3;
+    background: linear-gradient(90deg, #e67e22, #d35400);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wg-main-message-icon {
+    color: #e67e22;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 2px 4px rgba(230, 126, 34, 0.3));
+}
+
+.wg-badge {
+    background: linear-gradient(90deg, #e67e22, #d35400);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
+}
+
+.wg-tagline {
+    font-size: 1.2rem;
+    color: #5a6b7c;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 400;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.wg-features-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.wg-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1rem;
+    color: #2c3e50;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.wg-feature-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.wg-feature-icon {
+    color: #e67e22;
+    font-size: 1.2rem;
+    background: rgba(230, 126, 34, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animation du texte défilant - Version optimisée */
+.wg-scrolling-text-container {
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(255, 107, 0, 0.1);
+    padding: 0.5rem 0;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+}
+
+.wg-scrolling-text {
+    display: inline-block;
+    animation: wg-scroll 25s linear infinite; /* Augmenté de 18s à 25s */
+    font-weight: 600;
+    color: #FF6B00;
+    font-size: 1.3rem;
+    text-align: center;
+    padding: 0 10px;
+}
+
+@keyframes wg-scroll {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Optimisation pour Mobile/Android */
+@media (max-width: 768px) {
+    .wg-scrolling-text {
+        font-size: 0.9rem; /* Taille réduite pour Android */
+        animation-duration: 20s; /* Augmenté de 14s à 20s */
+        padding: 0 5px;
+    }
+    
+    .wg-scrolling-text-container {
+        padding: 0.4rem 0;
+        margin: 0.4rem 0;
+    }
+    
+    .wg-hero-banner {
+        padding: 1.5rem 0;
+    }
+    
+    .wg-main-message {
+        font-size: 1.5rem;
+    }
+    
+    .wg-tagline {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+}
+
+/* Correction pour très petits écrans */
+@media (max-width: 480px) {
+    .wg-scrolling-text {
+        font-size: 0.8rem;
+        animation-duration: 16s; /* Augmenté de 12s à 16s */
+    }
+}

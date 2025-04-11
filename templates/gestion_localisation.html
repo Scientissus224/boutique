@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
          <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">      
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -311,115 +313,224 @@ transform: scale(1.1);
   opacity: 0.7;
 }
 
-/* Style général de la notification */
-.notification-box {
+:root {
+  --bg-color: rgba(255, 255, 255, 0.97);
+  --text-color: #333;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+  --mobile-breakpoint: 768px;
+}
+
+.messages-overlay {
   position: fixed;
-  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
-  right: 10px;
-  transform: translateY(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  align-items: center;
-  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
-  color: #fff;
-  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
-  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
   z-index: 9999;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.messages-container {
+  max-width: 600px;
+  width: 90%;
+  pointer-events: auto;
+  padding: 10px;
+}
+
+.notification-modal {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-30px) scale(0.95);
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Pointe de la boîte */
-.notification-box:after {
-  content: '';
+.notification-modal.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.notification-modal.closing {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
+.notification-icon {
   position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
-  z-index: 9999;
+  left: 20px;
+  top: 20px;
+  font-size: 24px;
+  color: var(--primary-color, #4e73ff);
 }
 
-/* Icône futuriste de robot */
-.notification-box i {
-  font-size: 2.5rem; /* Taille plus grande pour l'icône */
-  margin-right: 20px;
-  color: #00ffcc; /* Couleur cybernétique verte */
-  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+.notification-content {
+  padding-left: 40px;
+  padding-right: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem; /* Agrandit la taille du texte */
-  flex-grow: 1;
-  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
-  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
-  color: #fff; /* Assure que le texte est bien visible */
+.pulse {
+  animation: pulse 2s infinite;
 }
 
-/* Bouton de fermeture */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
-  color: #fff;
-  font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  padding: 5px;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: all 0.2s ease-out;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  touch-action: manipulation;
 }
 
 .close-btn:hover {
-  color: #00ffcc; /* Couleur hover dynamique */
-  transform: scale(1.2);
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
 }
 
-/* Styles responsive */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--progress-gradient);
+  transform-origin: left;
+  transition: width 5s linear;
+}
+
+/* Effet de "glow" subtil */
+.notification-modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Animation d'entrée spécifique pour chaque notification */
+.notification-modal:nth-child(1) { transition-delay: 0.1s; }
+.notification-modal:nth-child(2) { transition-delay: 0.2s; }
+.notification-modal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .notification-box {
-    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
-    right: 5px; /* Réduit l'espacement sur les petits écrans */
-    padding: 12px 18px;
-    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  .messages-overlay {
+      padding-top: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
   }
-
-  .notification-box i {
-    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  
+  .messages-container {
+      width: 95%;
+      max-width: 100%;
+      padding: 5px;
   }
-
-  .notification-box .message {
-    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  
+  .notification-modal {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
   }
-
+  
+  .notification-icon {
+      left: 15px;
+      top: 15px;
+      font-size: 20px;
+  }
+  
+  .notification-content {
+      padding-left: 35px;
+      padding-right: 15px;
+      font-size: 14px;
+  }
+  
   .close-btn {
-    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+  }
+  
+  .progress-bar {
+      height: 2px;
   }
 }
 
 @media (max-width: 480px) {
-  .notification-box {
-    top: 5%; /* Réduit encore la distance du haut */
-    right: 5px; /* Garde une marge minimale à droite */
-    padding: 8px 15px;
-    width: 90%; /* Largeur ajustée pour les petits écrans */
+  .notification-modal {
+      padding: 12px;
   }
-
-  .notification-box i {
-    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  
+  .notification-icon {
+      left: 12px;
+      top: 12px;
+      font-size: 18px;
   }
-
-  .notification-box .message {
-    font-size: 1rem; /* Réduit encore la taille du texte */
+  
+  .notification-content {
+      padding-left: 30px;
+      padding-right: 10px;
   }
-
-  .close-btn {
-    font-size: 1rem; /* Petite taille du bouton de fermeture */
+  
+  .notification-modal::after {
+      display: none; /* Supprime l'effet glow sur petits écrans */
   }
 }
 
+/* Support pour les appareils tactiles */
+@media (hover: none) {
+  .close-btn {
+      opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+      background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Amélioration pour les très grands écrans */
+@media (min-width: 1600px) {
+  .messages-container {
+      max-width: 700px;
+  }
+}
 /* Animation de lueur pour l'icône */
 @keyframes glow {
   0% {
@@ -474,27 +585,69 @@ transform: scale(1.1);
   display: block;
 }
 
+
+.form-switch .form-check-input {
+  width: 2.5em;
+  height: 1.5em;
+}
+.timepicker {
+  background-color: white;
+}
+#heures-ouverture {
+  transition: all 0.3s ease;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-embed-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.schedule-section {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
     </style>
 </head>
 <body>
-  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+  
+<audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
-  {% if messages %}
-      <div class="messages">
-          {% for message in messages %}
-              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                  <!-- Icône futuriste de robot -->
-                  <i class="fas fa-robot"></i>
+{% if messages %}
+<div class="messages-overlay" id="messages-overlay">
+  <div class="messages-container">
+      {% for message in messages %}
+          <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+              <div class="notification-icon">
+                  <i class="fas fa-robot pulse"></i>
+              </div>
+              
+              <div class="notification-content">
                   <div class="message">
                       {{ message }}
                   </div>
-                  <button class="close-btn" onclick="closeNotification(this)">
-                      <i class="fas fa-times"></i>
-                  </button>
               </div>
-          {% endfor %}
-      </div>
-  {% endif %}
+              
+              <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                  <i class="fas fa-times"></i>
+              </button>
+              
+              <div class="progress-bar"></div>
+          </div>
+      {% endfor %}
+  </div>
+</div>
+{% endif %}
 
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -514,18 +667,11 @@ transform: scale(1.1);
     <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
     <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
     <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-    <a href=""><i class="fas fa-map"></i> Lieux</a>
-    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
     <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
     <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
     <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
-    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
-    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
     <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
     <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
-    <a href=""><i class="fas fa-bell"></i> Notifications</a>
     <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
     <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
@@ -550,78 +696,137 @@ transform: scale(1.1);
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <form method="POST" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  
-                  <!-- Lien Google Maps -->
-                  <div class="mb-3">
-                      <label for="id_lien_maps" class="form-label">Lien Google Maps</label>
-                      <div class="input-group">
-                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                          {{ form.lien_maps|add_class:"form-control" }}
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              
+              <!-- Lien Google Maps -->
+              <div class="mb-3">
+                  <label for="id_lien_maps" class="form-label">Lien Google Maps</label>
+                  <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                      {{ form.lien_maps|add_class:"form-control" }}
+                  </div>
+                  {% if form.lien_maps.errors %}
+                      <div class="invalid-feedback d-block">
+                          {% for error in form.lien_maps.errors %}
+                              <p>{{ error }}</p>
+                          {% endfor %}
                       </div>
-                      {% if form.lien_maps.errors %}
-                          <div class="invalid-feedback d-block">
-                              {% for error in form.lien_maps.errors %}
-                                  <p>{{ error }}</p>
-                              {% endfor %}
-                          </div>
-                      {% endif %}
+                  {% endif %}
+              </div>
+          
+              <!-- Ville -->
+              <div class="mb-3">
+                  <label for="id_ville" class="form-label">Ville</label>
+                  <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-city"></i></span>
+                      {{ form.ville|add_class:"form-control" }}
                   </div>
-      
-                  <!-- Ville -->
-                  <div class="mb-3">
-                      <label for="id_ville" class="form-label">Ville</label>
-                      <div class="input-group">
-                          <span class="input-group-text"><i class="fas fa-city"></i></span>
-                          {{ form.ville|add_class:"form-control" }}
+                  {% if form.ville.errors %}
+                      <div class="invalid-feedback d-block">
+                          {% for error in form.ville.errors %}
+                              <p>{{ error }}</p>
+                          {% endfor %}
                       </div>
-                      {% if form.ville.errors %}
-                          <div class="invalid-feedback d-block">
-                              {% for error in form.ville.errors %}
-                                  <p>{{ error }}</p>
-                              {% endfor %}
-                          </div>
-                      {% endif %}
+                  {% endif %}
+              </div>
+          
+              <!-- Quartier -->
+              <div class="mb-3">
+                  <label for="id_quartier" class="form-label">Quartier</label>
+                  <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-flag"></i></span>
+                      {{ form.quartier|add_class:"form-control" }}
                   </div>
-      
-                  <!-- Quartier -->
-                  <div class="mb-3">
-                      <label for="id_quartier" class="form-label">Quartier</label>
-                      <div class="input-group">
-                          <span class="input-group-text"><i class="fas fa-flag"></i></span>
-                          {{ form.quartier|add_class:"form-control" }}
+                  {% if form.quartier.errors %}
+                      <div class="invalid-feedback d-block">
+                          {% for error in form.quartier.errors %}
+                              <p>{{ error }}</p>
+                          {% endfor %}
                       </div>
-                      {% if form.quartier.errors %}
-                          <div class="invalid-feedback d-block">
-                              {% for error in form.quartier.errors %}
-                                  <p>{{ error }}</p>
-                              {% endfor %}
-                          </div>
-                      {% endif %}
+                  {% endif %}
+              </div>
+          
+              <!-- Repère -->
+              <div class="mb-3">
+                  <label for="id_repere" class="form-label">Repère</label>
+                  <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-thumbtack"></i></span>
+                      {{ form.repere|add_class:"form-control" }}
                   </div>
-      
-                  <!-- Repère -->
-                  <div class="mb-3">
-                      <label for="id_repere" class="form-label">Repère</label>
-                      <div class="input-group">
-                          <span class="input-group-text"><i class="fas fa-thumbtack"></i></span>
-                          {{ form.repere|add_class:"form-control" }}
+                  {% if form.repere.errors %}
+                      <div class="invalid-feedback d-block">
+                          {% for error in form.repere.errors %}
+                              <p>{{ error }}</p>
+                          {% endfor %}
                       </div>
-                      {% if form.repere.errors %}
-                          <div class="invalid-feedback d-block">
-                              {% for error in form.repere.errors %}
-                                  <p>{{ error }}</p>
-                              {% endfor %}
+                  {% endif %}
+              </div>
+          
+              <!-- Section Horaires -->
+              <div class="card mb-4">
+                  <div class="card-header">
+                      <i class="fas fa-clock"></i> Horaires d'ouverture
+                  </div>
+                  <div class="card-body">
+                      <!-- Ouvert 24h/24 -->
+                      <div class="mb-3 form-check form-switch">
+                          {{ form.ouvert_24h|add_class:"form-check-input" }}
+                          <label class="form-check-label" for="id_ouvert_24h">Ouvert 24h/24</label>
+                      </div>
+          
+                      <!-- Jours d'ouverture -->
+                      <div class="row mb-3">
+                          <div class="col-md-6">
+                              <label for="id_jour_ouverture" class="form-label">Jour d'ouverture</label>
+                              <div class="input-group">
+                                  <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                                  {{ form.jour_ouverture|add_class:"form-select" }}
+                              </div>
                           </div>
-                      {% endif %}
+                          <div class="col-md-6">
+                              <label for="id_jour_fermeture" class="form-label">Jour de fermeture</label>
+                              <div class="input-group">
+                                  <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                                  {{ form.jour_fermeture|add_class:"form-select" }}
+                              </div>
+                          </div>
+                      </div>
+          
+                      <!-- Heures d'ouverture -->
+                      <div class="row mb-3" id="heures-ouverture">
+                          <div class="col-md-6">
+                              <label for="id_heure_ouverture" class="form-label">Heure d'ouverture</label>
+                              <div class="input-group">
+                                  <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                                  {{ form.heure_ouverture|add_class:"form-control timepicker" }}
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <label for="id_heure_fermeture" class="form-label">Heure de fermeture</label>
+                              <div class="input-group">
+                                  <span class="input-group-text"><i class="fas fa-door-closed"></i></span>
+                                  {{ form.heure_fermeture|add_class:"form-control timepicker" }}
+                              </div>
+                          </div>
+                      </div>
+          
+                      <!-- Jours fériés -->
+                      <div class="mb-3 form-check form-switch">
+                          {{ form.ferme_jour_ferie|add_class:"form-check-input" }}
+                          <label class="form-check-label" for="id_ferme_jour_ferie">Fermé les jours fériés</label>
+                      </div>
                   </div>
-      
-                  <!-- Bouton d'ajout -->
-                  <div class="d-flex justify-content-center">
-                      <button type="submit" class="btn btn-dark btn-lg" name="ajouter">Ajouter</button>
-                  </div>
-              </form>
+              </div>
+          
+              <!-- Bouton de soumission -->
+              <div class="d-flex justify-content-center">
+                  <button type="submit" class="btn btn-dark btn-lg" name="ajouter">
+                      <i class="fas fa-save me-2"></i> Enregistrer
+                  </button>
+              </div>
+          </form>
+                    
           </div>
       </div>
   </div>
@@ -629,60 +834,103 @@ transform: scale(1.1);
 
 <!-- Section Affichage Localisation -->
 <div class="d-flex justify-content-center mt-4 mb-4">
-<h3 class="text-center">Votre Localisation</h3>
+  <h3 class="text-center"><i class="bi bi-geo-alt-fill me-2"></i>Votre Localisation</h3>
 </div>
 
 <div class="container">
-    <div class="card shadow-lg mx-auto" style="max-width: 600px; display: flex; flex-direction: column; height: 100%;">
-      <div class="card-body" style="flex-grow: 1;">
-        <!-- Affichage des détails de localisation -->
-        <div class="row mb-3 align-items-center">
-          <div class="col-auto">
-            <i class="bi bi-house-door icon-size"></i>
+  <div class="card shadow-lg mx-auto" style="max-width: 600px;">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0"><i class="bi bi-info-circle-fill me-2"></i>Informations de localisation</h4>
+    </div>
+    
+    <div class="card-body">
+      <!-- Affichage des détails de localisation -->
+      <div class="location-detail mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-circle bg-primary text-white me-3">
+            <i class="bi bi-buildings-fill fs-4"></i>
           </div>
-          <div class="col">
-            <h5><strong>Ville :</strong> {{ localisation.ville|default:"Non renseigné" }}</h5>
-          </div>
-        </div>
-  
-        <div class="row mb-3 align-items-center">
-          <div class="col-auto">
-            <i class="bi bi-globe icon-size"></i>
-          </div>
-          <div class="col">
-            <h5><strong>Quartier :</strong> {{ localisation.quartier|default:"Non renseigné" }}</h5>
+          <div>
+            <h5 class="mb-0"><strong>Ville :</strong> {{ localisation.ville|default:"Non renseigné" }}</h5>
           </div>
         </div>
-  
-        <div class="row mb-3 align-items-center">
-          <div class="col-auto">
-            <i class="bi bi-pin-map icon-size"></i>
+
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-circle bg-success text-white me-3">
+            <i class="bi bi-signpost-split-fill fs-4"></i>
           </div>
-          <div class="col">
-            <h5><strong>Repère :</strong> {{ localisation.repere|default:"Non renseigné" }}</h5>
+          <div>
+            <h5 class="mb-0"><strong>Quartier :</strong> {{ localisation.quartier|default:"Non renseigné" }}</h5>
           </div>
         </div>
-        
-        <div class="map-container mt-4">
-          <h5><strong><i class="bi bi-map icon-size"></i> Carte de votre localisation :</strong></h5>
-          <div class="embed-responsive">
-            <div class="map-embed-container" style="position: relative; overflow: hidden; width: 100%; height: 300px;">
-              {% if lien_maps %}
-              {{ lien_maps|safe|default:"Non renseigné" }}
-              {% else %}
-                <!-- Si pas de carte, afficher un robot -->
-                <div class="d-flex justify-content-center align-items-center w-100 h-100 bg-light text-muted">
-                  <i class="fas fa-robot fa-3x"></i>
-                  <p class="text-center">Carte non disponible</p>
-                </div>
-              {% endif %}
-            </div>
+
+        <div class="d-flex align-items-center mb-4">
+          <div class="icon-circle bg-warning text-dark me-3">
+            <i class="bi bi-pin-angle-fill fs-4"></i>
+          </div>
+          <div>
+            <h5 class="mb-0"><strong>Repère :</strong> {{ localisation.repere|default:"Non renseigné" }}</h5>
           </div>
         </div>
       </div>
+
+      <!-- Section Horaires -->
+      <div class="schedule-section mb-4">
+        <h5 class="border-bottom pb-2"><i class="bi bi-clock-history me-2"></i>Horaires d'ouverture</h5>
+        
+        {% if localisation.ouvert_24h %}
+          <div class="alert alert-success d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+            <span>Ouvert 24h/24</span>
+          </div>
+        {% else %}
+          <div class="d-flex justify-content-between">
+            <div class="me-3">
+              <p class="mb-1"><strong><i class="bi bi-door-open me-2"></i>Ouverture :</strong></p>
+              <p class="text-muted">{{ localisation.heure_ouverture|time:"H:i"|default:"Non renseigné" }}</p>
+            </div>
+            <div>
+              <p class="mb-1"><strong><i class="bi bi-door-closed me-2"></i>Fermeture :</strong></p>
+              <p class="text-muted">{{ localisation.heure_fermeture|time:"H:i"|default:"Non renseigné" }}</p>
+            </div>
+          </div>
+          <p class="mt-2">
+            <i class="bi bi-calendar-week me-2"></i>
+            <strong>Jours :</strong> Du {{ localisation.get_jour_ouverture_display }} au {{ localisation.get_jour_fermeture_display }}
+          </p>
+        {% endif %}
+        
+        {% if localisation.ferme_jour_ferie %}
+          <div class="alert alert-info d-flex align-items-center mt-3">
+            <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+            <span>Fermé les jours fériés</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Section Carte -->
+      <div class="map-section">
+        <h5 class="border-bottom pb-2"><i class="bi bi-map-fill me-2"></i>Carte de localisation</h5>
+        <div class="map-embed-container rounded-3 overflow-hidden mt-3" style="height: 300px; background-color: #f8f9fa;">
+          {% if localisation.lien_maps %}
+            {{ localisation.lien_maps|safe }}
+          {% else %}
+            <div class="d-flex flex-column justify-content-center align-items-center h-100 text-muted">
+              <i class="bi bi-map fs-1 mb-2"></i>
+              <p class="text-center">Localisation non disponible</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-footer bg-light">
+      <small class="text-muted">
+        <i class="bi bi-clock-history me-1"></i>Dernière mise à jour : {{ localisation.updated_at|date:"d/m/Y H:i"|default:"Non spécifié" }}
+      </small>
     </div>
   </div>
-  
+</div>
 
 <!-- Section pour ajouter une image de localisation -->
 <div class="d-flex justify-content-center mt-4 mb-4">
@@ -772,7 +1020,7 @@ transform: scale(1.1);
   {% for image in images %}
   <div class="modal fade" id="deleteModal{{ image.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ image.id }}" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
       <div class="modal-dialog">
-          <div class="modal-content rounded-4 shadow-lg" style="background: #2a2a2a; color: #fff;">
+          <div class="modal-content rounded-4 shadow-lg" style="background:white ; color:black;">
               <div class="modal-header" style="border-bottom: 1px solid #444;">
                   <h5 class="modal-title d-flex align-items-center" id="deleteModalLabel{{ image.id }}">
                       <i class="fas fa-robot me-2" style="color: #ff6600;"></i>
@@ -780,9 +1028,16 @@ transform: scale(1.1);
                   </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: #ff6600;"></button>
               </div>
-              <div class="modal-body" style="font-size: 1.1rem; text-align: center;">
-                  <i class="fas fa-robot" style="font-size: 3rem; color: #ff6600;"></i>
-                  <p><strong>Êtes-vous sûr de vouloir supprimer cette image ?</strong></p>
+              <div class="modal-body p-0">
+                  <!-- Zone d'image avec fond blanc -->
+                  <div style="background: white; padding: 20px; text-align: center;">
+                      <img src="{{ image.image.url }}" alt="Image à supprimer" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                  </div>
+                  <!-- Message de confirmation -->
+                  <div style="padding: 20px; text-align: center; font-size: 1.1rem;">
+                      <i class="fas fa-robot" style="font-size: 2rem; color: #ff6600;"></i>
+                      <p class="mt-2"><strong>Êtes-vous sûr de vouloir supprimer cette image ?</strong></p>
+                  </div>
               </div>
               <div class="modal-footer" style="border-top: 1px solid #444;">
                   <form method="post">
@@ -795,7 +1050,7 @@ transform: scale(1.1);
           </div>
       </div>
   </div>
-  {% endfor %}
+{% endfor %}
 </div>  
     </div>
 
@@ -826,64 +1081,6 @@ document.querySelector('.sidebar-close').addEventListener('click', function(e) {
     body.classList.remove('no-scroll');
 });
 
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    var sound = document.getElementById('notification-sound');
-    sound.play();
-}
-
-// Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-document.addEventListener('DOMContentLoaded', function () {
-    const notifications = document.querySelectorAll('.notification.show');
-    notifications.forEach(notification => {
-        playNotificationSound();  // Jouer le son lorsque la notification est affichée
-    });
-});
-
-            // Fonction pour fermer une notification
-            function closeNotification(element) {
-                const notification = element.parentElement;
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-            }
-            
-            // Fonction pour jouer le son de notification
-            function playNotificationSound() {
-                var sound = document.getElementById('notification-sound');
-                sound.play();
-            }
-            
-            // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-            document.addEventListener('DOMContentLoaded', function () {
-                const notifications = document.querySelectorAll('.notification.show');
-                notifications.forEach(notification => {
-                    playNotificationSound();  // Jouer le son lorsque la notification est affichée
-                });
-            });
-            
-            // Fonction pour afficher une notification avec animation et son
-            function showNotification(element) {
-                const notification = element;
-                notification.classList.add('show');
-                playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-                
-                // Ajouter un délai avant de masquer la notification
-                setTimeout(() => {
-                    notification.classList.add('hide');
-                    setTimeout(() => notification.remove(), 300); // Suppression après transition
-                }, 10000); // La notification disparaît après 5 secondes
-            }
-            
-            // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-            setTimeout(() => {
-                const notifications = document.querySelectorAll('.notification');
-                notifications.forEach(notification => {
-                    notification.classList.add('hide');
-                    setTimeout(() => notification.remove(), 300); // Suppression après transition
-                });
-            }, 10000); // La notification disparaît après 5 secondes
-            
-            
 
 // Script pour appliquer un filtre avec la barre de recherche
 document.querySelector('#search').addEventListener('input', function() {
@@ -900,7 +1097,149 @@ document.querySelector('#search').addEventListener('input', function() {
   });
 });
   </script>
-
+  <script>
+    function toggleHeureFields() {
+        const ouvert24h = document.getElementById('ouvert_24h_checkbox').checked;
+        const heureFields = document.querySelectorAll('.timepicker');
+        
+        heureFields.forEach(field => {
+            field.disabled = ouvert24h;
+            if (ouvert24h) {
+                field.value = '';
+            }
+        });
+    }
+    
+    // Initialisation au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleHeureFields();
+        
+        // Initialisation des timepickers (exemple avec Flatpickr)
+        flatpickr('.timepicker', {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 15
+        });
+    });
+    </script>
+    <script>
+      // Configuration des thèmes
+  const themes = {
+    light: {
+        bg: 'rgba(255, 255, 255, 0.97)',
+        text: '#333',
+        border: 'rgba(0, 0, 0, 0.1)',
+        progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+    }
+  };
+  
+  // Fonction pour jouer le son avec gestion moderne des erreurs
+  function playNotificationSound() {
+    const sound = document.getElementById('notification-sound');
+    if (!sound) return;
+  
+    const playSound = () => {
+        sound.currentTime = 0;
+        sound.volume = 0.8;
+        sound.play().catch(e => console.debug("Sound play prevented:", e));
+    };
+  
+    // Essayer de jouer immédiatement
+    playSound();
+    
+    // Si bloqué, attendre une interaction utilisateur
+    if (sound.paused) {
+        const enableSound = () => {
+            playSound();
+            document.removeEventListener('click', enableSound);
+            document.removeEventListener('keydown', enableSound);
+        };
+        document.addEventListener('click', enableSound, { once: true });
+        document.addEventListener('keydown', enableSound, { once: true });
+    }
+  }
+  
+  // Fermeture de notification avec animation fluide
+  function closeNotification(closeButton) {
+    const notification = closeButton.closest('.notification-modal');
+    if (!notification) return;
+    
+    notification.classList.add('closing');
+    setTimeout(() => {
+        notification.classList.remove('show', 'closing');
+        notification.remove();
+    }, 300);
+  }
+  
+  // Affichage de notification avec effets modernes
+  function showNotification(notificationElement) {
+    // Appliquer le thème light par défaut
+    const themeConfig = themes.light;
+    
+    notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+    notificationElement.style.setProperty('--text-color', themeConfig.text);
+    notificationElement.style.setProperty('--border-color', themeConfig.border);
+    notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+  
+    // Animation d'entrée
+    notificationElement.classList.add('show');
+    playNotificationSound();
+    
+    // Barre de progression animée
+    const progressBar = notificationElement.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.style.width = '100%';
+        setTimeout(() => {
+            progressBar.style.transition = 'width 5s linear';
+            progressBar.style.width = '0%';
+        }, 50);
+    }
+  
+    // Fermeture automatique après délai
+    let timeoutId = setTimeout(() => {
+        notificationElement.classList.add('closing');
+        setTimeout(() => notificationElement.remove(), 300);
+    }, 5000);
+  
+    // Réinitialiser le timeout si la souris entre
+    notificationElement.addEventListener('mouseenter', () => {
+        clearTimeout(timeoutId);
+        if (progressBar) progressBar.style.transition = 'none';
+    });
+  
+    // Redémarrer le timeout si la souris sort
+    notificationElement.addEventListener('mouseleave', () => {
+        if (progressBar) {
+            const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+            progressBar.style.transition = `width ${remaining}ms linear`;
+            progressBar.style.width = '0%';
+        }
+        timeoutId = setTimeout(() => {
+            notificationElement.classList.add('closing');
+            setTimeout(() => notificationElement.remove(), 300);
+        }, progressBar ? remaining : 5000);
+    });
+  }
+  
+  // Initialisation
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.notification-modal').forEach(notification => {
+        showNotification(notification);
+    });
+  });
+  
+  // Gestion des clics en dehors pour fermer
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.notification-modal')) {
+        document.querySelectorAll('.notification-modal.show').forEach(modal => {
+            modal.classList.add('closing');
+            setTimeout(() => modal.remove(), 300);
+        });
+    }
+  });
+      </script>   
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

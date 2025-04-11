@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarabaAI | Plateforme eCommerce Intelligente</title>
+    <link rel="icon" type="image/png" href="/static/lo.jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #004E89;
+            --dark: #2D2D2A;
+            --light: #F7F7FF;
+            --accent: #00A6FB;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        /* Loader modernisé */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Style général modernisé */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Header avec effet glassmorphism */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.9) 0%, rgba(0, 78, 137, 0.9) 100%);
+            color: white;
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        /* Logo modernisé */
+        .platform-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 18px 35px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        
+        .logo-container:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .logo-img {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, white, #f3f3f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Section vidéos modernisée */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin: 5rem 0;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .video-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            transition: var(--transition);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .video-wrapper:hover video {
+            transform: scale(1.03);
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+        
+        .video-wrapper:hover .play-icon {
+            opacity: 1;
+        }
+        
+        .play-icon i {
+            color: white;
+            font-size: 2rem;
+            margin-left: 5px;
+        }
+        
+        .video-content {
+            padding: 2rem;
+        }
+        
+        .video-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        
+        .video-content h3 i {
+            color: var(--primary);
+        }
+        
+        .video-content p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Boutons modernisés */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 78, 137, 0.4);
+        }
+        
+        /* Navigation */
+        .nav-back {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+        }
+        
+        .nav-back a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .nav-back a:hover {
+            transform: translateX(-5px);
+        }
+        
+        /* Plein écran vidéo amélioré */
+        .fullscreen-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .fullscreen-video.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .fullscreen-container {
+            width: 90%;
+            max-width: 1400px;
+            position: relative;
+        }
+        
+        .fullscreen-video video {
+            width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+        
+        .close-video {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .close-video:hover {
+            color: var(--primary);
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .video-info {
+            position: absolute;
+            bottom: -70px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+        }
+        
+        .video-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .video-info p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: -120px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .video-controls button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-controls button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        
+        .video-controls button:active {
+            transform: scale(0.95);
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 6rem 1.5rem 4rem;
+            }
+            
+            .logo-container {
+                padding: 15px 25px;
+            }
+            
+            .logo-img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1.5rem;
+            }
+            
+            .fullscreen-container {
+                width: 95%;
+            }
+            
+            .video-info h3 {
+                font-size: 1.4rem;
+            }
+            
+            .video-info p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="content-loaded">
+    <!-- Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="spinner"></div>
+        <div class="loader-text">Chargement de WarabaAI...</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-back">
+        <a href="{% url 'accueil' %}">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour</span>
+        </a>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="platform-logo">
+            <div class="logo-container">
+                <img src="{% static 'lo.jpeg' %}" alt="WarabaAI" class="logo-img">
+                <span class="logo-text">WarabaAI</span>
+            </div>
+        </div>
+        
+        <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1.5rem;">L'Intelligence Artificielle au service de votre eCommerce</h1>
+        <p style="font-size: clamp(1rem, 2vw, 1.25rem); max-width: 700px; margin: 0 auto 2.5rem;">
+            Découvrez comment notre plateforme intelligente peut transformer votre business en ligne
+        </p>
+        <a href="{% url 'inscription' %}" class="btn btn-primary">
+            <i class="fas fa-rocket"></i>
+            Essai Gratuit
+        </a>
+    </section>
+    
+    <!-- Video Tutorials Section -->
+    <div class="video-grid">
+        <!-- Vidéo 1: Création de boutique -->
+        <div class="video-card" data-video-src="{% static 'video.mp4' %}" data-title="Création de Boutique" data-description="Guide étape par étape pour créer votre boutique en ligne en moins de 5 minutes.">
+            <div class="video-wrapper">
+                <video muted loop>
+                    <source src="{% static 'video.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas les vidéos HTML5.
+                </video>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-content">
+                <h3><i class="fas fa-store"></i> Création de Boutique</h3>
+                <p>Guide étape par étape pour créer votre boutique en ligne en moins de 5 minutes.</p>
+                <button class="btn btn-primary" style="width: 100%; text-align: center;">
+                    <i class="fas fa-eye"></i> Voir la démo
+                </button>
+            </div>
+        </div>
+        
+        <!-- Vidéo 2: Remplir sa boutique -->
+        <div class="video-card" data-video-src="{% static 'videos/remplir-boutique.mp4' %}" data-title="Remplir sa Boutique" data-description="Apprenez à ajouter des produits, catégories et configurer vos méthodes de paiement.">
+            <div class="video-wrapper">
+                <video muted loop>
+                    <source src="{% static 'videos/remplir-boutique.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas les vidéos HTML5.
+                </video>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-content">
+                <h3><i class="fas fa-box-open"></i> Remplir sa Boutique</h3>
+                <p>Apprenez à ajouter des produits, catégories et configurer vos méthodes de paiement.</p>
+                <button class="btn btn-primary" style="width: 100%; text-align: center;">
+                    <i class="fas fa-eye"></i> Voir la démo
+                </button>
+            </div>
+        </div>
+        
+        <!-- Vidéo 3: Guide d'Achat -->
+        <div class="video-card" data-video-src="{% static 'videos/achat.mp4' %}" data-title="Guide d'Achat" data-description="Apprenez à naviguer et effectuer des achats sur notre plateforme en quelques étapes simples.">
+            <div class="video-wrapper">
+                <video muted loop>
+                    <source src="{% static 'videos/achat.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas les vidéos HTML5.
+                </video>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-content">
+                <h3><i class="fas fa-shopping-cart"></i> Guide d'Achat</h3>
+                <p>Apprenez à naviguer et effectuer des achats sur notre plateforme en quelques étapes simples.</p>
+                <button class="btn btn-primary" style="width: 100%; text-align: center;">
+                    <i class="fas fa-eye"></i> Voir la démo
+                </button>
+            </div>
+        </div>
+        
+        <!-- Vidéo 4: Gestion des commandes -->
+        <div class="video-card" data-video-src="{% static 'videos/commandes.mp4' %}" data-title="Gestion des Commandes" data-description="Découvrez comment suivre et gérer efficacement vos commandes avec notre interface intuitive.">
+            <div class="video-wrapper">
+                <video muted loop>
+                    <source src="{% static 'videos/commandes.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas les vidéos HTML5.
+                </video>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-content">
+                <h3><i class="fas fa-tasks"></i> Gestion des Commandes</h3>
+                <p>Découvrez comment suivre et gérer efficacement vos commandes avec notre interface intuitive.</p>
+                <button class="btn btn-primary" style="width: 100%; text-align: center;">
+                    <i class="fas fa-eye"></i> Voir la démo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Video Player amélioré -->
+    <div class="fullscreen-video" id="fullscreenPlayer">
+        <div class="fullscreen-container">
+            <span class="close-video" onclick="closeFullscreen()">
+                <i class="fas fa-times"></i>
+            </span>
+            <video controls id="fullscreenVideo"></video>
+            
+            <div class="video-info">
+                <h3 id="videoTitle"></h3>
+                <p id="videoDescription"></p>
+                
+                <div class="progress-container" onclick="seekVideo(event)">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+            
+            <div class="video-controls">
+                <button onclick="togglePlay()" id="playBtn">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button onclick="toggleMute()" id="muteBtn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <button onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion du loader
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loader = document.getElementById('pageLoader');
+                loader.style.opacity = '0';
+                
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                    document.body.classList.add('show');
+                }, 500);
+            }, 1000);
+        });
+        
+        // Variables globales
+        let currentVideo = null;
+        let isDraggingProgress = false;
+        
+        // Initialisation des vidéos
+        function initVideos() {
+            const videoCards = document.querySelectorAll('.video-card');
+            
+            videoCards.forEach(card => {
+                const videoWrapper = card.querySelector('.video-wrapper');
+                const btn = card.querySelector('.btn');
+                
+                // Récupérer les données
+                const videoSrc = card.getAttribute('data-video-src');
+                const title = card.getAttribute('data-title');
+                const description = card.getAttribute('data-description');
+                
+                // Configurer les événements
+                videoWrapper.addEventListener('click', () => openFullscreen(videoSrc, title, description));
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openFullscreen(videoSrc, title, description);
+                });
+                
+                // Auto-play au survol
+                const video = videoWrapper.querySelector('video');
+                video.addEventListener('mouseenter', function() {
+                    this.play().catch(e => console.log("Auto-play bloqué:", e));
+                });
+                
+                video.addEventListener('mouseleave', function() {
+                    this.pause();
+                    this.currentTime = 0;
+                });
+            });
+        }
+        
+        // Ouvrir en plein écran
+        function openFullscreen(videoSrc, title, description) {
+            const player = document.getElementById('fullscreenPlayer');
+            const video = document.getElementById('fullscreenVideo');
+            const videoTitle = document.getElementById('videoTitle');
+            const videoDescription = document.getElementById('videoDescription');
+            
+            // Stocker la vidéo courante
+            currentVideo = video;
+            
+            // Mettre à jour les infos
+            videoTitle.textContent = title;
+            videoDescription.textContent = description;
+            
+            // Configurer la vidéo
+            video.src = videoSrc;
+            video.controls = false;
+            video.muted = false;
+            
+            // Afficher le lecteur
+            player.classList.add('active');
+            
+            // Lecture automatique
+            const playPromise = video.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Si la lecture automatique échoue, afficher les contrôles
+                    video.controls = true;
+                    console.log("Lecture automatique bloquée:", error);
+                });
+            }
+            
+            // Mettre à jour les boutons
+            updateControlButtons();
+            
+            // Démarrer la mise à jour de la barre de progression
+            requestAnimationFrame(updateProgressBar);
+        }
+        
+        // Fermer le plein écran
+        function closeFullscreen() {
+            const player = document.getElementById('fullscreenPlayer');
+            const video = document.getElementById('fullscreenVideo');
+            
+            video.pause();
+            player.classList.remove('active');
+            
+            // Réinitialiser
+            currentVideo = null;
+        }
+        
+        // Contrôles vidéo
+        function togglePlay() {
+            if (currentVideo.paused) {
+                currentVideo.play();
+            } else {
+                currentVideo.pause();
+            }
+            updateControlButtons();
+        }
+        
+        function toggleMute() {
+            currentVideo.muted = !currentVideo.muted;
+            updateControlButtons();
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Erreur fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        function seekVideo(event) {
+            if (!currentVideo) return;
+            
+            const progressContainer = event.currentTarget;
+            const rect = progressContainer.getBoundingClientRect();
+            const pos = (event.clientX - rect.left) / rect.width;
+            
+            currentVideo.currentTime = pos * currentVideo.duration;
+        }
+        
+        // Mettre à jour les boutons de contrôle
+        function updateControlButtons() {
+            if (!currentVideo) return;
+            
+            const playBtn = document.getElementById('playBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            
+            playBtn.innerHTML = currentVideo.paused ? 
+                '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+            
+            muteBtn.innerHTML = currentVideo.muted ? 
+                '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+        }
+        
+        // Mettre à jour la barre de progression
+        function updateProgressBar() {
+            if (!currentVideo || currentVideo.paused) return;
+            
+            const progressBar = document.getElementById('progressBar');
+            const progress = (currentVideo.currentTime / currentVideo.duration) * 100;
+            progressBar.style.width = progress + '%';
+            
+            requestAnimationFrame(updateProgressBar);
+        }
+        
+        // Événements globaux
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                closeFullscreen();
+            }
+            
+            // Espace pour play/pause
+            if (e.key === " " && currentVideo) {
+                e.preventDefault();
+                togglePlay();
+            }
+        });
+        
+        document.getElementById('fullscreenPlayer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFullscreen();
+            }
+        });
+        
+        // Événements vidéo
+        document.addEventListener('DOMContentLoaded', function() {
+            initVideos();
+            
+            const video = document.getElementById('fullscreenVideo');
+            
+            video.addEventListener('play', function() {
+                updateControlButtons();
+                requestAnimationFrame(updateProgressBar);
+            });
+            
+            video.addEventListener('pause', function() {
+                updateControlButtons();
+            });
+            
+            video.addEventListener('volumechange', function() {
+                updateControlButtons();
+            });
+            
+            video.addEventListener('click', function() {
+                togglePlay();
+            });
+        });
+    </script>
+</body>
+</html>

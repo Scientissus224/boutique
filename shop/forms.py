@@ -1,5 +1,6 @@
 # forms.py
 from django import forms
+from datetime import time, datetime
 from django.core.validators import RegexValidator 
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -109,7 +110,7 @@ class MiseAJourUtilisateurForm(UserChangeForm):
 
     class Meta:
         model = Utilisateur
-        fields = ['nom_complet', 'numero', 'nom_boutique', 'email']
+        fields = ['nom_complet', 'numero', 'nom_boutique', 'email', 'logo_boutique']  # Ajout du champ logo_boutique
 
     def __init__(self, *args, **kwargs):
         """
@@ -145,12 +146,16 @@ class MiseAJourUtilisateurForm(UserChangeForm):
         """
         user = super().save(commit=False)
 
+        # Si un logo est fourni et a été modifié, il est mis à jour
+        if 'logo_boutique' in self.changed_data:
+            logo = self.cleaned_data.get('logo_boutique')
+            if logo:
+                user.logo_boutique = logo
+
         # Le mot de passe ne sera pas mis à jour, donc on ne s'en occupe plus
         if commit:
             user.save()
         return user
-
-
 #---------------------------------Gestion des infos supplementaires-----------------------------------
 
 
@@ -263,7 +268,6 @@ class InscriptionClientForm(UserCreationForm):
         
         return cleaned_data
 #---------------------------------Gestion des Produits------------------------------------
-
 class ProduitForm(forms.ModelForm):
     etat = forms.ChoiceField(
         label='État',
@@ -295,6 +299,11 @@ class ProduitForm(forms.ModelForm):
     )
     prix = forms.DecimalField(
         label='Prix', 
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    ancien_prix = forms.DecimalField(
+        label='Ancien Prix', 
+        required=False,  # Optionnel si le produit n'est pas en promo
         widget=forms.NumberInput(attrs={'class': 'form-control'})
     )
     quantite_stock = forms.IntegerField(
@@ -335,13 +344,21 @@ class ProduitForm(forms.ModelForm):
         required=False, 
         widget=forms.URLInput(attrs={'class': 'form-control'})
     )
+
+    # Champ pour le type du produit (Promo, Populaire, Nouveauté)
+    type_produit = forms.ChoiceField(
+        label='Type de produit',
+        choices=Produit.TYPE_PRODUIT_CHOICES,
+        required=False,  # Optionnel
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     
     class Meta:
         model = Produit
         fields = [
-            'nom', 'description', 'prix', 'quantite_stock', 'reference', 
+            'nom', 'description', 'prix', 'ancien_prix', 'quantite_stock', 'reference', 
             'marque', 'poids', 'dimensions', 'etat', 'mise_en_avant', 'video_promotionnelle', 
-            'tags', 'image'
+            'tags', 'image', 'type_produit'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -395,6 +412,197 @@ class ProduitForm(forms.ModelForm):
 
         return produit
 
+
+
+class ProduitEditForm(forms.ModelForm):
+    # Champs avec des choix prédéfinis
+    etat = forms.ChoiceField(
+        label='État',
+        choices=Produit.ETAT_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    mise_en_avant = forms.ChoiceField(
+        label='Mettre en avant',
+        choices=Produit.MISE_EN_AVANT_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    type_produit = forms.ChoiceField(
+        label='Type de produit',
+        choices=Produit.TYPE_PRODUIT_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    # Champ image avec prévisualisation
+    image = forms.ImageField(
+        required=False,
+        label='Image principale',
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control',
+            'onchange': 'previewImage(this)'
+        })
+    )
+
+    # Champs texte
+    nom = forms.CharField(
+        label='Nom du produit', 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nom du produit'
+        })
+    )
+    
+    description = forms.CharField(
+        label='Description', 
+        widget=forms.Textarea(attrs={
+            'class': 'form-control', 
+            'rows': 3,
+            'placeholder': 'Description détaillée du produit'
+        })
+    )
+
+    # Champs numériques
+    prix = forms.DecimalField(
+        label='Prix', 
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.01',
+            'min': '0'
+        })
+    )
+    
+    ancien_prix = forms.DecimalField(
+        label='Ancien Prix (promo)', 
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.01',
+            'min': '0'
+        })
+    )
+    
+    quantite_stock = forms.IntegerField(
+        label='Quantité en stock', 
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'min': '0'
+        })
+    )
+    
+    poids = forms.DecimalField(
+        label='Poids (kg)', 
+        required=False, 
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.001',
+            'min': '0'
+        })
+    )
+
+    # Autres champs
+    reference = forms.CharField(
+        label='Référence', 
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Référence unique'
+        })
+    )
+    
+    marque = forms.CharField(
+        label='Marque', 
+        required=False, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Marque du produit'
+        })
+    )
+    
+    dimensions = forms.CharField(
+        label='Dimensions (LxHxP en cm)', 
+        required=False, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ex: 20x15x10'
+        })
+    )
+    
+    video_promotionnelle = forms.URLField(
+        label='Vidéo promotionnelle (URL)', 
+        required=False, 
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'https://example.com/video'
+        })
+    )
+
+    # Champ ManyToMany avec style amélioré
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control select2'}),
+        required=False,
+        label='Tags associés'
+    )
+
+    class Meta:
+        model = Produit
+        fields = [
+            'nom', 'description', 'prix', 'ancien_prix', 'quantite_stock', 
+            'reference', 'marque', 'poids', 'dimensions', 'etat', 
+            'mise_en_avant', 'video_promotionnelle', 'tags', 'image', 
+            'type_produit'
+        ]
+        help_texts = {
+            'ancien_prix': 'Remplir uniquement si le produit est en promotion',
+            'type_produit': 'Catégorie spéciale du produit',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Personnalisation des initial values si nécessaire
+        if self.instance.pk:
+            self.fields['image'].initial = self.instance.image
+            self.fields['tags'].initial = self.instance.tags.all()
+
+    def clean_prix(self):
+        prix = self.cleaned_data.get('prix')
+        if prix is not None:
+            if prix <= 0:
+                raise ValidationError("Le prix doit être supérieur à zéro.")
+            if len(str(prix).split('.')[0]) > 10:
+                raise ValidationError("Le prix ne peut pas dépasser 10 chiffres avant la virgule.")
+        return prix
+
+    def clean_ancien_prix(self):
+        ancien_prix = self.cleaned_data.get('ancien_prix')
+        prix = self.cleaned_data.get('prix')
+        
+        if ancien_prix and prix:
+            if ancien_prix <= prix:
+                raise ValidationError("L'ancien prix doit être supérieur au prix actuel pour une promotion.")
+        return ancien_prix
+
+    def clean_dimensions(self):
+        dimensions = self.cleaned_data.get('dimensions')
+        if dimensions:
+            parts = dimensions.split('x')
+            if len(parts) != 3 or not all(part.strip().isdigit() for part in parts):
+                raise ValidationError('Format invalide. Utilisez "LxHxP" avec des nombres (ex: 20x15x10).')
+        return dimensions
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Validation croisée supplémentaire si nécessaire
+        return cleaned_data
+
+    def save(self, commit=True):
+        produit = super().save(commit=False)
+        if commit:
+            produit.save()
+            self.save_m2m()  # Important pour les relations ManyToMany comme les tags
+        return produit
 
      #---------------------------Autres images du Produit ----------------------------
 
@@ -545,7 +753,10 @@ class LocalisationForm(forms.ModelForm):
             regex=r'^<iframe src="https://www\.google\.com/maps/embed\?pb=.*" width="\d+" height="\d+" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>$',
             message="Le lien doit être un iframe Google Maps valide"
         )],
-        widget=forms.Textarea(attrs={'placeholder': 'Collez ici votre iframe Google Maps'}),
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Collez ici votre iframe Google Maps',
+            'class': 'form-control'
+        }),
         label="Lien Maps"
     )
 
@@ -553,93 +764,152 @@ class LocalisationForm(forms.ModelForm):
     repere = forms.CharField(
         max_length=255, 
         required=False, 
-        widget=forms.TextInput(attrs={'placeholder': 'Ajouter un repère (facultatif)'}),
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Ajouter un repère (facultatif)',
+            'class': 'form-control'
+        }),
         label="Repère"
+    )
+
+    # Génération des choix d'heures toutes les 15 minutes
+    HEURE_CHOICES = [(time(h, m).strftime('%H:%M'), time(h, m).strftime('%H:%M')) 
+                    for h in range(24) for m in (0, 15, 30, 45)]
+
+    # Champs pour les horaires avec widgets améliorés
+    heure_ouverture = forms.ChoiceField(
+        choices=HEURE_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-select time-select',
+            'data-toggle': 'select2'
+        }),
+        label="Heure d'ouverture"
+    )
+    heure_fermeture = forms.ChoiceField(
+        choices=HEURE_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-select time-select',
+            'data-toggle': 'select2'
+        }),
+        label="Heure de fermeture"
+    )
+    ouvert_24h = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input',
+            'id': 'ouvert_24h_checkbox',
+            'onchange': 'toggleHeureFields()'
+        }),
+        label="Ouvert 24h/24"
+    )
+    ferme_jour_ferie = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        label="Fermé les jours fériés",
+        initial=True
     )
 
     class Meta:
         model = Localisation
-        fields = ['lien_maps', 'ville', 'quartier', 'repere']  # Ajout du champ 'repere'
+        fields = ['lien_maps', 'ville', 'quartier', 'repere', 
+                 'jour_ouverture', 'jour_fermeture', 
+                 'heure_ouverture', 'heure_fermeture', 
+                 'ouvert_24h', 'ferme_jour_ferie']
+        widgets = {
+            'ville': forms.TextInput(attrs={'class': 'form-control'}),
+            'quartier': forms.TextInput(attrs={'class': 'form-control'}),
+            'jour_ouverture': forms.Select(attrs={'class': 'form-select'}),
+            'jour_fermeture': forms.Select(attrs={'class': 'form-select'}),
+        }
 
     def __init__(self, *args, **kwargs):
-        # Associer le formulaire avec l'utilisateur connecté
-        self.user = kwargs.pop('user', None)  # L'utilisateur connecté doit être passé dans les arguments
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        
+        if hasattr(self.Meta.model, 'JOURS_SEMAINE'):
+            self.fields['jour_ouverture'].choices = self.Meta.model.JOURS_SEMAINE
+            self.fields['jour_fermeture'].choices = self.Meta.model.JOURS_SEMAINE
+        
+        # Initialisation des champs heure si ouvert 24h/24
+        if self.instance and self.instance.ouvert_24h:
+            self.fields['heure_ouverture'].required = False
+            self.fields['heure_fermeture'].required = False
+            self.fields['heure_ouverture'].widget.attrs['disabled'] = True
+            self.fields['heure_fermeture'].widget.attrs['disabled'] = True
+
+        # Si instance existe, formater les heures au format HH:MM
+        if self.instance and self.instance.heure_ouverture:
+            self.initial['heure_ouverture'] = self.instance.heure_ouverture.strftime('%H:%M')
+        if self.instance and self.instance.heure_fermeture:
+            self.initial['heure_fermeture'] = self.instance.heure_fermeture.strftime('%H:%M')
 
     def clean(self):
         cleaned_data = super().clean()
         
-        # Vérifier si l'utilisateur a déjà une localisation enregistrée
-        if self.user and Localisation.objects.filter(utilisateur=self.user).exists():
-            raise ValidationError("Vous avez déjà une localisation enregistrée. Si vous souhaitez la mettre à jour, faites-le dans les paramètres de votre boutique.")
+        # Ne pas valider l'unicité si c'est une mise à jour (user n'est pas défini)
+        if hasattr(self, 'user') and self.user and Localisation.objects.filter(utilisateur=self.user).exclude(pk=self.instance.pk if self.instance else None).exists():
+            raise ValidationError("Vous avez déjà une localisation enregistrée.")
         
+        ouvert_24h = cleaned_data.get('ouvert_24h', False)
+        heure_ouverture = cleaned_data.get('heure_ouverture')
+        heure_fermeture = cleaned_data.get('heure_fermeture')
+        
+        if not ouvert_24h:
+            if not heure_ouverture or not heure_fermeture:
+                raise ValidationError("Les heures sont requises si non ouvert 24h/24.")
+            
+            # Convertir les chaînes HH:MM en objets time pour comparaison
+            try:
+                h_ouv = datetime.strptime(heure_ouverture, '%H:%M').time()
+                h_fer = datetime.strptime(heure_fermeture, '%H:%M').time()
+                if h_ouv >= h_fer:
+                    raise ValidationError("L'heure de fermeture doit être après l'heure d'ouverture.")
+            except ValueError:
+                raise ValidationError("Format d'heure invalide. Utilisez HH:MM.")
+        else:
+            # Nettoyer les heures si ouvert 24h/24
+            cleaned_data['heure_ouverture'] = None
+            cleaned_data['heure_fermeture'] = None
+
         return cleaned_data
 
     def save(self, commit=True):
-        # Lors de la sauvegarde, associer la localisation à l'utilisateur connecté
         localisation = super().save(commit=False)
-        if self.user:
-            localisation.utilisateur = self.user  # Associer l'utilisateur à la localisation
-        if commit:
-            localisation.save()
-        return localisation
-#---------------------------------Gestion de la Mise à jour de la Localisation------------------------------------
-
-class MiseAJourLocalisationForm(forms.ModelForm):
-    """
-    Formulaire pour la mise à jour des informations de localisation.
-    """
-
-    class Meta:
-        model = Localisation
-        fields = ['lien_maps', 'ville', 'quartier', 'repere']  # Ajout du champ repère
-
-    def __init__(self, *args, **kwargs):
-        """
-        Initialisation du formulaire. Permet de pré-remplir les champs
-        avec les informations de localisation existantes.
-        """
-        self.request = kwargs.pop('request', None)  # Accepter la requête dans l'init
-        super().__init__(*args, **kwargs)
-
-    def clean_ville(self):
-        """
-        Vérifier si la ville est fournie et valide.
-        """
-        ville = self.cleaned_data.get('ville')
-        if ville and len(ville) < 3:
-            raise forms.ValidationError("Le nom de la ville doit avoir au moins 3 caractères.")
-        return ville
-
-    def clean_quartier(self):
-        """
-        Vérifier si le quartier est fourni et valide.
-        """
-        quartier = self.cleaned_data.get('quartier')
-        if quartier and len(quartier) < 3:
-            raise forms.ValidationError("Le nom du quartier doit avoir au moins 3 caractères.")
-        return quartier
-
-    def clean_repere(self):
-        """
-        Vérifier si le repère est fourni et valide.
-        """
-        repere = self.cleaned_data.get('repere')
-        if repere and len(repere) < 3:
-            raise forms.ValidationError("Le repère doit avoir au moins 3 caractères.")
-        return repere
-
-    def save(self, commit=True):
-        """
-        Sauvegarder les informations de localisation.
-        """
-        localisation = super().save(commit=False)
+        if hasattr(self, 'user') and self.user:
+            localisation.utilisateur = self.user
         
+        # Gestion cohérente des heures pour 24h/24
+        if localisation.ouvert_24h:
+            localisation.heure_ouverture = None
+            localisation.heure_fermeture = None
+        else:
+            # Convertir les chaînes HH:MM en objets time
+            if self.cleaned_data.get('heure_ouverture'):
+                localisation.heure_ouverture = datetime.strptime(
+                    self.cleaned_data['heure_ouverture'], '%H:%M'
+                ).time()
+            if self.cleaned_data.get('heure_fermeture'):
+                localisation.heure_fermeture = datetime.strptime(
+                    self.cleaned_data['heure_fermeture'], '%H:%M'
+                ).time()
+            
         if commit:
             localisation.save()
         return localisation
+class MiseAJourLocalisationForm(LocalisationForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        
+        # Supprimer le validateur d'unicité pour le lien maps
+        self.fields['lien_maps'].validators = []
 
-#---------------------------------Gestion de la Localisation------------------------------------
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+    
+    #---------------------------------Gestion de la Localisation------------------------------------
 class LocalImagesForm(forms.ModelForm):
     """
     Formulaire pour la gestion des images de localisation.

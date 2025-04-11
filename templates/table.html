@@ -282,254 +282,373 @@
   }
 }
 
-/* Style général de la notification */
-.notification-box {
+:root {
+  --bg-color: rgba(255, 255, 255, 0.97);
+  --text-color: #333;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+  --mobile-breakpoint: 768px;
+}
+
+.messages-overlay {
   position: fixed;
-  top: 15%;
-  right: 10px;
-  transform: translateY(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  align-items: center;
-  background-color: #222; /* Noir profond pour un effet premium */
-  color: #fff;
-  border-radius: 15px;
-  padding: 15px 25px;
-  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3); /* Ombre orange foncé */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
   z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Pointe de la boîte */
-.notification-box:after {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #FF8C00; /* Orange foncé */
-  z-index: 9999;
-}
-
-/* Icône */
-.notification-box i {
-  font-size: 2.5rem;
-  margin-right: 20px;
-  color: #FF8C00; /* Icône orange foncé */
-  animation: glow 1.5s infinite alternate;
-}
-
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem;
-  flex-grow: 1;
-  opacity: 0.9;
-  letter-spacing: 0.5px;
-  color: #fff;
-}
-
-/* Bouton de fermeture */
-.close-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 60px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
+.messages-container {
+  max-width: 600px;
+  width: 90%;
+  pointer-events: auto;
   padding: 10px;
 }
 
-.close-btn:hover {
-  color: #FF8C00;
-  transform: scale(1.2);
+.notification-modal {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-30px) scale(0.95);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Styles responsive */
+.notification-modal.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.notification-modal.closing {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
+.notification-icon {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  font-size: 24px;
+  color: var(--primary-color, #4e73ff);
+}
+
+.notification-content {
+  padding-left: 40px;
+  padding-right: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: all 0.2s ease-out;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  touch-action: manipulation;
+}
+
+.close-btn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--progress-gradient);
+  transform-origin: left;
+  transition: width 5s linear;
+}
+
+/* Effet de "glow" subtil */
+.notification-modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Animation d'entrée spécifique pour chaque notification */
+.notification-modal:nth-child(1) { transition-delay: 0.1s; }
+.notification-modal:nth-child(2) { transition-delay: 0.2s; }
+.notification-modal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .notification-box {
-    top: 10%;
-    right: 5px;
-    padding: 12px 18px;
-    width: 90%;
+  .messages-overlay {
+      padding-top: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
   }
-  .notification-box i {
-    font-size: 2rem;
+  
+  .messages-container {
+      width: 95%;
+      max-width: 100%;
+      padding: 5px;
   }
-  .notification-box .message {
-    font-size: 1.1rem;
+  
+  .notification-modal {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
   }
+  
+  .notification-icon {
+      left: 15px;
+      top: 15px;
+      font-size: 20px;
+  }
+  
+  .notification-content {
+      padding-left: 35px;
+      padding-right: 15px;
+      font-size: 14px;
+  }
+  
   .close-btn {
-    font-size: 1.2rem;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+  }
+  
+  .progress-bar {
+      height: 2px;
   }
 }
 
 @media (max-width: 480px) {
-  .notification-box {
-    top: 5%;
-    right: 5px;
-    padding: 8px 15px;
-    width: 90%;
+  .notification-modal {
+      padding: 12px;
   }
-  .notification-box i {
-    font-size: 1.8rem;
+  
+  .notification-icon {
+      left: 12px;
+      top: 12px;
+      font-size: 18px;
   }
-  .notification-box .message {
-    font-size: 1rem;
+  
+  .notification-content {
+      padding-left: 30px;
+      padding-right: 10px;
   }
+  
+  .notification-modal::after {
+      display: none; /* Supprime l'effet glow sur petits écrans */
+  }
+}
+
+/* Support pour les appareils tactiles */
+@media (hover: none) {
   .close-btn {
-    font-size: 1rem;
+      opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+      background: rgba(0, 0, 0, 0.1);
   }
 }
 
-/* Animation de lueur pour l'icône */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 5px #FF8C00, 0 0 10px #FF8C00, 0 0 20px #FF8C00;
-  }
-  100% {
-    text-shadow: 0 0 20px #FF8C00, 0 0 30px #FF8C00, 0 0 40px #FF8C00;
+/* Amélioration pour les très grands écrans */
+@media (min-width: 1600px) {
+  .messages-container {
+      max-width: 700px;
   }
 }
 
-/* Styles des notifications */
-.notification.show {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-  box-shadow: 0 8px 30px rgba(255, 140, 0, 0.5);
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateY(-50%) translateX(100%);
-}
-
-/* Style du popup */
+/* Style modernisé du popup - Thème Light */
 .popup {
   display: none;
   position: fixed;
-  top: 30%; /* Centré verticalement */
-  left: 50%; /* Centré horizontalement */
-  transform: translate(-50%, -50%); /* Centrer complètement */
-  width: 300px;
-  height: auto;
-  background: rgba(35, 35, 35, 0.9); /* Fond noir clair pour un aspect marketplace */
-  justify-content: center;
-  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
   z-index: 9999;
-  font-family: 'Roboto', sans-serif;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  transition: opacity 0.5s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .popup-content {
-  padding: 20px;
+  padding: 24px;
   text-align: center;
 }
 
 .popup h4 {
-  font-family: 'Orbitron', sans-serif;
-  color: #ffffff; /* Couleur blanche pour le titre */
+  color: #1a1a1a;
   font-size: 22px;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: -0.2px;
 }
 
 .popup p {
-  color: #ffffff;
-  font-size: 16px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
 .popup button {
-  background: #007b7b; /* Couleur plus sobre pour le bouton */
-  color: #fff;
-  font-size: 16px;
-  padding: 10px 20px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  letter-spacing: 1px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+  flex: 1;
+  max-width: 160px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.popup button.primary {
+  background: #4361ee;
+  color: white;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
 }
 
 .popup button:hover {
-  background: #005c5c; /* Couleur sombre au survol */
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Animation d'apparition du popup */
+.popup button.primary:hover {
+  background: #3a56d4;
+  box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+}
+
+/* Animation modernisée */
 @keyframes popup-appear {
   0% {
     opacity: 0;
-    transform: scale(0.8);
+    transform: translate(-50%, -45%) scale(0.96);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
-/* Application de l'animation */
 .popup.show {
-  animation: popup-appear 0.6s ease-out forwards;
+  display: block;
+  animation: popup-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Médias Queries pour adapter le popup aux petits écrans */
+/* Effet de fermeture */
+.popup.closing {
+  opacity: 0;
+  transform: translate(-50%, -55%) scale(0.98);
+}
+
+/* Icône moderne (optionnelle) */
+.popup-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: #4361ee;
+}
+
+/* Version mobile */
 @media (max-width: 768px) {
   .popup {
-    width: 80%; /* Réduire la largeur sur les petits écrans */
-    top: 40%; /* Positionner un peu plus haut pour les petits écrans */
-    left: 50%; /* Garder centré horizontalement */
-    transform: translate(-50%, -40%); /* Ajuster le centrage */
+    width: 88%;
+    border-radius: 14px;
   }
-
+  
+  .popup-content {
+    padding: 20px;
+  }
+  
   .popup h4 {
-    font-size: 18px; /* Réduire la taille du titre */
+    font-size: 20px;
   }
-
+  
   .popup p {
-    font-size: 14px; /* Réduire la taille du texte */
+    font-size: 14px;
   }
-
+  
+  .popup-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
   .popup button {
-    font-size: 14px; /* Réduire la taille du bouton */
-    padding: 8px 16px; /* Ajuster les dimensions du bouton */
+    max-width: 100%;
+    padding: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .popup {
-    width: 90%; /* Réduire encore plus la largeur pour les très petits écrans */
-    top: 35%; /* Monter encore plus le popup sur les petits écrans */
-    left: 5%; /* Décaler légèrement à gauche pour éviter que le popup soit trop centré */
-    transform: translate(0, -50%); /* Décalage horizontal pour centrer vers la gauche */
+    width: 92%;
+    border-radius: 12px;
   }
-
-  .popup h4 {
-    font-size: 16px; /* Réduire davantage la taille du titre */
-  }
-
-  .popup p {
-    font-size: 12px; /* Réduire davantage la taille du texte */
-  }
-
-  .popup button {
-    font-size: 12px; /* Réduire davantage la taille du bouton */
-    padding: 6px 12px; /* Ajuster les dimensions du bouton */
+  
+  .popup-content {
+    padding: 18px;
   }
 }
-
     </style>
 </head>
 <body>
@@ -554,24 +673,35 @@
     {% endif %}
   </div>
 
-  <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
+  
+<audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                <!-- Icône futuriste de robot -->
-                <i class="fas fa-robot"></i>
-                <div class="message">
-                    {{ message }}
-                </div>
-                <button class="close-btn" onclick="closeNotification(this)">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        {% endfor %}
-    </div>
+<div class="messages-overlay" id="messages-overlay">
+  <div class="messages-container">
+      {% for message in messages %}
+          <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+              <div class="notification-icon">
+                  <i class="fas fa-robot pulse"></i>
+              </div>
+              
+              <div class="notification-content">
+                  <div class="message">
+                      {{ message }}
+                  </div>
+              </div>
+              
+              <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                  <i class="fas fa-times"></i>
+              </button>
+              
+              <div class="progress-bar"></div>
+          </div>
+      {% endfor %}
+  </div>
+</div>
 {% endif %}
+
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()" style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">☰</button>
         <h1>Tableau de Bord - WarabaGuinée</h1>
@@ -588,18 +718,11 @@
     <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
     <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
     <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-    <a href=""><i class="fas fa-map"></i> Lieux</a>
-    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
     <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
     <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
     <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
-    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
-    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
     <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
     <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
-    <a href=""><i class="fas fa-bell"></i> Notifications</a>
     <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
     <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
@@ -629,11 +752,11 @@
         </div>
 
         <div class="card">
-            <i class="fas fa-credit-card text-warning"></i>
-            <h5>Moyens de paiement</h5>
-            <p>Configurer vos options de paiement.</p>
-            <a href="#paiement">Configurer</a>
-        </div>
+          <i class="fas fa-headset"></i>
+          <h5>Support client</h5>
+          <p>Besoin d'aide ? Notre équipe est là pour vous assister à chaque étape.</p>
+          <a href="{% url 'statut_validation_compte' %}">Configurer</a>
+      </div>      
 
         <div class="card">
             <i class="fas fa-cogs text-secondary"></i>
@@ -664,10 +787,10 @@
         </div>
 
         <div class="card">
-            <i class="fas fa-users text-info"></i>
-            <h5>Visiteurs de la boutique</h5>
-            <p>Voir le nombre de visiteurs de votre site.</p>
-            <a href="">Voir</a>
+            <i class="fas fa-cubes"></i>
+            <h5>Gestion des stocks</h5>
+            <p>gérez vos stocks</p>
+            <a href="{% url 'update_quantite' %}">Voir</a>
         </div>
 
         <div class="card">
@@ -677,6 +800,123 @@
             <a href="{% url 'statistiques_commandes' %}">Voir</a>
         </div>
     </div>
+   
+    <script>
+    // Configuration des thèmes
+const themes = {
+  light: {
+      bg: 'rgba(255, 255, 255, 0.97)',
+      text: '#333',
+      border: 'rgba(0, 0, 0, 0.1)',
+      progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+  }
+};
+
+// Fonction pour jouer le son avec gestion moderne des erreurs
+function playNotificationSound() {
+  const sound = document.getElementById('notification-sound');
+  if (!sound) return;
+
+  const playSound = () => {
+      sound.currentTime = 0;
+      sound.volume = 0.8;
+      sound.play().catch(e => console.debug("Sound play prevented:", e));
+  };
+
+  // Essayer de jouer immédiatement
+  playSound();
+  
+  // Si bloqué, attendre une interaction utilisateur
+  if (sound.paused) {
+      const enableSound = () => {
+          playSound();
+          document.removeEventListener('click', enableSound);
+          document.removeEventListener('keydown', enableSound);
+      };
+      document.addEventListener('click', enableSound, { once: true });
+      document.addEventListener('keydown', enableSound, { once: true });
+  }
+}
+
+// Fermeture de notification avec animation fluide
+function closeNotification(closeButton) {
+  const notification = closeButton.closest('.notification-modal');
+  if (!notification) return;
+  
+  notification.classList.add('closing');
+  setTimeout(() => {
+      notification.classList.remove('show', 'closing');
+      notification.remove();
+  }, 300);
+}
+
+// Affichage de notification avec effets modernes
+function showNotification(notificationElement) {
+  // Appliquer le thème light par défaut
+  const themeConfig = themes.light;
+  
+  notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+  notificationElement.style.setProperty('--text-color', themeConfig.text);
+  notificationElement.style.setProperty('--border-color', themeConfig.border);
+  notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+
+  // Animation d'entrée
+  notificationElement.classList.add('show');
+  playNotificationSound();
+  
+  // Barre de progression animée
+  const progressBar = notificationElement.querySelector('.progress-bar');
+  if (progressBar) {
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+          progressBar.style.transition = 'width 5s linear';
+          progressBar.style.width = '0%';
+      }, 50);
+  }
+
+  // Fermeture automatique après délai
+  let timeoutId = setTimeout(() => {
+      notificationElement.classList.add('closing');
+      setTimeout(() => notificationElement.remove(), 300);
+  }, 5000);
+
+  // Réinitialiser le timeout si la souris entre
+  notificationElement.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      if (progressBar) progressBar.style.transition = 'none';
+  });
+
+  // Redémarrer le timeout si la souris sort
+  notificationElement.addEventListener('mouseleave', () => {
+      if (progressBar) {
+          const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+          progressBar.style.transition = `width ${remaining}ms linear`;
+          progressBar.style.width = '0%';
+      }
+      timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, progressBar ? remaining : 5000);
+  });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.notification-modal').forEach(notification => {
+      showNotification(notification);
+  });
+});
+
+// Gestion des clics en dehors pour fermer
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.notification-modal')) {
+      document.querySelectorAll('.notification-modal.show').forEach(modal => {
+          modal.classList.add('closing');
+          setTimeout(() => modal.remove(), 300);
+      });
+  }
+});
+    </script>   
 
     <script>
         // Fonction pour ouvrir et fermer le sidebar
@@ -693,50 +933,6 @@
                 body.classList.remove('no-scroll');
             }
         }
-
-        // Fonction pour fermer une notification
-        function closeNotification(element) {
-            const notification = element.parentElement;
-            notification.classList.add('hide');
-            setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-        }
-
-        // Fonction pour jouer le son de notification
-        function playNotificationSound() {
-            var sound = document.getElementById('notification-sound');
-            sound.play();
-        }
-
-        // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-        document.addEventListener('DOMContentLoaded', function () {
-            const notifications = document.querySelectorAll('.notification.show');
-            notifications.forEach(notification => {
-                playNotificationSound();  // Jouer le son lorsque la notification est affichée
-            });
-        });
-
-        // Fonction pour afficher une notification avec animation et son
-        function showNotification(element) {
-            const notification = element;
-            notification.classList.add('show');
-            playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-            
-            // Ajouter un délai avant de masquer la notification
-            setTimeout(() => {
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 300); // Suppression après transition
-            }, 10000); // La notification disparaît après 5 secondes
-        }
-
-        // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-        setTimeout(() => {
-            const notifications = document.querySelectorAll('.notification');
-            notifications.forEach(notification => {
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 300); // Suppression après transition
-            });
-        }, 10000); // La notification disparaît après 5 secondes
-
 
         // Récupérer le statut de validation du compte
         const statutValidationCompte = "{{ statut_validation_compte }}";

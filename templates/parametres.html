@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
          <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -315,144 +316,224 @@ transform: scale(1.1);
   }
 }
 
-/* Style général de la notification */
-.notification-box {
+
+:root {
+  --bg-color: rgba(255, 255, 255, 0.97);
+  --text-color: #333;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
+  --mobile-breakpoint: 768px;
+}
+
+.messages-overlay {
   position: fixed;
-  top: 15%; /* Ajuste ici la position pour qu'elle soit plus proche du haut */
-  right: 10px;
-  transform: translateY(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  align-items: center;
-  background-color: #1e1e1e; /* Fond plus sombre pour un effet futuriste */
-  color: #fff;
-  border-radius: 15px; /* Coins plus arrondis pour un style moderne */
-  padding: 15px 25px; /* Plus de padding pour un effet plus spacieux */
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); /* Ombre lumineuse */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
   z-index: 9999;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.messages-container {
+  max-width: 600px;
+  width: 90%;
+  pointer-events: auto;
+  padding: 10px;
+}
+
+.notification-modal {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-30px) scale(0.95);
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Pointe de la boîte */
-.notification-box:after {
-  content: '';
+.notification-modal.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.notification-modal.closing {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
+.notification-icon {
   position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #00ffcc; /* Couleur futuriste cyan */
-  z-index: 9999;
+  left: 20px;
+  top: 20px;
+  font-size: 24px;
+  color: var(--primary-color, #4e73ff);
 }
 
-/* Icône futuriste de robot */
-.notification-box i {
-  font-size: 2.5rem; /* Taille plus grande pour l'icône */
-  margin-right: 20px;
-  color: #00ffcc; /* Couleur cybernétique verte */
-  animation: glow 1.5s infinite alternate; /* Effet de lueur */
+.notification-content {
+  padding-left: 40px;
+  padding-right: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Message */
-.notification-box .message {
-  font-size: 1.2rem; /* Agrandit la taille du texte */
-  flex-grow: 1;
-  opacity: 0.9; /* Légère transparence pour un style plus futuriste */
-  letter-spacing: 0.5px; /* Espacement entre les lettres pour un effet élégant */
-  color: #fff; /* Assure que le texte est bien visible */
+.pulse {
+  animation: pulse 2s infinite;
 }
 
-/* Bouton de fermeture */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
-  color: #fff;
-  font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  padding: 5px;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: all 0.2s ease-out;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  touch-action: manipulation;
 }
 
 .close-btn:hover {
-  color: #00ffcc; /* Couleur hover dynamique */
-  transform: scale(1.2);
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
 }
 
-/* Styles responsive */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--progress-gradient);
+  transform-origin: left;
+  transition: width 5s linear;
+}
+
+/* Effet de "glow" subtil */
+.notification-modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Animation d'entrée spécifique pour chaque notification */
+.notification-modal:nth-child(1) { transition-delay: 0.1s; }
+.notification-modal:nth-child(2) { transition-delay: 0.2s; }
+.notification-modal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .notification-box {
-    top: 10%; /* Réduit un peu la distance du haut pour les petits écrans */
-    right: 5px; /* Réduit l'espacement sur les petits écrans */
-    padding: 12px 18px;
-    width: 90%; /* Réduit la largeur pour mieux s'adapter aux petits écrans */
+  .messages-overlay {
+      padding-top: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
   }
-
-  .notification-box i {
-    font-size: 2rem; /* Réduit la taille de l'icône sur les petits écrans */
+  
+  .messages-container {
+      width: 95%;
+      max-width: 100%;
+      padding: 5px;
   }
-
-  .notification-box .message {
-    font-size: 1.1rem; /* Réduit la taille du texte pour plus de lisibilité */
+  
+  .notification-modal {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
   }
-
+  
+  .notification-icon {
+      left: 15px;
+      top: 15px;
+      font-size: 20px;
+  }
+  
+  .notification-content {
+      padding-left: 35px;
+      padding-right: 15px;
+      font-size: 14px;
+  }
+  
   .close-btn {
-    font-size: 1.2rem; /* Ajuste la taille du bouton de fermeture */
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+  }
+  
+  .progress-bar {
+      height: 2px;
   }
 }
 
 @media (max-width: 480px) {
-  .notification-box {
-    top: 5%; /* Réduit encore la distance du haut */
-    right: 5px; /* Garde une marge minimale à droite */
-    padding: 8px 15px;
-    width: 90%; /* Largeur ajustée pour les petits écrans */
+  .notification-modal {
+      padding: 12px;
   }
-
-  .notification-box i {
-    font-size: 1.8rem; /* Plus petit pour les très petits écrans */
+  
+  .notification-icon {
+      left: 12px;
+      top: 12px;
+      font-size: 18px;
   }
-
-  .notification-box .message {
-    font-size: 1rem; /* Réduit encore la taille du texte */
+  
+  .notification-content {
+      padding-left: 30px;
+      padding-right: 10px;
   }
+  
+  .notification-modal::after {
+      display: none; /* Supprime l'effet glow sur petits écrans */
+  }
+}
 
+/* Support pour les appareils tactiles */
+@media (hover: none) {
   .close-btn {
-    font-size: 1rem; /* Petite taille du bouton de fermeture */
+      opacity: 0.8; /* Rend le bouton plus visible sur mobile */
+      background: rgba(0, 0, 0, 0.1);
   }
 }
 
-/* Animation de lueur pour l'icône */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+/* Amélioration pour les très grands écrans */
+@media (min-width: 1600px) {
+  .messages-container {
+      max-width: 700px;
   }
-  100% {
-    text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc;
-  }
-}
-
-/* Styles des notifications */
-.notification.show {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-  box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5); /* Ombre lumineuse plus prononcée */
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateY(-50%) translateX(100%);
-}
-
-/* Assurez-vous que le lien ne dépasse pas du conteneur */
-.location-link {
-  word-wrap: break-word; /* Permet de couper le texte et de le faire passer à la ligne suivante */
-  overflow-wrap: break-word; /* Assure la compatibilité avec tous les navigateurs */
-  display: block; /* Force le lien à être un bloc pour qu'il prenne toute la largeur du parent */
-  word-break: break-all; /* Empêche le texte de sortir en cas de longues chaînes de texte sans espaces */
-  max-width: 100%; /* Le lien ne peut pas dépasser 100% de la largeur de son conteneur */
 }
 
 /* ----------------------------------------------
@@ -497,27 +578,340 @@ transform: scale(1.1);
         display: block;
     }
 }
+
+.default-logo {
+  font-size: 40px; /* Taille de la police réduite pour être plus moderne */
+  color: #fff; /* Couleur du texte blanche */
+  text-align: center;
+  background-color: #007bff; /* Un bleu vif pour le fond */
+  width: 100px; /* Largeur du cercle */
+  height: 100px; /* Hauteur du cercle */
+  border-radius: 50%; /* Forme circulaire */
+  display: flex;
+  justify-content: center; /* Centrage horizontal */
+  align-items: center; /* Centrage vertical */
+  border: 2px solid #0056b3; /* Bordure sombre pour le contraste */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile */
+  margin: 0 auto; /* Centrage horizontal */
+}
+
+.logo-img {
+  width: 100px; /* Largeur de l'image */
+  height: 100px; /* Hauteur de l'image */
+  object-fit: cover; /* Garder les proportions de l'image */
+  border-radius: 50%; /* Forme circulaire pour l'image */
+  border: 2px solid #007bff; /* Bordure autour de l'image pour un effet de profondeur */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile */
+  margin: 0 auto; /* Centrage horizontal */
+}
+
+/* Media queries pour rendre le logo responsive */
+@media (max-width: 768px) {
+  .default-logo, .logo-img {
+    width: 80px;
+    height: 80px;
+    font-size: 30px; /* Ajuste la taille de la police sur les petits écrans */
+  }
+}
+
+@media (max-width: 576px) {
+  .default-logo, .logo-img {
+    width: 70px;
+    height: 70px;
+    font-size: 25px; /* Ajuste encore plus la taille sur les petits écrans */
+  }
+}
+
+.copy-btn {
+  margin-left: 10px;
+  padding: 2px 8px;
+}
+#boutiqueUrl {
+  background-color: #f8f9fa;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+
+
+
+.location-info-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.location-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-header i {
+  font-size: 28px;
+  color: #4a6baf;
+  margin-right: 15px;
+}
+
+.location-header h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.location-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.card-header i {
+  font-size: 20px;
+  margin-right: 12px;
+  color: #4a6baf;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: flex-start;
+}
+
+.info-item i {
+  font-size: 18px;
+  color: #6c757d;
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  color: #333;
+  display: block;
+}
+
+.info-value.empty {
+  color: #999;
+  font-style: italic;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.status-badge i {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.open-24h {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.not-configured {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.hours-range {
+  margin-bottom: 15px;
+}
+
+.days-range, .time-range {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.days-range i, .time-range i {
+  margin-right: 10px;
+  color: #4a6baf;
+}
+
+.holiday-status {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.holiday-status i {
+  margin-right: 10px;
+  color: #6c757d;
+}
+
+.holiday-status .open {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.holiday-status .closed {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.map-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+}
+
+.map-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.no-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  color: #6c757d;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.no-map i {
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #adb5bd;
+}
+
+.map-note {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.map-note i {
+  margin-right: 8px;
+}
+
+.location-actions {
+  text-align: right;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.edit-btn {
+  background: #4a6baf;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.edit-btn i {
+  margin-right: 8px;
+}
+
+.edit-btn:hover {
+  background: #3a5a9f;
+}
+
+@media (max-width: 768px) {
+  .location-grid {
+    grid-template-columns: 1fr;
+  }
+}
     </style>
 </head>
 <body>
   <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
   {% if messages %}
-      <div class="messages">
-          {% for message in messages %}
-              <div class="notification-box notification show" id="notification-{{ forloop.counter }}">
-                  <!-- Icône futuriste de robot -->
-                  <i class="fas fa-robot"></i>
-                  <div class="message">
-                      {{ message }}
-                  </div>
-                  <button class="close-btn" onclick="closeNotification(this)">
-                      <i class="fas fa-times"></i>
-                  </button>
-              </div>
-          {% endfor %}
-      </div>
+  <div class="messages-overlay" id="messages-overlay">
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
+                <div class="notification-icon">
+                    <i class="fas fa-robot pulse"></i>
+                </div>
+                
+                <div class="notification-content">
+                    <div class="message">
+                        {{ message }}
+                    </div>
+                </div>
+                
+                <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="progress-bar"></div>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
   {% endif %}
+  
 
     <div class="top-bar">
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -537,18 +931,11 @@ transform: scale(1.1);
     <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
     <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
     <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-    <a href=""><i class="fas fa-map"></i> Lieux</a>
-    <a href="#paiement"><i class="fas fa-credit-card"></i> Moyens de paiement</a>
     <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
     <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-    <a href=""><i class="fas fa-users"></i> Nombre de visiteurs</a>
     <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-    <a href=""><i class="fas fa-truck"></i> Mode de livraison</a>
-    <a href=""><i class="fas fa-exclamation-circle"></i> Réclamations</a>
-    <a href=""><i class="fas fa-star"></i> Fidélisation clients</a>
     <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
     <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
-    <a href=""><i class="fas fa-bell"></i> Notifications</a>
     <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
     <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
@@ -563,19 +950,156 @@ transform: scale(1.1);
         <p><i class="fas fa-envelope"></i> <strong>Email :</strong> {{ user.email }}</p>
         <p><i class="fas fa-phone-alt"></i> <strong>Numéro :</strong> {{ user.numero }}</p>
         <p><i class="fas fa-store-alt"></i> <strong>Boutique :</strong> {{ user.boutique }}</p>
+        <div class="logo-boutique">
+          <strong>Logo : </strong>
+          {% if user.logo %}
+              <img src="{{ user.logo }}" alt="Logo de la boutique" class="logo-img">
+          {% else %}
+              <div class="default-logo">
+                  <i class="fas fa-image"></i> <!-- Icône d'image vide si pas de logo -->
+              </div>
+          {% endif %}
+          {% if user.url_boutique %}
+          <p>
+              <i class="fas fa-link"></i> <strong>Lien boutique :</strong> 
+              <span id="boutiqueUrl">{{ user.url_boutique }}</span>
+              <button class="btn btn-sm btn-outline-secondary copy-btn" onclick="copyBoutiqueUrl()">
+                  <i class="fas fa-copy"></i> Copier
+              </button>
+          </p>
+          {% endif %}
+      </div>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal"><i class="fas fa-edit"></i> Modifier</button>
     </div>
 
 <!-- Location Info Section -->
-<div class="user-info">
-<h3><i class="fas fa-map-marker-alt"></i> Gérez les informations de votre localisation</h3>
-<p><i class="fas fa-map-signs"></i> <strong>Quartier :</strong> {{ localisation.quartier|default:"Non renseigné" }}</p>
-<p><i class="fas fa-building"></i> <strong>Ville :</strong> {{ localisation.ville|default:"Non renseigné" }}</p>
-<p><i class="fas fa-thumbtack"></i> <strong>Repère :</strong> {{ localisation.repere|default:"Non renseigné" }}</p>
-<p><i class="fab fa-google"></i> <strong>Lien Maps :</strong> 
-    <span class="location-link">{{ localisation.lien_maps }}</span>
-</p>
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editLocationModal"><i class="fas fa-edit"></i> Modifier</button>
+<div class="location-info-container">
+  <div class="location-header">
+    <i class="fas fa-store-alt"></i>
+    <h2>Informations de localisation</h2>
+  </div>
+
+  <div class="location-grid">
+    <!-- Section Adresse -->
+    <div class="location-card address-card">
+      <div class="card-header">
+        <i class="fas fa-map-marked-alt"></i>
+        <h3>Adresse</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-item">
+          <i class="fas fa-city"></i>
+          <div>
+            <span class="info-label">Ville :</span>
+            <span class="info-value {% if not localisation.ville %}empty{% endif %}">
+              {{ localisation.ville|default:"Non spécifié" }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <i class="fas fa-road"></i>
+          <div>
+            <span class="info-label">Quartier :</span>
+            <span class="info-value {% if not localisation.quartier %}empty{% endif %}">
+              {{ localisation.quartier|default:"Non spécifié" }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <i class="fas fa-map-pin"></i>
+          <div>
+            <span class="info-label">Repère :</span>
+            <span class="info-value {% if not localisation.repere %}empty{% endif %}">
+              {{ localisation.repere|default:"Non spécifié" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Horaires -->
+    <div class="location-card hours-card">
+      <div class="card-header">
+        <i class="fas fa-business-time"></i>
+        <h3>Horaires</h3>
+      </div>
+      <div class="card-body">
+        {% if localisation.ouvert_24h %}
+          <div class="status-badge open-24h">
+            <i class="fas fa-clock"></i>
+            <div>
+              <strong>Ouvert 24h/24</strong>
+              <small>7 jours sur 7</small>
+            </div>
+          </div>
+        {% elif localisation.heure_ouverture and localisation.heure_fermeture %}
+          <div class="hours-range">
+            <div class="days-range">
+              {% if jour_ouverture or jour_fermeture %}
+              <div class="opening-hours">
+                  <i class="fas fa-calendar-week"></i>
+                  {% if jour_ouverture %}<span>{{ jour_ouverture }}</span>{% endif %}
+                  {% if jour_fermeture %}<span> - {{ jour_fermeture }}</span>{% endif %}
+              </div>
+          {% endif %} 
+            <div class="time-range">
+              <i class="fas fa-clock"></i>
+              <span>{{ localisation.heure_ouverture}} - {{ localisation.heure_fermeture}}</span>
+            </div>
+          </div>
+          <div class="holiday-status">
+            <i class="fas fa-info-circle"></i>
+            <span>Jours fériés : 
+              <strong class="{% if localisation.ferme_jour_ferie %}closed{% else %}open{% endif %}">
+                {% if localisation.ferme_jour_ferie %}Fermé{% else %}Ouvert{% endif %}
+              </strong>
+            </span>
+          </div>
+        {% else %}
+          <div class="status-badge not-configured">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong>Non configuré</strong>
+              <small>Horaires manquants</small>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section Google Maps -->
+    <div class="location-card maps-card">
+      <div class="card-header">
+        <i class="fas fa-map-location-dot"></i>
+        <h3>Localisation</h3>
+      </div>
+      <div class="card-body">
+        {% if localisation.lien_maps %}
+          <div class="map-container">
+            {{ localisation.lien_maps|safe }}
+          </div>
+          <div class="map-note">
+            <i class="fas fa-info-circle"></i>
+            <span>Localisation visible par vos clients</span>
+          </div>
+        {% else %}
+          <div class="no-map">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Aucune carte configurée</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="location-actions">
+    <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editLocationModal">
+      <i class="fas fa-pencil-alt"></i>
+      Modifier la localisation
+    </button>
+  </div>
 </div>
 
 <!-- Modal for Editing User Info -->
@@ -587,7 +1111,7 @@ transform: scale(1.1);
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer les modifications</button>
@@ -649,80 +1173,172 @@ transform: scale(1.1);
         event.stopPropagation();
     });
 
-    // Fonction pour afficher/masquer la description flottante
-    // Fonction pour afficher ou masquer la description
-    function toggleDescription(imageId) {
-      var descElement = document.getElementById('desc' + imageId);
-      var buttonElement = document.getElementById('toggleDesc' + imageId);
-      
-      if (descElement.style.display === "none") {
-          descElement.style.display = "block";
-          buttonElement.innerHTML = "Masquer la description"; // Change le texte du bouton
-      } else {
-          descElement.style.display = "none";
-          buttonElement.innerHTML = "Voir la description"; // Réinitialise le texte du bouton
-      }
-    }
-             // Fonction pour fermer une notification
-    function closeNotification(element) {
-        const notification = element.parentElement;
-        notification.classList.add('hide');
-        setTimeout(() => notification.remove(), 300); // Supprimer l'élément après la transition
-    }
-
-    // Fonction pour jouer le son de notification
-    function playNotificationSound() {
-        var sound = document.getElementById('notification-sound');
-        sound.play();
-    }
-
-    // Lorsque la page est prête, jouer le son pour toutes les notifications existantes
-    document.addEventListener('DOMContentLoaded', function () {
-        const notifications = document.querySelectorAll('.notification.show');
-        notifications.forEach(notification => {
-            playNotificationSound();  // Jouer le son lorsque la notification est affichée
-        });
-    });
-
-    // Fonction pour afficher une notification avec animation et son
-    function showNotification(element) {
-        const notification = element;
-        notification.classList.add('show');
-        playNotificationSound();  // Jouer le son lors de l'affichage de la notification
-        
-        // Ajouter un délai avant de masquer la notification
-        setTimeout(() => {
-            notification.classList.add('hide');
-            setTimeout(() => notification.remove(), 300); // Suppression après transition
-        }, 10000); // La notification disparaît après 5 secondes
-    }
-
-    // Fonction pour fermer les notifications après 5 secondes (si elles sont visibles)
-    setTimeout(() => {
-        const notifications = document.querySelectorAll('.notification');
-        notifications.forEach(notification => {
-            notification.classList.add('hide');
-            setTimeout(() => notification.remove(), 300); // Suppression après transition
-        });
-    }, 10000); // La notification disparaît après 5 secondes
-
-
-    // Script pour appliquer un filtre avec la barre de recherche
-    document.querySelector('#search').addEventListener('input', function() {
-      // Lors de la saisie, appliquer la recherche sur les éléments du slider
-      const searchValue = this.value.toLowerCase();  // Récupère la valeur saisie dans la barre de recherche
-      const cards = document.querySelectorAll('.card');  // Sélectionne toutes les cartes des images de slider
-      cards.forEach(card => {
-          const title = card.querySelector('.card-title').textContent.toLowerCase();  // Récupère le titre de chaque image
-          if (title.includes(searchValue)) {  // Si le titre contient la valeur de recherche
-              card.style.display = 'block';  // Afficher la carte
-          } else {
-              card.style.display = 'none';  // Masquer la carte
-          }
-      });
-    });
   </script>
+  <script>
+    // Configuration des thèmes
+const themes = {
+  light: {
+      bg: 'rgba(255, 255, 255, 0.97)',
+      text: '#333',
+      border: 'rgba(0, 0, 0, 0.1)',
+      progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
+  }
+};
 
+// Fonction pour jouer le son avec gestion moderne des erreurs
+function playNotificationSound() {
+  const sound = document.getElementById('notification-sound');
+  if (!sound) return;
+
+  const playSound = () => {
+      sound.currentTime = 0;
+      sound.volume = 0.8;
+      sound.play().catch(e => console.debug("Sound play prevented:", e));
+  };
+
+  // Essayer de jouer immédiatement
+  playSound();
+  
+  // Si bloqué, attendre une interaction utilisateur
+  if (sound.paused) {
+      const enableSound = () => {
+          playSound();
+          document.removeEventListener('click', enableSound);
+          document.removeEventListener('keydown', enableSound);
+      };
+      document.addEventListener('click', enableSound, { once: true });
+      document.addEventListener('keydown', enableSound, { once: true });
+  }
+}
+
+// Fermeture de notification avec animation fluide
+function closeNotification(closeButton) {
+  const notification = closeButton.closest('.notification-modal');
+  if (!notification) return;
+  
+  notification.classList.add('closing');
+  setTimeout(() => {
+      notification.classList.remove('show', 'closing');
+      notification.remove();
+  }, 300);
+}
+
+// Affichage de notification avec effets modernes
+function showNotification(notificationElement) {
+  // Appliquer le thème light par défaut
+  const themeConfig = themes.light;
+  
+  notificationElement.style.setProperty('--bg-color', themeConfig.bg);
+  notificationElement.style.setProperty('--text-color', themeConfig.text);
+  notificationElement.style.setProperty('--border-color', themeConfig.border);
+  notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
+
+  // Animation d'entrée
+  notificationElement.classList.add('show');
+  playNotificationSound();
+  
+  // Barre de progression animée
+  const progressBar = notificationElement.querySelector('.progress-bar');
+  if (progressBar) {
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+          progressBar.style.transition = 'width 5s linear';
+          progressBar.style.width = '0%';
+      }, 50);
+  }
+
+  // Fermeture automatique après délai
+  let timeoutId = setTimeout(() => {
+      notificationElement.classList.add('closing');
+      setTimeout(() => notificationElement.remove(), 300);
+  }, 5000);
+
+  // Réinitialiser le timeout si la souris entre
+  notificationElement.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      if (progressBar) progressBar.style.transition = 'none';
+  });
+
+  // Redémarrer le timeout si la souris sort
+  notificationElement.addEventListener('mouseleave', () => {
+      if (progressBar) {
+          const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
+          progressBar.style.transition = `width ${remaining}ms linear`;
+          progressBar.style.width = '0%';
+      }
+      timeoutId = setTimeout(() => {
+          notificationElement.classList.add('closing');
+          setTimeout(() => notificationElement.remove(), 300);
+      }, progressBar ? remaining : 5000);
+  });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.notification-modal').forEach(notification => {
+      showNotification(notification);
+  });
+});
+
+// Gestion des clics en dehors pour fermer
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.notification-modal')) {
+      document.querySelectorAll('.notification-modal.show').forEach(modal => {
+          modal.classList.add('closing');
+          setTimeout(() => modal.remove(), 300);
+      });
+  }
+});
+    </script>    
+  <script>
+    function copyBoutiqueUrl() {
+        const urlElement = document.getElementById('boutiqueUrl');
+        const range = document.createRange();
+        range.selectNode(urlElement);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        
+        // Feedback visuel
+        const copyBtns = document.querySelectorAll('.copy-btn');
+        copyBtns.forEach(btn => {
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copié!';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copier';
+            }, 2000);
+        });
+    }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      function toggleHeureFields() {
+          const ouvert24h = document.getElementById('ouvert_24h_checkbox').checked;
+          const heureFields = document.querySelectorAll('.timepicker');
+          
+          heureFields.forEach(field => {
+              field.disabled = ouvert24h;
+              if (ouvert24h) {
+                  field.value = '';
+              }
+          });
+      }
+      
+      // Initialisation au chargement
+      document.addEventListener('DOMContentLoaded', function() {
+          toggleHeureFields();
+          
+          // Initialisation des timepickers (exemple avec Flatpickr)
+          flatpickr('.timepicker', {
+              enableTime: true,
+              noCalendar: true,
+              dateFormat: "H:i",
+              time_24hr: true,
+              minuteIncrement: 15
+          });
+      });
+      </script>
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

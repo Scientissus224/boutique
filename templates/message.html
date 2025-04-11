@@ -3,165 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmation de création de boutique</title>
-    
-    <!-- Lien CDN Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <style>
-        /* Global Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f8fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 700px;
-            text-align: center;
-        }
-        h2 {
-            color: #e67e22; /* Orange foncé */
-            font-size: 36px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        p {
-            font-size: 16px;
-            color: #7f8c8d;
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Confirmation de création de boutique | WarabaShop</title>
+    <style type="text/css">
+        /* Base styles */
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
+            color: #1F2937;
+            background-color: #F9FAFB;
         }
-        .highlight {
-            color: #e67e22; /* Orange foncé */
-            font-weight: bold;
-            font-size: 18px;
+        
+        /* Outlook-specific fixes */
+        table {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
         }
-        .identifiant-box {
-            background: #e67e22; /* Orange foncé */
-            color: #fff;
-            padding: 15px 25px;
-            font-size: 22px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        .footer {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-top: 30px;
-            font-style: italic;
-        }
-        .button {
-            background-color: #e67e22; /* Orange foncé */
-            color: #fff;
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 25px;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-            background-color: #d35400; /* Teinte plus foncée de l'orange */
-        }
-        ul {
-            text-align: left;
-            list-style-type: none;
-            padding: 0;
-            font-size: 16px;
-            color: #7f8c8d;
-            margin: 25px 0;
-        }
-        li {
-            margin: 12px 0;
-            display: flex;
-            align-items: center;
-        }
-        li i {
-            margin-right: 10px;
-            color: #e67e22; /* Orange foncé */
-        }
+        
         img {
-            max-width: 150px;
-            margin-bottom: 30px;
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
         }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px;
-            }
-            h2 {
-                font-size: 30px;
-            }
-            .highlight {
-                font-size: 16px;
-            }
-            .identifiant-box {
-                font-size: 18px;
-                padding: 12px 20px;
-            }
-            .button {
-                padding: 12px 25px;
-                font-size: 16px;
-            }
+        
+        /* iOS blue link fix */
+        .no-link a {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
         }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
+        
+        /* Modern styling */
+        .gradient-text {
+            background: linear-gradient(135deg, #FF5A1F, #E03800);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .highlight {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+        }
+        
+        .highlight:after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: #FFEAE5;
+            z-index: -1;
+            border-radius: 2px;
+        }
+        
+        @media screen and (max-width: 600px) {
+            .responsive-table {
+                width: 100% !important;
             }
-            h2 {
-                font-size: 26px;
-            }
-            .highlight {
-                font-size: 14px;
-            }
-            .identifiant-box {
-                font-size: 16px;
-                padding: 10px 18px;
-            }
-            .button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            ul {
-                font-size: 14px;
+            
+            .responsive-padding {
+                padding-left: 24px !important;
+                padding-right: 24px !important;
             }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <img src="{{ logo_url }}" alt="WarabaShop Logo">
-        <h2>Félicitations !</h2>
-        <p>Votre boutique <span class="highlight">{{ boutique }}</span> a été créée avec succès.</p>
-        <p><strong>Votre identifiant unique :</strong></p>
-        <div class="identifiant-box">{{ identifiant }}</div>
-        <p>Voici un résumé de vos informations :</p>
-        <ul>
-            <li><i class="fas fa-store"></i><strong> Nom de la boutique :</strong> <span class="highlight">{{ boutique }}</span></li>
-            <li><i class="fas fa-envelope"></i><strong> Email associé :</strong> <span class="highlight">{{ email }}</span></li>
-            <li><i class="fas fa-phone"></i><strong> Numéro de téléphone :</strong> <span class="highlight">{{ numero }}</span></li>
-            <li><i class="fas fa-cogs"></i><strong> Type de boutique :</strong> <span class="highlight">{{ type_boutique }}</span></li>
-            <li><i class="fas fa-cube"></i><strong> Produits vendus :</strong> <span class="highlight">{{ produits_vendus }}</span></li>
-            <li><i class="fas fa-search"></i><strong> Comment avez-vous découvert la plateforme ? :</strong> <span class="highlight">{{ source_decouverte }}</span></li>
-        </ul>
-        <p>Nous sommes ravis de vous compter parmi nos utilisateurs ! Prenez soin de votre identifiant unique pour un accès sécurisé.</p>
-        <a href="http://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="button">Activer mon compte</a>
-        <p class="footer">Besoin d'aide ? Contactez-nous à tout moment.</p>
-        <p class="footer"><strong>L'équipe WarabaGuinée</strong></p>
-    </div>
+<body style="margin: 0; padding: 0; background-color: #F9FAFB;">
+
+    <!-- Email wrapper -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F9FAFB;">
+        <tr>
+            <td align="center" valign="top">
+                <table class="responsive-table" border="0" cellpadding="0" cellspacing="0" width="680" style="margin: 0 auto;">
+                    <tr>
+                        <td style="padding: 40px 20px;">
+                            <!-- Card container -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.03); overflow: hidden;">
+                                <tr>
+                                    <td class="responsive-padding" align="center" valign="top" style="padding: 56px 48px 48px;">
+                                        <!-- Logo placeholder -->
+                                        <div style="margin-bottom: 32px;">
+                                            <!-- Insert your logo here -->
+                                        </div>
+                                        
+                                        <!-- Main heading -->
+                                        <h1 style="font-size: 36px; font-weight: 700; margin: 0 0 24px; color: #FF5A1F; letter-spacing: -0.75px; text-align: center;">Félicitations !</h1>
+                                        
+                                        <!-- Main message -->
+                                        <p style="font-size: 18px; color: #6B7280; margin: 0 0 32px; text-align: center;">
+                                            Votre boutique <span class="highlight" style="color: #FF5A1F; font-weight: 600;">{{ boutique }}</span> a été créée avec succès sur notre plateforme premium.
+                                        </p>
+                                        
+                                        <!-- ID badge -->
+                                        <div style="background: linear-gradient(135deg, #FF5A1F, #E03800); color: #FFFFFF; padding: 20px 40px; font-size: 24px; font-weight: 700; border-radius: 16px; display: inline-block; margin: 32px 0; box-shadow: 0 8px 24px rgba(255, 90, 31, 0.25); border: none;">
+                                            {{ identifiant }}
+                                        </div>
+                                        
+                                        <p style="font-size: 18px; color: #6B7280; margin: 0 0 32px; text-align: center;">Voici les détails de votre inscription :</p>
+                                        
+                                        <!-- Info cards container -->
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border-radius: 16px; border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); margin: 40px 0; padding: 0;">
+                                            <!-- Boutique name -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    🏪
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Nom de la boutique</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ boutique }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Email -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    ✉️
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Email associé</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ email }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Phone -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    📱
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Numéro de téléphone</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ numero }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Boutique type -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    🏷️
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Type de boutique</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ type_boutique }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Products -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    📦
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Produits vendus</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ produits_vendus }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Discovery -->
+                                            <tr>
+                                                <td align="left" valign="top" style="padding: 20px 24px;">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td width="40" valign="top" style="padding-right: 16px;">
+                                                                <div style="color: #FFFFFF; font-size: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, #FF5A1F, #E03800); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(255, 90, 31, 0.2);">
+                                                                    🔍
+                                                                </div>
+                                                            </td>
+                                                            <td valign="middle">
+                                                                <span style="font-weight: 600; color: #1F2937; display: block; margin-bottom: 4px; font-size: 16px;">Comment avez-vous découvert WarabaShop ?</span>
+                                                                <span style="color: #FF5A1F; font-size: 18px; font-weight: 600;">{{ source_decouverte }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <!-- Divider -->
+                                        <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent); width: 100%; margin: 40px 0;"></div>
+                                        
+                                        <!-- Final message -->
+                                        <p style="font-size: 18px; color: #6B7280; margin: 0 0 32px; text-align: center;">
+                                            Nous sommes honorés de vous accueillir parmi nos partenaires professionnels. Votre identifiant unique est votre clé d'accès sécurisée à toutes les fonctionnalités premium.
+                                        </p>
+                                        
+                                        <!-- CTA Button -->
+                                        <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 32px auto;">
+                                            <tr>
+                                                <td align="center" style="border-radius: 16px; background: linear-gradient(135deg, #FF5A1F, #E03800); box-shadow: 0 8px 24px rgba(255, 90, 31, 0.3);">
+                                                    <a href="http://{{ domain }}/activate/{{ uid }}/{{ token }}/" target="_blank" style="display: inline-block; padding: 20px 48px; font-size: 18px; font-weight: 600; color: #FFFFFF; text-decoration: none; border-radius: 16px;">
+                                                        Activer mon compte
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <!-- Footer -->
+                                        <p style="font-size: 16px; color: #6B7280; margin: 48px 0 0; text-align: center; line-height: 1.6;">
+                                            Notre équipe d'experts est disponible 24/7 pour vous accompagner dans votre réussite.<br>
+                                            Contactez-nous via le centre d'assistance ou par réponse à cet email.
+                                        </p>
+                                        
+                                        <!-- Signature -->
+                                        <div style="margin: 32px auto 0; text-align: center;">
+                                            <div style="display: inline-block; font-weight: 600; color: #1F2937; font-size: 18px; position: relative; padding: 0 24px;">
+                                                <span style="position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #FF5A1F, #E03800);"></span>
+                                                L'équipe WarabaGuinée
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                
+            
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

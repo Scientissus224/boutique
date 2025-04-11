@@ -7,6 +7,7 @@ from shop.token import generator_token
 import logging
 import random
 import string
+import urllib.request
 
 class InscriptionUtilisateurView(View):
     def get(self, request):
@@ -15,6 +16,13 @@ class InscriptionUtilisateurView(View):
         return render(request, 'inscription.html', {'form': form})
 
     def post(self, request):
+        
+        try:
+           urllib.request.urlopen('https://www.google.com', timeout=5)
+        except:
+            messages.error(request, "Veuillez vous connecter à internet pour accéder à cette page.")
+            return redirect('inscription')
+        
         """ Traiter les données du formulaire d'inscription """
         form = InscriptionUtilisateurForm(request.POST)
         
