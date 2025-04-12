@@ -16,12 +16,7 @@ def activate(request, uidb64, token):
         utilisateur_temporaire = None
 
     if utilisateur_temporaire is not None and generator_token.check_token(utilisateur_temporaire, token):
-        # Vérifier l'expiration du lien d'activation
-        expiration_time = utilisateur_temporaire.created_at + timezone.timedelta(hours=24)
-        if timezone.now() > expiration_time:
-            utilisateur_temporaire.delete()
-            messages.error(request, 'Le lien d\'activation a expiré. Veuillez recommencer l\'inscription.')
-            return redirect('inscription')
+        # La vérification de l'expiration est maintenant gérée dans check_token
 
         # Sécuriser la création et supprimer les doublons
         with transaction.atomic():
@@ -47,12 +42,10 @@ def activate(request, uidb64, token):
                 nom_boutique=utilisateur_temporaire.nom_boutique,
                 username=utilisateur_temporaire.email,  # Utilise l'email comme username si nécessaire
                 produits_vendus = informations_temporaire.produits_vendus
-                
             )
             utilisateur.is_active = True
             utilisateur.save()
 
-            
             # Créer un objet InformationsSupplementaires et l'associer à l'utilisateur
             informations = InformationsSupplementaires(
                 utilisateur=utilisateur,
@@ -73,5 +66,3 @@ def activate(request, uidb64, token):
             utilisateur_temporaire.delete()
         messages.error(request, 'L\'activation a échoué. Le lien peut avoir expiré ou le token est invalide. Veuillez réessayer.')
         return redirect('inscription')
-
-
