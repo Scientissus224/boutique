@@ -100,13 +100,18 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 # Base de données
 
 
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgres://waraba_guinee_user:bsqpIXTODz1gtKX00aHj3PyqbcW7fvH1@dpg-cvspkd24d50c73d5ovh0-a.oregon-postgres.render.com/waraba_guinee'),
-        conn_max_age=600,
-        ssl_require=True  # sécurise la connexion
+        default=os.getenv('DATABASE_URL', 'postgres://waraba_guinee_user:bsqpIXTODz1gtKX00aHj3PyqbcW7fvH1@dpg-cvspkd24d50c73d5ovh0-a.oregon-postgres.render.com/waraba_guinee')
     )
 }
+
+# Ajoutez manuellement les options de la connexion, si nécessaire
+DATABASES['default']['OPTIONS'] = {
+    'sslmode': 'require',
+}
+
 
 
 # Validation du mot de passe
