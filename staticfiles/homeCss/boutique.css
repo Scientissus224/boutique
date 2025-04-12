@@ -1,0 +1,359 @@
+/* Conteneur principal */
+/* Styles pour le spinner */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour le thème light */
+    z-index: 1000;
+}
+
+.dark .loading-spinner {
+    background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent pour le thème dark */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #ff6600; /* Couleur du spinner */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animation pour le chargement du contenu */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.boutiques {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+.b-contenaire {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 70px auto;
+    width: 90%;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .b-contenaire {
+    background-color: #f9f9f9; /* Fond clair */
+    color: #333; /* Texte sombre */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .b-contenaire {
+    background-color: #1a1a1a; /* Fond sombre */
+    color: #f0f0f0; /* Texte clair */
+}
+
+/* Header Section */
+.header-section-boutique {
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    
+}
+
+
+/* Titre */
+.responsive-title {
+    font-size: 34px;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .responsive-title {
+    color: #fff; /* Texte blanc pour contraster avec le fond */
+    
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .responsive-title {
+    color: #f0f0f0; /* Texte clair pour contraster avec le fond */
+}
+
+.responsive-title i {
+    margin-right: 10px;
+}
+
+/* Pagination */
+.pagination-container {
+    text-align: center;
+    margin-top: 5px;
+}
+
+.pagination-container span {
+    font-size: 14px;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .pagination-container span {
+    color: #333; /* Texte sombre */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .pagination-container span {
+    color: #f0f0f0; /* Texte clair */
+}
+
+.page-btn {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 2px;
+    font-size: 14px;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .page-btn {
+    background-color: #34495e; /* Fond sombre */
+    color: #fff; /* Texte clair */
+}
+
+[data-theme="light"] .page-btn:hover {
+    background-color: #1abc9c; /* Couleur au survol */
+}
+
+[data-theme="light"] .page-btn.active {
+    background-color: #1abc9c; /* Couleur active */
+    font-weight: bold;
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .page-btn {
+    background-color: #555; /* Fond gris foncé */
+    color: #f0f0f0; /* Texte clair */
+}
+
+[data-theme="dark"] .page-btn:hover {
+    background-color: #1abc9c; /* Couleur au survol */
+}
+
+[data-theme="dark"] .page-btn.active {
+    background-color: #1abc9c; /* Couleur active */
+    font-weight: bold;
+}
+
+/* Conteneur des boutiques */
+.boutiques {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.boutique {
+    border: 2px solid #dcdcdc;
+    padding: 15px;
+    margin: 5px;
+    width: calc(70% - 10px);
+    border-radius: 10px;
+    transition: transform 0.3s ease, opacity 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    text-align: center;
+    position: relative;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .boutique {
+    background-color: #fff; /* Fond blanc */
+    border-color: #dcdcdc; /* Bordure claire */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .boutique {
+    background-color: #2a2a2a; /* Fond sombre */
+    border-color: #444; /* Bordure sombre */
+}
+
+/* Carte de boutique */
+.boutique-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.boutique-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Logo Container */
+.logo-container_b {
+    width: 100%; /* Prendre toute la largeur disponible */
+    overflow: hidden; /* Empêcher les débordements */
+    border-radius: 8px; /* Conserver le style */
+}
+
+.logo-container_b img {
+    width: 100%; /* Prendre toute la largeur du conteneur */
+    height: auto; /* Hauteur automatique pour s'adapter à la largeur */
+    object-fit: contain; /* Garantir que l'image s'adapte sans être coupée */
+    border-radius: 8px; /* Conserver le style */
+    transition: all 0.3s ease; /* Transition fluide */
+}
+
+.boutique-info {
+    padding: 15px;
+}
+
+.boutique-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .boutique-info h3 {
+    color: #2c3e50; /* Texte sombre */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .boutique-info h3 {
+    color: #f0f0f0; /* Texte clair */
+}
+
+.boutique-info p {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .boutique-info p {
+    color: #666; /* Texte gris */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .boutique-info p {
+    color: #ccc; /* Texte gris clair */
+}
+
+.boutique-link {
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Style pour le thème light */
+[data-theme="light"] .boutique-link {
+    background-color: #ff6600; /* Fond orange */
+    color: white; /* Texte blanc */
+}
+
+[data-theme="light"] .boutique-link:hover {
+    color: #16a085; /* Couleur au survol */
+}
+
+/* Style pour le thème dark */
+[data-theme="dark"] .boutique-link {
+    background-color: #ff6600; /* Fond gris foncé */
+    color: #f0f0f0; /* Texte clair */
+}
+
+[data-theme="dark"] .boutique-link:hover {
+    color: #1abc9c; /* Couleur au survol */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .boutiques {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .b-contenaire {
+        width: 100%;
+        margin: 70px 0;
+        border-radius: 0;
+    }
+
+    .boutiques {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header-section-boutique {
+        padding: 10px;
+        border-radius: 0;
+    }
+
+    .responsive-title {
+        font-size: 24px;
+    }
+
+    .pagination-container {
+        margin-top: 5px;
+    }
+
+    .page-btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .logo-container_b img {
+        height: auto; /* Hauteur automatique pour s'adapter */
+    }
+}
+
+@media (max-width: 480px) {
+    .b-contenaire {
+        padding: 10px;
+    }
+
+    .boutiques {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .boutique {
+        padding: 10px;
+        width: calc(100% - 10px);
+    }
+
+    .logo-container_b img {
+        height: auto; /* Hauteur automatique pour s'adapter */
+    }
+
+    .boutique-info h3 {
+        font-size: 16px;
+    }
+
+    .boutique-info p {
+        font-size: 12px;
+    }
+
+    .boutique-link {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .responsive-title {
+        font-size: 20px;
+    }
+}

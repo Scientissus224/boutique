@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1',         # Localhost
     'localhost',         # Alias pour 127.0.0.1
     '192.168.19.163',
-    'warabaguinee.onrender.com'
 ]     
 
 
@@ -94,6 +94,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'boutique.wsgi.application'
 
+# Base de données
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL', 'postgres://waraba_guinee_user:bsqpIXTODz1gtKX00aHj3PyqbcW7fvH1@dpg-cvspkd24d50c73d5ovh0-a.oregon-postgres.render.com/waraba_guinee'),
@@ -133,7 +134,10 @@ USE_TZ = True
 STATIC_URL = '/static/'  # Le slash avant est nécessaire pour le bon fonctionnement
 
 # Répertoire où sont stockés les fichiers statiques supplémentaires
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Correction du nom de la variable
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Le chemin du dossier 'static' local
+
+# Répertoire où Django collectera tous les fichiers statiques pour production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Ajoute STATIC_ROOT pour la collecte des fichiers statiques
 
 # Fichiers médias
 MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
