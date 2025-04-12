@@ -1,2 +1,4 @@
 static/v1.mp4
 echo "staticfiles/v1.mp4" >> .gitignore
+.env
+echo ".env" >> .gitignore

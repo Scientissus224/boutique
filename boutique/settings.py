@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
@@ -152,6 +153,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier o√π les fichiers upload√
 
 
 # Configuration de Cloudinary---------------------
+load_dotenv()
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('dqucjtsjk'),  # Variable d'environnement
