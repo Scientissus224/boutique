@@ -70,6 +70,8 @@ INSTALLED_APPS = [
     'shop',
     'boutique',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
 
 ]
 
@@ -136,7 +138,7 @@ USE_TZ = True
 # Fichiers statiques
 STATIC_URL = '/static/'  # URL pour accéder aux fichiers statiques
 
-# Dossier où Django stocke les fichiers collectés
+# Dossier où Django stocke les fichiers collectés (fichiers statiques collectés)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Dossier pour les fichiers statiques collectés
 
 # Fichiers statiques supplémentaires pour les services comme Render
@@ -145,8 +147,20 @@ STATICFILES_DIRS = [
 ]
 
 # Fichiers médias
-MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
+MEDIA_URL = '/media/'  # URL pour accéder aux fichiers médias dans le navigateur
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier où les fichiers uploadés sont enregistrés
 
 
+# Configuration de Cloudinary---------------------
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('dqucjtsjk'),  # Variable d'environnement
+    'API_KEY': os.environ.get('359451741969355'),        # Variable d'environnement
+    'API_SECRET': os.environ.get('MgdajB9J96XcHftIQluA6ts_bZg'),  # Variable d'environnement
+}
+
+# Spécifie le stockage des fichiers médias avec Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+#-------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
