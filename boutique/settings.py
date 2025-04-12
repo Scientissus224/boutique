@@ -133,16 +133,20 @@ TIME_ZONE = 'Africa/Conakry'  # Ajustez selon votre besoin
 USE_I18N = True
 USE_TZ = True
 
+# Fichiers statiques
+STATIC_URL = '/static/'  # URL pour accéder aux fichiers statiques
+
 # Dossier où Django stocke les fichiers collectés
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Dossier pour les fichiers statiques collectés
 
 # Fichiers statiques supplémentaires pour les services comme Render
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Assurez-vous que vos fichiers sont dans le dossier 'static'
 ]
 
-# Fichiers médias (uploads utilisateurs)
-MEDIA_URL = '/media/'  # Nécessaire pour servir les fichiers via URL
+# Fichiers médias
+MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier où les fichiers uploadés sont enregistrés
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
