@@ -1,97 +1,111 @@
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.db import transaction
+from django.core.exceptions import SuspiciousOperation
 from shop.models import Utilisateur, Client, InformationsSupplementaires, SupportClient
 import urllib.request
+import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 def login(request):
-    # Vérification de la connexion internet
+    """
+    Vue de connexion ultra-sécurisée avec :
+    - Vérification stricte de l'état actif/inactif
+    - Protection renforcée contre les attaques
+    - Journalisation complète
+    - Conservation stricte de la logique originale
+    """
+    # 1. Vérification connexion internet (sécurisée)
     try:
-        urllib.request.urlopen('https://www.google.com', timeout=5)
-    except:
-        messages.error(request, "Veuillez vous connecter à internet pour accéder à cette page.")
-        return render(request, 'login.html')
+        urllib.request.urlopen('https://www.google.com', timeout=3)
+    except Exception as e:
+        logger.warning(f"Absence de connexion internet - {str(e)}")
+        messages.error(request, "Connexion internet requise")
+        return render(request, 'login.html', status=503)
     
+    # 2. Gestion des requêtes POST
     if request.method == 'POST':
-        # Récupération des informations du formulaire
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
+        start_time = datetime.now()
+        
+        try:
+            # 3. Nettoyage et validation des entrées
+            username = request.POST.get('username', '').strip()[:150]  # Limite anti-DoS
+            password = request.POST.get('password', '').strip()[:128]
+            
+            if not username or not password:
+                messages.error(request, 'Tous les champs sont obligatoires')
+                return redirect('login')
 
-        # Vérification des champs obligatoires
-        if not username or not password:
-            messages.error(request, 'Veuillez renseigner tous les champs.')
-            return redirect('login')
+            # 4. Authentification sécurisée
+            with transaction.atomic():
+                user = authenticate(request, username=username, password=password)
+                
+                if not user:
+                    logger.warning(f"Échec authentification - username: {username[:10]}...")
+                    messages.error(request, "Identifiants incorrects")
+                    return redirect('login')
 
-        # Authentifier l'utilisateur (client, utilisateur/boutiquier, support)
-        user = authenticate(request, username=username, password=password)
-        print(user)
+                # 5. Vérification stricte de l'activation
+                if not user.is_active:
+                    logger.warning(f"Tentative connexion compte inactif - user_id: {user.id}")
+                    messages.error(request, "Compte non activé - Vérifiez vos emails")
+                    return redirect('login')
 
-        if user:
-            # Vérification si l'utilisateur est actif
-            if user.is_active:
-                # Connexion sécurisée de l'utilisateur
+                # 6. Connexion autorisée
                 auth_login(request, user)
+                request.session.cycle_key()  # Protection contre le fixation
 
-                # Vérification du type d'utilisateur (client, utilisateur/boutiquier, support)
+                # 7. Gestion des types d'utilisateurs (logique originale conservée)
                 if isinstance(user, Utilisateur):
-                    # Si l'utilisateur est un utilisateur/boutiquier
                     try:
-                        # Récupérer les informations supplémentaires de l'utilisateur (boutiquier)
-                        infos = InformationsSupplementaires.objects.get(utilisateur=user)
-
-                        # Stockage des données nécessaires dans la session
+                        infos = InformationsSupplementaires.objects.select_for_update().get(utilisateur=user)
                         request.session.update({
                             'connection': True,
                             'user_id': user.id,
                             'type_boutique': infos.type_boutique,
+                            'last_login': str(datetime.now())
                         })
-
+                        logger.info(f"Connexion réussie - Boutiquier: {user.id}")
                         messages.success(request, f"Bienvenue, {user.nom_complet} dans votre boutique '{user.nom_boutique}' !")
-
-                        # Redirection vers la table principale pour tous les types de boutique
                         return redirect('table')
 
                     except InformationsSupplementaires.DoesNotExist:
-                        # Aucun enregistrement trouvé pour les informations supplémentaires
-                        messages.error(request, "Aucune information supplémentaire associée à votre compte.")
+                        logger.error(f"Infos manquantes - Boutiquier: {user.id}")
+                        messages.error(request, "Configuration compte incomplète")
                         return redirect('login')
 
                 elif isinstance(user, Client):
-                    # Si l'utilisateur est un client
-                    # Stockage des données nécessaires pour le client dans la session
                     request.session.update({
                         'connection': True,
                         'user_id': user.id,
+                        'last_login': str(datetime.now())
                     })
-
+                    logger.info(f"Connexion réussie - Client: {user.id}")
                     messages.success(request, f"Bienvenue, {user.nom_complet} !")
-
-                    # Redirection vers la page du client
                     return redirect('platForm')
                 
                 elif isinstance(user, SupportClient):
-                    # Si l'utilisateur est un support client
-                    # Stockage des données nécessaires pour le support client dans la session
                     request.session.update({
                         'connection': True,
                         'user_id': user.id,
+                        'last_login': str(datetime.now())
                     })
-
+                    logger.info(f"Connexion réussie - Support: {user.id}")
                     messages.success(request, f"Bienvenue, {user.nom} !")
-
-                    # Redirection vers la page de gestion du statut
                     return redirect('update_status')
 
-            else:
-                # Si l'utilisateur est inactif
-                messages.error(request, "Votre compte n'est pas encore activé. Veuillez vérifier votre email pour l'activer.")
-                return redirect('login')
-
-        else:
-            # L'utilisateur n'a pas pu être authentifié (identifiants incorrects)
-            messages.error(request, "Identifiants incorrects. Veuillez réessayer.")
+        except Exception as e:
+            logger.error(f"ERREUR CONNEXION - {str(e)}", exc_info=True)
+            messages.error(request, "Erreur système - Veuillez réessayer")
             return redirect('login')
 
-    # Si la méthode est GET, rendre la page de connexion
-    return render(request, 'login.html')
+        finally:
+            # Mesure du temps d'exécution
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.debug(f"Temps traitement login: {duration:.3f}s")
+
+    # 8. Gestion des requêtes GET
+    return render(request, 'login.html', status=200)
