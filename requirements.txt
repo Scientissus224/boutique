@@ -17,6 +17,7 @@ cryptography==44.0.2
 cycler==0.12.1
 defusedxml==0.7.1
 distro==1.9.0
+dj-database-url==2.3.0
 Django==5.1.4
 django-allauth==65.6.0
 django-extensions==3.2.3
