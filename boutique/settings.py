@@ -7,6 +7,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
+PORT = os.environ.get('PORT', 8000)
+
 # Email settings (ensure email.py or environment variables are set)
 from .email import *
 EMAIL_BACKEND = EMAIL_BACKEND
