@@ -20,7 +20,7 @@ LOGIN_REDIRECT_URL = '/table/'
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9__p-#jd0*9ax7kudnc+%=jl9n)plo=y+v5lql+)pwlht$ooy0')
 
-DEBUG = False
+DEBUG = True
 
 
 
