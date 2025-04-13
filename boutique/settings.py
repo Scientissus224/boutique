@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 PORT = os.environ.get("PORT", 8000)
+from decouple import config 
 
 # Email settings (ensure email.py or environment variables are set)
 from .email import *
@@ -101,11 +102,27 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 
 
 
+# Configuration de la base de données
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgres://waraba_guinee_user:bsqpIXTODz1gtKX00aHj3PyqbcW7fvH1@dpg-cvspkd24d50c73d5ovh0-a.oregon-postgres.render.com/waraba_guinee')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT', default='5432'),
+    }
 }
+
+# Configuration de Cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+
+# Spécifie le stockage des fichiers médias avec Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Ajoutez manuellement les options de la connexion, si nécessaire
 DATABASES['default']['OPTIONS'] = {
@@ -156,17 +173,6 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'  # URL pour accéder aux fichiers médias dans le navigateur
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier où les fichiers uploadés sont enregistrés
 
-
-# Configuration de Cloudinary---------------------
-load_dotenv()  # Charge les variables d'environnement depuis .env
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
-# Spécifie le stockage des fichiers médias avec Cloudinary
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 #-------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

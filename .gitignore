@@ -1,4 +1,5 @@
+# Ignore le fichier static/v1.mp4
 static/v1.mp4
-echo "staticfiles/v1.mp4" >> .gitignore
+
+# Ignore le fichier .env pour ne pas partager les informations sensibles
 .env
-echo ".env" >> .gitignore
