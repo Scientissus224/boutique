@@ -100,7 +100,7 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 
 
 # Base de données
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://waraba_guinee_6px2_user:k6c3wS4HQtK97tnLjklh3N5CWHJEi9nv@dpg-cvtq4eje5dus73adbpm0-a.oregon-postgres.render.com/waraba_guinee_6px2')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://waraba_guinee_adap_user:lcXqqZBRggOWQARCPC1K4Dxcmo0oX4KZ@dpg-cvtujc7gi27c73ab9s2g-a.oregon-postgres.render.com/waraba_guinee_adap')
 
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL),
