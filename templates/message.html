@@ -10,78 +10,97 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #F9FAFB;
-            color: #1F2937;
-            line-height: 1.5;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333333;
+            line-height: 1.6;
         }
 
         table {
             width: 100%;
+            max-width: 600px;
             background-color: #FFFFFF;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
-            padding: 20px;
+            padding: 30px;
         }
 
         h1 {
-            color: #FF5A1F;
-            font-size: 24px;
-            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         p {
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 20px;
+            color: #555555;
+        }
+
+        .info-block {
+            background-color: #f9f9f9;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 3px solid #3498db;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            display: inline-block;
+            min-width: 180px;
         }
 
         .cta-button {
             display: inline-block;
-            background: #FF5A1F;
+            background: #3498db;
             color: white;
             text-align: center;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            border-radius: 4px;
             text-decoration: none;
             width: 200px;
             margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #2980b9;
+        }
+
+        .footer {
+            font-size: 13px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
         }
 
         /* Responsive styles */
         @media screen and (max-width: 600px) {
             table {
-                padding: 15px;
+                padding: 20px;
+                margin: 10px;
             }
 
             h1 {
                 font-size: 20px;
             }
 
-            p {
-                font-size: 14px;
+            .info-label {
+                min-width: 120px;
+                display: block;
+                margin-bottom: 5px;
             }
 
             .cta-button {
                 width: 100%;
-                padding: 12px;
-                font-size: 16px;
-            }
-        }
-
-        @media screen and (max-width: 400px) {
-            h1 {
-                font-size: 18px;
-            }
-
-            p {
-                font-size: 14px;
-            }
-
-            .cta-button {
-                padding: 12px;
-                font-size: 14px;
             }
         }
     </style>
@@ -90,23 +109,27 @@
 
     <table role="presentation" cellspacing="0" cellpadding="0" border="0">
         <tr>
-            <td style="text-align: center;">
-                <h1>Félicitations !</h1>
-                <p>Votre boutique <span style="color: #FF5A1F; font-weight: bold;">{{ boutique }}</span> a été créée avec succès.</p>
+            <td>
+                <h1>Confirmation de création de boutique</h1>
+                <p style="text-align: center;">Votre boutique <strong style="color: #2c3e50;">{{ boutique }}</strong> a été créée avec succès.</p>
 
-                <div style="padding: 16px; border-top: 1px solid #EEE;">
-                    <p><strong>Votre Identifiant :</strong> {{ identifiant }}</p>
-                    <p><strong>Email associé :</strong> {{ email }}</p>
-                    <p><strong>Numéro de téléphone :</strong> {{ numero }}</p>
-                    <p><strong>Type de boutique :</strong> {{ type_boutique }}</p>
-                    <p><strong>Produits vendus :</strong> {{ produits_vendus }}</p>
-                    <p><strong>Comment avez-vous découvert WarabaShop ?</strong> {{ source_decouverte }}</p>
+                <div class="info-block">
+                    <p><span class="info-label">Votre Identifiant :</span> {{ identifiant }}</p>
+                    <p><span class="info-label">Email associé :</span> {{ email }}</p>
+                    <p><span class="info-label">Numéro de téléphone :</span> {{ numero }}</p>
+                    <p><span class="info-label">Type de boutique :</span> {{ type_boutique }}</p>
+                    <p><span class="info-label">Produits vendus :</span> {{ produits_vendus }}</p>
+                    <p><span class="info-label">Source de découverte :</span> {{ source_decouverte }}</p>
                 </div>
 
-                <a href="http://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="cta-button">Activer mon compte</a>
+                <div style="text-align: center;">
+                    <a href="http://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="cta-button">Activer mon compte</a>
+                </div>
 
-                <p style="font-size: 14px; color: #6B7280; text-align: center;">Nous sommes honorés de vous accueillir parmi nos partenaires professionnels.</p>
-                <p style="font-size: 14px; color: #6B7280; text-align: center;">L'équipe WarabaGuinée</p>
+                <div class="footer">
+                    <p>Nous sommes honorés de vous accueillir parmi nos partenaires professionnels.</p>
+                    <p>L'équipe WarabaGuinée</p>
+                </div>
             </td>
         </tr>
     </table>

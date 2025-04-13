@@ -14,9 +14,6 @@ from .models import (
     Localisation,
     LocalImages,
     Devise,
-    NavbarSettings,
-    BoutiqueSettings,
-    BoutiqueNavCusor,
    InformationsSupplementairesTemporaire,
    Client,
    ProduitImage,
@@ -963,89 +960,7 @@ class DeviseUpdateForm(forms.ModelForm):
 
         # Retourner l'ancienne devise après la mise à jour
         return old_devise
-
-#---------------------------------Gestion du site------------------------------------
-               #Gestion du couleur de fond de la   NavBar 
-               
-class NavbarSettingsForm(forms.ModelForm):
-    class Meta:
-        model = NavbarSettings
-        fields = ['couleur_fond']  # On ne permet de mettre à jour que la couleur de fond de la navbar
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Récupérer l'utilisateur et le retirer des kwargs
-        super(NavbarSettingsForm, self).__init__(*args, **kwargs)
-
-        # Limiter les paramètres aux données de l'utilisateur connecté
-        if user:
-            self.instance.utilisateur = user  # Associer l'utilisateur connecté
-
-    def save(self, commit=True):
-        # Récupérer l'ancienne valeur de la couleur de fond avant la mise à jour
-        old_couleur_fond = self.instance.couleur_fond
-
-        # Mettre à jour l'instance avec la nouvelle couleur de fond
-        navbar_settings_instance = super(NavbarSettingsForm, self).save(commit=False)
-        navbar_settings_instance.utilisateur = self.instance.utilisateur  # L'utilisateur connecté
-
-        if commit:
-            navbar_settings_instance.save()
-
-        return navbar_settings_instance
-    
-class BoutiqueSettingsForm(forms.ModelForm):
-    class Meta:
-        model = BoutiqueSettings
-        fields = ['couleur_texte']  # On ne permet de modifier que la couleur du texte
-    
-    # Initialisation du formulaire
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Récupérer l'utilisateur et le retirer des kwargs
-        super(BoutiqueSettingsForm, self).__init__(*args, **kwargs)
-
-        # Limiter les paramètres aux données de l'utilisateur connecté
-        if user:
-            self.instance.utilisateur = user  # Associer l'utilisateur connecté
-    
-    # Sauvegarde de l'instance
-    def save(self, commit=True):
-        boutique_settings_instance = super(BoutiqueSettingsForm, self).save(commit=False)
-        
-        # Lier l'utilisateur connecté à l'instance
-        boutique_settings_instance.utilisateur = self.instance.utilisateur
-
-        if commit:
-            boutique_settings_instance.save()
-
-        return boutique_settings_instance
-
-class BoutiqueNavCusorForm(forms.ModelForm):
-    class Meta:
-        model = BoutiqueNavCusor
-        fields = ['couleur_texte_cursor']  # Permet de modifier uniquement la couleur du texte du curseur
-    
-    # Initialisation du formulaire
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Récupérer l'utilisateur et le retirer des kwargs
-        super(BoutiqueNavCusorForm, self).__init__(*args, **kwargs)
-
-        # Limiter les paramètres aux données de l'utilisateur connecté
-        if user:
-            self.instance.utilisateur = user  # Associer l'utilisateur connecté
-            self.fields['couleur_texte_cursor'].queryset = BoutiqueNavCusor.objects.filter(utilisateur=user)  # Filtrer les choix basés sur l'utilisateur
-    
-    # Sauvegarde de l'instance
-    def save(self, commit=True):
-        boutique_nav_cusor_instance = super(BoutiqueNavCusorForm, self).save(commit=False)
-        
-        # Lier l'utilisateur connecté à l'instance
-        boutique_nav_cusor_instance.utilisateur = self.instance.utilisateur
-
-        if commit:
-            boutique_nav_cusor_instance.save()
-
-        return boutique_nav_cusor_instance
-    
+ 
 #-------------------------------Gestion Publier le site --------------------------------------------
 
 class BoutiqueUpdateForm(forms.ModelForm):

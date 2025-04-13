@@ -14,8 +14,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from .const_models import (
-    TEXT_COLOR_NAV,
-    TEXT_COLOR_NAV_CUSOR,
     COULEURS,
     TYPE_BOUTIQUE_CHOICES,
     SOURCE_DECOUVERTE_CHOICES,
@@ -66,7 +64,7 @@ class Utilisateur(AbstractUser):
     identifiant_unique = models.CharField(max_length=100, unique=True)
     nom_complet = models.CharField(max_length=200)
     numero = models.CharField(max_length=15, unique=True)
-    nom_boutique = models.CharField(max_length=200, unique=True)
+    nom_boutique = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     statut_validation_compte = models.CharField(
         max_length=10,
@@ -651,18 +649,6 @@ class Commande(models.Model):
 
 
 # -----------------------
-# Modèle pour les détails des commandes
-# -----------------------
-class DetailCommande(models.Model):
-    commande = models.ForeignKey(Commande, on_delete=models.CASCADE, related_name="details_commande")
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
-    quantite = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return f"{self.quantite} x {self.produit.nom} (Commande {self.commande.pk})"
-
-
-# -----------------------
 
 class Commentaire(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="commentaires")
@@ -677,110 +663,6 @@ class Commentaire(models.Model):
         help_text="Note entre 1 et 5 étoiles",
     )
 
-# -----------------------
-# Modèle pour recevoir les messages des utilisateurs
-# -----------------------
-class Message(models.Model):
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="messages")
-    nom_utilisateur = models.CharField(max_length=200)
-    email_utilisateur = models.EmailField()
-    sujet = models.CharField(max_length=200)
-    message = models.TextField()
-    date_message = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Message de {self.nom_utilisateur} - {self.sujet}"
-    
-#-------------------------------------Gestion des styles du site -------------------------------------
-          #1 Gestion des couleurs de fond de la NavBar
-class NavbarSettings(models.Model):
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="navbar_settings")
-    couleur_fond = models.CharField(
-        max_length=200,  # Hexa couleur : #RRGGBB
-        choices=[
-            ('#FFFFFF', 'Blanc'),
-            ('#000000', 'Noir'),
-            ('#FF5733', 'Orange'),
-            ('#33FF57', 'Vert'),
-            ('#3357FF', 'Bleu'),
-            ('#FFD700', 'Jaune'),
-            ('#800080', 'Violet'),
-            ('#FFC0CB', 'Rose'),
-            ('#D3D3D3', 'Gris clair'),
-
-            # Mélanges de couleurs
-            ('#3498DB', 'Bleu'),
-            ('#FF5733', 'Orange vif'),
-            ('#1ABC9C', 'Turquoise'),
-            ('#E74C3C', 'Rouge'),
-            ('#9B59B6', 'Violet'),
-            ('#F39C12', 'Jaune'),
-            ('#F39C12', 'Jaune'),
-
-            # Couleurs foncées
-            ('#333333', 'Gris foncé'),
-            ('#212121', 'Noir charbon'),
-            ('#1A1A1A', 'Gris ardoise foncé'),
-            ('#2C3E50', 'Bleu marine foncé'),
-            ('#34495E', 'Gris bleu foncé'),
-            ('#555555', 'Gris moyen foncé'),
-            ('#7F8C8D', 'Gris ardoise'),
-            ('#6A1B9A', 'Violet foncé'),
-            ('#9B59B6', 'Violet prune'),
-            ('#8E44AD', 'Violet foncé'),
-            ('#E74C3C', 'Rouge foncé'),
-            ('#C0392B', 'Rouge bordeaux'),
-            ('#D35400', 'Orange brûlé'),
-            ('#F39C12', 'Jaune foncé'),
-            ('#16A085', 'Vert foncé'),
-            ('#27AE60', 'Vert forêt foncé'),
-            ('#2980B9', 'Bleu foncé'),
-            ('#1ABC9C', 'Turquoise foncé'),
-
-            # Dégradés
-            ('linear-gradient(to right, #FF7F50, #FF1493)', 'Dégradé Rose-Orangé'),
-            ('linear-gradient(to right, #2980B9, #8E44AD)', 'Dégradé Bleu-Violet'),
-            ('linear-gradient(to right, #F39C12, #F1C40F)', 'Dégradé Jaune-Or'),
-
-            # Couleurs complémentaires
-            ('#27AE60', 'Vert'),
-            ('#2C3E50', 'Bleu marine'),
-            ('#FFDAB9', 'Pêche'),
-            ('#BDC3C7', 'Gris clair'),
-        ],
-        default='#FFFFFF',  # Valeur par défaut
-    )
-
-    def __str__(self):
-        return f"Paramètres navbar de {self.utilisateur.username}"
-
-
-
-class BoutiqueSettings(models.Model):
-    utilisateur = models.ForeignKey('Utilisateur', on_delete=models.CASCADE, related_name="boutique_settings")
-    
-    # Couleur de l'écriture
-    couleur_texte = models.CharField(
-        max_length=200,
-        choices=TEXT_COLOR_NAV,
-        default='#000000'
-    )
-
-    def __str__(self):
-        return f"Paramètres de la boutique de {self.utilisateur.username}"
-    
-class BoutiqueNavCusor(models.Model):
-    utilisateur = models.ForeignKey('Utilisateur', on_delete=models.CASCADE, related_name="boutique_cusor_nav")
-    
-    # Couleur de l'écriture
-    couleur_texte_cursor = models.CharField(
-        max_length=200,
-        choices=TEXT_COLOR_NAV_CUSOR,
-        default='#000000'
-    )
-
-    def __str__(self):
-        return f"Paramètres de la boutique de {self.utilisateur.username}"
     
 #-------------------------------------------Génération de la boutique----------------------------------
 

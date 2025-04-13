@@ -5,9 +5,6 @@ from shop.forms import (
     DeviseUpdateForm,
     MiseAJourUtilisateurForm,
     MiseAJourLocalisationForm,
-    NavbarSettingsForm,
-    BoutiqueSettingsForm,
-    BoutiqueNavCusorForm,
 
 )
 
@@ -15,9 +12,6 @@ from shop.models import (
     Utilisateur,
     Localisation,
     Devise,
-    NavbarSettings,
-    BoutiqueSettings,
-    BoutiqueNavCusor,
     Boutique,
 
 )
@@ -40,10 +34,7 @@ def parametres(request):
     localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
     boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
     devise_instance, _ = Devise.objects.get_or_create(utilisateur=utilisateur, defaults={'devise': 'GNF'})
-    navbar_instance, _ = NavbarSettings.objects.get_or_create(utilisateur=utilisateur, defaults={'couleur_fond': '#FFFFFF'})
-    shop_nom_color_instance, _ = BoutiqueSettings.objects.get_or_create(utilisateur=utilisateur, defaults={'couleur_texte': '#FFFFFF'})
-    shop_cursor_nav_instance, _ = BoutiqueNavCusor.objects.get_or_create(utilisateur=utilisateur, defaults={'couleur_texte_cursor': '#000000'})
-    
+
     # Données initiales pour l'affichage
     anciennes_localisations = {
         'lien_maps': localisation.lien_maps if localisation else 'Aucune localisation disponible',
@@ -60,18 +51,11 @@ def parametres(request):
         
     }
     ancienne_devise = devise_instance.devise
-    ancienne_navbar = navbar_instance.couleur_fond
-    ancien_shop_nom_color = shop_nom_color_instance.couleur_texte
-    ancien_cursor_nav = shop_cursor_nav_instance.couleur_texte_cursor
     
     # Initialisation des formulaires
     form = MiseAJourUtilisateurForm(request.POST or None, request.FILES or None, instance=utilisateur)
     form_localisation = MiseAJourLocalisationForm(request.POST or None, instance=localisation)
     form_devise = DeviseUpdateForm(request.POST or None, instance=devise_instance, user=utilisateur)
-    form_navbar = NavbarSettingsForm(request.POST or None, instance=navbar_instance, user=utilisateur)
-    form_shop_nom_color = BoutiqueSettingsForm(request.POST or None, instance=shop_nom_color_instance, user=utilisateur)
-    form_shop_cursor_nav = BoutiqueNavCusorForm(request.POST or None, instance=shop_cursor_nav_instance, user=utilisateur)
-
     # Traitement des formulaires
     if request.method == 'POST':
         if form.is_valid():
@@ -88,18 +72,6 @@ def parametres(request):
             form_devise.save()
             messages.success(request, "Votre devise a été mise à jour avec succès.")
             return redirect('profil')
-        elif form_navbar.is_valid():
-            form_navbar.save()
-            messages.success(request, "La couleur de votre navbar a été mise à jour avec succès.")
-            return redirect('profil')
-        elif form_shop_nom_color.is_valid():
-            form_shop_nom_color.save()
-            messages.success(request, "La couleur du texte de votre boutique a été mise à jour avec succès.")
-            return redirect('profil')
-        elif form_shop_cursor_nav.is_valid():
-            form_shop_cursor_nav.save()
-            messages.success(request, "La couleur du curseur de votre boutique a été mise à jour avec succès.")
-            return redirect('profil')
         else:
             messages.error(request, "Une ou plusieurs erreurs se sont produites. Veuillez vérifier vos informations.")
 
@@ -109,9 +81,6 @@ def parametres(request):
         'form': form,
         'form_localisation': form_localisation,
         'form_devise': form_devise,
-        'form_navbar': form_navbar,
-        'form_shop_nom_color': form_shop_nom_color,
-        'form_shop_cursor_nav': form_shop_cursor_nav,
         'user': {
             'nom': utilisateur.nom_complet,
             'email': utilisateur.email,
@@ -122,9 +91,6 @@ def parametres(request):
         },
         'localisation': anciennes_localisations,  # Mise à jour des anciennes localisations
         'ancienne_devise': ancienne_devise,
-        'ancien_navbar': ancienne_navbar,
-        'ancien_shop_nom_color': ancien_shop_nom_color,
-        'ancien_cursor_nav': ancien_cursor_nav,
         'jour_ouverture': getattr(localisation, 'jour_ouverture', None) if localisation else None,
         'jour_fermeture': getattr(localisation, 'jour_fermeture', None) if localisation else None,
 

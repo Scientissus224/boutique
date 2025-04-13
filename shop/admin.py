@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils import timezone
 from .models import (
     Utilisateur,
-    NavbarSettings,
     UtilisateurTemporaire,
     Produit,
     Devise,
@@ -11,11 +10,7 @@ from .models import (
     Localisation,
     LocalImages,
     Commande,
-    DetailCommande,
     Commentaire,
-    Message,
-    BoutiqueSettings,
-    BoutiqueNavCusor,
     InformationsSupplementaires,
     InformationsSupplementairesTemporaire,
     Client,
@@ -230,43 +225,14 @@ class CommandeAdmin(admin.ModelAdmin):
     ordering = ('-date_commande',)
 
 
-@admin.register(DetailCommande)
-class DetailCommandeAdmin(admin.ModelAdmin):
-    list_display = ('commande', 'produit', 'quantite')
-    search_fields = ('commande__nom_client', 'produit__nom')
-
 @admin.register(Commentaire)
 class CommentaireAdmin(admin.ModelAdmin):
     list_display = ('utilisateur', 'produit', 'date_commentaire', 'note')
     list_filter = ('date_commentaire', 'utilisateur', 'produit')
     search_fields = ('utilisateur__nom_complet', 'commentaire', 'produit__nom')
 
-@admin.register(Message)
-class MessageAdmin(admin.ModelAdmin):
-    list_display = ('nom_utilisateur', 'sujet', 'date_message', 'utilisateur')
-    list_filter = ('date_message', 'utilisateur')
-    search_fields = ('nom_utilisateur', 'sujet', 'utilisateur__nom_complet')
-    ordering = ('-date_message',)
-#---------------------------Gestion des styles du site-------------------------------------
-      #Gestion du fond de couleur de le NavBar:
-@admin.register(NavbarSettings)
-class NavbarSettingsAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'couleur_fond')  # Affiche l'utilisateur et la couleur de fond choisie
-    search_fields = ('utilisateur__username', 'utilisateur__email')  # Recherche par nom d'utilisateur et email
-    list_filter = ('couleur_fond',)  # Filtre par couleur de fond
-    
-@admin.register(BoutiqueSettings)
-class BoutiqueSettingsAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'couleur_texte')  # Affiche l'utilisateur et la couleur de texte choisie
-    search_fields = ('utilisateur__username', 'utilisateur__email')  # Recherche par nom d'utilisateur et email
-    list_filter = ('couleur_texte',)  # Filtre par couleur de texte
-    
-@admin.register(BoutiqueNavCusor)
-class BoutiqueSettingsAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'couleur_texte_cursor')  # Affiche l'utilisateur et la couleur de texte choisie
-    search_fields = ('utilisateur__username', 'utilisateur__email')  # Recherche par nom d'utilisateur et email
-    list_filter = ('couleur_texte_cursor',)  # Filtre par couleur de texte
-    
+
+ 
 #-------------------------------------Génération de la boutique ---------------------  
 @admin.register(Boutique)
 class BoutiqueAdmin(admin.ModelAdmin):
