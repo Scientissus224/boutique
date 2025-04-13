@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',         # Localhost
     'localhost',         # Alias pour 127.0.0.1
     '192.168.19.163',
+    'warabaguinee-l9ax.onrender.com'
 ]     
 
 
