@@ -1,1 +1,2 @@
-web: gunicorn boutique.wsgi:application
+web: echo "✅ BON Procfile utilisé !" && gunicorn boutique.wsgi:application
+
