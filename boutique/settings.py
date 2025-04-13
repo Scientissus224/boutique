@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,6 +69,8 @@ INSTALLED_APPS = [
     'shop',
     'boutique',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
 
 ]
 
@@ -134,14 +137,34 @@ TIME_ZONE = 'Africa/Conakry'  # Ajustez selon votre besoin
 USE_I18N = True
 USE_TZ = True
 
-# Fichiers statiques
-STATIC_URL = '/static/'  # Le slash avant est nécessaire pour le bon fonctionnement
+# Paramètres pour les fichiers statiques
+STATIC_URL = '/static/'
 
-# Répertoire où sont stockés les fichiers statiques supplémentaires
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Correction du nom de la variable
+# Dossier où seront collectés les fichiers statiques
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Répertoires supplémentaires pour les fichiers statiques
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 # Fichiers médias
 MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+# Répertoire où sont stockés les fichiers médias 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dgbbbmmlm',
+    'API_KEY': '341176238122211',
+    'API_SECRET': 'lE0kq_OIv1wSv6Ul2TzP01s1RXI',
+}
+
+cloudinary.config( 
+  cloud_name = "dgbbbmmlm", 
+  api_key = "341176238122211", 
+  api_secret = "lE0kq_OIv1wSv6Ul2TzP01s1RXI" 
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

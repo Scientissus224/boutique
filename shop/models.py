@@ -6,6 +6,7 @@ from decimal import Decimal, InvalidOperation
 from datetime import timedelta
 import random
 import string
+from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
 from django.utils.timezone import now
 from django.utils import timezone
@@ -78,8 +79,8 @@ class Utilisateur(AbstractUser):
         blank=True
     )
 
-    logo_boutique = models.ImageField(
-        upload_to='logos_boutiques/',
+    logo_boutique =  CloudinaryField(
+        'logos_boutiques',
         blank=True,
         null=True
     )
@@ -256,7 +257,7 @@ class Produit(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="produits")
     nom = models.CharField(max_length=200)  # Nom du produit
     description = models.TextField()  # Description détaillée
-    image = models.ImageField(upload_to='produits/', null=True, blank=True)  # Image principale
+    image =  CloudinaryField('produits', null=True, blank=True)  # Image principale
     prix = models.DecimalField(max_digits=10, decimal_places=2)  # Prix du produit
     disponible = models.BooleanField(default=True)  # Statut de disponibilité du produit
     panier = models.BooleanField(default=False)  # Champ pour savoir si le produit est dans le panier
@@ -344,7 +345,7 @@ class VenteAttente(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="ventes_attente")
     produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, null=True, blank=True, related_name="ventes_attente")
     nom_produit = models.CharField(max_length=200)  # Sauvegarde du nom du produit
-    image_produit = models.ImageField(upload_to='vent/', null=True, blank=True)  # Image du produit vendu
+    image_produit =  CloudinaryField('vent', null=True, blank=True)  # Image du produit vendu
     prix_achat = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix d'achat
     prix_vente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix de vente
     quantite_vendue = models.PositiveIntegerField(default=0)  # Quantité vendue
@@ -358,7 +359,7 @@ class Vente(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="ventes")
     produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, null=True, blank=True, related_name="ventes")
     nom_produit = models.CharField(max_length=200)  # Sauvegarde du nom du produit
-    image_produit = models.ImageField(upload_to='ventes/', null=True, blank=True)  # Image du produit vendu
+    image_produit =  CloudinaryField('ventes', null=True, blank=True)  # Image du produit vendu
     prix_achat = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix d'achat
     prix_vente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix de vente
     statut = models.BooleanField(default=False) 
@@ -463,7 +464,7 @@ class ProduitImage(models.Model):
     reference = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     produit = models.ForeignKey(Produit, related_name='images', on_delete=models.CASCADE)
     utilisateur = models.ForeignKey(Utilisateur, related_name='produit_images', on_delete=models.CASCADE, default=None)
-    image = models.ImageField(upload_to='details/')
+    image =  CloudinaryField('details')
     date_ajout = models.DateTimeField(default=timezone.now)
 
     def clean(self):
@@ -501,7 +502,7 @@ class Variante(models.Model):
     )  # Couleur de la variante (en hexadécimal)
     
     
-    image = models.ImageField(upload_to='variante/', null=True, blank=True)  # Image principale
+    image =  CloudinaryField('variante', null=True, blank=True)  # Image principale
     prix = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix spécifique à la variante
     quantite_stock = models.PositiveIntegerField(default=0,null=True,blank=True)  # Quantité disponible pour cette variante
     reference = models.CharField(max_length=100, blank=True, null=True)  # Référence spécifique à la variante
@@ -550,7 +551,7 @@ class Devise(models.Model):
 # -----------------------
 class SliderImage(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="slider_images")
-    image = models.ImageField(upload_to='sliders/')
+    image =  CloudinaryField('sliders')
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
 
@@ -618,7 +619,7 @@ class Localisation(models.Model):
 # -----------------------
 class LocalImages(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="images_localisation")
-    image = models.ImageField(upload_to='images_localisation/')
+    image =  CloudinaryField('images_localisation')
 
     def __str__(self):
         return f"Image de {self.utilisateur.nom_complet} - {self.image.url}"  # Affiche l'utilisateur et l'URL de l'image
@@ -652,9 +653,9 @@ class Commande(models.Model):
 
 class Commentaire(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="commentaires")
-    produit = models.ForeignKey('Produit', on_delete=models.CASCADE, related_name="commentaires", default=1)  # Id produit par défaut
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name="commentaires", default=1)  # Id produit par défaut
     commentaire = models.TextField()
-    image_profil = models.ImageField(upload_to='profil_images/', null=True, blank=True)  # Image de profil
+    image_profil =  CloudinaryField('profil_images', null=True, blank=True)  # Image de profil
     date_commentaire = models.DateTimeField(auto_now_add=True)
     note = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
@@ -692,11 +693,10 @@ class Boutique(models.Model):
         blank=True,
         verbose_name="Contenu HTML"
     )
-    logo = models.ImageField(
-        upload_to="logos/",
+    logo =  CloudinaryField(
+        "logo",
         null=True,
         blank=True,
-        verbose_name="Logo de la boutique"
     )
     premium = models.BooleanField(
         default=False,
@@ -850,7 +850,7 @@ class SupportClient(AbstractBaseUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, choices=ROLES)
     validation_compte = models.CharField(max_length=20, choices=VALIDATION_COMPTE)
-    profil = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    profil =  CloudinaryField('profiles', null=True, blank=True)
     password = models.CharField(max_length=255)  # Le mot de passe haché sera stocké ici
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
