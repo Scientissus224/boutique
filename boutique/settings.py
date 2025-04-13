@@ -1,12 +1,9 @@
 from pathlib import Path
 import os
-import dj_database_url
-from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-PORT = os.environ.get("PORT", 8000)
-from decouple import config 
 
 # Email settings (ensure email.py or environment variables are set)
 from .email import *
@@ -31,7 +28,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1',         # Localhost
     'localhost',         # Alias pour 127.0.0.1
     '192.168.19.163',
-    'warabaguinee.onrender.com',
 ]     
 
 
@@ -72,8 +68,6 @@ INSTALLED_APPS = [
     'shop',
     'boutique',
     'widget_tweaks',
-    'cloudinary',
-    'cloudinary_storage',
 
 ]
 
@@ -99,37 +93,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'boutique.wsgi.application'
 
 # Base de données
-
-
-
-# Configuration de la base de données
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME'),
-        'USER': config('DATABASE_USER'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST': config('DATABASE_HOST'),
-        'PORT': config('DATABASE_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'warabaguinee',
+        'USER': 'root',
+        'PASSWORD': '2003',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # Assurez-vous que utf8mb4 est utilisé
+        },
     }
 }
-
-# Configuration de Cloudinary
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
-}
-
-# Spécifie le stockage des fichiers médias avec Cloudinary
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Ajoutez manuellement les options de la connexion, si nécessaire
-DATABASES['default']['OPTIONS'] = {
-    'sslmode': 'require',
-}
-
-
 
 # Validation du mot de passe
 AUTH_PASSWORD_VALIDATORS = [
@@ -159,20 +135,13 @@ USE_I18N = True
 USE_TZ = True
 
 # Fichiers statiques
-STATIC_URL = '/static/'  # URL pour accéder aux fichiers statiques
+STATIC_URL = '/static/'  # Le slash avant est nécessaire pour le bon fonctionnement
 
-# Dossier où Django stocke les fichiers collectés (fichiers statiques collectés)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Dossier pour les fichiers statiques collectés
-
-# Fichiers statiques supplémentaires pour les services comme Render
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Assurez-vous que vos fichiers sont dans le dossier 'static'
-]
+# Répertoire où sont stockés les fichiers statiques supplémentaires
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Correction du nom de la variable
 
 # Fichiers médias
-MEDIA_URL = '/media/'  # URL pour accéder aux fichiers médias dans le navigateur
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier où les fichiers uploadés sont enregistrés
+MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
-
-#-------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
