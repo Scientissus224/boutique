@@ -158,14 +158,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier où les fichiers upload�
 
 
 # Configuration de Cloudinary---------------------
-load_dotenv()
+load_dotenv()  # Charge les variables d'environnement depuis .env
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('dqucjtsjk'),  # Variable d'environnement
-    'API_KEY': os.environ.get('359451741969355'),        # Variable d'environnement
-    'API_SECRET': os.environ.get('MgdajB9J96XcHftIQluA6ts_bZg'),  # Variable d'environnement
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
-
 # Spécifie le stockage des fichiers médias avec Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
