@@ -761,7 +761,7 @@ class Boutique(models.Model):
         Retourne l'URL publique de la boutique en utilisant l'identifiant.
         """
         domain_str = str(domaine.domain) if hasattr(domaine, 'domain') else str(domaine)
-        return f"{domain_str.rstrip('/')}/warabaguinee/{self.identifiant}/"
+        return f"{domain_str.rstrip('/')}/{self.identifiant}/"
 
     def publier_boutique(self):
         """
