@@ -20,7 +20,7 @@ LOGIN_REDIRECT_URL = '/table/'
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9__p-#jd0*9ax7kudnc+%=jl9n)plo=y+v5lql+)pwlht$ooy0')
 
-DEBUG = True
+DEBUG = False
 
 
 
@@ -95,20 +95,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'boutique.wsgi.application'
 
-# Base de données
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'warabaguinee',
-        'USER': 'root',
-        'PASSWORD': '2003',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',  # Assurez-vous que utf8mb4 est utilisé
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'waraba_guinee_6px2',
+        'USER': 'waraba_guinee_6px2_user',
+        'PASSWORD': 'k6c3wS4HQtK97tnLjklh3N5CWHJEi9nv',
+        'HOST': 'dpg-cvtq4eje5dus73adbpm0-a.oregon-postgres.render.com',
+        'PORT': '5432',  # PostgreSQL utilise le port 5432 par défaut
     }
 }
+
 
 # Validation du mot de passe
 AUTH_PASSWORD_VALIDATORS = [
