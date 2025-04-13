@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 # Base de données
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': 'warabaguinee',
         'USER': 'root',
         'PASSWORD': '2003',
