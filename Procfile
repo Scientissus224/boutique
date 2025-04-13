@@ -1,2 +1,1 @@
-web: gunicorn boutique.wsgi:application
-
+web: waitress-serve --listen=*:8000 boutique.wsgi:application
