@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 import cloudinary
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +29,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1',         # Localhost
     'localhost',         # Alias pour 127.0.0.1
     '192.168.19.163',
-    'https://warabaguinee-4ssa.onrender.com'
 ]     
 
 
@@ -97,13 +95,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'boutique.wsgi.application'
 
-
-
 # Base de données
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://waraba_guinee_adap_user:lcXqqZBRggOWQARCPC1K4Dxcmo0oX4KZ@dpg-cvtujc7gi27c73ab9s2g-a.oregon-postgres.render.com/waraba_guinee_adap')
-
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'warabaguinee',
+        'USER': 'root',
+        'PASSWORD': '2003',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # Assurez-vous que utf8mb4 est utilisé
+        },
+    }
 }
 
 # Validation du mot de passe
