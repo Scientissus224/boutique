@@ -43,7 +43,8 @@ def site(request):
     logo_boutique = utilisateur.logo_boutique.url if utilisateur and utilisateur.logo_boutique else None
 
     produits = Produit.objects.filter(utilisateur=utilisateur).exclude(type_produit='Promo')
-    produits_mis_en_avant = produits.filter(mise_en_avant='oui')
+    
+    produits_mis_en_avant = Produit.objects.filter(utilisateur=utilisateur, mise_en_avant='oui')
     
     slider_images = SliderImage.objects.filter(utilisateur=utilisateur)
     images_localisation = LocalImages.objects.filter(utilisateur=utilisateur)[:4]
@@ -67,7 +68,7 @@ def site(request):
          "likes_url": likes_url,
         "user_id": utilisateur_id,
     })
-    
+    print(produits_mis_en_avant)
     max_size = 4294967296
     if len(html_contenu.encode('utf-8')) > max_size:
         messages.error(request, "Le contenu est trop volumineux pour être enregistré.")
