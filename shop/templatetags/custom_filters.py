@@ -61,3 +61,13 @@ def active_si(value, arg):
         return 'active' if value == arg else ''
     except Exception:
         return ''
+# ✅ Filtre pour appliquer la classe 'active' selon une condition
+@register.filter
+def active_si(value, arg):
+    """
+    Retourne 'active' si value == arg, sinon une chaîne vide.
+    """
+    try:
+        return 'active' if value == arg else ''
+    except Exception:
+        return ''

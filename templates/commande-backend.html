@@ -1,117 +1,68 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% load custom_filters %}
-<div class="modern-command-container">
-    <!-- Header with animated icon -->
+<div class="command-container">
+    <!-- En-tête -->
     <div class="command-header">
-        <div class="icon-wrapper animate-bounce">
+        <div class="header-icon">
             <i class="fas fa-receipt"></i>
         </div>
-        <div>
-            <h1 class="command-title">Détails de votre commande</h1>
-            <p class="command-subtitle">N° {{ commande_numero }} • {{ commande_date }}</p>
+        <div class="header-info">
+            <h1>Commande N°{{ commande_numero }}</h1>
+            <p>{{ commande_date }}</p>
+            <div class="status-badge {{ commande_statut|lower }}">{{ commande_statut }}</div>
         </div>
     </div>
 
-    <!-- Status timeline -->
-    <div class="status-timeline">
-        <div class="timeline-step active">
+    <!-- Barre de progression -->
+    <div class="progress-steps">
+        <div class="step active">
             <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
-            <span>Commande passée</span>
+            <span>Commandé</span>
         </div>
-        <div class="timeline-step {{ commande_statut|lower|active_si:'en traitement' }}">
+        <div class="step {{ commande_statut|lower|active_si:'en traitement' }}">
             <div class="step-icon"><i class="fas fa-cog"></i></div>
             <span>En préparation</span>
         </div>
-        <div class="timeline-step {{ commande_statut|lower|active_si:'expédiée' }}">
+        <div class="step {{ commande_statut|lower|active_si:'expédiée' }}">
             <div class="step-icon"><i class="fas fa-truck"></i></div>
-            <span>Expédiée</span>
+            <span>Expédié</span>
         </div>
-        <div class="timeline-step {{ commande_statut|lower|active_si:'livrée' }}">
+        <div class="step {{ commande_statut|lower|active_si:'livrée' }}">
             <div class="step-icon"><i class="fas fa-check-circle"></i></div>
-            <span>Livrée</span>
+            <span>Livré</span>
         </div>
     </div>
 
-
-    <!-- Client card with glassmorphism effect -->
-    <div class="glass-card client-card">
-        <div class="card-header">
-            <i class="fas fa-user-circle"></i>
-            <h3>Informations client</h3>
-            <div class="status-badge {{ commande_statut|lower }}">{{ commande_statut }}</div>
-        </div>
-        <div class="card-body">
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-user-tag"></i></div>
-                    <div>
-                        <p class="info-label">Nom complet</p>
-                        <p class="info-value">{{ client_nom }}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
-                    <div>
-                        <p class="info-label">Téléphone</p>
-                        <p class="info-value">{{ client_numero }}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <p class="info-label">Adresse</p>
-                        <p class="info-value">{{ lieu_de_livraison }}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-credit-card"></i></div>
-                    <div>
-                        <p class="info-label">Paiement</p>
-                        <p class="info-value">{{ methode_paiement }} • {{ paiement_statut }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Products section with horizontal scroll on mobile -->
-    <div class="glass-card products-section">
-        <div class="card-header">
-            <i class="fas fa-box-open"></i>
-            <h3>Articles ({{ produits_info|length }})</h3>
-        </div>
-        <div class="products-container">
+    <!-- Liste des produits -->
+    <div class="products-section">
+        <h2><i class="fas fa-box-open"></i> Articles ({{ produits_info|length }})</h2>
+        
+        <div class="products-list">
             {% for produit in produits_info %}
             <div class="product-card">
-                <div class="product-image-container">
+                <div class="product-image">
                     {% if produit.image %}
                     <img src="{{ produit.image }}" alt="{{ produit.nom }}" loading="lazy">
                     {% else %}
-                    <div class="image-placeholder">
-                        <i class="fas fa-image"></i>
-                    </div>
+                    <div class="no-image"><i class="fas fa-image"></i></div>
                     {% endif %}
                 </div>
-                <div class="product-info">
-                    <h4 class="product-name">{{ produit.nom }}</h4>
-                    <p class="product-ref">Réf: {{ produit.reference|default:"N/A" }}</p>
+                
+                <div class="product-details">
+                    <h3>{{ produit.nom }}</h3>
+                    <p class="product-ref">Réf: {{ produit.reference|default:"-" }}</p>
                     
                     {% if produit.type == 'variante' %}
                     <div class="product-attributes">
-                        <span class="attribute-chip"><i class="fas fa-ruler-combined"></i> {{ produit.taille|default:"N/A" }}</span>
-                        <span class="attribute-chip"><i class="fas fa-palette"></i> {{ produit.couleur|default:"N/A" }}</span>
+                        {% if produit.taille %}<span>Taille: {{ produit.taille }}</span>{% endif %}
+                        {% if produit.couleur %}<span>Couleur: {{ produit.couleur }}</span>{% endif %}
                     </div>
                     {% endif %}
                     
-                    <div class="quantity-price">
+                    <div class="product-footer">
                         <span class="quantity">x{{ produit.quantite|default:"1" }}</span>
-                        <div class="price-container">
-                            <span class="current-price">{{ produit.prix }} {{ devise }}</span>
-                            {% if produit.prix_original %}
-                            <span class="original-price">{{ produit.prix_original }} {{ devise }}</span>
-                            {% endif %}
-                        </div>
+                        <span class="price">{{ produit.prix }} {{ devise }}</span>
                     </div>
                 </div>
             </div>
@@ -119,142 +70,143 @@
         </div>
     </div>
 
-    <!-- Summary cards in grid layout -->
-    <div class="summary-grid">
-        <div class="glass-card summary-card">
-            <div class="card-header">
-                <i class="fas fa-box"></i>
-                <h3>Résumé</h3>
-            </div>
+    <!-- Récapitulatif horizontal -->
+    <div class="summary-horizontal">
+        <div class="summary-scroll">
             <div class="summary-item">
                 <span>Sous-total</span>
-                <span>{{ sous_total }} {{ devise }}</span>
+                <strong>{{ sous_total }} {{ devise }}</strong>
             </div>
             <div class="summary-item">
-                <span>Livraison</span>
-                <span>{{ frais_livraison }} {{ devise }}</span>
+                <span>Frais</span>
+                <strong>{{ frais_livraison }} {{ devise }}</strong>
             </div>
-            <div class="summary-item">
-                <span>Remise</span>
-                <span class="discount">-{{ remise }} {{ devise }}</span>
+            <div class="summary-item discount">
+                <span>Promotion</span>
+                <strong>-{{ remise }} {{ devise }}</strong>
             </div>
-        </div>
-        
-        <div class="glass-card total-card accent">
-            <div class="card-header">
-                <i class="fas fa-wallet"></i>
-                <h3>Total</h3>
+            <div class="summary-item total">
+                <span>Total</span>
+                <strong>{{ total_prix }} {{ devise }}</strong>
             </div>
-            <div class="total-amount">
-                <span>{{ total_prix }} {{ devise }}</span>
-                <small>TTC</small>
-            </div>
-            <button class="action-button">
-                <i class="fas fa-print"></i> Imprimer
-            </button>
-            <button class="action-button secondary">
-                <i class="fas fa-headset"></i> Support
-            </button>
         </div>
     </div>
 </div>
 
 <style>
+    /* Base */
     :root {
-        --primary: #6366f1;
-        --primary-dark: #4f46e5;
-        --primary-light: #a5b4fc;
+        --primary: #4f46e5;
         --secondary: #10b981;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --dark: #1e293b;
-        --light: #f8fafc;
-        --gray: #94a3b8;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.4);
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --bg: #f8fafc;
     }
     
     * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
     }
     
     body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-        min-height: 100vh;
         font-family: 'Inter', sans-serif;
-        color: var(--dark);
+        color: var(--text);
+        background-color: var(--bg);
+        line-height: 1.5;
+        padding: 16px;
+    }
+    
+    /* Conteneur principal */
+    .command-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        overflow: hidden;
         padding: 20px;
     }
     
-    .modern-command-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    
-    /* Header styles */
+    /* En-tête */
     .command-header {
         display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 0.5rem;
+        gap: 16px;
+        margin-bottom: 24px;
     }
     
-    .icon-wrapper {
-        width: 60px;
-        height: 60px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    .header-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
         color: white;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
-        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        font-size: 1.5rem;
+        flex-shrink: 0;
     }
     
-    .animate-bounce {
-        animation: bounce 2s infinite;
+    .header-info h1 {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
     }
     
-    .command-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--dark);
-        line-height: 1.2;
+    .header-info p {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 8px;
     }
     
-    .command-subtitle {
-        color: var(--gray);
-        font-size: 0.95rem;
-        margin-top: 0.3rem;
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
     }
     
-    /* Status timeline */
-    .status-timeline {
+    .status-badge.en.traitement {
+        background: #fffbeb;
+        color: #d97706;
+        border: 1px solid #fcd34d;
+    }
+    
+    .status-badge.expédiée {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #93c5fd;
+    }
+    
+    .status-badge.livrée {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #6ee7b7;
+    }
+    
+    /* Barre de progression */
+    .progress-steps {
         display: flex;
         justify-content: space-between;
         position: relative;
-        margin: 2rem 0;
+        margin: 30px 0;
     }
     
-    .status-timeline::before {
+    .progress-steps::before {
         content: '';
         position: absolute;
-        top: 20px;
+        top: 15px;
         left: 0;
         right: 0;
-        height: 4px;
-        background: #e2e8f0;
+        height: 2px;
+        background: var(--border);
         z-index: 1;
-        border-radius: 2px;
     }
     
-    .timeline-step {
+    .step {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -263,414 +215,218 @@
         flex: 1;
     }
     
-    .timeline-step.active span {
-        color: var(--dark);
-        font-weight: 500;
-    }
-    
-    .timeline-step:not(.active) span {
-        color: var(--gray);
-    }
-    
-    .timeline-step.active .step-icon {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-    }
-    
-    .timeline-step:not(.active) .step-icon {
-        background: white;
-        color: var(--gray);
-        border-color: #e2e8f0;
-    }
-    
     .step-icon {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid;
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
-    }
-    
-    .timeline-step span {
-        font-size: 0.85rem;
-        text-align: center;
-        max-width: 80px;
-    }
-    
-    /* Glass card effect */
-    .glass-card {
-        background: var(--glass);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid var(--glass-border);
-        overflow: hidden;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    .glass-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
-    }
-    
-    .glass-card.accent {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(79, 70, 229, 0.2));
-        border-color: rgba(99, 102, 241, 0.3);
-    }
-    
-    .card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1.25rem 1.5rem;
-        background: rgba(255, 255, 255, 0.4);
-        border-bottom: 1px solid var(--glass-border);
-    }
-    
-    .card-header i {
-        font-size: 1.2rem;
-        color: var(--primary);
-    }
-    
-    .card-header h3 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--dark);
-        margin-right: auto;
-    }
-    
-    .status-badge {
-        padding: 0.35rem 0.75rem;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .status-badge.en.traitement {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    
-    .status-badge.expédiée {
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-        border: 1px solid rgba(59, 130, 246, 0.3);
-    }
-    
-    .status-badge.livrée {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--secondary);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    
-    /* Client info grid */
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        padding: 1.5rem;
-    }
-    
-    .info-item {
-        display: flex;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-    
-    .info-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--primary);
+        background: var(--border);
+        color: var(--text-light);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 0.9rem;
-        flex-shrink: 0;
+        margin-bottom: 8px;
     }
     
-    .info-label {
-        font-size: 0.8rem;
-        color: var(--gray);
-        margin-bottom: 0.2rem;
+    .step.active .step-icon {
+        background: var(--primary);
+        color: white;
     }
     
-    .info-value {
-        font-size: 0.95rem;
+    .step span {
+        font-size: 0.75rem;
+        text-align: center;
+        color: var(--text-light);
+    }
+    
+    .step.active span {
+        color: var(--text);
         font-weight: 500;
-        color: var(--dark);
     }
     
-    /* Products section */
-    .products-container {
+    /* Section produits */
+    .products-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .products-section h2 i {
+        color: var(--primary);
+    }
+    
+    .products-list {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        padding: 0 1.5rem 1.5rem;
+        gap: 12px;
     }
     
     .product-card {
         display: flex;
-        gap: 1.25rem;
-        padding: 1.25rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        transition: all 0.2s ease;
-    }
-    
-    .product-card:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-    }
-    
-    .product-image-container {
-        width: 80px;
-        height: 80px;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
         border-radius: 8px;
-        overflow: hidden;
-        background: #f8fafc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    }
+    
+    .product-image {
+        width: 70px;
+        height: 70px;
         flex-shrink: 0;
     }
     
-    .product-image-container img {
+    .product-image img {
         width: 100%;
         height: 100%;
         object-fit: contain;
+        border-radius: 4px;
     }
     
-    .image-placeholder {
-        color: #e2e8f0;
-        font-size: 1.8rem;
-    }
-    
-    .product-info {
-        flex: 1;
+    .no-image {
+        width: 100%;
+        height: 100%;
+        background: #f1f5f9;
+        border-radius: 4px;
         display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        color: #cbd5e1;
     }
     
-    .product-name {
+    .product-details {
+        flex: 1;
+    }
+    
+    .product-details h3 {
         font-size: 1rem;
-        font-weight: 600;
-        color: var(--dark);
-        margin-bottom: 0.1rem;
+        margin-bottom: 4px;
     }
     
     .product-ref {
-        font-size: 0.75rem;
-        color: var(--gray);
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-bottom: 8px;
     }
     
     .product-attributes {
         display: flex;
-        gap: 0.5rem;
-        margin: 0.5rem 0;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
     }
     
-    .attribute-chip {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+    .product-attributes span {
+        font-size: 0.75rem;
         background: #f1f5f9;
-        border-radius: 50px;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+        padding: 2px 8px;
+        border-radius: 4px;
     }
     
-    .attribute-chip i {
-        font-size: 0.6rem;
-        color: var(--gray);
-    }
-    
-    .quantity-price {
+    .product-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: auto;
+        margin-top: 8px;
     }
     
     .quantity {
-        font-size: 0.85rem;
-        color: var(--gray);
+        font-size: 0.9rem;
+        color: var(--text-light);
     }
     
-    .price-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-    
-    .current-price {
-        font-size: 1rem;
+    .price {
         font-weight: 600;
-        color: var(--dark);
     }
     
-    .original-price {
-        font-size: 0.7rem;
-        color: var(--gray);
-        text-decoration: line-through;
+    /* Récapitulatif horizontal */
+    .summary-horizontal {
+        margin-top: 20px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
-    /* Summary grid */
-    .summary-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
+    .summary-scroll {
+        display: flex;
+        gap: 20px;
+        padding-bottom: 10px;
+        min-width: fit-content;
     }
     
     .summary-item {
         display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px dashed #e2e8f0;
-        font-size: 0.9rem;
-    }
-    
-    .summary-item:last-child {
-        border-bottom: none;
-    }
-    
-    .discount {
-        color: var(--secondary);
-        font-weight: 500;
-    }
-    
-    .total-card {
-        display: flex;
         flex-direction: column;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-radius: 8px;
+        min-width: 120px;
     }
     
-    .total-card .card-header i {
-        color: white;
-    }
-    
-    .total-card .card-header h3 {
-        color: white;
-    }
-    
-    .total-amount {
-        padding: 1.5rem;
-        text-align: center;
-    }
-    
-    .total-amount span {
-        font-size: 2rem;
-        font-weight: 700;
-        color: white;
-        line-height: 1;
-    }
-    
-    .total-amount small {
+    .summary-item span:first-child {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--text-light);
+        margin-bottom: 4px;
     }
     
-    .action-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        margin: 0 1.5rem 1.5rem;
-        border-radius: 10px;
-        border: none;
-        background: white;
-        color: var(--primary);
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
+    .summary-item.discount strong {
+        color: var(--secondary);
     }
     
-    .action-button:hover {
-        background: rgba(255, 255, 255, 0.9);
-        transform: translateY(-2px);
-    }
-    
-    .action-button.secondary {
-        background: transparent;
+    .summary-item.total {
+        background: var(--primary);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
-    .action-button.secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
+    .summary-item.total span {
+        color: rgba(255,255,255,0.8);
     }
     
-    /* Animations */
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-    
-    /* Responsive design */
-    @media (max-width: 1024px) {
-        .summary-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
+    /* Responsive */
     @media (max-width: 768px) {
         .command-header {
             flex-direction: column;
             text-align: center;
-            gap: 1rem;
+            align-items: center;
         }
         
-        .icon-wrapper {
-            width: 70px;
-            height: 70px;
-            font-size: 2rem;
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
         }
         
-        .info-grid {
-            grid-template-columns: 1fr;
+        .progress-steps {
+            margin: 20px 0;
         }
         
-        .status-timeline {
-            margin: 1.5rem 0;
+        .step span {
+            font-size: 0.65rem;
         }
         
-        .timeline-step span {
-            font-size: 0.7rem;
+        .product-image {
+            width: 60px;
+            height: 60px;
         }
     }
     
     @media (max-width: 480px) {
         body {
-            padding: 15px;
+            padding: 12px;
         }
         
-        .command-title {
-            font-size: 1.5rem;
+        .command-container {
+            padding: 16px;
+            border-radius: 8px;
         }
         
-        .status-timeline {
-            gap: 0.5rem;
+        .progress-steps {
+            gap: 4px;
         }
         
         .step-icon {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             font-size: 0.8rem;
         }
         
@@ -678,13 +434,14 @@
             flex-direction: column;
         }
         
-        .product-image-container {
+        .product-image {
             width: 100%;
-            height: 120px;
+            height: 100px;
         }
         
-        .quantity-price {
-            margin-top: 0.5rem;
+        .summary-item {
+            min-width: 100px;
+            padding: 10px 12px;
         }
     }
 </style>

@@ -936,6 +936,97 @@ td.text-center {
   }
 }
 
+
+ /* Styles de base pour la modal */
+ .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #333;
+}
+
+.modal-body {
+  overflow-y: auto;
+  padding: 5px;
+  flex-grow: 1;
+}
+
+/* Styles pour le contenu de la commande */
+.command-container {
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-content {
+      margin: 10% auto;
+      width: 95%;
+      padding: 15px;
+  }
+  
+  .modal-header h3 {
+      font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+      margin: 15% auto;
+      max-height: 85vh;
+  }
+  
+  .close {
+      font-size: 24px;
+  }
+}
     </style>
 </head>
 <body>
@@ -1076,13 +1167,19 @@ td.text-center {
             
         </tr>
 
-        <!-- Modal pour les détails de la commande -->
+       <!-- Structure de la modal -->
         <div id="modal-{{ forloop.counter }}" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-{{ forloop.counter }}')">&times;</span>
-                <h3>Détails de la commande</h3>
-                {{ commande.html_contenu|safe }}
-            </div>
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h3><i class="fas fa-receipt"></i> Détails de la commande</h3>
+                  <span class="close" onclick="closeModal('modal-{{ forloop.counter }}')">&times;</span>
+              </div>
+              <div class="modal-body">
+                  <div class="command-container">
+                      {{ commande.html_contenu|safe }}
+                  </div>
+              </div>
+          </div>
         </div>
         {% empty %}
         <tr>
@@ -1161,12 +1258,6 @@ function openModal(id) {
   }
 }
 
-function closeModal(id) {
-  const modal = document.getElementById(id);
-  if (modal) {
-      modal.style.display = "none";
-  }
-}
 
 // Fermer le modal si on clique en dehors de son contenu
 window.onclick = function (event) {
@@ -1295,7 +1386,42 @@ document.addEventListener('click', (e) => {
       });
   }
 });
-    </script>   
+    </script>
+    <script>
+      // Fonction pour fermer la modal
+      function closeModal(id) {
+          const modal = document.getElementById(id);
+          if (modal) {
+              modal.style.display = "none";
+              document.body.style.overflow = 'auto'; // Rétablit le scroll de la page
+          }
+      }
+      
+      // Optionnel: Ouvrir la modal
+      function openModal(id) {
+          const modal = document.getElementById(id);
+          if (modal) {
+              modal.style.display = "block";
+              document.body.style.overflow = 'hidden'; // Bloque le scroll de la page
+          }
+      }
+      
+      // Fermer en cliquant en dehors du contenu
+      window.onclick = function(event) {
+          if (event.target.classList.contains('modal')) {
+              event.target.style.display = "none";
+              document.body.style.overflow = 'auto';
+          }
+      }
+      
+      // Gestion du toucher pour les appareils mobiles
+      document.addEventListener('touchstart', function(event) {
+          if (event.target.classList.contains('modal')) {
+              event.target.style.display = "none";
+              document.body.style.overflow = 'auto';
+          }
+      }, {passive: true});
+  </script>   
 
   <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
