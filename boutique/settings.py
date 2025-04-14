@@ -21,14 +21,18 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/table/'  
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG", "True") == "True"
+if not SECRET_KEY:
+    raise Exception("La variable SECRET_KEY est manquante dans le fichier .env")
 
-
+DEBUG = os.getenv("DEBUG", "True").strip().lower() == "true"
 
 # Charger les hôtes autorisés depuis le fichier .env
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
     
-
+# Sécurité des cookies
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False") == "True"
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False") == "True"
+CSRF_USE_SESSIONS = os.getenv("CSRF_USE_SESSIONS", "True") == "True"
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [

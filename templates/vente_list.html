@@ -561,6 +561,59 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+ /* Styles spécifiques pour mobile */
+ @media (max-width: 768px) {
+    .mobile-input {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        height: auto;
+    }
+    
+    #ventesEnCours th, 
+    #ventesEnCours td {
+        padding: 0.3rem;
+        font-size: 0.85rem;
+    }
+    
+    #ventesEnCours th {
+        white-space: nowrap;
+    }
+    
+    .table-responsive {
+        border: none;
+    }
+    
+    #ventesEnCours {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+.mini-spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 576px) {
+    .mini-spinner {
+        width: 14px;
+        height: 14px;
+    }
+}
  </style>
 </head>
 <body>
@@ -623,820 +676,820 @@
     </div>
     
     <div class="content">
-      <div class="container">
-        <div class="container-fluid px-4">
-          <h1 class="mt-4"><i class="fas fa-chart-line me-2"></i>Tableau de Bord des Ventes</h1>
-          
-          <!-- Filtres -->
-          <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <i class="fas fa-filter me-1"></i>
-                Filtres
-            </div>
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-2">
-                        <label for="jour_unique" class="form-label">Jour spécifique</label>
-                        <input type="date" class="form-control" id="jour_unique" name="jour_unique" value="{{ filtres.jour_unique }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="debut_jour" class="form-label">Date début</label>
-                        <input type="date" class="form-control" id="debut_jour" name="debut_jour" value="{{ filtres.intervalle_jours_debut }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="fin_jour" class="form-label">Date fin</label>
-                        <input type="date" class="form-control" id="fin_jour" name="fin_jour" value="{{ filtres.intervalle_jours_fin }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="produit" class="form-label">Produit</label>
-                        <select class="form-select" id="produit" name="produit">
-                            <option value="">Tous</option>
-                            {% for produit in produits %}
-                            <option value="{{ produit.id }}" {% if filtres.produit_id == produit.id|stringformat:"s" %}selected{% endif %}>{{ produit.nom }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="marque" class="form-label">Marque</label>
-                        <select class="form-select" id="marque" name="marque">
-                            <option value="">Toutes</option>
-                            {% for marque in marques %}
-                            <option value="{{ marque }}" {% if filtres.marque == marque %}selected{% endif %}>{{ marque }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="tag" class="form-label">Catégorie</label>
-                        <select class="form-select" id="tag" name="tag">
-                            <option value="">Toutes</option>
-                            {% for tag in tags %}
-                            <option value="{{ tag.nom }}" {% if filtres.tag == tag.nom %}selected{% endif %}>{{ tag.nom }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="annee_analyse" class="form-label">Année analyse</label>
-                        <input type="number" class="form-control" id="annee_analyse" name="annee_analyse" min="2000" max="2100" value="{{ filtres.annee_analyse }}">
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-search me-1"></i>Filtrer</button>
-                        <a href="{% url 'vente_list' %}" class="btn btn-secondary"><i class="fas fa-undo me-1"></i>Réinitialiser</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-      
-          <!-- Cartes de Résumé -->
-          <div class="row">
-              <div class="col-xl-3 col-md-6 mb-4">
-                  <div class="card border-start-success shadow h-100 py-2">
-                      <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                              <div class="col me-2">
-                                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                      Revenu Total</div>
-                                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_revenu|floatformat:2 }} FG</div>
-                              </div>
-                              <div class="col-auto">
-                                <i class="fas fa-hand-holding-usd fa-2x text-success"></i>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <div class="col-xl-3 col-md-6 mb-4">
-                  <div class="card border-start-primary shadow h-100 py-2">
-                      <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                              <div class="col me-2">
-                                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                      Coût Total</div>
-                                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_cout|floatformat:2 }} FG</div>
-                              </div>
-                              <div class="col-auto">
-                                  <i class="fas fa-money-bill-wave fa-2x text-primary"></i>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <div class="col-xl-3 col-md-6 mb-4">
-                  <div class="card border-start-info shadow h-100 py-2">
-                      <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                              <div class="col me-2">
-                                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                      Profit ({{ pourcentage_profit }}%)</div>
-                                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_profit|floatformat:2 }} FG</div>
-                              </div>
-                              <div class="col-auto">
-                                  <i class="fas fa-chart-pie fa-2x text-info"></i>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <div class="col-xl-3 col-md-6 mb-4">
-                  <div class="card border-start-warning shadow h-100 py-2">
-                      <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                              <div class="col me-2">
-                                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                      Total Ventes</div>
-                                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_ventes }}</div>
-                              </div>
-                              <div class="col-auto">
-                                  <i class="fas fa-shopping-cart fa-2x text-warning"></i>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      
-          <!-- Graphiques et Analyses -->
-          <div class="row">
-              <!-- Graphique des ventes par mois -->
-              <div class="col-lg-6 mb-4">
-                  <div class="card shadow mb-4">
-                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white">
-                          <h6 class="m-0 font-weight-bold text-primary">
-                              <i class="fas fa-calendar-alt me-1"></i> Ventes par Mois
-                          </h6>
-                      </div>
-                      <div class="card-body">
-                          <div class="chart-area">
-                              <canvas id="ventesParMoisChart"></canvas>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- Graphique des ventes par jour de semaine -->
-              <div class="col-lg-6 mb-4">
-                  <div class="card shadow mb-4">
-                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white">
-                          <h6 class="m-0 font-weight-bold text-primary">
-                              <i class="fas fa-calendar-day me-1"></i> Ventes par Jour de Semaine
-                          </h6>
-                      </div>
-                      <div class="card-body">
-                          <div class="chart-area">
-                              <canvas id="ventesParJourChart"></canvas>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      
-          <!-- Tableaux d'Analyse -->
-<div class="row">
-             <!-- Top Produits -->
-<div class="col-lg-4 mb-4">
-  <div class="card shadow h-100">
-      <div class="card-header bg-success text-white py-3">
-          <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-trophy me-1"></i> Top 5 Produits
-          </h6>
-      </div>
-      <div class="card-body">
-          <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                  <thead>
-                      <tr>
-                          <th>Produit</th>
-                          <th>Image</th> <!-- Nouvelle colonne pour l'image -->
-                          <th class="text-end">Quantité</th>
-                          <th class="text-end">Profit</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for produit in products_performance.top_produits %}
-                      <tr>
-                          <td>{{ produit.nom_produit|truncatechars:20 }}</td>
-                          <td>
-                              {% if produit.image %}
-                              <img src="{{ produit.image }}" alt="{{ produit.nom_produit }}" style="width: 50px; height: auto;">
-                              {% else %}
-                              <img src="{% static 'images/default-product-image.jpg' %}" alt="Image par défaut" style="width: 50px; height: auto;">
-                              {% endif %}
-                          </td> <!-- Affichage de l'image du produit -->
-                          <td class="text-end">{{ produit.total_vendu }}</td>
-                          <td class="text-end text-success">{{ produit.total_profit|floatformat:2 }} FG</td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="4" class="text-center">Aucune donnée disponible</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-</div>
-
-      
-             <!-- Produits Sous-Performance -->
-<div class="col-lg-4 mb-4">
-  <div class="card shadow h-100">
-      <div class="card-header bg-danger text-white py-3">
-          <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-exclamation-triangle me-1"></i> Produits en Difficulté
-          </h6>
-      </div>
-      <div class="card-body">
-          <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                  <thead>
-                      <tr>
-                          <th>Produit</th>
-                          <th>Image</th> <!-- Nouvelle colonne pour l'image -->
-                          <th class="text-end">Quantité</th>
-                          <th class="text-end">Perte</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for produit in products_performance.produits_sous_performance %}
-                      <tr>
-                          <td>{{ produit.nom_produit|truncatechars:20 }}</td>
-                          <td>
-                              {% if produit.image %}
-                              <img src="{{ produit.image }}" alt="{{ produit.nom_produit }}" style="width: 50px; height: auto;">
-                              {% else %}
-                              <img src="{% static 'images/default-product-image.jpg' %}" alt="Image par défaut" style="width: 50px; height: auto;">
-                              {% endif %}
-                          </td> <!-- Affichage de l'image du produit -->
-                          <td class="text-end">{{ produit.total_vendu }}</td>
-                          <td class="text-end text-danger">{{ produit.total_profit|floatformat:2 }} FG</td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="4" class="text-center">Aucun produit en difficulté</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-</div>
-
-              <!-- Alertes Stock -->
-<div class="col-lg-4 mb-4">
-  <div class="card shadow h-100">
-      <div class="card-header bg-warning text-dark py-3">
-          <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-box-open me-1"></i> Alertes Stock
-          </h6>
-      </div>
-      <div class="card-body">
-          <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                  <thead>
-                      <tr>
-                          <th>Produit</th>
-                          <th class="text-end">Stock</th>
-                          <th class="text-end">Jours restants</th>
-                          <th class="text-end">Image</th> <!-- Nouvelle colonne pour l'image -->
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for produit in inventory_analysis.alertes_stock %}
-                      <tr class="{% if produit.niveau == 'rupture' %}table-danger{% else %}table-warning{% endif %}">
-                          <td>{{ produit.produit|truncatechars:20 }}</td>
-                          <td class="text-end">{{ produit.stock }}</td>
-                          <td class="text-end">
-                              {% if produit.niveau == 'rupture' %}
-                                  N/A
-                              {% else %}
-                                  <strong>Faible stock</strong>
-                              {% endif %}
-                          </td>
-                          <td class="text-end">
-                              {% if produit.image %}
-                                  <img src="{{produit.image}}" alt="{{ produit.produit }}" style="max-width: 50px; max-height: 50px;">
-                              {% else %}
-                                  <span>Aucune image</span>
-                              {% endif %}
-                          </td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="4" class="text-center">Aucune alerte de stock</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-</div>
-
-<!-- Surstock -->
-<div class="col-lg-4 mb-4">
-  <div class="card shadow h-100">
-      <div class="card-header bg-success text-dark py-3">
-          <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-box-open me-1"></i> Surstock
-          </h6>
-      </div>
-      <div class="card-body">
-          <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                  <thead>
-                      <tr>
-                          <th>Produit</th>
-                          <th class="text-end">Stock</th>
-                          <th class="text-end">Jours restants</th>
-                          <th class="text-end">Image</th> <!-- Colonne pour l'image -->
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for produit in inventory_analysis.surstock %}
-                      <tr class="table-success">
-                          <td>{{ produit.produit|truncatechars:20 }}</td>
-                          <td class="text-end">{{ produit.stock_actuel }}</td>
-                          <td class="text-end">
-                              {% if produit.mois_restants %}
-                              {{ produit.mois_restants|floatformat:1 }} mois
-                              {% else %}
-                              N/A
-                              {% endif %}
-                          </td>
-                          <td class="text-end">
-                              {% if produit.image %}
-                              <img src="{{ produit.image }}" alt="{{ produit.produit }}" width="50" height="50">
-                              {% else %}
-                              <span>Aucune image</span>
-                              {% endif %}
-                          </td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="4" class="text-center">Aucun produit en surstock</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-</div>
-
-<!-- Rotation des Stocks -->
-<div class="col-lg-4 mb-4">
-  <div class="card shadow h-100">
-      <div class="card-header bg-info text-dark py-3">
-          <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-sync-alt me-1"></i> Rotation des Stocks
-          </h6>
-      </div>
-      <div class="card-body">
-          <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                  <thead>
-                      <tr>
-                          <th>Produit</th>
-                          <th class="text-end">Rotation</th>
-                          <th class="text-end">Image</th> <!-- Colonne pour l'image -->
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for produit in inventory_analysis.rotation_stock %}
-                      <tr>
-                          <td>{{ produit.produit|truncatechars:20 }}</td>
-                          <td class="text-end">{{ produit.rotation|floatformat:2 }}</td>
-                          <td class="text-end">
-                              {% if produit.image %}
-                              <img src="{{ produit.image }}" alt="{{ produit.produit }}" width="50" height="50">
-                              {% else %}
-                              <span>Aucune image</span>
-                              {% endif %}
-                          </td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="3" class="text-center">Aucune donnée de rotation</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-</div>
-<!-- Section IA - WarabaAI Assistant Commercial -->
-<div class="col-lg-6 mb-4">
-    <div class="card shadow h-100 border-0" style="border-radius: 16px; overflow: hidden;">
-        
-        <!-- En-tête avec identité IA -->
-        <div class="card-header bg-gradient-waraba text-white py-3" style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="ia-avatar me-3" style="width: 48px; height: 48px; background-color: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-robot fa-lg" style="color: white;"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0 fw-bold">WarabaAI Assistant</h5>
-                        <small class="opacity-75">Analyse prédictive avancée • Version Pro</small>
-                    </div>
-                </div>
-                <button id="toggleIA" class="btn btn-sm btn-light rounded-pill px-3" style="border: none;">
-                    <i class="fas fa-eye me-1"></i> <span class="toggle-text">Explorer</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Corps principal -->
-        <div class="card-body p-0">
-            
-            <!-- Message d'accueil IA -->
-            <div id="iaWelcome" class="ia-message p-4" style="background-color: #f8f9fa; border-bottom: 1px solid #eee;">
-                <div class="d-flex">
-                    <div class="ia-avatar-small me-3" style="width: 36px; height: 36px; background-color: #6e48aa; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-sparkles"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-2 fw-bold" style="color: #6e48aa;">Bonjour, je suis WarabaAI</h6>
-                        <p class="mb-0 small text-muted">Votre assistant d'intelligence artificielle pour optimiser vos ventes et stocks. Cliquez sur "Explorer" pour découvrir mes analyses prédictives.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contenu IA (masqué par défaut) -->
-            <div id="iaContent" style="display: none;">
+        <div class="container-fluid px-0">
+            <div class="container-fluid px-4">
+                <h1 class="mt-4"><i class="fas fa-chart-line me-2"></i>Tableau de Bord des Ventes</h1>
                 
-                <!-- Section Légende -->
-                <div class="ia-section p-4" style="background-color: #f5f3ff; border-bottom: 1px solid #e9e3ff;">
-                    <h6 class="d-flex align-items-center mb-3 fw-bold" style="color: #6e48aa;">
-                        <i class="fas fa-lightbulb me-2"></i> Comment interpréter ces données
-                    </h6>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
-                                <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #4caf50; border-radius: 50%;"></div>
-                                <div>
-                                    <small class="d-block fw-bold">Haute fiabilité</small>
-                                    <small class="text-muted">(70-100%) - Très probable</small>
+                <!-- Filtres -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-filter me-1"></i>
+                        Filtres
+                    </div>
+                    <div class="card-body">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-3 col-6">
+                                <label for="jour_unique" class="form-label">Jour spécifique</label>
+                                <input type="date" class="form-control form-control-lg" id="jour_unique" name="jour_unique" value="{{ filtres.jour_unique }}">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="debut_jour" class="form-label">Date début</label>
+                                <input type="date" class="form-control form-control-lg" id="debut_jour" name="debut_jour" value="{{ filtres.intervalle_jours_debut }}">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="fin_jour" class="form-label">Date fin</label>
+                                <input type="date" class="form-control form-control-lg" id="fin_jour" name="fin_jour" value="{{ filtres.intervalle_jours_fin }}">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="produit" class="form-label">Produit</label>
+                                <select class="form-select form-select-lg" id="produit" name="produit">
+                                    <option value="">Tous</option>
+                                    {% for produit in produits %}
+                                    <option value="{{ produit.id }}" {% if filtres.produit_id == produit.id|stringformat:"s" %}selected{% endif %}>{{ produit.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="marque" class="form-label">Marque</label>
+                                <select class="form-select form-select-lg" id="marque" name="marque">
+                                    <option value="">Toutes</option>
+                                    {% for marque in marques %}
+                                    <option value="{{ marque }}" {% if filtres.marque == marque %}selected{% endif %}>{{ marque }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="tag" class="form-label">Catégorie</label>
+                                <select class="form-select form-select-lg" id="tag" name="tag">
+                                    <option value="">Toutes</option>
+                                    {% for tag in tags %}
+                                    <option value="{{ tag.nom }}" {% if filtres.tag == tag.nom %}selected{% endif %}>{{ tag.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="annee_analyse" class="form-label">Année analyse</label>
+                                <input type="number" class="form-control form-control-lg" id="annee_analyse" name="annee_analyse" min="2000" max="2100" value="{{ filtres.annee_analyse }}">
+                            </div>
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-search me-1"></i>Filtrer</button>
+                                <a href="{% url 'vente_list' %}" class="btn btn-secondary btn-lg"><i class="fas fa-undo me-1"></i>Réinitialiser</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+              <!-- Cartes de Résumé -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-start-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col me-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Revenu Total</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_revenu|floatformat:2 }} FG</div>
+                                    </div>
+                                    <div class="col-auto">
+                                    <i class="fas fa-hand-holding-usd fa-2x text-success"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
-                                <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #ff9800; border-radius: 50%;"></div>
-                                <div>
-                                    <small class="d-block fw-bold">Confiance moyenne</small>
-                                    <small class="text-muted">(40-69%) - À surveiller</small>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-start-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col me-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Coût Total</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_cout|floatformat:2 }} FG</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-money-bill-wave fa-2x text-primary"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
-                                <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #f44336; border-radius: 50%;"></div>
-                                <div>
-                                    <small class="d-block fw-bold">Faible certitude</small>
-                                    <small class="text-muted">(0-39%) - Données insuffisantes</small>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-start-{% if total_profit < 0 %}danger{% else %}info{% endif %} shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col me-2">
+                                        <div class="text-xs font-weight-bold text-{% if total_profit < 0 %}danger{% else %}info{% endif %} text-uppercase mb-1">
+                                            {% if total_profit < 0 %}<i class="fas fa-exclamation-triangle me-1"></i>{% endif %}
+                                            Profit ({{ pourcentage_profit }}%)
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-{% if total_profit < 0 %}danger{% else %}gray-800{% endif %}">
+                                            {{ total_profit|floatformat:2 }} FG
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-{% if total_profit < 0 %}exclamation-circle{% else %}chart-pie{% endif %} fa-2x text-{% if total_profit < 0 %}danger{% else %}info{% endif %}"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-start-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col me-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Total Ventes</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_ventes }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-shopping-cart fa-2x text-warning"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Résultats IA -->
-                {% for product_id, data in sales_predictions.items %}
-                <div class="ia-product-card p-4" style="border-bottom: 1px solid #eee;">
-                    
-                    <!-- En-tête produit -->
-                    <div class="ia-product-header d-flex justify-content-between align-items-start mb-4">
-                        <div class="d-flex align-items-start" style="gap: 16px;">
-                            {% if data.product_image %}
-                            <div class="product-img-container" style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                                <img src="{{ data.product_image }}" class="img-fluid h-100 w-100 object-fit-cover" alt="{{ data.product_name }}" style="object-fit: cover;">
+            
+                <!-- Graphiques et Analyses -->
+                <div class="row">
+                    <!-- Graphique des ventes par mois -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow mb-4 h-100">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-calendar-alt me-1"></i> Ventes par Mois
+                                </h6>
                             </div>
-                            {% endif %}
-                            <div>
-                                <h5 class="mb-2 fw-bold" style="color: #333;">
-                                    {{ data.product_name }}
-                                </h5>
-                                <div class="d-flex flex-wrap" style="gap: 8px;">
-                                    <span class="ia-badge d-flex align-items-center px-3 py-1 rounded-pill" style="background-color: {% if data.stock_risk %}#fee2e2{% else %}#e0f7fa{% endif %}; font-size: 0.8rem;">
-                                        <i class="fas fa-boxes me-1" style="color: {% if data.stock_risk %}#dc2626{% else %}#00acc1{% endif %};"></i> 
-                                        <span style="color: {% if data.stock_risk %}#dc2626{% else %}#007c91{% endif %};">Stock: {{ data.current_stock }}</span>
-                                    </span>
-                                    <span class="ia-badge d-flex align-items-center px-3 py-1 rounded-pill" style="background-color: #f0f4ff; font-size: 0.8rem;">
-                                        <i class="fas fa-bullseye me-1" style="color: #4c6ef5;"></i> 
-                                        <span style="color: #364fc7;">Prévision: {{ data.total_predicted|floatformat }}</span>
-                                    </span>
+                            <div class="card-body">
+                                <div class="chart-container" style="position: relative; height: 400px; width: 100%;">
+                                    <canvas id="ventesParMoisChart"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Section Prévisions -->
-                    <div class="ia-forecast-section mt-4">
-                        <h6 class="section-title mb-3 fw-bold d-flex align-items-center" style="color: #6e48aa;">
-                            <i class="fas fa-chart-line me-2"></i> Prévisions détaillées
-                        </h6>
-                        
-                        <div class="row g-3">
-                            {% for pred in data.predictions %}
-                            <div class="col-md-4">
-                                <div class="ia-month-card p-3 h-100 rounded-3 bg-white shadow-sm border-0">
-                                    
-                                    <!-- Nom du mois en français -->
-                                    <div class="month-header text-center mb-3">
-                                        <span class="month-badge d-inline-block px-3 py-1 rounded-pill fw-bold" 
-                                            style="font-size: 0.75rem;
-                                                   background-color: {% if pred.confidence > 69 %}#e6f4ea{% elif pred.confidence > 39 %}#fff8e6{% else %}#ffebee{% endif %};
-                                                   color: {% if pred.confidence > 69 %}#0a7b3e{% elif pred.confidence > 39 %}#b35d00{% else %}#c62828{% endif %};">
-                                                   {% with pred.month|stringformat:"s" as month_str %}
-                                                   {% with month_str|slice:"-2:" as month %}
-                                                       {% if month == '01' %}JANVIER
-                                                       {% elif month == '02' %}FÉVRIER
-                                                       {% elif month == '03' %}MARS
-                                                       {% elif month == '04' %}AVRIL
-                                                       {% elif month == '05' %}MAI
-                                                       {% elif month == '06' %}JUIN
-                                                       {% elif month == '07' %}JUILLET
-                                                       {% elif month == '08' %}AOÛT
-                                                       {% elif month == '09' %}SEPTEMBRE
-                                                       {% elif month == '10' %}OCTOBRE
-                                                       {% elif month == '11' %}NOVEMBRE
-                                                       {% elif month == '12' %}DÉCEMBRE
-                                                       {% else %}{{ month_str }}
-                                                       {% endif %}
-                                                   {% endwith %}
-                                               {% endwith %}
-                                        </span>
+                
+                    <!-- Graphique des ventes par jour de semaine -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow mb-4 h-100">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-calendar-day me-1"></i> Ventes par Jour de Semaine
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" style="position: relative; height: 400px; width: 100%;">
+                                    <canvas id="ventesParJourChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Tableaux d'Analyse -->
+                <div class="row">
+                    <!-- Top Produits -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-success text-white py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-trophy me-1"></i> Top 5 Produits
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>Image</th>
+                                                <th class="text-end">Quantité</th>
+                                                <th class="text-end">Profit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for produit in products_performance.top_produits %}
+                                            <tr>
+                                                <td>{{ produit.nom_produit|truncatechars:20 }}</td>
+                                                <td>
+                                                    {% if produit.image %}
+                                                    <img src="{{ produit.image }}" alt="{{ produit.nom_produit }}" style="width: 50px; height: auto;">
+                                                    {% else %}
+                                                    <img src="{% static 'images/default-product-image.jpg' %}" alt="Image par défaut" style="width: 50px; height: auto;">
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">{{ produit.total_vendu }}</td>
+                                                <td class="text-end text-success">{{ produit.total_profit|floatformat:2 }} FG</td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Aucune donnée disponible</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Produits Sous-Performance -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-danger text-white py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-exclamation-triangle me-1"></i> Produits en Difficulté
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>Image</th>
+                                                <th class="text-end">Quantité</th>
+                                                <th class="text-end">Perte</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for produit in products_performance.produits_sous_performance %}
+                                            <tr>
+                                                <td>{{ produit.nom_produit|truncatechars:20 }}</td>
+                                                <td>
+                                                    {% if produit.image %}
+                                                    <img src="{{ produit.image }}" alt="{{ produit.nom_produit }}" style="width: 50px; height: auto;">
+                                                    {% else %}
+                                                    <img src="{% static 'images/default-product-image.jpg' %}" alt="Image par défaut" style="width: 50px; height: auto;">
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">{{ produit.total_vendu }}</td>
+                                                <td class="text-end text-danger">{{ produit.total_profit|floatformat:2 }} FG</td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Aucun produit en difficulté</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Alertes Stock -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-warning text-dark py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-box-open me-1"></i> Alertes Stock
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th class="text-end">Stock</th>
+                                                <th class="text-end">Jours restants</th>
+                                                <th class="text-end">Image</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for produit in inventory_analysis.alertes_stock %}
+                                            <tr class="{% if produit.niveau == 'rupture' %}table-danger{% else %}table-warning{% endif %}">
+                                                <td>{{ produit.produit|truncatechars:20 }}</td>
+                                                <td class="text-end">{{ produit.stock }}</td>
+                                                <td class="text-end">
+                                                    {% if produit.niveau == 'rupture' %}
+                                                        N/A
+                                                    {% else %}
+                                                        <strong>Faible stock</strong>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">
+                                                    {% if produit.image %}
+                                                        <img src="{{produit.image}}" alt="{{ produit.produit }}" style="max-width: 50px; max-height: 50px;">
+                                                    {% else %}
+                                                        <span>Aucune image</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Aucune alerte de stock</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Surstock -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-success text-dark py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-box-open me-1"></i> Surstock
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th class="text-end">Stock</th>
+                                                <th class="text-end">Jours restants</th>
+                                                <th class="text-end">Image</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for produit in inventory_analysis.surstock %}
+                                            <tr class="table-success">
+                                                <td>{{ produit.produit|truncatechars:20 }}</td>
+                                                <td class="text-end">{{ produit.stock_actuel }}</td>
+                                                <td class="text-end">
+                                                    {% if produit.mois_restants %}
+                                                    {{ produit.mois_restants|floatformat:1 }} mois
+                                                    {% else %}
+                                                    N/A
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">
+                                                    {% if produit.image %}
+                                                    <img src="{{ produit.image }}" alt="{{ produit.produit }}" width="50" height="50">
+                                                    {% else %}
+                                                    <span>Aucune image</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Aucun produit en surstock</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Rotation des Stocks -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-info text-dark py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-sync-alt me-1"></i> Rotation des Stocks
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th class="text-end">Rotation</th>
+                                                <th class="text-end">Image</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for produit in inventory_analysis.rotation_stock %}
+                                            <tr>
+                                                <td>{{ produit.produit|truncatechars:20 }}</td>
+                                                <td class="text-end">{{ produit.rotation|floatformat:2 }}</td>
+                                                <td class="text-end">
+                                                    {% if produit.image %}
+                                                    <img src="{{ produit.image }}" alt="{{ produit.produit }}" width="50" height="50">
+                                                    {% else %}
+                                                    <span>Aucune image</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="3" class="text-center">Aucune donnée de rotation</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Section IA - WarabaAI Assistant Commercial -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow h-100 border-0" style="border-radius: 16px; overflow: hidden;">
+                            <!-- En-tête avec identité IA -->
+                            <div class="card-header bg-gradient-waraba text-white py-3" style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="ia-avatar me-3" style="width: 48px; height: 48px; background-color: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-robot fa-lg" style="color: white;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0 fw-bold">WarabaAI Assistant</h5>
+                                            <small class="opacity-75">Analyse prédictive avancée • Version Pro</small>
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Cercle de progression -->
-                                    <div class="ia-progress-container mb-3 d-flex justify-content-center">
-                                        <div class="position-relative" style="width: 100px; height: 100px;">
-                                            <svg class="progress-circle" width="100" height="100" viewBox="0 0 100 100">
-                                                <circle cx="50" cy="50" r="45" fill="none" stroke="#eee" stroke-width="8"/>
-                                                <circle cx="50" cy="50" r="45" fill="none" 
-                                                    stroke="{% if pred.confidence > 69 %}#4caf50{% elif pred.confidence > 39 %}#ff9800{% else %}#f44336{% endif %}" 
-                                                    stroke-width="8" stroke-linecap="round"
-                                                    stroke-dasharray="{{ pred.confidence }} 100" transform="rotate(-90 50 50)"/>
-                                            </svg>
-                                            <div class="position-absolute top-50 start-50 translate-middle text-center">
-                                                <div class="fw-bold" style="font-size: 1.25rem; color: #333;">{{ pred.confidence }}%</div>
-                                                <div class="small text-muted">confiance</div>
+                                    <button id="toggleIA" class="btn btn-sm btn-light rounded-pill px-3" style="border: none;">
+                                        <i class="fas fa-eye me-1"></i> <span class="toggle-text">Explorer</span>
+                                    </button>
+                                </div>
+                            </div>
+            
+                            <!-- Corps principal -->
+                            <div class="card-body p-0">
+                                <!-- Message d'accueil IA -->
+                                <div id="iaWelcome" class="ia-message p-4" style="background-color: #f8f9fa; border-bottom: 1px solid #eee;">
+                                    <div class="d-flex">
+                                        <div class="ia-avatar-small me-3" style="width: 36px; height: 36px; background-color: #6e48aa; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-sparkles"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-2 fw-bold" style="color: #6e48aa;">Bonjour, je suis WarabaAI</h6>
+                                            <p class="mb-0 small text-muted">Votre assistant d'intelligence artificielle pour optimiser vos ventes et stocks. Cliquez sur "Explorer" pour découvrir mes analyses prédictives.</p>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <!-- Contenu IA (masqué par défaut) -->
+                                <div id="iaContent" style="display: none;">
+                                    <!-- Section Légende -->
+                                    <div class="ia-section p-4" style="background-color: #f5f3ff; border-bottom: 1px solid #e9e3ff;">
+                                        <h6 class="d-flex align-items-center mb-3 fw-bold" style="color: #6e48aa;">
+                                            <i class="fas fa-lightbulb me-2"></i> Comment interpréter ces données
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
+                                                    <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #4caf50; border-radius: 50%;"></div>
+                                                    <div>
+                                                        <small class="d-block fw-bold">Haute fiabilité</small>
+                                                        <small class="text-muted">(70-100%) - Très probable</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
+                                                    <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #ff9800; border-radius: 50%;"></div>
+                                                    <div>
+                                                        <small class="d-block fw-bold">Confiance moyenne</small>
+                                                        <small class="text-muted">(40-69%) - À surveiller</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm h-100">
+                                                    <div class="legend-dot me-3" style="width: 16px; height: 16px; background-color: #f44336; border-radius: 50%;"></div>
+                                                    <div>
+                                                        <small class="d-block fw-bold">Faible certitude</small>
+                                                        <small class="text-muted">(0-39%) - Données insuffisantes</small>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Ventes prévues -->
-                                    <div class="ia-sales-prediction text-center mt-3">
-                                        <div class="d-flex flex-column">
-                                            <span class="text-muted small mb-1">Ventes estimées</span>
-                                            <span class="fw-bold" style="font-size: 1.5rem; color: #6e48aa;">
-                                                {{ pred.predicted_sales|floatformat }}
-                                            </span>
+            
+                                    <!-- Résultats IA -->
+                                    {% for product_id, data in sales_predictions.items %}
+                                    <div class="ia-product-card p-4" style="border-bottom: 1px solid #eee;">
+                                        <!-- En-tête produit -->
+                                        <div class="ia-product-header d-flex justify-content-between align-items-start mb-4">
+                                            <div class="d-flex align-items-start" style="gap: 16px;">
+                                                {% if data.product_image %}
+                                                <div class="product-img-container" style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                                    <img src="{{ data.product_image }}" class="img-fluid h-100 w-100 object-fit-cover" alt="{{ data.product_name }}" style="object-fit: cover;">
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h5 class="mb-2 fw-bold" style="color: #333;">
+                                                        {{ data.product_name }}
+                                                    </h5>
+                                                    <div class="d-flex flex-wrap" style="gap: 8px;">
+                                                        <span class="ia-badge d-flex align-items-center px-3 py-1 rounded-pill" style="background-color: {% if data.stock_risk %}#fee2e2{% else %}#e0f7fa{% endif %}; font-size: 0.8rem;">
+                                                            <i class="fas fa-boxes me-1" style="color: {% if data.stock_risk %}#dc2626{% else %}#00acc1{% endif %};"></i> 
+                                                            <span style="color: {% if data.stock_risk %}#dc2626{% else %}#007c91{% endif %};">Stock: {{ data.current_stock }}</span>
+                                                        </span>
+                                                        <span class="ia-badge d-flex align-items-center px-3 py-1 rounded-pill" style="background-color: #f0f4ff; font-size: 0.8rem;">
+                                                            <i class="fas fa-bullseye me-1" style="color: #4c6ef5;"></i> 
+                                                            <span style="color: #364fc7;">Prévision: {{ data.total_predicted|floatformat }}</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+            
+                                        <!-- Section Prévisions -->
+                                        <div class="ia-forecast-section mt-4">
+                                            <h6 class="section-title mb-3 fw-bold d-flex align-items-center" style="color: #6e48aa;">
+                                                <i class="fas fa-chart-line me-2"></i> Prévisions détaillées
+                                            </h6>
+                                            
+                                            <div class="row g-3">
+                                                {% for pred in data.predictions %}
+                                                <div class="col-md-4">
+                                                    <div class="ia-month-card p-3 h-100 rounded-3 bg-white shadow-sm border-0">
+                                                        <!-- Nom du mois en français -->
+                                                        <div class="month-header text-center mb-3">
+                                                            <span class="month-badge d-inline-block px-3 py-1 rounded-pill fw-bold" 
+                                                                style="font-size: 0.75rem;
+                                                                    background-color: {% if pred.confidence > 69 %}#e6f4ea{% elif pred.confidence > 39 %}#fff8e6{% else %}#ffebee{% endif %};
+                                                                    color: {% if pred.confidence > 69 %}#0a7b3e{% elif pred.confidence > 39 %}#b35d00{% else %}#c62828{% endif %};">
+                                                                    {% with pred.month|stringformat:"s" as month_str %}
+                                                                    {% with month_str|slice:"-2:" as month %}
+                                                                        {% if month == '01' %}JANVIER
+                                                                        {% elif month == '02' %}FÉVRIER
+                                                                        {% elif month == '03' %}MARS
+                                                                        {% elif month == '04' %}AVRIL
+                                                                        {% elif month == '05' %}MAI
+                                                                        {% elif month == '06' %}JUIN
+                                                                        {% elif month == '07' %}JUILLET
+                                                                        {% elif month == '08' %}AOÛT
+                                                                        {% elif month == '09' %}SEPTEMBRE
+                                                                        {% elif month == '10' %}OCTOBRE
+                                                                        {% elif month == '11' %}NOVEMBRE
+                                                                        {% elif month == '12' %}DÉCEMBRE
+                                                                        {% else %}{{ month_str }}
+                                                                        {% endif %}
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <!-- Cercle de progression -->
+                                                        <div class="ia-progress-container mb-3 d-flex justify-content-center">
+                                                            <div class="position-relative" style="width: 100px; height: 100px;">
+                                                                <svg class="progress-circle" width="100" height="100" viewBox="0 0 100 100">
+                                                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#eee" stroke-width="8"/>
+                                                                    <circle cx="50" cy="50" r="45" fill="none" 
+                                                                        stroke="{% if pred.confidence > 69 %}#4caf50{% elif pred.confidence > 39 %}#ff9800{% else %}#f44336{% endif %}" 
+                                                                        stroke-width="8" stroke-linecap="round"
+                                                                        stroke-dasharray="{{ pred.confidence }} 100" transform="rotate(-90 50 50)"/>
+                                                                </svg>
+                                                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                                                    <div class="fw-bold" style="font-size: 1.25rem; color: #333;">{{ pred.confidence }}%</div>
+                                                                    <div class="small text-muted">confiance</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <!-- Ventes prévues -->
+                                                        <div class="ia-sales-prediction text-center mt-3">
+                                                            <div class="d-flex flex-column">
+                                                                <span class="text-muted small mb-1">Ventes estimées</span>
+                                                                <span class="fw-bold" style="font-size: 1.5rem; color: #6e48aa;">
+                                                                    {{ pred.predicted_sales|floatformat }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+            
+                                        <!-- Conseil IA -->
+                                        <div class="ia-advice mt-4 p-3 rounded-3" style="background-color: {% if data.stock_risk %}#fff0f0{% else %}#f0f9ff{% endif %}; border-left: 4px solid {% if data.stock_risk %}#ff6b6b{% else %}#6e48aa{% endif %};">
+                                            <div class="d-flex" style="gap: 12px;">
+                                                <div class="ia-avatar-small flex-shrink-0" style="width: 36px; height: 36px; background-color: {% if data.stock_risk %}#ff6b6b{% else %}#6e48aa{% endif %}; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="fas {% if data.stock_risk %}fa-exclamation{% else %}fa-check{% endif %}"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-1" style="color: {% if data.stock_risk %}#dc2626{% else %}#6e48aa{% endif %};">
+                                                        {% if data.stock_risk %}🔔 Attention : Risque de rupture{% else %}✅ Stock optimal{% endif %}
+                                                    </h6>
+                                                    <p class="mb-0 small" style="color: #555;">
+                                                        {% if data.stock_risk %}
+                                                        Selon mes analyses, vous devriez commander <strong>{{ data.total_predicted|subtract:data.current_stock|floatformat }} unités</strong> supplémentaires pour couvrir la demande prévue des 3 prochains mois.
+                                                        {% else %}
+                                                        Votre stock actuel couvre confortablement la demande prévue. Bonne gestion !
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    {% empty %}
+                                    <div class="ia-empty-state text-center py-5" style="background-color: #f8f9fa;">
+                                        <div class="mb-4">
+                                            <i class="fas fa-chart-pie fa-3x" style="color: #9d50bb; opacity: 0.5;"></i>
+                                        </div>
+                                        <h5 class="mb-2 fw-bold" style="color: #6e48aa;">Analyse en cours</h5>
+                                        <p class="text-muted mb-4 mx-auto" style="max-width: 400px;">
+                                            WarabaAI collecte et analyse vos données pour fournir des prévisions précises. Revenez dans 24h pour des résultats détaillés.
+                                        </p>
+                                        <button class="btn btn-sm rounded-pill px-4" style="background-color: #6e48aa; color: white;">
+                                            <i class="fas fa-bell me-1"></i> M'alerter
+                                        </button>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                            {% endfor %}
+            
+                            <!-- Pied de page IA -->
+                            <div class="card-footer py-3" style="background-color: #f8f9fa; border-top: 1px solid #eee;">
+                                <div class="d-flex justify-content-between align-items-center small">
+                                    <span class="text-muted d-flex align-items-center">
+                                        <i class="fas fa-shield-alt me-2" style="color: #9d50bb;"></i>
+                                        Données sécurisées et confidentielles
+                                    </span>
+                                    <span class="text-muted d-flex align-items-center">
+                                        <i class="fas fa-sync-alt me-2" style="color: #9d50bb;"></i>
+                                        Dernière actualisation : {% now "H:i" %} • Prochaine :{% heure_plus 60 "%H:%M" %}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+            
+                   <!-- Ventes en Cours -->
+                    <div class="col-12 mb-4">
+                        <form method="post" id="ventesForm">
+                            {% csrf_token %}
 
-                    <!-- Conseil IA -->
-                    <div class="ia-advice mt-4 p-3 rounded-3" style="background-color: {% if data.stock_risk %}#fff0f0{% else %}#f0f9ff{% endif %}; border-left: 4px solid {% if data.stock_risk %}#ff6b6b{% else %}#6e48aa{% endif %};">
-                        <div class="d-flex" style="gap: 12px;">
-                            <div class="ia-avatar-small flex-shrink-0" style="width: 36px; height: 36px; background-color: {% if data.stock_risk %}#ff6b6b{% else %}#6e48aa{% endif %}; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas {% if data.stock_risk %}fa-exclamation{% else %}fa-check{% endif %}"></i>
+                            <!-- Barre de titre -->
+                            <div class="bg-success text-white px-3 py-2 rounded-top d-flex align-items-center">
+                                <i class="fas fa-clock me-2"></i>
+                                <h5 class="mb-0">Ventes en attente</h5>
                             </div>
-                            <div>
-                                <h6 class="fw-bold mb-1" style="color: {% if data.stock_risk %}#dc2626{% else %}#6e48aa{% endif %};">
-                                    {% if data.stock_risk %}🔔 Attention : Risque de rupture{% else %}✅ Stock optimal{% endif %}
-                                </h6>
-                                <p class="mb-0 small" style="color: #555;">
-                                    {% if data.stock_risk %}
-                                    Selon mes analyses, vous devriez commander <strong>{{ data.total_predicted|subtract:data.current_stock|floatformat }} unités</strong> supplémentaires pour couvrir la demande prévue des 3 prochains mois.
-                                    {% else %}
-                                    Votre stock actuel couvre confortablement la demande prévue. Bonne gestion !
-                                    {% endif %}
-                                </p>
+
+                            <div class="table-responsive border border-top-0 rounded-bottom">
+                                <table class="table table-bordered table-hover mb-0" id="ventesEnCours">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="5%"><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                                            <th width="20%">Produit</th>
+                                            <th width="15%">Image</th>
+                                            <th width="15%" class="text-end">Prix Achat</th>
+                                            <th width="15%" class="text-end">Prix Vente</th>
+                                            <th width="10%" class="text-end">Quantité</th>
+                                            <th width="10%" class="text-end">Profit</th>
+                                            <th width="10%" class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for vente in ventes %}
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="vente_id" value="{{ vente.id }}" class="form-check-input">
+                                            </td>
+                                            <td>{{ vente.nom_produit|truncatechars:15 }}</td>
+                                            <td>
+                                                {% if vente.image_produit %}
+                                                    <img src="{{ vente.image_produit.url }}" class="img-thumbnail" style="max-height:40px; width:auto;">
+                                                {% else %}
+                                                    <span class="text-muted small">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">
+                                                <input type="number" name="prix_achat_{{ vente.id }}" class="form-control form-control-sm text-end mobile-input" step="0.01" value="{{ vente.prix_achat|floatformat:2 }}">
+                                            </td>
+                                            <td class="text-end">
+                                                <input type="number" name="prix_vente_{{ vente.id }}" class="form-control form-control-sm text-end mobile-input" step="0.01" value="{{ vente.prix_vente|floatformat:2 }}">
+                                            </td>
+                                            <td class="text-end">
+                                                <input type="number" name="quantite_vendue_{{ vente.id }}" class="form-control form-control-sm text-end mobile-input" min="1" value="{{ vente.quantite_vendue }}">
+                                            </td>
+                                            <td class="text-end small">{{ vente.get_profit_unitaire|floatformat:2 }} FG</td>
+                                            <td class="text-end small">{{ vente.get_total|floatformat:2 }} FG</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="8" class="text-center">Aucune vente en cours</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="mt-3 d-flex justify-content-between flex-wrap">
+                                <button type="button" class="btn btn-danger mb-2 flex-grow-1 mx-1" id="deleteSelected" {% if not ventes %}disabled{% endif %}>
+                                    <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                    <span class="mini-spinner"></span>
+                                </button>
+                                <button type="button" class="btn btn-success mb-2 flex-grow-1 mx-1" id="validateSelected" {% if not ventes %}disabled{% endif %}>
+                                    <i class="fas fa-check-circle me-1"></i> Valider
+                                    <span class="mini-spinner"></span>
+                                </button>
+                            </div>
+
+                            <!-- Champ action caché -->
+                            <input type="hidden" name="form_action" id="formActionInput" value="">
+                        </form>
+                    </div>
+                                
+                    <!-- Ventes Terminées -->
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <i class="fas fa-clipboard-check me-1"></i>
+                                Historique des Ventes
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" id="ventesTerminees">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="20%">Produit</th>
+                                                <th width="10%">Image</th>
+                                                <th width="10%" class="text-end">Prix Achat</th>
+                                                <th width="10%" class="text-end">Prix Vente</th>
+                                                <th width="10%" class="text-end">Quantité</th>
+                                                <th width="10%" class="text-end">Profit Unitaire</th>
+                                                <th width="10%" class="text-end">Total</th>
+                                                <th width="10%">Date</th>
+                                                <th width="10%">Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for vente in ventes_terminees %}
+                                            <tr>
+                                                <td>{{ vente.nom_produit }}</td>
+                                                <td>
+                                                    {% if vente.produit and vente.produit.image %}
+                                                    <img src="{{ vente.produit.image.url }}" alt="{{ vente.nom_produit }}" class="img-thumbnail" style="max-height: 50px;">
+                                                    {% elif vente.image_produit %}
+                                                    <img src="{{ vente.image_produit.url }}" alt="{{ vente.nom_produit }}" class="img-thumbnail" style="max-height: 50px;">
+                                                    {% else %}
+                                                    <span class="text-muted">Aucune image</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">{{ vente.prix_achat|floatformat:2 }} FG</td>
+                                                <td class="text-end">{{ vente.prix_vente|floatformat:2 }} FG</td>
+                                                <td class="text-end">{{ vente.quantite_vendue }}</td>
+                                                <td class="text-end text-{% if vente.get_profit_unitaire >= 0 %}success{% else %}danger{% endif %}">
+                                                    {{ vente.get_profit_unitaire|floatformat:2 }} FG
+                                                </td>
+                                                <td class="text-end">{{ vente.get_total|floatformat:2 }} FG</td>
+                                                <td>{{ vente.date_vente|date:"d/m/Y" }}</td>
+                                                <td>
+                                                    <span class="badge bg-success">Terminée</span>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="9" class="text-center">Aucune vente terminée</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                {% if ventes_terminees.paginator.num_pages > 1 %}
+                                <nav aria-label="Page navigation" class="mt-3">
+                                    <ul class="pagination justify-content-center">
+                                        {% if ventes_terminees.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                                                <span aria-hidden="true">&laquo;&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ ventes_terminees.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                        {% for num in ventes_terminees.paginator.page_range %}
+                                            {% if ventes_terminees.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                            {% elif num > ventes_terminees.number|add:'-3' and num < ventes_terminees.number|add:'3' %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if ventes_terminees.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ ventes_terminees.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ ventes_terminees.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                                                <span aria-hidden="true">&raquo;&raquo;</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-                {% empty %}
-                <div class="ia-empty-state text-center py-5" style="background-color: #f8f9fa;">
-                    <div class="mb-4">
-                        <i class="fas fa-chart-pie fa-3x" style="color: #9d50bb; opacity: 0.5;"></i>
-                    </div>
-                    <h5 class="mb-2 fw-bold" style="color: #6e48aa;">Analyse en cours</h5>
-                    <p class="text-muted mb-4 mx-auto" style="max-width: 400px;">
-                        WarabaAI collecte et analyse vos données pour fournir des prévisions précises. Revenez dans 24h pour des résultats détaillés.
-                    </p>
-                    <button class="btn btn-sm rounded-pill px-4" style="background-color: #6e48aa; color: white;">
-                        <i class="fas fa-bell me-1"></i> M'alerter
-                    </button>
-                </div>
-                {% endfor %}
             </div>
         </div>
-
-        <!-- Pied de page IA -->
-        <div class="card-footer py-3" style="background-color: #f8f9fa; border-top: 1px solid #eee;">
-            <div class="d-flex justify-content-between align-items-center small">
-                <span class="text-muted d-flex align-items-center">
-                    <i class="fas fa-shield-alt me-2" style="color: #9d50bb;"></i>
-                    Données sécurisées et confidentielles
-                </span>
-                <span class="text-muted d-flex align-items-center">
-                    <i class="fas fa-sync-alt me-2" style="color: #9d50bb;"></i>
-                    Dernière actualisation : {% now "H:i" %} • Prochaine :{% heure_plus 60 "%H:%M" %}
-
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Ventes en Cours -->
-<form method="post" id="ventesForm" style="margin-bottom:20px;">
-    {% csrf_token %}
-
-    <!-- Barre de titre -->
-    <div class="bg-success text-white px-3 py-2 rounded-top d-flex align-items-center">
-        <i class="fas fa-clock me-2"></i>
-        <h5 class="mb-0">Ventes en attente</h5>
-    </div>
-
-    <div class="table-responsive border border-top-0 rounded-bottom">
-        <table class="table table-bordered table-hover mb-0" id="ventesEnCours">
-            <thead class="table-light">
-                <tr>
-                    <th><input type="checkbox" id="selectAll"></th>
-                    <th>Produit</th>
-                    <th>Image</th>
-                    <th class="text-end">Prix Achat</th>
-                    <th class="text-end">Prix Vente</th>
-                    <th class="text-end">Quantité</th>
-                    <th class="text-end">Profit</th>
-                    <th class="text-end">Total</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for vente in ventes %}
-                <tr>
-                    <td>
-                        <input type="checkbox" name="vente_id" value="{{ vente.id }}">
-                    </td>
-                    <td>{{ vente.nom_produit }}</td>
-                    <td>
-                        {% if vente.image_produit %}
-                            <img src="{{ vente.image_produit.url }}" class="img-thumbnail" style="max-height:50px;">
-                        {% else %}
-                            <span class="text-muted">Aucune image</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end">
-                        <input type="number" name="prix_achat_{{ vente.id }}" class="form-control form-control-sm text-end" step="0.01" value="{{ vente.prix_achat|floatformat:2 }}">
-                    </td>
-                    <td class="text-end">
-                        <input type="number" name="prix_vente_{{ vente.id }}" class="form-control form-control-sm text-end" step="0.01" value="{{ vente.prix_vente|floatformat:2 }}">
-                    </td>
-                    <td class="text-end">
-                        <input type="number" name="quantite_vendue_{{ vente.id }}" class="form-control form-control-sm text-end" min="1" value="{{ vente.quantite_vendue }}">
-                    </td>
-                    <td class="text-end">{{ vente.get_profit_unitaire|floatformat:2 }} FG</td>
-                    <td class="text-end">{{ vente.get_total|floatformat:2 }} FG</td>
-                    <td>{{ vente.date_vente|date:"d/m/Y" }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="9" class="text-center">Aucune vente en cours</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Boutons d'action -->
-    <div class="mt-3 d-flex justify-content-between">
-        <button type="button" class="btn btn-danger" id="deleteSelected" {% if not ventes %}disabled{% endif %}>
-            <i class="fas fa-trash-alt me-1"></i> Supprimer la sélection
-        </button>
-        <button type="button" class="btn btn-success" id="validateSelected" {% if not ventes %}disabled{% endif %}>
-            <i class="fas fa-check-circle me-1"></i> Valider les ventes
-        </button>
-    </div>
-
-    <!-- Champ action caché -->
-    <input type="hidden" name="form_action" id="formActionInput" value="">
-</form>
-
-        
-          <!-- Ventes Terminées -->
-          <div class="card mb-4">
-              <div class="card-header bg-success text-white">
-                  <i class="fas fa-clipboard-check me-1"></i>
-                  Historique des Ventes
-              </div>
-              <div class="card-body">
-                  <div class="table-responsive">
-                      <table class="table table-bordered table-hover" id="ventesTerminees">
-                          <thead class="table-light">
-                              <tr>
-                                  <th width="20%">Produit</th>
-                                  <th width="10%">Image</th>
-                                  <th width="10%" class="text-end">Prix Achat</th>
-                                  <th width="10%" class="text-end">Prix Vente</th>
-                                  <th width="10%" class="text-end">Quantité</th>
-                                  <th width="10%" class="text-end">Profit Unitaire</th>
-                                  <th width="10%" class="text-end">Total</th>
-                                  <th width="10%">Date</th>
-                                  <th width="10%">Statut</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              {% for vente in ventes_terminees %}
-                              <tr>
-                                  <td>{{ vente.nom_produit }}</td>
-                                  <td>
-                                      {% if vente.produit and vente.produit.image %}
-                                      <img src="{{ vente.produit.image.url }}" alt="{{ vente.nom_produit }}" class="img-thumbnail" style="max-height: 50px;">
-                                      {% elif vente.image_produit %}
-                                      <img src="{{ vente.image_produit.url }}" alt="{{ vente.nom_produit }}" class="img-thumbnail" style="max-height: 50px;">
-                                      {% else %}
-                                      <span class="text-muted">Aucune image</span>
-                                      {% endif %}
-                                  </td>
-                                  <td class="text-end">{{ vente.prix_achat|floatformat:2 }} FG</td>
-                                  <td class="text-end">{{ vente.prix_vente|floatformat:2 }} FG</td>
-                                  <td class="text-end">{{ vente.quantite_vendue }}</td>
-                                  <td class="text-end text-{% if vente.get_profit_unitaire >= 0 %}success{% else %}danger{% endif %}">
-                                      {{ vente.get_profit_unitaire|floatformat:2 }} FG
-                                  </td>
-                                  <td class="text-end">{{ vente.get_total|floatformat:2 }} FG</td>
-                                  <td>{{ vente.date_vente|date:"d/m/Y" }}</td>
-                                  <td>
-                                      <span class="badge bg-success">Terminée</span>
-                                  </td>
-                              </tr>
-                              {% empty %}
-                              <tr>
-                                  <td colspan="9" class="text-center">Aucune vente terminée</td>
-                              </tr>
-                              {% endfor %}
-                          </tbody>
-                      </table>
-                  </div>
-                  
-                  <!-- Pagination -->
-                  {% if ventes_terminees.paginator.num_pages > 1 %}
-                  <nav aria-label="Page navigation" class="mt-3">
-                      <ul class="pagination justify-content-center">
-                          {% if ventes_terminees.has_previous %}
-                          <li class="page-item">
-                              <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
-                                  <span aria-hidden="true">&laquo;&laquo;</span>
-                              </a>
-                          </li>
-                          <li class="page-item">
-                              <a class="page-link" href="?page={{ ventes_terminees.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
-                                  <span aria-hidden="true">&laquo;</span>
-                              </a>
-                          </li>
-                          {% endif %}
-                          
-                          {% for num in ventes_terminees.paginator.page_range %}
-                              {% if ventes_terminees.number == num %}
-                              <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
-                              {% elif num > ventes_terminees.number|add:'-3' and num < ventes_terminees.number|add:'3' %}
-                              <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
-                              {% endif %}
-                          {% endfor %}
-                          
-                          {% if ventes_terminees.has_next %}
-                          <li class="page-item">
-                              <a class="page-link" href="?page={{ ventes_terminees.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
-                                  <span aria-hidden="true">&raquo;</span>
-                              </a>
-                          </li>
-                          <li class="page-item">
-                              <a class="page-link" href="?page={{ ventes_terminees.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
-                                  <span aria-hidden="true">&raquo;&raquo;</span>
-                              </a>
-                          </li>
-                          {% endif %}
-                      </ul>
-                  </nav>
-                  {% endif %}
-              </div>
-          </div>
-      </div>
-      
-      </div>      
 </div>
       
 <!-- Script JavaScript -->
@@ -1564,123 +1617,184 @@
         </script>   
         
         <script>
-          
-          // Graphique des ventes par mois
-          const ctx1 = document.getElementById('ventesParMoisChart').getContext('2d');
-          const ventesParMoisChart = new Chart(ctx1, {
-              type: 'bar',
-              data: {
-                  labels: [{% for item in sales_trends.ventes_par_mois %}'{{ item.mois }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
-                  datasets: [{
-                      label: 'Ventes',
-                      data: [{% for item in sales_trends.ventes_par_mois %}{{ item.total }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                      backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                      borderColor: 'rgba(54, 162, 235, 1)',
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  plugins: {
-                      legend: {
-                          display: false
-                      },
-                      tooltip: {
-                          callbacks: {
-                              label: function(context) {
-                                  return context.parsed.y + ' unités';
-                              }
-                          }
-                      }
-                  },
-                  scales: {
-                      y: {
-                          beginAtZero: true,
-                          title: {
-                              display: true,
-                              text: 'Quantité vendue'
-                          }
-                      }
-                  }
-              }
-          });
-          
-          // Graphique des ventes par jour de semaine
-          const ctx2 = document.getElementById('ventesParJourChart').getContext('2d');
-          const ventesParJourChart = new Chart(ctx2, {
-              type: 'line',
-              data: {
-                  labels: [{% for item in sales_trends.ventes_par_jour %}'{{ item.jour }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
-                  datasets: [{
-                      label: 'Ventes',
-                      data: [{% for item in sales_trends.ventes_par_jour %}{{ item.total }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      borderColor: 'rgba(75, 192, 192, 1)',
-                      borderWidth: 2,
-                      tension: 0.1,
-                      fill: true
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  plugins: {
-                      legend: {
-                          display: false
-                      },
-                      tooltip: {
-                          callbacks: {
-                              label: function(context) {
-                                  return context.parsed.y + ' unités';
-                              }
-                          }
-                      }
-                  },
-                  scales: {
-                      y: {
-                          beginAtZero: true,
-                          title: {
-                              display: true,
-                              text: 'Quantité vendue'
-                          }
-                      }
-                  }
-              }
-          });
-          
-          </script>
-          <script>
-            const ventesForm = document.getElementById("ventesForm");
-            const validateBtn = document.getElementById("validateSelected");
-            const deleteBtn = document.getElementById("deleteSelected");
-            let alreadySubmitted = false;
-        
-            function submitFormWithAction(action) {
-                if (alreadySubmitted) return; // empêche double soumission
-                alreadySubmitted = true;
-        
-                document.getElementById("formActionInput").value = action;
-        
-                // Désactivation des boutons pour éviter le double clic
-                validateBtn.disabled = true;
-                deleteBtn.disabled = true;
-        
-                ventesForm.submit();
-            }
-        
-            validateBtn.addEventListener("click", function () {
-                submitFormWithAction("update_ventes");
+            // Graphique des ventes par mois
+            const ctx1 = document.getElementById('ventesParMoisChart').getContext('2d');
+            const ventesParMoisChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: [{% for item in sales_trends.ventes_par_mois %}'{{ item.mois }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    datasets: [{
+                        label: 'Ventes',
+                        data: [{% for item in sales_trends.ventes_par_mois %}{{ item.total }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' unités';
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Ventes mensuelles',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantité vendue',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
             });
-        
-            deleteBtn.addEventListener("click", function () {
-                submitFormWithAction("delete_ventes");
+            
+            // Graphique des ventes par jour de semaine
+            const ctx2 = document.getElementById('ventesParJourChart').getContext('2d');
+            const ventesParJourChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: [{% for item in sales_trends.ventes_par_jour %}'{{ item.jour }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    datasets: [{
+                        label: 'Ventes',
+                        data: [{% for item in sales_trends.ventes_par_jour %}{{ item.total }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' unités';
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Ventes par jour de semaine',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantité vendue',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
             });
-        
-            // Select All
-            document.getElementById("selectAll").addEventListener("change", function () {
-                const checkboxes = document.querySelectorAll("input[name='vente_id']");
-                checkboxes.forEach(cb => cb.checked = this.checked);
-            });
-        </script>
+            </script>
+            <script>
+                const ventesForm = document.getElementById("ventesForm");
+                const validateBtn = document.getElementById("validateSelected");
+                const deleteBtn = document.getElementById("deleteSelected");
+                let alreadySubmitted = false;
+            
+                function submitFormWithAction(action) {
+                    if (alreadySubmitted) return;
+                    alreadySubmitted = true;
+            
+                    // Affiche les spinners
+                    const validateSpinner = validateBtn.querySelector('.mini-spinner');
+                    const deleteSpinner = deleteBtn.querySelector('.mini-spinner');
+                    
+                    if (action === "update_ventes" && validateSpinner) {
+                        validateSpinner.style.display = 'inline-block';
+                    } else if (deleteSpinner) {
+                        deleteSpinner.style.display = 'inline-block';
+                    }
+            
+                    document.getElementById("formActionInput").value = action;
+            
+                    // Désactivation des boutons
+                    validateBtn.disabled = true;
+                    deleteBtn.disabled = true;
+            
+                    ventesForm.submit();
+                }
+            
+                validateBtn.addEventListener("click", function () {
+                    submitFormWithAction("update_ventes");
+                });
+            
+                deleteBtn.addEventListener("click", function () {
+                    submitFormWithAction("delete_ventes");
+                });
+            
+                // Select All
+                document.getElementById("selectAll").addEventListener("change", function () {
+                    const checkboxes = document.querySelectorAll("input[name='vente_id']");
+                    checkboxes.forEach(cb => cb.checked = this.checked);
+                });
+            
+                // Réinitialisation des spinners si la page est rechargée sans soumission
+                window.addEventListener('pageshow', function() {
+                    document.querySelectorAll('.mini-spinner').forEach(spinner => {
+                        spinner.style.display = 'none';
+                    });
+                });
+            </script>
         <script>
             // Toggle IA Content
             document.getElementById('toggleIA').addEventListener('click', function() {
