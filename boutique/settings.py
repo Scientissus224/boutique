@@ -1,10 +1,12 @@
 from pathlib import Path
 import os
 import cloudinary
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Email settings (ensure email.py or environment variables are set)
 from .email import *
@@ -18,19 +20,14 @@ EMAIL_PORT = EMAIL_PORT
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/table/'  
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-9__p-#jd0*9ax7kudnc+%=jl9n)plo=y+v5lql+)pwlht$ooy0')
-
-DEBUG = True
-
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 
-ALLOWED_HOSTS = [
-    '10.5.50.71',        # Votre adresse IP Wi-Fi actuelle (peut changer)
-    '127.0.0.1',         # Localhost
-    'localhost',         # Alias pour 127.0.0.1
-    '192.168.19.163',
-    'warabaguinee-l9ax.onrender.com'
-]     
+
+# Charger les hôtes autorisés depuis le fichier .env
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
+    
 
 
 # Authentication Backends
@@ -99,13 +96,14 @@ WSGI_APPLICATION = 'boutique.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'waraba_guinee_6px2',
-        'USER': 'waraba_guinee_6px2_user',
-        'PASSWORD': 'k6c3wS4HQtK97tnLjklh3N5CWHJEi9nv',
-        'HOST': 'dpg-cvtq4eje5dus73adbpm0-a.oregon-postgres.render.com',
-        'PORT': '5432',  # PostgreSQL utilise le port 5432 par défaut
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 
 # Validation du mot de passe
@@ -150,17 +148,12 @@ STATICFILES_DIRS = [
 # Fichiers médias
 MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
-# Répertoire où sont stockés les fichiers médias 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dgbbbmmlm',
-    'API_KEY': '341176238122211',
-    'API_SECRET': 'lE0kq_OIv1wSv6Ul2TzP01s1RXI',
-}
+# Configuration Cloudinary
 
 cloudinary.config( 
-  cloud_name = "dgbbbmmlm", 
-  api_key = "341176238122211", 
-  api_secret = "lE0kq_OIv1wSv6Ul2TzP01s1RXI" 
+  cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME'),
+  api_key = os.getenv('CLOUDINARY_API_KEY'),
+  api_secret = os.getenv('CLOUDINARY_API_SECRET')
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
