@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
 ]
 
 INSTALLED_APPS = [
@@ -133,21 +134,21 @@ TIME_ZONE = 'Africa/Conakry'  # Ajustez selon votre besoin
 USE_I18N = True
 USE_TZ = True
 
-# Paramètres pour les fichiers statiques
+# FICHIERS STATIQUES
 STATIC_URL = '/static/'
-
-# Dossier où seront collectés les fichiers statiques
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Répertoires supplémentaires pour les fichiers statiques
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Pour collectstatic (Render)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),  # Tes fichiers statiques perso
 ]
 
+# FICHIERS MÉDIAS (upload via Cloudinary ou local si DEBUG)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Fichiers médias
-MEDIA_URL = '/media/'  # Le slash avant est nécessaire pour le bon fonctionnement
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+
+# Pour une meilleure gestion des fichiers statiques en production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Configuration Cloudinary
 
 cloudinary.config( 
