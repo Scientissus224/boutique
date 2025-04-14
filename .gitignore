@@ -1,2 +1,7 @@
-# Ignorer le fichier .env contenant les variables sensibles
+*.pyc
+__pycache__/
 .env
+.venv/
+media/
+staticfiles/
+
