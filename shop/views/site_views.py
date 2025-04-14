@@ -44,7 +44,7 @@ def site(request):
 
     produits = Produit.objects.filter(utilisateur=utilisateur).exclude(type_produit='Promo')
     
-    produits_mis_en_avant = Produit.objects.filter(utilisateur=utilisateur, mise_en_avant='oui')
+    produits_mis_en_avant = Produit.objects.filter(utilisateur=utilisateur, mise_en_avant='Oui')
     
     slider_images = SliderImage.objects.filter(utilisateur=utilisateur)
     images_localisation = LocalImages.objects.filter(utilisateur=utilisateur)[:4]
