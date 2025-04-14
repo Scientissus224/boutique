@@ -36,6 +36,8 @@ CSRF_USE_SESSIONS = os.getenv("CSRF_USE_SESSIONS", "True") == "True"
 # Sécurisation des cookies CSRF en production
 CSRF_COOKIE_HTTPONLY = os.getenv("CSRF_COOKIE_HTTPONLY", "False") == "True"  # Permet à JavaScript d'accéder au cookie
 CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "None")  # Nécessaire pour les requêtes cross-origin en production
+# Domaine de confiance pour les requêtes CSRF
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
     'shop.backends.UtilisateurBackend',
