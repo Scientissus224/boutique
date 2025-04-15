@@ -38,16 +38,20 @@
           height: 100vh;
       }
       .top-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 10px 20px;
-          background-color: #333;
-          position: fixed;
-          width: 100%;
-          top: 0;
-          z-index: 1000;
-      }
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: #333;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-sizing: border-box;
+        margin: 0;
+    }
       .top-bar h1 {
           flex: 1;
           text-align: center;

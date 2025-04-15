@@ -2688,7 +2688,8 @@
                 ADD_TO_CART: '/ajouter_produit_au_panier/',
                 GET_CART_COUNT: '/obtenir_panier/',
                 GET_LIKE_COUNT: '/obtenir_like/',
-                CSRF_TOKEN: '/get-csrf-token/'
+                CSRF_TOKEN: '/get-csrf-token/',
+                BULK_REMOVE_LIKES: '/retirer-likes-en-masse/'
             },
             ERROR_MESSAGES: {
                 NETWORK: 'Problème de connexion. Réessai...',
@@ -2698,7 +2699,9 @@
                 SELECTION: 'Veuillez sélectionner au moins un produit.',
                 CONFIRM_DELETE: 'Voulez-vous vraiment supprimer ce produit de vos favoris ?',
                 CONFIRM_MULTI_DELETE: 'Voulez-vous vraiment supprimer les produits sélectionnés ?',
-                CONFIRM_ADD_CART: 'Voulez-vous ajouter les produits sélectionnés à votre panier ?'
+                CONFIRM_ADD_CART: 'Voulez-vous ajouter les produits sélectionnés à votre panier ?',
+                SUCCESS_REMOVE: 'Produit(s) supprimé(s) avec succès',
+                PARTIAL_REMOVE: 'Certains produits n\'ont pas pu être supprimés'
             }
         };
     
@@ -2710,17 +2713,20 @@
             return cookie ? decodeURIComponent(cookie.substring(name.length + 1)) : null;
         }
     
-        // Nouvelle fonction pour obtenir le token CSRF de manière robuste
+        // Gestion robuste du token CSRF
         async function getCSRFToken() {
-            // Essayer d'abord depuis les cookies
-            const csrfCookie = getCookie('csrftoken');
-            if (csrfCookie) return csrfCookie;
-            
-            // Si pas trouvé, faire une requête pour l'obtenir
             try {
+                // Essayer d'abord depuis les cookies
+                const csrfCookie = getCookie('csrftoken');
+                if (csrfCookie) return csrfCookie;
+                
+                // Fallback: requête spéciale
                 const response = await fetch(CONFIG.API_ENDPOINTS.CSRF_TOKEN, {
                     method: 'GET',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 
                 if (response.ok) {
@@ -2730,15 +2736,16 @@
             } catch (e) {
                 console.error('Erreur récupération CSRF:', e);
             }
-            
             return null;
         }
     
-        // Fonction fetch sécurisée avec gestion CSRF améliorée
+        // Fonction fetch sécurisée avec gestion intelligente des erreurs
         async function secureFetch(url, options = {}, retryCount = 0) {
             try {
                 const csrfToken = await getCSRFToken();
-                const isPostRequest = (options.method || 'GET').toUpperCase() === 'POST';
+                const isModifyingRequest = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(
+                    (options.method || 'GET').toUpperCase()
+                );
     
                 const headers = {
                     'Content-Type': 'application/json',
@@ -2747,9 +2754,9 @@
                     ...options.headers
                 };
     
-                if (csrfToken && isPostRequest) {
+                if (csrfToken && isModifyingRequest) {
                     headers['X-CSRFToken'] = csrfToken;
-                } else if (isPostRequest && !csrfToken) {
+                } else if (isModifyingRequest && !csrfToken) {
                     throw new Error(CONFIG.ERROR_MESSAGES.CSRF);
                 }
     
@@ -2759,10 +2766,14 @@
                     credentials: 'include'
                 });
     
-                if (!response.ok) throw new Error('Erreur serveur');
+                if (!response.ok) {
+                    const error = new Error('Erreur serveur');
+                    error.status = response.status;
+                    throw error;
+                }
                 return await response.json();
             } catch (error) {
-                if (retryCount < CONFIG.MAX_RETRIES) {
+                if (retryCount < CONFIG.MAX_RETRIES && !error.message.includes('CSRF')) {
                     await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
                     return secureFetch(url, options, retryCount + 1);
                 }
@@ -2770,7 +2781,7 @@
             }
         }
     
-        // Fonction principale de chargement
+        // Fonction principale de chargement avec gestion d'état
         async function loadLikedProducts(retryCount = 0) {
             const container = document.querySelector('.likes-container');
             if (!container) {
@@ -2795,18 +2806,20 @@
             }
         }
     
-        // Gestion des erreurs de chargement
+        // Gestion avancée des erreurs
         function handleLoadError(error, container, retryCount) {
             console.error('Erreur:', error);
-            if (retryCount < CONFIG.MAX_RETRIES) {
-                container.innerHTML = `<p class="error">${
-                    error.message.includes('CSRF') ? CONFIG.ERROR_MESSAGES.CSRF : CONFIG.ERROR_MESSAGES.NETWORK
-                }</p>`;
+            const errorMessage = error.message.includes('CSRF') 
+                ? CONFIG.ERROR_MESSAGES.CSRF 
+                : error.status === 404 
+                    ? CONFIG.ERROR_MESSAGES.EMPTY
+                    : CONFIG.ERROR_MESSAGES.SERVER;
+    
+            if (retryCount < CONFIG.MAX_RETRIES && !error.message.includes('CSRF')) {
+                container.innerHTML = `<p class="error">${errorMessage}</p>`;
                 setTimeout(() => loadLikedProducts(retryCount + 1), CONFIG.RETRY_DELAY);
             } else {
-                container.innerHTML = `<p class="error">${
-                    error.message.includes('CSRF') ? CONFIG.ERROR_MESSAGES.CSRF : CONFIG.ERROR_MESSAGES.SERVER
-                }</p>`;
+                container.innerHTML = `<p class="error">${errorMessage}</p>`;
             }
         }
     
@@ -2863,24 +2876,68 @@
             });
         }
     
-        // Suppression de produit
+        // Suppression individuelle renforcée
         async function removeProduct(productId, productCard) {
             const loadingOverlay = createFullscreenLoader();
             
             try {
-                await secureFetch(`${CONFIG.API_ENDPOINTS.REMOVE_LIKE}${productId}/`, {
-                    method: 'POST'
+                const response = await secureFetch(`${CONFIG.API_ENDPOINTS.REMOVE_LIKE}${productId}/`, {
+                    method: 'POST',
+                    body: JSON.stringify({ product_id: productId })
                 });
     
                 animateRemoval(productCard, () => {
+                    showToast(CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE, 'success');
                     loadLikedProducts();
                 });
             } catch (error) {
                 console.error('Erreur suppression:', error);
-                showToast(error.message.includes('CSRF') 
-                    ? CONFIG.ERROR_MESSAGES.CSRF 
-                    : 'Erreur lors de la suppression', 'error');
+                showToast(
+                    error.message.includes('CSRF') 
+                        ? CONFIG.ERROR_MESSAGES.CSRF 
+                        : 'Erreur lors de la suppression',
+                    'error'
+                );
                 resetCardStyle(productCard);
+            } finally {
+                loadingOverlay.remove();
+            }
+        }
+    
+        // Nouvelle fonction pour la suppression en masse optimisée
+        async function bulkRemoveProducts(productIds) {
+            const loadingOverlay = createFullscreenLoader();
+            
+            try {
+                const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
+                    method: 'POST',
+                    body: JSON.stringify({ product_ids: productIds })
+                });
+    
+                if (response.failed_ids && response.failed_ids.length > 0) {
+                    showToast(
+                        `${CONFIG.ERROR_MESSAGES.PARTIAL_REMOVE} (${response.failed_ids.length}/${productIds.length})`,
+                        'warning'
+                    );
+                } else {
+                    showToast(
+                        `${CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE} (${productIds.length} produits)`,
+                        'success'
+                    );
+                }
+                
+                // Rechargement intelligent seulement si nécessaire
+                if (response.success_ids && response.success_ids.length > 0) {
+                    loadLikedProducts();
+                }
+            } catch (error) {
+                console.error('Erreur suppression en masse:', error);
+                showToast(
+                    error.message.includes('CSRF') 
+                        ? CONFIG.ERROR_MESSAGES.CSRF 
+                        : 'Erreur lors de la suppression en masse',
+                    'error'
+                );
             } finally {
                 loadingOverlay.remove();
             }
@@ -2983,28 +3040,37 @@
             }, 3000);
         }
     
-        // Initialisation des événements
+        // Initialisation des événements améliorée
         function initEventListeners() {
-            // Sélection globale
+            // Sélection globale intelligente
             const selectAllCheckbox = document.getElementById('select-all');
             if (selectAllCheckbox) {
                 selectAllCheckbox.addEventListener('change', function() {
-                    const productCheckboxes = document.querySelectorAll('.product-select');
-                    productCheckboxes.forEach(checkbox => {
+                    const allCheckboxes = document.querySelectorAll('.product-select');
+                    const visibleCheckboxes = Array.from(allCheckboxes).filter(
+                        cb => cb.closest('.liked-product-card').style.display !== 'none'
+                    );
+                    
+                    visibleCheckboxes.forEach(checkbox => {
                         checkbox.checked = this.checked;
                         toggleProductSelection(checkbox);
                     });
+                    
+                    // Mise à jour de l'état du bouton "Tout sélectionner"
+                    if (!this.checked) {
+                        const anyChecked = Array.from(visibleCheckboxes).some(cb => cb.checked);
+                        this.indeterminate = anyChecked;
+                    }
                 });
             }
     
-            // Gestion des clics
+            // Gestion des clics avec délégation d'événements
             document.addEventListener('click', async function(e) {
-                // Suppression individuelle
+                // Suppression individuelle renforcée
                 if (e.target.closest('.delete-btn')) {
-                    const btn = e.target.closest('.delete-btn');
-                    const productCard = btn.closest('.liked-product-card');
+                    const productCard = e.target.closest('.liked-product-card');
                     const productId = productCard.dataset.productId;
-    
+                    
                     createConfirmationModal(CONFIG.ERROR_MESSAGES.CONFIRM_DELETE, () => {
                         removeProduct(productId, productCard);
                     });
@@ -3057,18 +3123,33 @@
                 }
             });
     
-            // Suppression multiple
+            // Suppression multiple améliorée
             document.querySelector('.delete-selected-btn')?.addEventListener('click', function() {
                 const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
-                
-                if (selectedCheckboxes.length === 0) {
+                const productIds = selectedCheckboxes.map(checkbox => 
+                    checkbox.closest('.liked-product-card').dataset.productId
+                );
+    
+                if (productIds.length === 0) {
                     showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
                     return;
                 }
     
                 createConfirmationModal(
-                    `${CONFIG.ERROR_MESSAGES.CONFIRM_MULTI_DELETE} (${selectedCheckboxes.length})`, 
-                    () => handleMultiDelete(selectedCheckboxes, this)
+                    `${CONFIG.ERROR_MESSAGES.CONFIRM_MULTI_DELETE} (${productIds.length})`, 
+                    async () => {
+                        const button = this;
+                        button.disabled = true;
+                        const loadingOverlay = createFullscreenLoader();
+                        
+                        try {
+                            // Utilisation de la nouvelle fonction bulkRemoveProducts
+                            await bulkRemoveProducts(productIds);
+                        } finally {
+                            button.disabled = false;
+                            loadingOverlay.remove();
+                        }
+                    }
                 );
             });
     
@@ -3086,24 +3167,6 @@
                     () => handleMultiAddToCart(selectedCheckboxes, this)
                 );
             });
-        }
-    
-        // Gestion de la suppression multiple
-        async function handleMultiDelete(selectedCheckboxes, button) {
-            const loadingOverlay = createFullscreenLoader();
-            button.disabled = true;
-            
-            try {
-                for (const checkbox of selectedCheckboxes) {
-                    const productCard = checkbox.closest('.liked-product-card');
-                    const productId = productCard.dataset.productId;
-                    
-                    await removeProduct(productId, productCard);
-                }
-            } finally {
-                loadingOverlay.remove();
-                button.disabled = false;
-            }
         }
     
         // Gestion de l'ajout multiple au panier
@@ -3153,23 +3216,37 @@
             }
         }
     
-        // Initialisation sécurisée
+        // Initialisation sécurisée avec vérification d'état
         (async function init() {
             try {
-                // Vérifier d'abord qu'on a un token CSRF
+                // Pré-chargement du token CSRF
                 const csrfToken = await getCSRFToken();
                 if (!csrfToken) {
-                    console.warn('Aucun token CSRF trouvé');
+                    console.warn('Token CSRF non disponible');
+                    showToast(CONFIG.ERROR_MESSAGES.CSRF, 'error');
                 }
+                
+                // Chargement initial avec gestion des erreurs
                 await loadLikedProducts();
+                
+                // Vérification périodique de l'état
+                setInterval(async () => {
+                    try {
+                        await updateCounters();
+                    } catch (e) {
+                        console.warn('Échec de la mise à jour des compteurs:', e);
+                    }
+                }, 60000); // Toutes les minutes
             } catch (e) {
                 console.error('Erreur initialisation:', e);
-                const container = document.querySelector('.likes-container');
-                if (container) {
-                    container.innerHTML = `<p class="error">${
-                        e.message.includes('CSRF') ? CONFIG.ERROR_MESSAGES.CSRF : CONFIG.ERROR_MESSAGES.SERVER
-                    }</p>`;
-                }
+                const container = document.querySelector('.likes-container') || document.body;
+                container.innerHTML = `
+                    <div class="error-container">
+                        <p>${CONFIG.ERROR_MESSAGES.SERVER}</p>
+                        <button class="retry-btn">Réessayer</button>
+                    </div>
+                `;
+                container.querySelector('.retry-btn').addEventListener('click', init);
             }
         })();
     });
