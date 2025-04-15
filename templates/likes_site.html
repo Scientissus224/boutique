@@ -2734,15 +2734,11 @@
             return null;
         }
     
-        // Fonction fetch sécurisée avec gestion CSRF
+        // Fonction fetch sécurisée avec gestion CSRF améliorée
         async function secureFetch(url, options = {}, retryCount = 0) {
             try {
                 const csrfToken = await getCSRFToken();
                 const isPostRequest = (options.method || 'GET').toUpperCase() === 'POST';
-    
-                if (isPostRequest && !csrfToken) {
-                    throw new Error(CONFIG.ERROR_MESSAGES.CSRF);
-                }
     
                 const headers = {
                     'Content-Type': 'application/json',
@@ -2753,12 +2749,14 @@
     
                 if (csrfToken && isPostRequest) {
                     headers['X-CSRFToken'] = csrfToken;
+                } else if (isPostRequest && !csrfToken) {
+                    throw new Error(CONFIG.ERROR_MESSAGES.CSRF);
                 }
     
                 const response = await fetch(url, {
                     ...options,
                     headers,
-                    credentials: 'include' // Important pour les cookies en cross-origin
+                    credentials: 'include'
                 });
     
                 if (!response.ok) throw new Error('Erreur serveur');
@@ -2801,7 +2799,9 @@
         function handleLoadError(error, container, retryCount) {
             console.error('Erreur:', error);
             if (retryCount < CONFIG.MAX_RETRIES) {
-                container.innerHTML = `<p class="error">${CONFIG.ERROR_MESSAGES.NETWORK}</p>`;
+                container.innerHTML = `<p class="error">${
+                    error.message.includes('CSRF') ? CONFIG.ERROR_MESSAGES.CSRF : CONFIG.ERROR_MESSAGES.NETWORK
+                }</p>`;
                 setTimeout(() => loadLikedProducts(retryCount + 1), CONFIG.RETRY_DELAY);
             } else {
                 container.innerHTML = `<p class="error">${
@@ -2886,7 +2886,102 @@
             }
         }
     
-        // [RESTE DES FONCTIONS UTILITAIRES (animateRemoval, createFullscreenLoader, etc.) reste identique...]
+        // Animation de suppression
+        function animateRemoval(element, callback) {
+            element.style.transition = 'all 0.3s ease';
+            element.style.opacity = '0';
+            element.style.height = '0';
+            element.style.margin = '0';
+            element.style.padding = '0';
+            
+            setTimeout(callback, 300);
+        }
+    
+        // Réinitialisation du style
+        function resetCardStyle(element) {
+            element.style.opacity = '';
+            element.style.height = '';
+            element.style.margin = '';
+            element.style.padding = '';
+        }
+    
+        // Loader plein écran
+        function createFullscreenLoader() {
+            const overlay = document.createElement('div');
+            overlay.className = 'fullscreen-loading';
+            overlay.appendChild(createModernSpinner());
+            document.body.appendChild(overlay);
+            return overlay;
+        }
+    
+        // Création du spinner moderne
+        function createModernSpinner() {
+            const spinner = document.createElement('div');
+            spinner.className = 'loading-spinner';
+            
+            for (let i = 0; i < 4; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'spinner-dot';
+                spinner.appendChild(dot);
+            }
+            
+            return spinner;
+        }
+    
+        // Modal de confirmation
+        function createConfirmationModal(message, confirmCallback) {
+            const modal = document.createElement('div');
+            modal.className = 'custom-modal';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            modalContent.style.color = '#333';
+            
+            const messageEl = document.createElement('p');
+            messageEl.textContent = message;
+            messageEl.style.margin = '0 0 20px 0';
+            messageEl.style.fontSize = '16px';
+            
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'modal-buttons';
+            
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'confirm-btn';
+            confirmBtn.textContent = 'Confirmer';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'cancel-btn';
+            cancelBtn.textContent = 'Annuler';
+            
+            confirmBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+                confirmCallback();
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            buttonsContainer.appendChild(cancelBtn);
+            buttonsContainer.appendChild(confirmBtn);
+            modalContent.appendChild(messageEl);
+            modalContent.appendChild(buttonsContainer);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+    
+        // Affichage des messages toast
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     
         // Initialisation des événements
         function initEventListeners() {
@@ -2962,7 +3057,100 @@
                 }
             });
     
-            // [RESTE DES ÉCOUTEURS D'ÉVÉNEMENTS reste identique...]
+            // Suppression multiple
+            document.querySelector('.delete-selected-btn')?.addEventListener('click', function() {
+                const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
+                
+                if (selectedCheckboxes.length === 0) {
+                    showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
+                    return;
+                }
+    
+                createConfirmationModal(
+                    `${CONFIG.ERROR_MESSAGES.CONFIRM_MULTI_DELETE} (${selectedCheckboxes.length})`, 
+                    () => handleMultiDelete(selectedCheckboxes, this)
+                );
+            });
+    
+            // Ajout multiple au panier
+            document.querySelector('.add-all-to-cart-btn')?.addEventListener('click', function() {
+                const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
+                
+                if (selectedCheckboxes.length === 0) {
+                    showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
+                    return;
+                }
+    
+                createConfirmationModal(
+                    `${CONFIG.ERROR_MESSAGES.CONFIRM_ADD_CART} (${selectedCheckboxes.length})`, 
+                    () => handleMultiAddToCart(selectedCheckboxes, this)
+                );
+            });
+        }
+    
+        // Gestion de la suppression multiple
+        async function handleMultiDelete(selectedCheckboxes, button) {
+            const loadingOverlay = createFullscreenLoader();
+            button.disabled = true;
+            
+            try {
+                for (const checkbox of selectedCheckboxes) {
+                    const productCard = checkbox.closest('.liked-product-card');
+                    const productId = productCard.dataset.productId;
+                    
+                    await removeProduct(productId, productCard);
+                }
+            } finally {
+                loadingOverlay.remove();
+                button.disabled = false;
+            }
+        }
+    
+        // Gestion de l'ajout multiple au panier
+        async function handleMultiAddToCart(selectedCheckboxes, button) {
+            const loadingOverlay = createFullscreenLoader();
+            button.disabled = true;
+            let successCount = 0;
+            
+            try {
+                for (const checkbox of selectedCheckboxes) {
+                    const productCard = checkbox.closest('.liked-product-card');
+                    const productId = productCard.dataset.productId;
+                    
+                    try {
+                        const data = await secureFetch(`${CONFIG.API_ENDPOINTS.ADD_TO_CART}${productId}/`, {
+                            method: 'POST'
+                        });
+    
+                        successCount++;
+                        
+                        if (data.total_articles !== undefined) {
+                            updateElementsText(
+                                ['#cart-count-nav', '#car-count-sidebar', '.cart-counter-mobil'],
+                                data.total_articles
+                            );
+                        }
+                    } catch (error) {
+                        console.error(`Erreur ajout produit ${productId}:`, error);
+                    }
+                }
+    
+                showToast(`${successCount} produit(s) ajouté(s) au panier`, 'success');
+                loadLikedProducts();
+            } finally {
+                loadingOverlay.remove();
+                button.disabled = false;
+            }
+        }
+    
+        // Toggle de sélection
+        function toggleProductSelection(checkbox) {
+            const productCard = checkbox.closest('.liked-product-card');
+            if (checkbox.checked) {
+                productCard.classList.add('selected');
+            } else {
+                productCard.classList.remove('selected');
+            }
         }
     
         // Initialisation sécurisée
@@ -2986,7 +3174,6 @@
         })();
     });
 </script>
-
     
 <script>
     (function() {
