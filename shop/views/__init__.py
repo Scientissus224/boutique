@@ -42,6 +42,7 @@ from .new_quantite import mise_a_jour_quantite
 from .boutique_produits_views import obtenir_produits_ajax
 from .demon_views import demo_interactive
 from .custom_404_views import custom_404
+from .token_gestion import get_csrf_token
 
 
 

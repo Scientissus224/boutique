@@ -40,6 +40,7 @@ from .views import (
      mise_a_jour_quantite,
      custom_404,
      demo_interactive,
+      get_csrf_token,
 
     # Vues liées à la gestion du site
     home,

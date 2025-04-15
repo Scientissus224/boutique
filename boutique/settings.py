@@ -29,15 +29,14 @@ DEBUG = os.getenv("DEBUG", "True").strip().lower() == "true"
 # Charger les hôtes autorisés depuis le fichier .env
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
     
-# Sécurité des cookies
-CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False") == "True"
-SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False") == "True"
-CSRF_USE_SESSIONS = os.getenv("CSRF_USE_SESSIONS", "True") == "True"
-# Sécurisation des cookies CSRF en production
-CSRF_COOKIE_HTTPONLY = os.getenv("CSRF_COOKIE_HTTPONLY", "False") == "True"  # Permet à JavaScript d'accéder au cookie
-CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "None")  # Nécessaire pour les requêtes cross-origin en production
-# Domaine de confiance pour les requêtes CSRF
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
+# Configuration CSRF
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'True') == 'True'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True') == 'True'
+CSRF_USE_SESSIONS = os.getenv('CSRF_USE_SESSIONS', 'False') == 'True'
+CSRF_COOKIE_HTTPONLY = os.getenv('CSRF_COOKIE_HTTPONLY', 'False') == 'True'
+CSRF_COOKIE_SAMESITE = os.getenv('CSRF_COOKIE_SAMESITE', 'Lax')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
     'shop.backends.UtilisateurBackend',
@@ -46,12 +45,10 @@ AUTHENTICATION_BACKENDS = [
 # settings.py
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # Limite de 10 Mo par fichier
 
-
-# settings.py
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Assurez-vous que la session est stockée en base de données
-SESSION_COOKIE_AGE = 14400  # Durée de vie des cookies de session (en secondes)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Pour que la session expire lorsque le navigateur se ferme
+# Configuration des sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = int(os.getenv('SESSION_COOKIE_AGE', '14400'))
+SESSION_EXPIRE_AT_BROWSER_CLOSE = os.getenv('SESSION_EXPIRE_AT_BROWSER_CLOSE', 'True') == 'True'
 
 
 # Middleware

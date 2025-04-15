@@ -73,6 +73,7 @@ from shop.views import (
      likes_site,
      obtenir_produits_likes,
      demo_interactive,
+    get_csrf_token,
       
 
 
@@ -133,6 +134,7 @@ urlpatterns = [
     path('ajouter-aux-likes/<int:produit_id>/', ajouter_produit_aux_likes, name='ajouter_aux_likes'),
     path('retirer-des-likes/<int:produit_id>/', retirer_produit_des_likes, name='retirer_des_likes'),
     path('utilisateur/<str:utilisateur_identifiant>/likes/', likes_site, name='likes_site'),
+    path('get-csrf-token/',get_csrf_token, name='get_csrf_token'),
     # Route pour la page d'accueil du site, utilisant la vue home
     path('', home, name='accueil'),
     
