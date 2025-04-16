@@ -32,7 +32,7 @@ def recuperer_panier(request):
             return None
             
         if not panier:
-            messages.info(request, "Votre panier est vide.")
+            messages.error(request, "Votre panier est vide.")
             return None
             
         return panier
