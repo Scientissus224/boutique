@@ -237,18 +237,18 @@ class CommentaireAdmin(admin.ModelAdmin):
 @admin.register(Boutique)
 class BoutiqueAdmin(admin.ModelAdmin):
     list_display = ('utilisateur', 'identifiant', 'publier', 'date_publication', 'premium')
-    search_fields = ('utilisateur__nom', 'description', 'premium', 'identifiant')
+    search_fields = ('utilisateur__nom', 'titre', 'premium', 'identifiant')  # Remplacement de description par titre
     list_filter = ('publier', 'date_publication', 'premium')
-    readonly_fields = ('date_publication', 'identifiant')  # Toujours en lecture seule
+    readonly_fields = ('date_publication', 'identifiant')
     fieldsets = (
         (None, {
-            'fields': ('utilisateur', 'identifiant', 'description', 'logo')
+            'fields': ('utilisateur', 'identifiant', 'titre', 'logo')  # Remplacement de description par titre
         }),
         ('Statut', {
             'fields': ('publier', 'statut_publication', 'date_publication', 'premium')
         }),
         ('Contenu', {
-            'fields': ('html_contenu', 'produits_vendus')
+            'fields': ('html_contenu', 'produits_vendus')  # Correction de la faute de frappe (produits_vendus)
         }),
     )
 
@@ -301,6 +301,7 @@ class BoutiqueAdmin(admin.ModelAdmin):
             date_publication=None
         )
         self.message_user(request, f"{updated} boutiques dépubliées avec succès.")
+        
 #-------------------------------------Gestion des personnels du support client --------------------- 
 
 class SupportClientAdmin(admin.ModelAdmin):

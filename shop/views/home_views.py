@@ -17,7 +17,7 @@ def home(request):
         
         # Pagination des boutiques
         page = request.GET.get('page', 1)
-        paginator = Paginator(boutiques_list, 1)  # 1 boutique par page
+        paginator = Paginator(boutiques_list, 10)  # 10 boutique par page
         
         try:
             boutiques_page = paginator.page(page)
@@ -29,7 +29,7 @@ def home(request):
         # Formatage des données des boutiques
         boutiques_data = [{
             "id": boutique.id,
-            "description": boutique.description,
+            "description": boutique.titre,
             "logo": boutique.logo.url if boutique.logo else None,
             "page_html_path": reverse('boutique_contenu', args=[boutique.identifiant]),
         } for boutique in boutiques_page]

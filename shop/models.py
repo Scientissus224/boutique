@@ -673,17 +673,19 @@ class Boutique(models.Model):
         Utilisateur,
         on_delete=models.CASCADE,
         related_name="boutique",
-        verbose_name="Propriétaire",  # Meilleur nom pour l'admin
+        verbose_name="Propriétaire",
     )
     identifiant = models.CharField(
         max_length=50,
         unique=True,
         blank=True,
-        help_text="Identifiant unique généré automatiquement",  # Info pour l'admin
+        help_text="Identifiant unique généré automatiquement",
     )
-    description = models.TextField(
+    titre = models.CharField(
+        max_length=100,
         blank=True,
-        verbose_name="Description de la boutique"
+        verbose_name="Titre de la boutique",
+        help_text="Un titre accrocheur pour votre boutique (ex: 'Ma belle boutique de mode')"
     )
     publier = models.BooleanField(
         default=False,
@@ -693,7 +695,7 @@ class Boutique(models.Model):
         blank=True,
         verbose_name="Contenu HTML"
     )
-    logo =  CloudinaryField(
+    logo = CloudinaryField(
         "logo",
         null=True,
         blank=True,
@@ -702,7 +704,6 @@ class Boutique(models.Model):
         default=False,
         verbose_name="Boutique premium"
     )
-    
     statut_publication = models.CharField(
         max_length=20,
         choices=[("chargé", "Chargé"), ("publié", "Publié")],
@@ -735,7 +736,6 @@ class Boutique(models.Model):
         """
         Génère un identifiant unique et élégant lors de la création de la boutique.
         """
-        # Ne génère l'identifiant que lors de la création (pas de modification)
         if not self.pk and not self.identifiant:
             self._generate_identifiant()
         
@@ -748,12 +748,10 @@ class Boutique(models.Model):
             suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
             self.identifiant = f"{base}-{suffix}"
             
-            # Vérifie l'unicité
             while Boutique.objects.filter(identifiant=self.identifiant).exists():
                 suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
                 self.identifiant = f"{base}-{suffix}"
         except Exception as e:
-            # Solution de repli en cas d'erreur
             self.identifiant = f"boutique-{timezone.now().strftime('%Y%m%d%H%M%S')}"
 
     def get_absolute_url(self, domaine):
@@ -796,7 +794,6 @@ class Boutique(models.Model):
             return boutique.html_contenu
         except Boutique.DoesNotExist:
             return None
-
 #-------------------------------------------Gestion des personnels du support client-----------------------------------
 
 

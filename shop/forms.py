@@ -964,14 +964,14 @@ class DeviseUpdateForm(forms.ModelForm):
 #-------------------------------Gestion Publier le site --------------------------------------------
 
 class BoutiqueUpdateForm(forms.ModelForm):
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Entrez une description...',
-            'class': 'form-control description-input',
-            'rows': 3,
+    titre = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Donnez un titre accrocheur à votre boutique...',
+            'class': 'form-control title-input',
         }),
         required=False,
-        label="Description"
+        label="Titre de votre boutique",
+        help_text="Ex: 'Ma belle boutique de mode' ou 'Les délices de chez nous'"
     )
     publier = forms.BooleanField(
         required=False,
@@ -980,7 +980,7 @@ class BoutiqueUpdateForm(forms.ModelForm):
     logo = forms.ImageField(
         widget=forms.FileInput(attrs={'class': 'form-control'}),
         required=False,
-        label="Logo"
+        label="Couverture boutique"
     )
     statut_publication = forms.ChoiceField(
         choices=[('chargé', 'Chargé'), ('publié', 'Publié')],
@@ -991,7 +991,7 @@ class BoutiqueUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Boutique
-        fields = ['description', 'publier', 'logo', 'statut_publication']
+        fields = ['titre', 'publier', 'logo', 'statut_publication']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)  # Associer l'utilisateur connecté
@@ -999,25 +999,25 @@ class BoutiqueUpdateForm(forms.ModelForm):
 
         # Pré-remplir les champs avec les valeurs existantes si le statut est "chargé"
         if self.instance and self.instance.statut_publication == "chargé":
-            self.fields['description'].initial = self.instance.description
+            self.fields['titre'].initial = self.instance.titre
 
     def clean(self):
         cleaned_data = super().clean()
 
         statut_publication = cleaned_data.get('statut_publication')
-        description = cleaned_data.get('description', '').strip()
+        titre = cleaned_data.get('titre', '').strip()
         logo = cleaned_data.get('logo')
 
         if statut_publication == "publié":
-            # Les champs description et logo doivent être obligatoires si "publié"
-            if not description:
-                self.add_error('description', 'La description est requise pour publier la boutique.')
+            # Les champs titre et logo doivent être obligatoires si "publié"
+            if not titre:
+                self.add_error('titre', 'Un titre attrayant est requis pour publier la boutique.')
             if not logo:
-                self.add_error('logo', 'Le logo est requis pour publier la boutique.')
+                self.add_error('Couverture boutique', 'La Couverture boutique est requis pour publier la boutique.')
         elif statut_publication == "chargé":
             # Utiliser les anciennes valeurs si elles ne sont pas fournies
-            if not description:
-                cleaned_data['description'] = self.instance.description
+            if not titre:
+                cleaned_data['titre'] = self.instance.titre
             if not logo:
                 cleaned_data['logo'] = self.instance.logo
 
@@ -1039,7 +1039,6 @@ class BoutiqueUpdateForm(forms.ModelForm):
         if commit:
             boutique.save()  # Sauvegarder les modifications
         return boutique
-
 
 
 

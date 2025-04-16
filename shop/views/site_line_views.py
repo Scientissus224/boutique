@@ -34,7 +34,8 @@ def check_prerequisites_for_publication(utilisateur, request):
         messages.error(request, "Vous devez ajouter des produits à votre boutique avant de la publier.")
         return False
     if not ProduitImage.objects.filter(produit__utilisateur=utilisateur).exists():
-        messages.error(request, "Ajoutez des images à vos produits pour rendre votre boutique plus attrayante.")
+        messages.error(request, "Ajoutez plusieurs images à vos produits (face, dos, etc.) pour mieux les présenter. Une belle présentation attire plus de clients !")
+
         return False
     if not SliderImage.objects.filter(utilisateur=utilisateur).exists():
         messages.error(request, "Vous devez ajouter des images de slider pour attirer l'attention des clients.")

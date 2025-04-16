@@ -943,42 +943,45 @@ input, textarea, select {
                 {% else %}
                 <!-- Formulaire principal -->
                 <div class="card-body p-4">
-                    <form id="boutiqueForm" method="POST" enctype="multipart/form-data" action="{% url 'gestion_boutique' %}">
-                        {% csrf_token %}
-                        {% for field in form %}
-                            <div class="form-group mb-4">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-bold d-flex align-items-center">
-                                    {% if field.name == 'description' %}
-                                        <i class="fas fa-align-left me-2 text-primary"></i>
-                                    {% elif field.name == 'publier' %}
-                                        <i class="fas fa-bullhorn me-2 text-primary"></i>
-                                    {% elif field.name == 'logo' %}
-                                        <i class="fas fa-camera me-2 text-primary"></i>
-                                    {% elif field.name == 'statut_publication' %}
-                                        <i class="fas fa-toggle-on me-2 text-primary"></i>
-                                    {% endif %}
-                                    {{ field.label }}
-                                </label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small mt-2 d-flex align-items-start">
-                                        <i class="fas fa-info-circle mt-1 me-1"></i>
-                                        <span>{{ field.errors|striptags }}</span>
-                                    </div>
+                  <form id="boutiqueForm" method="POST" enctype="multipart/form-data" action="{% url 'gestion_boutique' %}">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold d-flex align-items-center">
+                                {% if field.name == 'titre' %}
+                                    <i class="fas fa-heading me-2 text-primary"></i>
+                                {% elif field.name == 'publier' %}
+                                    <i class="fas fa-bullhorn me-2 text-primary"></i>
+                                {% elif field.name == 'logo' %}
+                                    <i class="fas fa-camera me-2 text-primary"></i>
+                                {% elif field.name == 'statut_publication' %}
+                                    <i class="fas fa-toggle-on me-2 text-primary"></i>
                                 {% endif %}
-                            </div>
-                        {% endfor %}
-            
-                        <div class="d-grid mt-4">
-                            <button id="submitBtn" type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill position-relative">
-                                <span id="buttonText">Publier la boutique</span>
-                                <span id="submitSpinner" class="spinner-container">
-                                    <span class="spinner-outer"></span>
-                                    <span class="spinner-inner"></span>
-                                </span>
-                            </button>
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text and field.name == 'titre' %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-2 d-flex align-items-start">
+                                    <i class="fas fa-info-circle mt-1 me-1"></i>
+                                    <span>{{ field.errors|striptags }}</span>
+                                </div>
+                            {% endif %}
                         </div>
-                    </form>
+                    {% endfor %}
+                
+                    <div class="d-grid mt-4">
+                        <button id="submitBtn" type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill position-relative">
+                            <span id="buttonText">Publier la boutique</span>
+                            <span id="submitSpinner" class="spinner-container">
+                                <span class="spinner-outer"></span>
+                                <span class="spinner-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </form>
                 </div>
                 {% endif %}
             </div>
