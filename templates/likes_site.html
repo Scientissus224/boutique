@@ -2702,6 +2702,10 @@
             CONFIRM_ADD_CART: 'Voulez-vous ajouter les produits sélectionnés à votre panier ?',
             SUCCESS_REMOVE: 'Produit(s) supprimé(s) avec succès',
             PARTIAL_REMOVE: 'Certains produits n\'ont pas pu être supprimés'
+        },
+        BULK_OPERATION: {
+            BATCH_SIZE: 5, // Nombre de requêtes parallèles
+            DELAY_BETWEEN_BATCHES: 500 // Délai entre les lots en ms
         }
     };
 
@@ -2876,7 +2880,7 @@
         });
     }
 
-    // Nouvelle version améliorée de la suppression individuelle
+    // Suppression individuelle améliorée avec animation
     async function removeProduct(productId, productCard) {
         const loadingOverlay = createFullscreenLoader();
         const originalContent = productCard.innerHTML;
@@ -2933,7 +2937,7 @@
         }
     }
 
-    // Nouvelle version ultra-robuste de la suppression en masse
+    // Nouvelle implémentation de suppression en masse avec boucle et gestion par lots
     async function bulkRemoveProducts(productIds) {
         if (!productIds || productIds.length === 0) {
             showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
@@ -2945,57 +2949,85 @@
             document.querySelector(`.liked-product-card[data-product-id="${id}"]`)
         ).filter(Boolean);
 
+        // Pré-animation pour tous les éléments sélectionnés
+        selectedCards.forEach(card => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '0.5';
+            card.style.transform = 'scale(0.98)';
+        });
+
         try {
-            // Pré-animation
-            selectedCards.forEach(card => {
-                card.style.transition = 'all 0.3s ease';
-                card.style.opacity = '0.5';
-                card.style.transform = 'scale(0.98)';
-            });
+            // Diviser les IDs en lots pour éviter de surcharger le serveur
+            const batches = [];
+            for (let i = 0; i < productIds.length; i += CONFIG.BULK_OPERATION.BATCH_SIZE) {
+                batches.push(productIds.slice(i, i + CONFIG.BULK_OPERATION.BATCH_SIZE));
+            }
 
-            const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
-                method: 'POST',
-                body: JSON.stringify({ product_ids: productIds })
-            });
+            const results = {
+                successIds: [],
+                failedIds: []
+            };
 
-            // Gestion des résultats
-            const successIds = response.success_ids || [];
-            const failedIds = response.failed_ids || [];
-            
-            // Animation des succès
-            const successCards = selectedCards.filter(card => 
-                successIds.includes(card.dataset.productId)
-            );
-            
-            successCards.forEach(card => {
-                card.style.height = `${card.offsetHeight}px`;
-                card.style.overflow = 'hidden';
-                
-                setTimeout(() => {
-                    card.style.height = '0';
-                    card.style.margin = '0';
-                    card.style.padding = '0';
-                    card.style.border = 'none';
-                    
-                    setTimeout(() => card.remove(), 300);
-                }, 100);
-            });
+            // Traiter chaque lot avec un délai entre eux
+            for (let i = 0; i < batches.length; i++) {
+                const batch = batches[i];
+                try {
+                    const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
+                        method: 'POST',
+                        body: JSON.stringify({ product_ids: batch })
+                    });
 
-            // Animation des échecs
-            const failedCards = selectedCards.filter(card => 
-                failedIds.includes(card.dataset.productId)
-            );
-            
-            failedCards.forEach(card => {
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1)';
-                card.querySelector('.product-select').checked = true;
+                    if (response.success_ids) {
+                        results.successIds.push(...response.success_ids);
+                    }
+                    if (response.failed_ids) {
+                        results.failedIds.push(...response.failed_ids);
+                    }
+
+                    // Animer les cartes supprimées avec succès
+                    batch.forEach(id => {
+                        if (response.success_ids && response.success_ids.includes(id)) {
+                            const card = document.querySelector(`.liked-product-card[data-product-id="${id}"]`);
+                            if (card) {
+                                card.style.height = `${card.offsetHeight}px`;
+                                card.style.overflow = 'hidden';
+                                
+                                setTimeout(() => {
+                                    card.style.height = '0';
+                                    card.style.margin = '0';
+                                    card.style.padding = '0';
+                                    card.style.border = 'none';
+                                    
+                                    setTimeout(() => card.remove(), 300);
+                                }, 100);
+                            }
+                        }
+                    });
+
+                    // Délai entre les lots sauf pour le dernier
+                    if (i < batches.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, CONFIG.BULK_OPERATION.DELAY_BETWEEN_BATCHES));
+                    }
+                } catch (error) {
+                    console.error(`Erreur lors du traitement du lot ${i}:`, error);
+                    results.failedIds.push(...batch);
+                }
+            }
+
+            // Gestion des cartes en échec
+            results.failedIds.forEach(id => {
+                const card = document.querySelector(`.liked-product-card[data-product-id="${id}"]`);
+                if (card) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                    card.querySelector('.product-select').checked = true;
+                }
             });
 
             // Feedback utilisateur
-            if (failedIds.length > 0) {
+            if (results.failedIds.length > 0) {
                 showToast(
-                    `${CONFIG.ERROR_MESSAGES.PARTIAL_REMOVE} (${failedIds.length}/${productIds.length})`,
+                    `${CONFIG.ERROR_MESSAGES.PARTIAL_REMOVE} (${results.failedIds.length}/${productIds.length})`,
                     'warning'
                 );
             } else {
@@ -3006,7 +3038,7 @@
             }
 
             // Mise à jour des compteurs et rechargement si nécessaire
-            if (successIds.length > 0) {
+            if (results.successIds.length > 0) {
                 updateCounters();
                 
                 // Vérifier s'il reste des produits
@@ -3018,13 +3050,13 @@
 
             return {
                 success: true,
-                successCount: successIds.length,
-                failedCount: failedIds.length
+                successCount: results.successIds.length,
+                failedCount: results.failedIds.length
             };
         } catch (error) {
-            console.error('Erreur suppression en masse:', error);
+            console.error('Erreur globale suppression en masse:', error);
             
-            // Restaurer les cartes en cas d'erreur globale
+            // Restaurer tous les éléments en cas d'erreur globale
             selectedCards.forEach(card => {
                 card.style.opacity = '1';
                 card.style.transform = 'scale(1)';
@@ -3224,7 +3256,7 @@
             }
         });
 
-        // Suppression multiple améliorée
+        // Suppression multiple améliorée avec boucle
         document.querySelector('.delete-selected-btn')?.addEventListener('click', function() {
             const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
             const productIds = selectedCheckboxes.map(checkbox => 
@@ -3244,7 +3276,7 @@
                     const loadingOverlay = createFullscreenLoader();
                     
                     try {
-                        // Utilisation de la nouvelle fonction bulkRemoveProducts
+                        // Utilisation de la nouvelle fonction bulkRemoveProducts avec boucle
                         await bulkRemoveProducts(productIds);
                     } finally {
                         button.disabled = false;
@@ -3301,6 +3333,7 @@
         let successCount = 0;
         
         try {
+            // Utilisation d'une boucle for...of pour un traitement séquentiel
             for (const checkbox of selectedCheckboxes) {
                 const productCard = checkbox.closest('.liked-product-card');
                 const productId = productCard.dataset.productId;
