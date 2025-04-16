@@ -794,6 +794,7 @@ class Boutique(models.Model):
             return boutique.html_contenu
         except Boutique.DoesNotExist:
             return None
+
 #-------------------------------------------Gestion des personnels du support client-----------------------------------
 
 
