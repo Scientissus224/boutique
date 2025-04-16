@@ -3299,7 +3299,22 @@
     (function() {
         'use strict';
 
-        // 1. Initialisation sécurisée du spinner
+        // Configuration centrale améliorée
+        const CONFIG = {
+            RETRY_DELAY: 1000,
+            MAX_RETRIES: 3,
+            ERROR_MESSAGES: {
+                FORM_INVALID: 'Formulaire invalide. Veuillez vérifier les champs.',
+                SUBMISSION_ERROR: 'Erreur de soumission. Veuillez réessayer.',
+                MODAL_ERROR: 'Erreur lors de la gestion de la modale.'
+            },
+            PERFORMANCE: {
+                DEBOUNCE_DELAY: 300,
+                TRANSITION_DURATION: 300
+            }
+        };
+
+        // 1. Initialisation sécurisée du spinner avec vérification d'existence
         function initSpinner() {
             if (!document.getElementById('modern-spinner-overlay')) {
                 const spinnerHTML = `
@@ -3315,6 +3330,8 @@
                         align-items: center;
                         z-index: 9999;
                         backdrop-filter: blur(2px);
+                        opacity: 0;
+                        transition: opacity ${CONFIG.PERFORMANCE.TRANSITION_DURATION}ms ease;
                     ">
                         <div class="spinner-core" style="
                             width: 60px;
@@ -3328,9 +3345,10 @@
                 `;
                 document.body.insertAdjacentHTML('beforeend', spinnerHTML);
             }
+            return document.getElementById('modern-spinner-overlay');
         }
 
-        // 2. Injection des styles avec vérification d'existence
+        // 2. Injection des styles avec vérification d'existence et cache busting
         function injectStyles() {
             if (!document.getElementById('dynamic-spinner-styles')) {
                 const style = document.createElement('style');
@@ -3344,126 +3362,289 @@
                     .form-disabled {
                         opacity: 0.7;
                         pointer-events: none;
+                        user-select: none;
                     }
                     
-                    #modern-spinner-overlay {
-                        transition: opacity 0.3s ease;
+                    #modern-spinner-overlay.show {
+                        opacity: 1 !important;
+                    }
+                    
+                    .form-submitting [type="submit"] {
+                        position: relative;
+                    }
+                    
+                    .form-submitting [type="submit"]:after {
+                        content: '';
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 16px;
+                        height: 16px;
+                        border: 2px solid transparent;
+                        border-top-color: currentColor;
+                        border-radius: 50%;
+                        animation: spin 0.8s linear infinite;
                     }
                 `;
                 document.head.appendChild(style);
             }
         }
 
-        // 3. Gestion robuste des formulaires
+        // 3. Gestion robuste des formulaires avec retry logic
         function handleFormSubmission() {
             const commandeForm = document.getElementById('commande-form');
             
-            if (commandeForm) {
-                commandeForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const spinnerOverlay = document.getElementById('modern-spinner-overlay');
-                    if (!spinnerOverlay) return;
-                    
-                    // Double vérification des éléments
-                    const form = this;
-                    const submitButton = form.querySelector('[type="submit"]');
-                    
-                    // Désactivation sécurisée
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.setAttribute('data-original-text', submitButton.textContent);
-                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-                    }
-                    
-                    spinnerOverlay.style.display = 'flex';
-                    document.body.classList.add('form-disabled');
-                    
-                    // Soumission avec gestion d'erreur
-                    setTimeout(() => {
-                        try {
-                            if (form.checkValidity()) {
-                                form.submit();
-                            } else {
-                                throw new Error('Formulaire invalide');
-                            }
-                        } catch (error) {
-                            console.error('Erreur de soumission:', error);
-                            spinnerOverlay.style.display = 'none';
-                            document.body.classList.remove('form-disabled');
-                            
-                            if (submitButton) {
-                                submitButton.disabled = false;
-                                submitButton.textContent = submitButton.getAttribute('data-original-text');
-                            }
-                            
-                            // Afficher un message d'erreur utilisateur
-                            alert('Une erreur est survenue. Veuillez réessayer.');
-                        }
-                    }, 150);
-                });
-            }
-        }
-
-        // 4. Gestion modale améliorée
-        function setupModal() {
-            const modal = document.getElementById('confirmation-modal-boutique');
+            if (!commandeForm) return;
             
-            if (modal) {
-                // Ouverture modale conditionnelle
-                const shouldOpen = document.querySelector('.alert-message, .success-content') !== null;
-                if (shouldOpen) {
-                    modal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
+            // Délégation d'événement pour meilleure performance
+            commandeForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const spinnerOverlay = initSpinner();
+                if (!spinnerOverlay) {
+                    console.error('Spinner non initialisé');
+                    return this.submit(); // Fallback
                 }
                 
-                // Fermeture modale sécurisée
-                const closeModal = () => {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                };
+                const form = this;
+                const submitButton = form.querySelector('[type="submit"]');
+                let originalButtonContent = '';
                 
-                // Gestionnaires d'événements protégés
-                document.querySelectorAll('.modal-btn, .close-btn').forEach(btn => {
-                    btn.removeEventListener('click', closeModal); // Nettoyage préalable
-                    btn.addEventListener('click', closeModal);
-                });
-                
-                // Fermeture au clic externe
-                modal.addEventListener('click', function(event) {
-                    if (event.target === modal) {
-                        closeModal();
+                try {
+                    // Préparation de l'UI
+                    form.classList.add('form-submitting');
+                    document.body.classList.add('form-disabled');
+                    
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        originalButtonContent = submitButton.innerHTML;
+                        submitButton.setAttribute('data-original-text', submitButton.textContent);
+                        submitButton.innerHTML = submitButton.getAttribute('data-original-text');
                     }
+                    
+                    // Affichage progressif du spinner
+                    spinnerOverlay.style.display = 'flex';
+                    setTimeout(() => {
+                        spinnerOverlay.classList.add('show');
+                    }, 10);
+                    
+                    // Validation améliorée
+                    if (!form.checkValidity()) {
+                        throw new Error(CONFIG.ERROR_MESSAGES.FORM_INVALID);
+                    }
+                    
+                    // Soumission avec gestion des retry
+                    await submitWithRetry(form);
+                    
+                } catch (error) {
+                    console.error('Erreur de soumission:', error);
+                    
+                    // Gestion d'erreur utilisateur
+                    showToast(
+                        error.message === CONFIG.ERROR_MESSAGES.FORM_INVALID 
+                            ? error.message 
+                            : CONFIG.ERROR_MESSAGES.SUBMISSION_ERROR,
+                        'error'
+                    );
+                    
+                } finally {
+                    // Nettoyage de l'UI
+                    spinnerOverlay.classList.remove('show');
+                    setTimeout(() => {
+                        spinnerOverlay.style.display = 'none';
+                    }, CONFIG.PERFORMANCE.TRANSITION_DURATION);
+                    
+                    form.classList.remove('form-submitting');
+                    document.body.classList.remove('form-disabled');
+                    
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonContent;
+                    }
+                }
+            });
+        }
+
+        // 4. Fonction de soumission avec mécanisme de retry
+        async function submitWithRetry(form, retryCount = 0) {
+            try {
+                // Simulation de délai pour démo (à remplacer par la vraie soumission)
+                await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        if (Math.random() > 0.3 || retryCount >= CONFIG.MAX_RETRIES - 1) {
+                            form.submit(); // Soumission réelle
+                            resolve();
+                        } else {
+                            reject(new Error('Erreur temporaire'));
+                        }
+                    }, 500);
                 });
+            } catch (error) {
+                if (retryCount < CONFIG.MAX_RETRIES) {
+                    await new Promise(resolve => 
+                        setTimeout(resolve, CONFIG.RETRY_DELAY * (retryCount + 1))
+                    );
+                    return submitWithRetry(form, retryCount + 1);
+                }
+                throw error;
             }
         }
 
-        // 5. Initialisation séquentielle sécurisée
-        document.addEventListener('DOMContentLoaded', function() {
+        // 5. Gestion modale améliorée avec état et animations
+        function setupModal() {
+            const modal = document.getElementById('confirmation-modal-boutique');
+            if (!modal) return;
+            
+            let isModalOpen = false;
+            
+            // Fonction de fermeture sécurisée
+            const closeModal = () => {
+                if (!isModalOpen) return;
+                
+                modal.style.opacity = '0';
+                document.body.style.overflow = 'auto';
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    isModalOpen = false;
+                }, CONFIG.PERFORMANCE.TRANSITION_DURATION);
+            };
+            
+            // Fonction d'ouverture sécurisée
+            const openModal = () => {
+                if (isModalOpen) return;
+                
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    modal.style.opacity = '1';
+                    isModalOpen = true;
+                }, 10);
+            };
+            
+            // Vérification initiale
+            const shouldOpen = document.querySelector('.alert-message, .success-content') !== null;
+            if (shouldOpen) {
+                openModal();
+            }
+            
+            // Gestionnaires d'événements protégés
+            const handleClick = (e) => {
+                if (e.target.classList.contains('modal-btn') {
+                    closeModal();
+                }
+            };
+            
+            const handleOutsideClick = (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            };
+            
+            // Nettoyage avant nouvel ajout
+            document.removeEventListener('click', handleClick);
+            modal.removeEventListener('click', handleOutsideClick);
+            
+            // Ajout des nouveaux gestionnaires
+            document.addEventListener('click', handleClick);
+            modal.addEventListener('click', handleOutsideClick);
+            
+            // Gestion du bouton de fermeture spécifique
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) {
+                closeBtn.removeEventListener('click', closeModal);
+                closeBtn.addEventListener('click', closeModal);
+            }
+        }
+
+        // 6. Affichage des messages toast
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 7. Initialisation séquentielle sécurisée avec état
+        let isInitialized = false;
+        
+        function initialize() {
+            if (isInitialized) return;
+            
             try {
                 initSpinner();
                 injectStyles();
                 handleFormSubmission();
                 setupModal();
+                isInitialized = true;
+                
+                // Surveillance des erreurs
+                window.addEventListener('error', handleGlobalError);
             } catch (error) {
                 console.error('Erreur d\'initialisation:', error);
                 // Fallback minimaliste
-                const forms = document.querySelectorAll('form');
-                forms.forEach(form => {
+                document.querySelectorAll('form').forEach(form => {
                     form.addEventListener('submit', () => {
                         alert('Chargement en cours...');
                     });
                 });
             }
+        }
+
+        // 8. Gestionnaire d'erreur global
+        function handleGlobalError(event) {
+            console.error('Erreur non capturée:', event.error);
+            
+            const spinner = document.getElementById('modern-spinner-overlay');
+            if (spinner) {
+                spinner.classList.remove('show');
+                spinner.style.display = 'none';
+            }
+            
+            document.body.classList.remove('form-disabled');
+            
+            // En production, vous pourriez envoyer cette erreur à un service de suivi
+            // trackError(event.error);
+        }
+
+        // 9. Gestion des différents états de chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation principale
+            initialize();
+            
+            // Re-initialisation si le DOM change (pour les SPA)
+            const observer = new MutationObserver(function(mutations) {
+                if (document.getElementById('commande-form') && !isInitialized) {
+                    initialize();
+                }
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
         });
 
-        // 6. Gestion des erreurs non capturées (safety net)
-        window.addEventListener('error', function(event) {
-            console.error('Erreur non capturée:', event.error);
-            const spinner = document.getElementById('modern-spinner-overlay');
-            if (spinner) spinner.style.display = 'none';
-            document.body.classList.remove('form-disabled');
-        });
+        // 10. Sécurité supplémentaire pour les anciens navigateurs
+        if (typeof Promise === 'undefined') {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Votre navigateur n\'est pas supporté. Veuillez mettre à jour.');
+                });
+            });
+        }
     })();
 </script>
 

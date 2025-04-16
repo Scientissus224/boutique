@@ -4358,28 +4358,101 @@ body {
     
 </script>
 <script>
-(function() {
-    function reinitialiserCompteurs() {
-        $.ajax({
-            url: "/reinitialiser_compteurs/",  // Vérifie que l'URL correspond à ta vue
-            method: "GET",
-            dataType: "json",
-            success: function(data) {
-                // Si nécessaire, on peut faire quelque chose ici après la réinitialisation
-                console.log("Compteurs réinitialisés:", data);
+    (function() {
+        'use strict';
+    
+        // Configuration optimisée
+        const CONFIG = {
+            RESET_ENDPOINT: '/reinitialiser_compteurs/',
+            CSRF: {
+                COOKIE_NAME: 'csrftoken',
+                HEADER_NAME: 'X-CSRFToken',
+                FALLBACK_URL: '/get-csrf-token/'  // Ajout de l'URL de fallback
             },
-            error: function() {
-                console.error("Erreur lors de la réinitialisation des compteurs.");
+            RETRY: {
+                MAX_ATTEMPTS: 3,
+                DELAY: [1000, 3000] // Délai aléatoire entre 1s et 3s
             }
-        });
-    }
-
-    // Appel automatique dès le chargement de la page
-    $(document).ready(function() {
-        reinitialiserCompteurs();
-    });
-})();
-
+        };
+    
+        // Fonction pour récupérer le token CSRF de manière robuste
+        async function getCSRFToken() {
+            // 1. Essai depuis les cookies
+            const cookieToken = document.cookie
+                .split('; ')
+                .find(c => c.startsWith(CONFIG.CSRF.COOKIE_NAME + '='))
+                ?.split('=')[1];
+            if (cookieToken) return cookieToken;
+    
+            // 2. Fallback via requête spéciale
+            try {
+                const response = await fetch(CONFIG.CSRF.FALLBACK_URL, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.token || data.csrfToken;
+                }
+            } catch (e) {
+                console.debug('Échec silencieux de récupération CSRF');
+            }
+    
+            return null;
+        }
+    
+        // Fonction d'exécution principale
+        async function executeReset() {
+            const csrfToken = await getCSRFToken();
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            
+            if (csrfToken) {
+                headers[CONFIG.CSRF.HEADER_NAME] = csrfToken;
+            }
+    
+            try {
+                await fetch(CONFIG.RESET_ENDPOINT, {
+                    method: 'POST',
+                    headers,
+                    credentials: 'include',
+                    body: JSON.stringify({})
+                });
+            } catch (error) {
+                handleRetry(error);
+            }
+        }
+    
+        // Gestion des retry silencieux
+        function handleRetry(error, attempt = 1) {
+            if (attempt > CONFIG.RETRY.MAX_ATTEMPTS) return;
+            
+            const delay = CONFIG.RETRY.DELAY[0] + 
+                Math.random() * (CONFIG.RETRY.DELAY[1] - CONFIG.RETRY.DELAY[0]);
+            
+            setTimeout(() => {
+                fetch(CONFIG.RESET_ENDPOINT, {
+                    method: 'POST',
+                    credentials: 'include'
+                }).catch(e => handleRetry(e, attempt + 1));
+            }, delay);
+        }
+    
+        // Déclenchement immédiat au chargement
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', executeReset, {
+                once: true,
+                passive: true
+            });
+        } else {
+            setTimeout(executeReset, 0);
+        }
+    
+    })();
 </script>
 <script>
     // Gestion du menu mobile
