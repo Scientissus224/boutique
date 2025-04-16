@@ -2678,578 +2678,707 @@
 <!-- ---------------------------// API gestion des categories produits  ---------------------------------->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Configuration centrale améliorée
-        const CONFIG = {
-            RETRY_DELAY: 3000,
-            MAX_RETRIES: 3,
-            API_ENDPOINTS: {
-                GET_LIKES: '/obtenir_produits_likes/',
-                REMOVE_LIKE: '/retirer-des-likes/',
-                ADD_TO_CART: '/ajouter_produit_au_panier/',
-                GET_CART_COUNT: '/obtenir_panier/',
-                GET_LIKE_COUNT: '/obtenir_like/',
-                CSRF_TOKEN: '/get-csrf-token/',
-                BULK_REMOVE_LIKES: '/retirer-likes-en-masse/'
-            },
-            ERROR_MESSAGES: {
-                NETWORK: 'Problème de connexion. Réessai...',
-                SERVER: 'Erreur serveur. Veuillez réessayer.',
-                CSRF: 'Erreur de sécurité. Rafraîchissez la page.',
-                EMPTY: 'Aucun favori trouvé.',
-                SELECTION: 'Veuillez sélectionner au moins un produit.',
-                CONFIRM_DELETE: 'Voulez-vous vraiment supprimer ce produit de vos favoris ?',
-                CONFIRM_MULTI_DELETE: 'Voulez-vous vraiment supprimer les produits sélectionnés ?',
-                CONFIRM_ADD_CART: 'Voulez-vous ajouter les produits sélectionnés à votre panier ?',
-                SUCCESS_REMOVE: 'Produit(s) supprimé(s) avec succès',
-                PARTIAL_REMOVE: 'Certains produits n\'ont pas pu être supprimés'
-            }
-        };
-    
-        // Fonction getCookie optimisée pour la production
-        function getCookie(name) {
-            const cookieString = document.cookie || '';
-            const cookies = cookieString.split(';').map(c => c.trim());
-            const cookie = cookies.find(c => c.startsWith(name + '='));
-            return cookie ? decodeURIComponent(cookie.substring(name.length + 1)) : null;
+    // Configuration centrale améliorée
+    const CONFIG = {
+        RETRY_DELAY: 3000,
+        MAX_RETRIES: 3,
+        API_ENDPOINTS: {
+            GET_LIKES: '/obtenir_produits_likes/',
+            REMOVE_LIKE: '/retirer-des-likes/',
+            ADD_TO_CART: '/ajouter_produit_au_panier/',
+            GET_CART_COUNT: '/obtenir_panier/',
+            GET_LIKE_COUNT: '/obtenir_like/',
+            CSRF_TOKEN: '/get-csrf-token/',
+            BULK_REMOVE_LIKES: '/retirer-likes-en-masse/'
+        },
+        ERROR_MESSAGES: {
+            NETWORK: 'Problème de connexion. Réessai...',
+            SERVER: 'Erreur serveur. Veuillez réessayer.',
+            CSRF: 'Erreur de sécurité. Rafraîchissez la page.',
+            EMPTY: 'Aucun favori trouvé.',
+            SELECTION: 'Veuillez sélectionner au moins un produit.',
+            CONFIRM_DELETE: 'Voulez-vous vraiment supprimer ce produit de vos favoris ?',
+            CONFIRM_MULTI_DELETE: 'Voulez-vous vraiment supprimer les produits sélectionnés ?',
+            CONFIRM_ADD_CART: 'Voulez-vous ajouter les produits sélectionnés à votre panier ?',
+            SUCCESS_REMOVE: 'Produit(s) supprimé(s) avec succès',
+            PARTIAL_REMOVE: 'Certains produits n\'ont pas pu être supprimés'
         }
-    
-        // Gestion robuste du token CSRF
-        async function getCSRFToken() {
-            try {
-                // Essayer d'abord depuis les cookies
-                const csrfCookie = getCookie('csrftoken');
-                if (csrfCookie) return csrfCookie;
-                
-                // Fallback: requête spéciale
-                const response = await fetch(CONFIG.API_ENDPOINTS.CSRF_TOKEN, {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.csrfToken;
+    };
+
+    // Fonction getCookie optimisée pour la production
+    function getCookie(name) {
+        const cookieString = document.cookie || '';
+        const cookies = cookieString.split(';').map(c => c.trim());
+        const cookie = cookies.find(c => c.startsWith(name + '='));
+        return cookie ? decodeURIComponent(cookie.substring(name.length + 1)) : null;
+    }
+
+    // Gestion robuste du token CSRF
+    async function getCSRFToken() {
+        try {
+            // Essayer d'abord depuis les cookies
+            const csrfCookie = getCookie('csrftoken');
+            if (csrfCookie) return csrfCookie;
+            
+            // Fallback: requête spéciale
+            const response = await fetch(CONFIG.API_ENDPOINTS.CSRF_TOKEN, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-            } catch (e) {
-                console.error('Erreur récupération CSRF:', e);
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return data.csrfToken;
             }
-            return null;
+        } catch (e) {
+            console.error('Erreur récupération CSRF:', e);
         }
-    
-        // Fonction fetch sécurisée avec gestion intelligente des erreurs
-        async function secureFetch(url, options = {}, retryCount = 0) {
-            try {
-                const csrfToken = await getCSRFToken();
-                const isModifyingRequest = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(
-                    (options.method || 'GET').toUpperCase()
-                );
-    
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...options.headers
-                };
-    
-                if (csrfToken && isModifyingRequest) {
-                    headers['X-CSRFToken'] = csrfToken;
-                } else if (isModifyingRequest && !csrfToken) {
-                    throw new Error(CONFIG.ERROR_MESSAGES.CSRF);
-                }
-    
-                const response = await fetch(url, {
-                    ...options,
-                    headers,
-                    credentials: 'include'
-                });
-    
-                if (!response.ok) {
-                    const error = new Error('Erreur serveur');
-                    error.status = response.status;
-                    throw error;
-                }
-                return await response.json();
-            } catch (error) {
-                if (retryCount < CONFIG.MAX_RETRIES && !error.message.includes('CSRF')) {
-                    await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
-                    return secureFetch(url, options, retryCount + 1);
-                }
+        return null;
+    }
+
+    // Fonction fetch sécurisée avec gestion intelligente des erreurs
+    async function secureFetch(url, options = {}, retryCount = 0) {
+        try {
+            const csrfToken = await getCSRFToken();
+            const isModifyingRequest = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(
+                (options.method || 'GET').toUpperCase()
+            );
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                ...options.headers
+            };
+
+            if (csrfToken && isModifyingRequest) {
+                headers['X-CSRFToken'] = csrfToken;
+            } else if (isModifyingRequest && !csrfToken) {
+                throw new Error(CONFIG.ERROR_MESSAGES.CSRF);
+            }
+
+            const response = await fetch(url, {
+                ...options,
+                headers,
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const error = new Error('Erreur serveur');
+                error.status = response.status;
                 throw error;
             }
-        }
-    
-        // Fonction principale de chargement avec gestion d'état
-        async function loadLikedProducts(retryCount = 0) {
-            const container = document.querySelector('.likes-container');
-            if (!container) {
-                console.error('Conteneur .likes-container introuvable');
-                return;
-            }
-    
-            showLoadingSpinner(container);
-    
-            try {
-                const data = await secureFetch(CONFIG.API_ENDPOINTS.GET_LIKES);
-                
-                if (data.status === 'success' && data.likes_html) {
-                    container.innerHTML = data.likes_html;
-                    initEventListeners();
-                    updateCounters();
-                } else {
-                    throw new Error('Données invalides');
-                }
-            } catch (error) {
-                handleLoadError(error, container, retryCount);
-            }
-        }
-    
-        // Gestion avancée des erreurs
-        function handleLoadError(error, container, retryCount) {
-            console.error('Erreur:', error);
-            const errorMessage = error.message.includes('CSRF') 
-                ? CONFIG.ERROR_MESSAGES.CSRF 
-                : error.status === 404 
-                    ? CONFIG.ERROR_MESSAGES.EMPTY
-                    : CONFIG.ERROR_MESSAGES.SERVER;
-    
+            return await response.json();
+        } catch (error) {
             if (retryCount < CONFIG.MAX_RETRIES && !error.message.includes('CSRF')) {
-                container.innerHTML = `<p class="error">${errorMessage}</p>`;
-                setTimeout(() => loadLikedProducts(retryCount + 1), CONFIG.RETRY_DELAY);
+                await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+                return secureFetch(url, options, retryCount + 1);
+            }
+            throw error;
+        }
+    }
+
+    // Fonction principale de chargement avec gestion d'état
+    async function loadLikedProducts(retryCount = 0) {
+        const container = document.querySelector('.likes-container');
+        if (!container) {
+            console.error('Conteneur .likes-container introuvable');
+            return;
+        }
+
+        showLoadingSpinner(container);
+
+        try {
+            const data = await secureFetch(CONFIG.API_ENDPOINTS.GET_LIKES);
+            
+            if (data.status === 'success' && data.likes_html) {
+                container.innerHTML = data.likes_html;
+                initEventListeners();
+                updateCounters();
             } else {
-                container.innerHTML = `<p class="error">${errorMessage}</p>`;
+                throw new Error('Données invalides');
             }
+        } catch (error) {
+            handleLoadError(error, container, retryCount);
         }
-    
-        // Spinner de chargement
-        function showLoadingSpinner(container) {
-            container.innerHTML = `
-                <div class="loading-spinner">
-                    <div class="spinner-dot"></div>
-                    <div class="spinner-dot"></div>
-                    <div class="spinner-dot"></div>
-                    <div class="spinner-dot"></div>
-                </div>
-            `;
+    }
+
+    // Gestion avancée des erreurs
+    function handleLoadError(error, container, retryCount) {
+        console.error('Erreur:', error);
+        const errorMessage = error.message.includes('CSRF') 
+            ? CONFIG.ERROR_MESSAGES.CSRF 
+            : error.status === 404 
+                ? CONFIG.ERROR_MESSAGES.EMPTY
+                : CONFIG.ERROR_MESSAGES.SERVER;
+
+        if (retryCount < CONFIG.MAX_RETRIES && !error.message.includes('CSRF')) {
+            container.innerHTML = `<p class="error">${errorMessage}</p>`;
+            setTimeout(() => loadLikedProducts(retryCount + 1), CONFIG.RETRY_DELAY);
+        } else {
+            container.innerHTML = `<p class="error">${errorMessage}</p>`;
         }
-    
-        // Mise à jour des compteurs
-        function updateCounters() {
-            Promise.all([
-                updateCounter(CONFIG.API_ENDPOINTS.GET_LIKE_COUNT, 'total_likes', ['#likes-count-nav', '#sidebar-like-count']),
-                updateCounter(CONFIG.API_ENDPOINTS.GET_CART_COUNT, 'total_articles', [
-                    '#cart-count-nav', 
-                    '#car-count-sidebar', 
-                    '.cart-counter-mobil'
-                ])
-            ]).catch(error => {
-                console.error('Erreur mise à jour compteurs:', error);
-            });
-        }
-    
-        // Fonction générique de compteur
-        function updateCounter(url, dataKey, selectors) {
-            return new Promise((resolve, reject) => {
-                secureFetch(url)
-                    .then(data => {
-                        const count = data[dataKey] || 0;
-                        updateElementsText(selectors, count);
-                        resolve();
-                    })
-                    .catch(error => {
-                        updateElementsText(selectors, '0');
-                        reject(error);
-                    });
-            });
-        }
-    
-        // Mise à jour des éléments DOM
-        function updateElementsText(selectors, text) {
-            selectors.forEach(selector => {
-                const elements = selector.startsWith('.') 
-                    ? document.querySelectorAll(selector) 
-                    : [document.querySelector(selector)];
-                
-                elements.forEach(el => el && (el.textContent = text));
-            });
-        }
-    
-        // Suppression individuelle renforcée
-        async function removeProduct(productId, productCard) {
-            const loadingOverlay = createFullscreenLoader();
-            
-            try {
-                const response = await secureFetch(`${CONFIG.API_ENDPOINTS.REMOVE_LIKE}${productId}/`, {
-                    method: 'POST',
-                    body: JSON.stringify({ product_id: productId })
+    }
+
+    // Spinner de chargement
+    function showLoadingSpinner(container) {
+        container.innerHTML = `
+            <div class="loading-spinner">
+                <div class="spinner-dot"></div>
+                <div class="spinner-dot"></div>
+                <div class="spinner-dot"></div>
+                <div class="spinner-dot"></div>
+            </div>
+        `;
+    }
+
+    // Mise à jour des compteurs
+    function updateCounters() {
+        Promise.all([
+            updateCounter(CONFIG.API_ENDPOINTS.GET_LIKE_COUNT, 'total_likes', ['#likes-count-nav', '#sidebar-like-count']),
+            updateCounter(CONFIG.API_ENDPOINTS.GET_CART_COUNT, 'total_articles', [
+                '#cart-count-nav', 
+                '#car-count-sidebar', 
+                '.cart-counter-mobil'
+            ])
+        ]).catch(error => {
+            console.error('Erreur mise à jour compteurs:', error);
+        });
+    }
+
+    // Fonction générique de compteur
+    function updateCounter(url, dataKey, selectors) {
+        return new Promise((resolve, reject) => {
+            secureFetch(url)
+                .then(data => {
+                    const count = data[dataKey] || 0;
+                    updateElementsText(selectors, count);
+                    resolve();
+                })
+                .catch(error => {
+                    updateElementsText(selectors, '0');
+                    reject(error);
                 });
-    
-                animateRemoval(productCard, () => {
-                    showToast(CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE, 'success');
-                    loadLikedProducts();
-                });
-            } catch (error) {
-                console.error('Erreur suppression:', error);
-                showToast(
-                    error.message.includes('CSRF') 
-                        ? CONFIG.ERROR_MESSAGES.CSRF 
-                        : 'Erreur lors de la suppression',
-                    'error'
-                );
-                resetCardStyle(productCard);
-            } finally {
-                loadingOverlay.remove();
-            }
-        }
-    
-        // Nouvelle fonction pour la suppression en masse optimisée
-        async function bulkRemoveProducts(productIds) {
-            const loadingOverlay = createFullscreenLoader();
+        });
+    }
+
+    // Mise à jour des éléments DOM
+    function updateElementsText(selectors, text) {
+        selectors.forEach(selector => {
+            const elements = selector.startsWith('.') 
+                ? document.querySelectorAll(selector) 
+                : [document.querySelector(selector)];
             
-            try {
-                const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
-                    method: 'POST',
-                    body: JSON.stringify({ product_ids: productIds })
-                });
-    
-                if (response.failed_ids && response.failed_ids.length > 0) {
-                    showToast(
-                        `${CONFIG.ERROR_MESSAGES.PARTIAL_REMOVE} (${response.failed_ids.length}/${productIds.length})`,
-                        'warning'
-                    );
-                } else {
-                    showToast(
-                        `${CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE} (${productIds.length} produits)`,
-                        'success'
-                    );
-                }
-                
-                // Rechargement intelligent seulement si nécessaire
-                if (response.success_ids && response.success_ids.length > 0) {
-                    loadLikedProducts();
-                }
-            } catch (error) {
-                console.error('Erreur suppression en masse:', error);
-                showToast(
-                    error.message.includes('CSRF') 
-                        ? CONFIG.ERROR_MESSAGES.CSRF 
-                        : 'Erreur lors de la suppression en masse',
-                    'error'
-                );
-            } finally {
-                loadingOverlay.remove();
-            }
-        }
-    
-        // Animation de suppression
-        function animateRemoval(element, callback) {
-            element.style.transition = 'all 0.3s ease';
-            element.style.opacity = '0';
-            element.style.height = '0';
-            element.style.margin = '0';
-            element.style.padding = '0';
+            elements.forEach(el => el && (el.textContent = text));
+        });
+    }
+
+    // Nouvelle version améliorée de la suppression individuelle
+    async function removeProduct(productId, productCard) {
+        const loadingOverlay = createFullscreenLoader();
+        const originalContent = productCard.innerHTML;
+        
+        try {
+            // Animation de pré-suppression
+            productCard.style.transition = 'all 0.3s ease';
+            productCard.style.opacity = '0.5';
+            productCard.style.transform = 'scale(0.98)';
             
-            setTimeout(callback, 300);
-        }
-    
-        // Réinitialisation du style
-        function resetCardStyle(element) {
-            element.style.opacity = '';
-            element.style.height = '';
-            element.style.margin = '';
-            element.style.padding = '';
-        }
-    
-        // Loader plein écran
-        function createFullscreenLoader() {
-            const overlay = document.createElement('div');
-            overlay.className = 'fullscreen-loading';
-            overlay.appendChild(createModernSpinner());
-            document.body.appendChild(overlay);
-            return overlay;
-        }
-    
-        // Création du spinner moderne
-        function createModernSpinner() {
-            const spinner = document.createElement('div');
-            spinner.className = 'loading-spinner';
-            
-            for (let i = 0; i < 4; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'spinner-dot';
-                spinner.appendChild(dot);
-            }
-            
-            return spinner;
-        }
-    
-        // Modal de confirmation
-        function createConfirmationModal(message, confirmCallback) {
-            const modal = document.createElement('div');
-            modal.className = 'custom-modal';
-            
-            const modalContent = document.createElement('div');
-            modalContent.className = 'modal-content';
-            modalContent.style.color = '#333';
-            
-            const messageEl = document.createElement('p');
-            messageEl.textContent = message;
-            messageEl.style.margin = '0 0 20px 0';
-            messageEl.style.fontSize = '16px';
-            
-            const buttonsContainer = document.createElement('div');
-            buttonsContainer.className = 'modal-buttons';
-            
-            const confirmBtn = document.createElement('button');
-            confirmBtn.className = 'confirm-btn';
-            confirmBtn.textContent = 'Confirmer';
-            
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'cancel-btn';
-            cancelBtn.textContent = 'Annuler';
-            
-            confirmBtn.addEventListener('click', () => {
-                document.body.removeChild(modal);
-                confirmCallback();
+            const response = await secureFetch(`${CONFIG.API_ENDPOINTS.REMOVE_LIKE}${productId}/`, {
+                method: 'POST',
+                body: JSON.stringify({ product_id: productId })
             });
-            
-            cancelBtn.addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            buttonsContainer.appendChild(cancelBtn);
-            buttonsContainer.appendChild(confirmBtn);
-            modalContent.appendChild(messageEl);
-            modalContent.appendChild(buttonsContainer);
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-        }
-    
-        // Affichage des messages toast
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
+
+            // Animation de suppression réussie
+            productCard.style.height = `${productCard.offsetHeight}px`;
+            productCard.style.overflow = 'hidden';
             
             setTimeout(() => {
-                toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-    
-        // Initialisation des événements améliorée
-        function initEventListeners() {
-            // Sélection globale intelligente
-            const selectAllCheckbox = document.getElementById('select-all');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function() {
-                    const allCheckboxes = document.querySelectorAll('.product-select');
-                    const visibleCheckboxes = Array.from(allCheckboxes).filter(
-                        cb => cb.closest('.liked-product-card').style.display !== 'none'
-                    );
+                productCard.style.height = '0';
+                productCard.style.margin = '0';
+                productCard.style.padding = '0';
+                productCard.style.border = 'none';
+                
+                setTimeout(() => {
+                    productCard.remove();
+                    showToast(CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE, 'success');
+                    updateCounters();
                     
-                    visibleCheckboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
-                        toggleProductSelection(checkbox);
-                    });
-                    
-                    // Mise à jour de l'état du bouton "Tout sélectionner"
-                    if (!this.checked) {
-                        const anyChecked = Array.from(visibleCheckboxes).some(cb => cb.checked);
-                        this.indeterminate = anyChecked;
+                    // Vérifier s'il reste des produits
+                    const remainingProducts = document.querySelectorAll('.liked-product-card').length;
+                    if (remainingProducts === 0) {
+                        loadLikedProducts(); // Recharger pour afficher le message "Aucun favori"
                     }
+                }, 300);
+            }, 100);
+        } catch (error) {
+            console.error('Erreur suppression:', error);
+            
+            // Animation d'échec
+            productCard.style.opacity = '1';
+            productCard.style.transform = 'scale(1)';
+            productCard.innerHTML = originalContent;
+            
+            showToast(
+                error.message.includes('CSRF') 
+                    ? CONFIG.ERROR_MESSAGES.CSRF 
+                    : 'Erreur lors de la suppression',
+                'error'
+            );
+        } finally {
+            loadingOverlay.remove();
+        }
+    }
+
+    // Nouvelle version ultra-robuste de la suppression en masse
+    async function bulkRemoveProducts(productIds) {
+        if (!productIds || productIds.length === 0) {
+            showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
+            return { success: false };
+        }
+
+        const loadingOverlay = createFullscreenLoader();
+        const selectedCards = productIds.map(id => 
+            document.querySelector(`.liked-product-card[data-product-id="${id}"]`)
+        ).filter(Boolean);
+
+        try {
+            // Pré-animation
+            selectedCards.forEach(card => {
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0.5';
+                card.style.transform = 'scale(0.98)';
+            });
+
+            const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
+                method: 'POST',
+                body: JSON.stringify({ product_ids: productIds })
+            });
+
+            // Gestion des résultats
+            const successIds = response.success_ids || [];
+            const failedIds = response.failed_ids || [];
+            
+            // Animation des succès
+            const successCards = selectedCards.filter(card => 
+                successIds.includes(card.dataset.productId)
+            );
+            
+            successCards.forEach(card => {
+                card.style.height = `${card.offsetHeight}px`;
+                card.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    card.style.height = '0';
+                    card.style.margin = '0';
+                    card.style.padding = '0';
+                    card.style.border = 'none';
+                    
+                    setTimeout(() => card.remove(), 300);
+                }, 100);
+            });
+
+            // Animation des échecs
+            const failedCards = selectedCards.filter(card => 
+                failedIds.includes(card.dataset.productId)
+            );
+            
+            failedCards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+                card.querySelector('.product-select').checked = true;
+            });
+
+            // Feedback utilisateur
+            if (failedIds.length > 0) {
+                showToast(
+                    `${CONFIG.ERROR_MESSAGES.PARTIAL_REMOVE} (${failedIds.length}/${productIds.length})`,
+                    'warning'
+                );
+            } else {
+                showToast(
+                    `${CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE} (${productIds.length} produits)`,
+                    'success'
+                );
+            }
+
+            // Mise à jour des compteurs et rechargement si nécessaire
+            if (successIds.length > 0) {
+                updateCounters();
+                
+                // Vérifier s'il reste des produits
+                const remainingProducts = document.querySelectorAll('.liked-product-card').length;
+                if (remainingProducts === 0) {
+                    loadLikedProducts(); // Recharger pour afficher le message "Aucun favori"
+                }
+            }
+
+            return {
+                success: true,
+                successCount: successIds.length,
+                failedCount: failedIds.length
+            };
+        } catch (error) {
+            console.error('Erreur suppression en masse:', error);
+            
+            // Restaurer les cartes en cas d'erreur globale
+            selectedCards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+            });
+
+            showToast(
+                error.message.includes('CSRF') 
+                    ? CONFIG.ERROR_MESSAGES.CSRF 
+                    : 'Erreur lors de la suppression en masse',
+                'error'
+            );
+            
+            return {
+                success: false,
+                error: error.message
+            };
+        } finally {
+            loadingOverlay.remove();
+        }
+    }
+
+    // Loader plein écran
+    function createFullscreenLoader() {
+        const overlay = document.createElement('div');
+        overlay.className = 'fullscreen-loading';
+        overlay.appendChild(createModernSpinner());
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    // Création du spinner moderne
+    function createModernSpinner() {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        
+        for (let i = 0; i < 4; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'spinner-dot';
+            spinner.appendChild(dot);
+        }
+        
+        return spinner;
+    }
+
+    // Modal de confirmation amélioré
+    function createConfirmationModal(message, confirmCallback, cancelCallback) {
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal';
+        
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        modalContent.style.color = '#333';
+        
+        const messageEl = document.createElement('p');
+        messageEl.textContent = message;
+        messageEl.style.margin = '0 0 20px 0';
+        messageEl.style.fontSize = '16px';
+        
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'modal-buttons';
+        
+        const confirmBtn = document.createElement('button');
+        confirmBtn.className = 'confirm-btn';
+        confirmBtn.textContent = 'Confirmer';
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'cancel-btn';
+        cancelBtn.textContent = 'Annuler';
+        
+        confirmBtn.addEventListener('click', () => {
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+                document.body.removeChild(modal);
+                confirmCallback();
+            }, 300);
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+                document.body.removeChild(modal);
+                if (cancelCallback) cancelCallback();
+            }, 300);
+        });
+        
+        buttonsContainer.appendChild(cancelBtn);
+        buttonsContainer.appendChild(confirmBtn);
+        modalContent.appendChild(messageEl);
+        modalContent.appendChild(buttonsContainer);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        // Animation d'entrée
+        setTimeout(() => {
+            modal.classList.add('fade-in');
+        }, 10);
+    }
+
+    // Affichage des messages toast amélioré
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        // Animation d'entrée
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Initialisation des événements améliorée
+    function initEventListeners() {
+        // Sélection globale intelligente
+        const selectAllCheckbox = document.getElementById('select-all');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const allCheckboxes = document.querySelectorAll('.product-select');
+                const visibleCheckboxes = Array.from(allCheckboxes).filter(
+                    cb => cb.closest('.liked-product-card').style.display !== 'none'
+                );
+                
+                visibleCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    toggleProductSelection(checkbox);
+                });
+                
+                // Mise à jour de l'état du bouton "Tout sélectionner"
+                if (!this.checked) {
+                    const anyChecked = Array.from(visibleCheckboxes).some(cb => cb.checked);
+                    this.indeterminate = anyChecked;
+                }
+            });
+        }
+
+        // Gestion des clics avec délégation d'événements
+        document.addEventListener('click', async function(e) {
+            // Suppression individuelle renforcée
+            if (e.target.closest('.delete-btn')) {
+                const productCard = e.target.closest('.liked-product-card');
+                const productId = productCard.dataset.productId;
+                
+                createConfirmationModal(CONFIG.ERROR_MESSAGES.CONFIRM_DELETE, () => {
+                    removeProduct(productId, productCard);
                 });
             }
-    
-            // Gestion des clics avec délégation d'événements
-            document.addEventListener('click', async function(e) {
-                // Suppression individuelle renforcée
-                if (e.target.closest('.delete-btn')) {
-                    const productCard = e.target.closest('.liked-product-card');
-                    const productId = productCard.dataset.productId;
-                    
-                    createConfirmationModal(CONFIG.ERROR_MESSAGES.CONFIRM_DELETE, () => {
-                        removeProduct(productId, productCard);
-                    });
-                }
-                
-                // Ajout au panier
-                if (e.target.closest('.cart-btn')) {
-                    const btn = e.target.closest('.cart-btn');
-                    const productCard = btn.closest('.liked-product-card');
-                    const productId = productCard.dataset.productId;
-                    const originalContent = btn.innerHTML;
-                    
-                    try {
-                        btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
-                        const data = await secureFetch(`${CONFIG.API_ENDPOINTS.ADD_TO_CART}${productId}/`, {
-                            method: 'POST'
-                        });
-    
-                        // Feedback visuel
-                        btn.innerHTML = '<i class="fas fa-check"></i>';
-                        btn.classList.add('success');
-                        
-                        // Mise à jour compteur
-                        if (data.total_articles !== undefined) {
-                            updateElementsText(
-                                ['#cart-count-nav', '#car-count-sidebar', '.cart-counter-mobil'],
-                                data.total_articles
-                            );
-                        }
-    
-                        setTimeout(() => {
-                            loadLikedProducts();
-                            btn.innerHTML = originalContent;
-                            btn.classList.remove('success');
-                            btn.disabled = false;
-                        }, 1000);
-                    } catch (error) {
-                        console.error('Erreur:', error);
-                        btn.innerHTML = '<i class="fas fa-times"></i>';
-                        setTimeout(() => {
-                            btn.innerHTML = originalContent;
-                            btn.disabled = false;
-                        }, 1000);
-                        showToast(error.message.includes('CSRF') 
-                            ? CONFIG.ERROR_MESSAGES.CSRF 
-                            : 'Erreur lors de l\'ajout au panier', 'error');
-                    }
-                }
-            });
-    
-            // Suppression multiple améliorée
-            document.querySelector('.delete-selected-btn')?.addEventListener('click', function() {
-                const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
-                const productIds = selectedCheckboxes.map(checkbox => 
-                    checkbox.closest('.liked-product-card').dataset.productId
-                );
-    
-                if (productIds.length === 0) {
-                    showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
-                    return;
-                }
-    
-                createConfirmationModal(
-                    `${CONFIG.ERROR_MESSAGES.CONFIRM_MULTI_DELETE} (${productIds.length})`, 
-                    async () => {
-                        const button = this;
-                        button.disabled = true;
-                        const loadingOverlay = createFullscreenLoader();
-                        
-                        try {
-                            // Utilisation de la nouvelle fonction bulkRemoveProducts
-                            await bulkRemoveProducts(productIds);
-                        } finally {
-                            button.disabled = false;
-                            loadingOverlay.remove();
-                        }
-                    }
-                );
-            });
-    
-            // Ajout multiple au panier
-            document.querySelector('.add-all-to-cart-btn')?.addEventListener('click', function() {
-                const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
-                
-                if (selectedCheckboxes.length === 0) {
-                    showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
-                    return;
-                }
-    
-                createConfirmationModal(
-                    `${CONFIG.ERROR_MESSAGES.CONFIRM_ADD_CART} (${selectedCheckboxes.length})`, 
-                    () => handleMultiAddToCart(selectedCheckboxes, this)
-                );
-            });
-        }
-    
-        // Gestion de l'ajout multiple au panier
-        async function handleMultiAddToCart(selectedCheckboxes, button) {
-            const loadingOverlay = createFullscreenLoader();
-            button.disabled = true;
-            let successCount = 0;
             
-            try {
-                for (const checkbox of selectedCheckboxes) {
-                    const productCard = checkbox.closest('.liked-product-card');
-                    const productId = productCard.dataset.productId;
+            // Ajout au panier
+            if (e.target.closest('.cart-btn')) {
+                const btn = e.target.closest('.cart-btn');
+                const productCard = btn.closest('.liked-product-card');
+                const productId = productCard.dataset.productId;
+                const originalContent = btn.innerHTML;
+                
+                try {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const data = await secureFetch(`${CONFIG.API_ENDPOINTS.ADD_TO_CART}${productId}/`, {
+                        method: 'POST'
+                    });
+
+                    // Feedback visuel
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.classList.add('success');
+                    
+                    // Mise à jour compteur
+                    if (data.total_articles !== undefined) {
+                        updateElementsText(
+                            ['#cart-count-nav', '#car-count-sidebar', '.cart-counter-mobil'],
+                            data.total_articles
+                        );
+                    }
+
+                    setTimeout(() => {
+                        loadLikedProducts();
+                        btn.innerHTML = originalContent;
+                        btn.classList.remove('success');
+                        btn.disabled = false;
+                    }, 1000);
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    btn.innerHTML = '<i class="fas fa-times"></i>';
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    }, 1000);
+                    showToast(error.message.includes('CSRF') 
+                        ? CONFIG.ERROR_MESSAGES.CSRF 
+                        : 'Erreur lors de l\'ajout au panier', 'error');
+                }
+            }
+        });
+
+        // Suppression multiple améliorée
+        document.querySelector('.delete-selected-btn')?.addEventListener('click', function() {
+            const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
+            const productIds = selectedCheckboxes.map(checkbox => 
+                checkbox.closest('.liked-product-card').dataset.productId
+            );
+
+            if (productIds.length === 0) {
+                showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
+                return;
+            }
+
+            createConfirmationModal(
+                `${CONFIG.ERROR_MESSAGES.CONFIRM_MULTI_DELETE} (${productIds.length})`, 
+                async () => {
+                    const button = this;
+                    button.disabled = true;
+                    const loadingOverlay = createFullscreenLoader();
                     
                     try {
-                        const data = await secureFetch(`${CONFIG.API_ENDPOINTS.ADD_TO_CART}${productId}/`, {
-                            method: 'POST'
-                        });
-    
-                        successCount++;
-                        
-                        if (data.total_articles !== undefined) {
-                            updateElementsText(
-                                ['#cart-count-nav', '#car-count-sidebar', '.cart-counter-mobil'],
-                                data.total_articles
-                            );
-                        }
-                    } catch (error) {
-                        console.error(`Erreur ajout produit ${productId}:`, error);
+                        // Utilisation de la nouvelle fonction bulkRemoveProducts
+                        await bulkRemoveProducts(productIds);
+                    } finally {
+                        button.disabled = false;
+                        loadingOverlay.remove();
                     }
                 }
-    
-                showToast(`${successCount} produit(s) ajouté(s) au panier`, 'success');
-                loadLikedProducts();
-            } finally {
-                loadingOverlay.remove();
-                button.disabled = false;
+            );
+        });
+
+        // Ajout multiple au panier
+        document.querySelector('.add-all-to-cart-btn')?.addEventListener('click', function() {
+            const selectedCheckboxes = Array.from(document.querySelectorAll('.product-select:checked'));
+            
+            if (selectedCheckboxes.length === 0) {
+                showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
+                return;
             }
-        }
-    
-        // Toggle de sélection
-        function toggleProductSelection(checkbox) {
-            const productCard = checkbox.closest('.liked-product-card');
-            if (checkbox.checked) {
-                productCard.classList.add('selected');
-            } else {
-                productCard.classList.remove('selected');
-            }
-        }
-    
-        // Initialisation sécurisée avec vérification d'état
-        (async function init() {
-            try {
-                // Pré-chargement du token CSRF
-                const csrfToken = await getCSRFToken();
-                if (!csrfToken) {
-                    console.warn('Token CSRF non disponible');
-                    showToast(CONFIG.ERROR_MESSAGES.CSRF, 'error');
-                }
+
+            createConfirmationModal(
+                `${CONFIG.ERROR_MESSAGES.CONFIRM_ADD_CART} (${selectedCheckboxes.length})`, 
+                () => handleMultiAddToCart(selectedCheckboxes, this)
+            );
+        });
+
+        // Gestion des cases à cocher individuelles
+        document.querySelectorAll('.product-select').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                toggleProductSelection(this);
                 
-                // Chargement initial avec gestion des erreurs
-                await loadLikedProducts();
-                
-                // Vérification périodique de l'état
-                setInterval(async () => {
-                    try {
-                        await updateCounters();
-                    } catch (e) {
-                        console.warn('Échec de la mise à jour des compteurs:', e);
+                // Mise à jour de l'état "Tout sélectionner"
+                if (selectAllCheckbox) {
+                    const allCheckboxes = document.querySelectorAll('.product-select');
+                    const checkedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
+                    
+                    if (checkedCount === 0) {
+                        selectAllCheckbox.checked = false;
+                        selectAllCheckbox.indeterminate = false;
+                    } else if (checkedCount === allCheckboxes.length) {
+                        selectAllCheckbox.checked = true;
+                        selectAllCheckbox.indeterminate = false;
+                    } else {
+                        selectAllCheckbox.checked = false;
+                        selectAllCheckbox.indeterminate = true;
                     }
-                }, 60000); // Toutes les minutes
-            } catch (e) {
-                console.error('Erreur initialisation:', e);
-                const container = document.querySelector('.likes-container') || document.body;
-                container.innerHTML = `
-                    <div class="error-container">
-                        <p>${CONFIG.ERROR_MESSAGES.SERVER}</p>
-                        <button class="retry-btn">Réessayer</button>
-                    </div>
-                `;
-                container.querySelector('.retry-btn').addEventListener('click', init);
+                }
+            });
+        });
+    }
+
+    // Gestion de l'ajout multiple au panier
+    async function handleMultiAddToCart(selectedCheckboxes, button) {
+        const loadingOverlay = createFullscreenLoader();
+        button.disabled = true;
+        let successCount = 0;
+        
+        try {
+            for (const checkbox of selectedCheckboxes) {
+                const productCard = checkbox.closest('.liked-product-card');
+                const productId = productCard.dataset.productId;
+                
+                try {
+                    const data = await secureFetch(`${CONFIG.API_ENDPOINTS.ADD_TO_CART}${productId}/`, {
+                        method: 'POST'
+                    });
+
+                    successCount++;
+                    
+                    if (data.total_articles !== undefined) {
+                        updateElementsText(
+                            ['#cart-count-nav', '#car-count-sidebar', '.cart-counter-mobil'],
+                            data.total_articles
+                        );
+                    }
+                } catch (error) {
+                    console.error(`Erreur ajout produit ${productId}:`, error);
+                }
             }
-        })();
-    });
+
+            showToast(`${successCount} produit(s) ajouté(s) au panier`, 'success');
+            loadLikedProducts();
+        } finally {
+            loadingOverlay.remove();
+            button.disabled = false;
+        }
+    }
+
+    // Toggle de sélection amélioré
+    function toggleProductSelection(checkbox) {
+        const productCard = checkbox.closest('.liked-product-card');
+        if (checkbox.checked) {
+            productCard.classList.add('selected');
+            productCard.style.transform = 'scale(0.98)';
+            productCard.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
+        } else {
+            productCard.classList.remove('selected');
+            productCard.style.transform = '';
+            productCard.style.boxShadow = '';
+        }
+    }
+
+    // Initialisation sécurisée avec vérification d'état
+    (async function init() {
+        try {
+            // Pré-chargement du token CSRF
+            const csrfToken = await getCSRFToken();
+            if (!csrfToken) {
+                console.warn('Token CSRF non disponible');
+                showToast(CONFIG.ERROR_MESSAGES.CSRF, 'error');
+            }
+            
+            // Chargement initial avec gestion des erreurs
+            await loadLikedProducts();
+            
+            // Vérification périodique de l'état
+            setInterval(async () => {
+                try {
+                    await updateCounters();
+                } catch (e) {
+                    console.warn('Échec de la mise à jour des compteurs:', e);
+                }
+            }, 60000); // Toutes les minutes
+        } catch (e) {
+            console.error('Erreur initialisation:', e);
+            const container = document.querySelector('.likes-container') || document.body;
+            container.innerHTML = `
+                <div class="error-container">
+                    <p>${CONFIG.ERROR_MESSAGES.SERVER}</p>
+                    <button class="retry-btn">Réessayer</button>
+                </div>
+            `;
+            container.querySelector('.retry-btn').addEventListener('click', init);
+        }
+    })();
+});
 </script>
     
 <script>
