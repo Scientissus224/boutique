@@ -106,7 +106,7 @@ urlpatterns = [
     path('localisation/',gestion_localisation, name = 'localisation'),
     path('get-total-panier/<int:user_id>/', get_total_panier, name='get-total-panier'),
     path('site/' , site , name = 'site'),
-    path('warabaguinee/<str:boutique_identifiant>/', boutique_contenu, name='boutique_contenu'),
+    path('<str:boutique_identifiant>/', boutique_contenu, name='boutique_contenu'),
   # Route pour le contenu HTML d'une boutique
     path('platForm/' , plat_forme , name = 'platForm'),
     path('rechercher-produits/', rechercher_produits, name='rechercher-produits'),
