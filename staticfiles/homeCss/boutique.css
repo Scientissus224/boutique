@@ -1,5 +1,4 @@
 /* Conteneur principal */
-/* Styles pour le spinner */
 .loading-spinner {
     display: flex;
     justify-content: center;
@@ -9,17 +8,17 @@
     position: absolute;
     top: 0;
     left: 0;
-    background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour le thème light */
+    background-color: rgba(255, 255, 255, 0.8);
     z-index: 1000;
 }
 
 .dark .loading-spinner {
-    background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent pour le thème dark */
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
-    border-top: 4px solid #ff6600; /* Couleur du spinner */
+    border-top: 4px solid #ff6600;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -31,7 +30,6 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Animation pour le chargement du contenu */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -41,321 +39,339 @@
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards;
 }
+
 .b-contenaire {
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     margin: 70px auto;
     width: 90%;
+    max-width: 1400px;
 }
 
-/* Style pour le thème light */
 [data-theme="light"] .b-contenaire {
-    background-color: #f9f9f9; /* Fond clair */
-    color: #333; /* Texte sombre */
+    background-color: #ffffff;
+    color: #333;
 }
 
-/* Style pour le thème dark */
 [data-theme="dark"] .b-contenaire {
-    background-color: #1a1a1a; /* Fond sombre */
-    color: #f0f0f0; /* Texte clair */
+    background-color: #1e1e1e;
+    color: #f0f0f0;
 }
 
 /* Header Section */
 .header-section-boutique {
     text-align: center;
-    padding: 10px 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
-
-/* Titre */
 .responsive-title {
-    font-size: 34px;
-    margin: 0 0 10px 0;
+    font-size: 2.2rem;
+    margin: 0 0 15px 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 600;
 }
 
-/* Style pour le thème light */
 [data-theme="light"] .responsive-title {
-    color: #fff; /* Texte blanc pour contraster avec le fond */
-    
+    color: #2c3e50;
 }
 
-/* Style pour le thème dark */
 [data-theme="dark"] .responsive-title {
-    color: #f0f0f0; /* Texte clair pour contraster avec le fond */
+    color: #f0f0f0;
 }
 
 .responsive-title i {
-    margin-right: 10px;
+    margin-right: 12px;
+    font-size: 1.8rem;
 }
 
 /* Pagination */
 .pagination-container {
     text-align: center;
-    margin-top: 5px;
+    margin-top: 20px;
 }
 
 .pagination-container span {
     font-size: 14px;
-}
-
-/* Style pour le thème light */
-[data-theme="light"] .pagination-container span {
-    color: #333; /* Texte sombre */
-}
-
-/* Style pour le thème dark */
-[data-theme="dark"] .pagination-container span {
-    color: #f0f0f0; /* Texte clair */
+    color: inherit;
 }
 
 .page-btn {
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 8px 14px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 0 2px;
+    transition: all 0.3s ease;
+    margin: 0 4px;
     font-size: 14px;
+    font-weight: 500;
 }
 
-/* Style pour le thème light */
 [data-theme="light"] .page-btn {
-    background-color: #34495e; /* Fond sombre */
-    color: #fff; /* Texte clair */
+    background-color: #e0e0e0;
+    color: #333;
 }
 
 [data-theme="light"] .page-btn:hover {
-    background-color: #1abc9c; /* Couleur au survol */
+    background-color: #ff6600;
+    color: white;
 }
 
 [data-theme="light"] .page-btn.active {
-    background-color: #1abc9c; /* Couleur active */
-    font-weight: bold;
+    background-color: #ff6600;
+    color: white;
+    font-weight: 600;
 }
 
-/* Style pour le thème dark */
 [data-theme="dark"] .page-btn {
-    background-color: #555; /* Fond gris foncé */
-    color: #f0f0f0; /* Texte clair */
+    background-color: #333;
+    color: #f0f0f0;
 }
 
 [data-theme="dark"] .page-btn:hover {
-    background-color: #1abc9c; /* Couleur au survol */
+    background-color: #ff6600;
+    color: white;
 }
 
 [data-theme="dark"] .page-btn.active {
-    background-color: #1abc9c; /* Couleur active */
-    font-weight: bold;
+    background-color: #ff6600;
+    color: white;
+    font-weight: 600;
 }
 
-/* Conteneur des boutiques */
+/* Conteneur des boutiques - Version moderne */
 .boutiques {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+    align-items: stretch;
 }
 
 .boutique {
-    border: 2px solid #dcdcdc;
-    padding: 15px;
-    margin: 5px;
-    width: calc(70% - 10px);
-    border-radius: 10px;
-    transition: transform 0.3s ease, opacity 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    text-align: center;
-    position: relative;
-}
-
-/* Style pour le thème light */
-[data-theme="light"] .boutique {
-    background-color: #fff; /* Fond blanc */
-    border-color: #dcdcdc; /* Bordure claire */
-}
-
-/* Style pour le thème dark */
-[data-theme="dark"] .boutique {
-    background-color: #2a2a2a; /* Fond sombre */
-    border-color: #444; /* Bordure sombre */
-}
-
-/* Carte de boutique */
-.boutique-card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.boutique-card:hover {
+[data-theme="light"] .boutique {
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+}
+
+[data-theme="dark"] .boutique {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+}
+
+.boutique:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Logo Container */
+/* Carte de boutique moderne */
+.boutique-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .logo-container_b {
-    width: 100%; /* Prendre toute la largeur disponible */
-    overflow: hidden; /* Empêcher les débordements */
-    border-radius: 8px; /* Conserver le style */
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+[data-theme="dark"] .logo-container_b {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
 }
 
 .logo-container_b img {
-    width: 100%; /* Prendre toute la largeur du conteneur */
-    height: auto; /* Hauteur automatique pour s'adapter à la largeur */
-    object-fit: contain; /* Garantir que l'image s'adapte sans être coupée */
-    border-radius: 8px; /* Conserver le style */
-    transition: all 0.3s ease; /* Transition fluide */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.boutique:hover .logo-container_b img {
+    transform: scale(1.03);
 }
 
 .boutique-info {
-    padding: 15px;
+    padding: 18px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .boutique-info h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-/* Style pour le thème light */
-[data-theme="light"] .boutique-info h3 {
-    color: #2c3e50; /* Texte sombre */
-}
-
-/* Style pour le thème dark */
-[data-theme="dark"] .boutique-info h3 {
-    color: #f0f0f0; /* Texte clair */
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+    color: inherit;
 }
 
 .boutique-info p {
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    margin: 0 0 12px 0;
+    color: inherit;
+    opacity: 0.8;
+    flex-grow: 1;
 }
 
-/* Style pour le thème light */
-[data-theme="light"] .boutique-info p {
-    color: #666; /* Texte gris */
-}
-
-/* Style pour le thème dark */
-[data-theme="dark"] .boutique-info p {
-    color: #ccc; /* Texte gris clair */
-}
-
+/* Bouton moderne */
 .boutique-link {
-    padding: 10px 30px 10px 20px; /* Plus de padding à droite (30px) qu'à gauche (20px) */
-    border-radius: 5px;
-    display: inline-flex;
-    justify-content: center; /* Centrer le contenu horizontalement */
-    align-items: center; /* Centrer le contenu verticalement */
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-decoration: none;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    gap: 8px; /* Espacement entre l'icône et le texte */
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin-top: auto;
+    gap: 8px;
 }
 
-/* Style pour le thème light */
 [data-theme="light"] .boutique-link {
-    background-color: #ff6600; /* Fond orange */
-    color: white; /* Texte blanc */
+    background-color: #ff6600;
+    color: white;
 }
 
 [data-theme="light"] .boutique-link:hover {
-    color: #16a085; /* Couleur au survol */
+    background-color: #e65c00;
+    transform: translateY(-2px);
 }
 
-/* Style pour le thème dark */
 [data-theme="dark"] .boutique-link {
-    background-color: #ff6600; /* Fond gris foncé */
-    color: #f0f0f0; /* Texte clair */
+    background-color: #ff6600;
+    color: white;
 }
 
 [data-theme="dark"] .boutique-link:hover {
-    color: #1abc9c; /* Couleur au survol */
+    background-color: #e65c00;
+    transform: translateY(-2px);
+}
+
+/* Bouton like */
+.boutique-like {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    color: #ff4757;
+    font-size: 1.1rem;
+}
+
+[data-theme="dark"] .boutique-like {
+    background: rgba(30, 30, 30, 0.9);
+    color: #ff6b81;
+}
+
+.boutique-like:hover {
+    transform: scale(1.1);
+    color: #ff0000;
+}
+
+.boutique-like.liked {
+    color: #ff0000;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .boutiques {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .b-contenaire {
+        width: 95%;
+    }
+    
+    .boutiques {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .logo-container_b {
+        height: 140px;
     }
 }
 
 @media (max-width: 768px) {
     .b-contenaire {
         width: 100%;
-        margin: 70px 0;
+        margin: 60px 0;
         border-radius: 0;
+        padding: 15px;
     }
 
     .boutiques {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
     }
 
     .header-section-boutique {
-        padding: 10px;
-        border-radius: 0;
+        padding: 15px;
     }
 
     .responsive-title {
-        font-size: 24px;
+        font-size: 1.8rem;
     }
 
-    .pagination-container {
-        margin-top: 5px;
-    }
-
-    .page-btn {
-        padding: 4px 8px;
-        font-size: 12px;
-    }
-
-    .logo-container_b img {
-        height: auto; /* Hauteur automatique pour s'adapter */
+    .logo-container_b {
+        height: 120px;
     }
 }
 
-@media (max-width: 480px) {
-    .b-contenaire {
-        padding: 10px;
-    }
-
+@media (max-width: 576px) {
     .boutiques {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .boutique {
-        padding: 10px;
-        width: calc(100% - 10px);
-    }
-
-    .logo-container_b img {
-        height: auto; /* Hauteur automatique pour s'adapter */
-    }
-
-    .boutique-info h3 {
-        font-size: 16px;
-    }
-
-    .boutique-info p {
-        font-size: 12px;
-    }
-
-    .boutique-link {
-        padding: 8px 15px;
-        font-size: 14px;
+        gap: 12px;
     }
 
     .responsive-title {
-        font-size: 20px;
+        font-size: 1.6rem;
+    }
+
+    .boutique-info h3 {
+        font-size: 1rem;
+    }
+
+    .boutique-info p {
+        font-size: 0.85rem;
+    }
+
+    .boutique-link {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .boutiques {
+        grid-template-columns: 1fr;
     }
 }
