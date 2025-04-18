@@ -1108,112 +1108,88 @@ a:hover {
 
 
 /*----------------------------------------- Styles modal général communs pour les cartes de boutique dans le modal------------------------- */
-/* Animation d'apparition du modal */
-@keyframes fadeIn {
-    from {
+/* Animation d'entrée/sortie moderne */
+@keyframes modalIn {
+    0% {
         opacity: 0;
-        transform: scale(0.9); /* Légère réduction au début */
+        transform: translate(-50%, -48%) scale(0.96);
     }
-    to {
+    100% {
         opacity: 1;
-        transform: scale(1); /* Taille normale à la fin */
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
-/* Animation de disparition du modal */
-@keyframes fadeOut {
-    from {
+@keyframes modalOut {
+    0% {
         opacity: 1;
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
-    to {
+    100% {
         opacity: 0;
-        transform: scale(0.9);
+        transform: translate(-50%, -48%) scale(0.96);
     }
 }
 
-/* Appliquer l'animation lors de l'ouverture du modal */
-.modal.fade.show .modal-dialog {
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Appliquer l'animation lors de la fermeture du modal */
-.modal.fade .modal-dialog {
-    animation: fadeOut 0.3s ease-out;
-}
-
-/* Centrage et style du modal */
+/* Styles principaux du modal */
 #productModal .modal-dialog {
-    max-width: 95%;
     position: fixed;
-    top: 55%; /* Légèrement descendu pour éviter la navbar */
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centrage parfait */
+    transform: translate(-50%, -50%);
     margin: 0;
+    width: 90%;
+    max-width: 1400px;
+    height: 85vh;
+    animation: modalOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+#productModal.show .modal-dialog {
+    animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 #productModal .modal-content {
-    max-height: 90vh; /* Réduit légèrement la hauteur pour éviter la navbar */
-    height: 90vh;
-    background: rgba(44, 47, 51, 0.95); /* Fond semi-transparent */
-    border-radius: 15px;
-    border: 1px solid rgba(255, 111, 0, 0.2);
-    color: white;
-    backdrop-filter: blur(15px);
-    overflow: hidden; /* Empêcher le débordement du contenu */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Ombre moderne */
+    height: 100%;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 }
 
-/* Couleurs pour le thème clair et sombre */
 [data-theme="dark"] #productModal .modal-content {
-    background: rgba(44, 47, 51, 0.95); /* Sombre */
-    color: white;
+    background: rgba(30, 30, 35, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 [data-theme="light"] #productModal .modal-content {
-    background: rgba(255, 255, 255, 0.95); /* Clair */
-    color: black;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Styles du bouton de fermeture */
-#productModal .close {
-    color: #FF6F00;
-    font-size: 1.5rem;
-    background: none;
+/* Bouton de fermeture personnalisé */
+.btn-close-custom {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgba(255, 111, 0, 0.1);
     border: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-[data-theme="dark"] #productModal .close {
+    transition: all 0.3s ease;
     color: #FF6F00;
 }
 
-[data-theme="light"] #productModal .close {
-    color: #000;
+.btn-close-custom:hover {
+    background: rgba(255, 111, 0, 0.2);
+    transform: rotate(90deg);
 }
 
-/* Changer la couleur du bouton de fermeture au survol */
-#productModal .close:hover {
-    color: #e67e22; /* Changement de couleur au survol */
-}
-
-/* Styles du header du modal */
-#productModal .modal-header {
-    background-color: transparent;
-    border-bottom: 1px solid rgba(211, 84, 0, 0.2);
-    padding: 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-}
-
-#productModal .modal-body {
-    padding-top: 20px;
-    overflow-y: auto; /* Permettre le défilement si le contenu est trop long */
-}
-
-/* Styles modernes pour la barre de recherche */
+/* Barre de recherche moderne */
 .search-wrapper {
     max-width: 800px;
     margin: 0 auto;
@@ -1222,141 +1198,121 @@ a:hover {
 
 .search-input {
     background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 111, 0, 0.3);
-    border-radius: 30px; /* Bordures plus arrondies */
-    padding: 12px 20px 12px 50px; /* Texte collé à l'icône */
-    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 14px 20px 14px 48px;
+    color: white;
     font-size: 1rem;
     transition: all 0.3s ease;
     width: 100%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+    backdrop-filter: blur(10px);
+    height: 52px;
+}
+
+[data-theme="light"] .search-input {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
     background: rgba(255, 255, 255, 0.15);
     border-color: #FF6F00;
-    box-shadow: 0 0 15px rgba(255, 111, 0, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
     outline: none;
 }
 
 .search-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
-    font-weight: 300; /* Texte plus léger */
+    font-weight: 400;
+}
+
+[data-theme="light"] .search-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
 }
 
 .search-icon {
     position: absolute;
-    left: 20px; /* Position ajustée */
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
     color: #FF6F00;
-    font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
     pointer-events: none;
     transition: color 0.3s ease;
 }
 
-.search-input:focus + .search-icon {
-    color: #e67e22; /* Changement de couleur au focus */
+/* Modal Spinner */
+.modal-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    backdrop-filter: blur(4px);
+}
+
+.modal-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #FF6F00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
     #productModal .modal-dialog {
-        margin: 0;
-        width: 100vw;
-        height: 100vh;
-        position: fixed;
-        top: 55%; /* Légèrement descendu pour éviter la navbar */
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
+        width: 95%;
+        height: 90vh;
     }
-
-    #productModal .modal-content {
-        width: 100%;
-        height: 90vh; /* Réduit légèrement la hauteur */
-        border-radius: 0;
+    
+    .search-input {
+        padding: 12px 16px 12px 44px;
+        height: 48px;
     }
-
-    #productModal .search-wrapper {
-        width: 90%;
-    }
-
-    #productModal .search-input {
-        font-size: 14px;
-        padding: 10px 20px 10px 45px; /* Ajustement pour mobile */
-    }
-
-    #modal-boutique-container .col-12 {
-        width: calc(50% - 10px);
+    
+    .search-icon {
+        left: 14px;
     }
 }
 
 @media (max-width: 480px) {
-    #productModal .search-wrapper {
-        width: 95%;
-    }
-
-    #productModal .search-input {
-        font-size: 13px;
-        padding: 8px 20px 8px 40px; /* Ajustement pour petits écrans */
-    }
-
-    #modal-boutique-container .col-12 {
+    #productModal .modal-dialog {
         width: 100%;
+        height: 100%;
+        border-radius: 0;
     }
-}
-
-/* Supprimer les transformations initiales */
-.modal.fade .modal-dialog {
-    transform: translate(-50%, -50%) !important; /* Toujours centré */
-    opacity: 0; /* Initialement invisible */
-}
-
-/* Appliquer l'animation lors de l'ouverture */
-.modal.fade.show .modal-dialog {
-    opacity: 1; /* Devenir visible */
-    transform: translate(-50%, -50%) scale(1); /* Centré et à la bonne taille */
-}
-
-/* Conteneur du texte de chargement */
-#spinner-modal {
-    position: absolute; /* Position absolue pour flotter au-dessus */
-    top: 20px; /* Position en haut du modal */
-    left: 50%; /* Centrage horizontal */
-    transform: translateX(-50%); /* Ajustement pour un centrage horizontal */
-    z-index: 1050; /* Au-dessus des autres éléments du modal */
-    background: rgba(0, 0, 0, 0.7); /* Fond semi-transparent */
-    border-radius: 10px;
-    padding: 15px 20px;
-    display: none; /* Masqué par défaut */
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-width: 200px;
-    height: auto;
-    min-height: 60px;
-}
-
-/* Texte de chargement */
-#loading-text {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-align: center;
-    margin: 0; /* Supprimer la marge par défaut */
-}
-
-/* Ajustements pour les petits écrans */
-@media (max-width: 768px) {
-    #spinner-modal {
-        top: 10px; /* Plus proche du haut sur les petits écrans */
-        padding: 10px 15px; /* Réduire le padding */
-        min-width: 150px; /* Réduire la largeur minimale */
-        min-height: 50px; /* Réduire la hauteur minimale */
+    
+    .modal-header {
+        padding: 1rem 0.5rem;
     }
-
-    #loading-text {
-        font-size: 1rem; /* Réduire la taille du texte */
+    
+    .btn-close-custom {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .modal-spinner {
+        padding: 16px 20px;
+    }
+    
+    .modal-loading-spinner {
+        width: 32px;
+        height: 32px;
     }
 }
 /*------------------------- Spinner de chargement pour la section des produits---------------------------------- */
@@ -3257,23 +3213,32 @@ body {
 <!------------------------------ Modal de recherche des boutiques ------------------------------>
 <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true"
      data-bs-backdrop="true" data-bs-keyboard="true">
-    <div class="modal-dialog modal-fullscreen">
+    <div class="modal-dialog">
         <div class="modal-content">
             <!-- Header du modal -->
             <div class="modal-header border-0 py-4">
                 <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-auto">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
                         </div>
                         <div class="col">
                             <div class="search-wrapper position-relative">
                                 <input type="search"
                                        id="modal-search-input"
                                        class="form-control form-control-lg search-input"
-                                       placeholder="Rechercher une boutique..."
-                                       oninput="performModalSearch(event)">
-                                <i class="fas fa-search search-icon"></i>
+                                       placeholder="Rechercher une boutique...">
+                                <div class="search-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3283,11 +3248,9 @@ body {
             <!-- Corps du modal -->
             <div class="modal-body p-0">
                 <div class="container-fluid py-4">
-                    <!-- Texte de chargement flottant -->
-                    <div id="spinner-modal">
-                        <div id="loading-text">
-                            Chargement
-                        </div>
+                    <!-- Modal Spinner -->
+                    <div id="modalSpinner" class="modal-spinner">
+                        <div class="modal-loading-spinner"></div>
                     </div>
 
                     <!-- Résultats de recherche -->
@@ -3980,7 +3943,7 @@ body {
    <script src="{% static 'homeJs/navigateurControle.js' %}"></script>
    <script src="{% static 'homeJs/changeThemeIcone.js' %}"></script>
    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script>
+   <script>
     $(document).ready(function() {
         // Afficher le modal lorsque l'utilisateur clique dans la barre de recherche
         $(document).on("focus", "#search-input", function() {
@@ -3994,66 +3957,48 @@ body {
         // Recherche en temps réel lors de la saisie
         $(document).on("input", "#search-input", function() {
             const query = $(this).val().trim();
-            $.ajax({
-                url: "/rechercher_boutiques_ajax/",
-                type: "GET",
-                data: { query: query },
-                beforeSend: function() {
-                    // Afficher le spinner et le texte de chargement avec points animés
-                    $('#spinner-modal').css('display', 'flex');
-                    $('#loading-text').css('display', 'block').text('Chargement');
-                    animateLoadingText(); // Animer les points
-                },
-                success: function(response) {
-                    setTimeout(function() {
-                        // Cacher le spinner (cercle qui tourne) et le texte de chargement après 1 seconde
-                        $('#spinner-modal').hide(); // Masquer le spinner
-                        $('#loading-text').hide(); // Masquer le texte "Chargement"
+            if (query.length > 0) {
+                $('#modalSpinner').show();
+                $.ajax({
+                    url: "/rechercher_boutiques_ajax/",
+                    type: "GET",
+                    data: { query: query },
+                    success: function(response) {
+                        $('#modalSpinner').hide();
                         $("#modal-boutique-container").html(response.boutiques_modal);
-                    }, 1000); // Afficher le spinner pendant 1 seconde avant de charger le contenu
-                },
-                error: function() {
-                    console.error('Erreur lors de la récupération des résultats');
-                }
-            });
+                    },
+                    error: function() {
+                        $('#modalSpinner').hide();
+                        console.error('Erreur lors de la récupération des résultats');
+                    }
+                });
+            } else {
+                $("#modal-boutique-container").empty();
+            }
         });
     
         // Fonction de recherche dans le modal
         $(document).on("input", "#modal-search-input", function(event) {
             const query = $(this).val().trim();
-            $.ajax({
-                url: "/rechercher_boutiques_ajax/",
-                type: "GET",
-                data: { query: query },
-                beforeSend: function() {
-                    // Afficher le spinner et le texte de chargement avec points animés
-                    $('#spinner-modal').css('display', 'flex');
-                    $('#loading-text').css('display', 'block').text('Chargement');
-                    animateLoadingText(); // Animer les points
-                },
-                success: function(response) {
-                    setTimeout(function() {
-                        // Cacher le spinner (cercle qui tourne) et le texte de chargement après 1 seconde
-                        $('#spinner-modal').hide(); // Masquer le spinner
-                        $('#loading-text').hide(); // Masquer le texte "Chargement"
+            if (query.length > 0) {
+                $('#modalSpinner').show();
+                $.ajax({
+                    url: "/rechercher_boutiques_ajax/",
+                    type: "GET",
+                    data: { query: query },
+                    success: function(response) {
+                        $('#modalSpinner').hide();
                         $("#modal-boutique-container").html(response.boutiques_modal);
-                    }, 1000); // Afficher le spinner pendant 1 seconde avant de charger le contenu
-                },
-                error: function() {
-                    console.error('Erreur lors de la récupération des résultats');
-                }
-            });
+                    },
+                    error: function() {
+                        $('#modalSpinner').hide();
+                        console.error('Erreur lors de la récupération des résultats');
+                    }
+                });
+            } else {
+                $("#modal-boutique-container").empty();
+            }
         });
-    
-        // Fonction pour animer les points de "Chargement..."
-        function animateLoadingText() {
-            let count = 0;
-            const dots = ['.', '..', '...'];
-            setInterval(function() {
-                $('#loading-text').text('Chargement' + dots[count]);
-                count = (count + 1) % dots.length;
-            }, 500); // Change les points toutes les 500ms
-        }
     });
     
     // ----------------------------------------- Fermeture du modal en cliquant en dehors -------------------------
@@ -4093,8 +4038,8 @@ body {
         mediaQuery.addListener(handleScreenChange);
         handleScreenChange(mediaQuery);
     });
-    
-  </script>
+    </script>
+
   <script>
     $(document).ready(function() {
         // Clic sur les boutons de page

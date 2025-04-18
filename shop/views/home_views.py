@@ -327,40 +327,46 @@ def home(request):
 
 
 
-
 def rechercher_boutiques_ajax(request):
     """
     Recherche des boutiques selon trois critères (produits_vendus, description, nom_boutique)
-    et retourne les résultats en JSON. Si aucune recherche n'est effectuée, retourne les 10 premières boutiques.
+    et retourne les résultats en JSON. Si aucune recherche n'est effectuée, retourne 10 boutiques aléatoires.
     """
-    query = request.GET.get('query', '').strip()  # Valeur de la recherche
+    try:
+        query = request.GET.get('query', '').strip()
+        
+        # Filtrer les boutiques publiées avec select_related pour optimiser
+        boutiques = Boutique.objects.filter(publier=True).select_related('utilisateur')
+        
+        if query:
+            # Recherche insensible à la casse avec indexation
+            boutiques = boutiques.filter(
+                Q(titre__icontains=query) |
+                Q(produits_vendus__icontains=query) |
+                Q(utilisateur__nom_boutique__icontains=query)
+            ).distinct()
+        else:
+            # 10 boutiques aléatoires pour plus de variété
+            boutiques = boutiques.order_by('?')[:10]
 
-    # Filtrer les boutiques publiées
-    boutiques = Boutique.objects.filter(publier=True)
-    
-    if query:
-        # Rechercher dans les trois champs (produits_vendus, description, nom_boutique)
-        boutiques = boutiques.filter(
-            Q(description__icontains=query) |
-            Q(produits_vendus__icontains=query) |
-            Q(utilisateur__nom_boutique__icontains=query)
-        )
-    else:
-        # Si aucune recherche, ne retourner que les 10 premières boutiques
-        boutiques = boutiques[:10]
-
-    # Construction de la réponse JSON
-    boutiques_data = []
-    for boutique in boutiques:
-        boutiques_data.append({
+        # Construction de la réponse JSON optimisée
+        boutiques_data = [{
             "nom_boutique": boutique.utilisateur.nom_boutique,
-            "description": boutique.description,
+            "description": boutique.titre,
             "logo": boutique.logo.url if boutique.logo else None,
             "produits_vendus": boutique.produits_vendus,
-            "page_html_path": reverse('boutique_contenu', args=[boutique.id]),
+            "page_html_path": reverse('boutique_contenu', args=[boutique.identifiant]),
+        } for boutique in boutiques]
+
+        # Génération du HTML
+        boutiques_modal = render_to_string('boutiques_modal.html', {'boutiques': boutiques_data}, request=request)
+        
+        return JsonResponse({
+            "boutiques_modal": boutiques_modal,
+            "boutiques": boutiques_data,
+            "count": len(boutiques_data)
         })
-    
-    # Générer le rendu HTML des boutiques
-    boutiques_modal = render_to_string('boutiques_modal.html', {'boutiques': boutiques_data}, request=request)
-    
-    return JsonResponse({"boutiques_modal": boutiques_modal, "boutiques": boutiques_data})
+
+    except Exception as e:
+        logger.error(f"Erreur recherche boutique: {str(e)}")
+        return JsonResponse({"error": "Une erreur est survenue"}, status=500)

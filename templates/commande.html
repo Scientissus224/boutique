@@ -93,6 +93,48 @@
             margin-top: 8px;
             text-align: right;
         }
+
+        /* Styles pour les images de produits */
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 16px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .product-attributes {
+            font-size: 14px;
+            color: #6B7280;
+            margin: 4px 0;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #F59E0B;
+            white-space: nowrap;
+            margin-left: 16px;
+            min-width: 80px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -127,7 +169,6 @@
         <!-- Contenu -->
         <div style="padding: 32px;">
             <p style="font-size: 16px; color: #374151; margin-bottom: 24px;">Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
-            
             <!-- Carte informations client -->
             <div style="background: #F9FAFB; border-radius: 8px; padding: 24px; margin-bottom: 24px; border: 1px solid #E5E7EB;">
                 <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Informations du client</h2>
@@ -148,17 +189,18 @@
                 <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Récapitulatif des produits</h2>
                 <div style="margin-top: 16px;">
                     {% for produit in produits_info %}
-                        <div style="display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #E5E7EB;">
-                            <div>
-                                <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 500;">{{ produit.nom }}</h4>
+                        <div class="product-item">
+                            <img src="{{ produit.image |default:'https://via.placeholder.com/80' }}" alt="{{ produit.nom }}" class="product-image">
+                            <div class="product-details">
+                                <h4 class="product-name">{{ produit.nom }}</h4>
                                 {% if produit.type == 'variante' %}
-                                    <div style="font-size: 14px; color: #6B7280; margin: 4px 0;">
+                                    <div class="product-attributes">
                                         <div><strong>Taille:</strong> {{ produit.taille }}</div>
                                         <div><strong>Couleur:</strong> {{ produit.couleur }}</div>
                                     </div>
                                 {% endif %}
                             </div>
-                            <div style="font-weight: 600; color: #F59E0B; white-space: nowrap; margin-left: 16px;">{{ produit.prix }} {{ devise }}</div>
+                            <div class="product-price">{{ produit.prix }} {{ devise }}</div>
                         </div>
                     {% endfor %}
                 </div>
