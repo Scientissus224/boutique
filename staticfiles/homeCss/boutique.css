@@ -247,10 +247,11 @@
 }
 
 .boutique-link {
-    padding: 10px 20px;
+    padding: 10px 30px 10px 20px; /* Plus de padding à droite (30px) qu'à gauche (20px) */
     border-radius: 5px;
     display: inline-flex;
-    align-items: center;
+    justify-content: center; /* Centrer le contenu horizontalement */
+    align-items: center; /* Centrer le contenu verticalement */
     text-decoration: none;
     transition: background-color 0.3s ease;
     width: 100%;
@@ -258,6 +259,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    gap: 8px; /* Espacement entre l'icône et le texte */
 }
 
 /* Style pour le thème light */
