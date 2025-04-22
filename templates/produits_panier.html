@@ -3057,7 +3057,7 @@
         </button>
     </div>
 </div>
-<!-- Modal de recherche produits -->
+<!-- Modal de recherche produits (version originale inchangée) -->
 <div id="modal-produit-panier" class="modal-produit-panier">
     <div class="modal-produit-panier-content">
         <div class="modal-produit-panier-header">
@@ -3088,6 +3088,7 @@
         </div>
     </div>
 </div>
+
  <!-----------------------------Section du footer--------------------------->
  <footer class="footer">
     <div class="footer-container">
@@ -3823,71 +3824,117 @@ window.addEventListener('click', function(event) {
    
 </script>
 <script>
-const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
-
-if (!user_id) {
-    console.error("Utilisateur ID est manquant");
-}
-
-$(document).ready(function () {
-    // Fonction pour récupérer et afficher les produits
-    function chargerProduits() {
-        let nom_produit = $('#modal-produit-panier-search-input').val().trim();
-        let prix_min = $('#modal-produit-panier-min-price').val();
-        let prix_max = $('#modal-produit-panier-max-price').val();
-
-        console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
-
-        // Afficher un indicateur de chargement en réduisant l'opacité
-        $('#modal-produit-panier-product-container').css('opacity', '0.5');
-
-        $.ajax({
-            url: '/produits/recherche/' + user_id + '/',
-            type: 'GET',
-            data: {
-                'nom': nom_produit,
-                'prix_min': prix_min,
-                'prix_max': prix_max
-            },
-            success: function (response) {
-                console.log("✅ Réponse AJAX reçue :", response);
-
-                if (response.produits_html) {
-                    $('#modal-produit-panier-product-container').html(response.produits_html).css('opacity', '1');
-
-                    // Vérifier si aucun produit n'a été retourné
-                    if ($('#modal-produit-panier-product-container').html().trim() === '') {
-                        $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+    const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
+    
+    if (!user_id) {
+        console.error("Utilisateur ID est manquant");
+    }
+    
+    $(document).ready(function () {
+        // Ajout des styles pour le spinner directement via JavaScript
+        const spinnerStyles = `
+            .modal-produit-panier-spinner-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                min-height: 100px;
+            }
+            
+            .modal-produit-panier-spinner {
+                border: 4px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top: 4px solid #3498db;
+                width: 40px;
+                height: 40px;
+                animation: modal-produit-panier-spin 1s linear infinite;
+                margin-bottom: 10px;
+            }
+            
+            @keyframes modal-produit-panier-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .modal-produit-panier-loading-text {
+                color: #555;
+                font-size: 14px;
+            }
+        `;
+        
+        // Création et ajout de la balise style
+        const styleElement = document.createElement('style');
+        styleElement.textContent = spinnerStyles;
+        document.head.appendChild(styleElement);
+    
+        // Fonction pour afficher le spinner
+        function showLoadingSpinner() {
+            $('#modal-produit-panier-product-container').html(`
+                <div class="modal-produit-panier-spinner-container">
+                    <div class="modal-produit-panier-spinner"></div>
+                    <p class="modal-produit-panier-loading-text">Chargement des produits...</p>
+                </div>
+            `);
+        }
+    
+        // Fonction pour récupérer et afficher les produits
+        function chargerProduits() {
+            let nom_produit = $('#modal-produit-panier-search-input').val().trim();
+            let prix_min = $('#modal-produit-panier-min-price').val();
+            let prix_max = $('#modal-produit-panier-max-price').val();
+    
+            console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
+    
+            // Afficher le spinner de chargement
+            showLoadingSpinner();
+    
+            $.ajax({
+                url: '/produits/recherche/' + user_id + '/',
+                type: 'GET',
+                data: {
+                    'nom': nom_produit,
+                    'prix_min': prix_min,
+                    'prix_max': prix_max
+                },
+                success: function (response) {
+    
+                    if (response.produits_html) {
+                        $('#modal-produit-panier-product-container').html(response.produits_html);
+    
+                        // Vérifier si aucun produit n'a été retourné
+                        if ($('#modal-produit-panier-product-container').html().trim() === '') {
+                            $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+                        }
+                    } else {
+                        console.error("⚠️ Réponse inattendue du serveur :", response);
+                        $('#modal-produit-panier-product-container').html('<p class="error-message">Une erreur s\'est produite</p>');
                     }
-                } else {
-                    console.error("⚠️ Réponse inattendue du serveur :", response);
-                    alert("Une erreur s'est produite.");
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ Erreur AJAX :", {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText
+                    });
+                    $('#modal-produit-panier-product-container').html('<p class="error-message">Erreur lors du chargement des produits</p>');
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error("❌ Erreur AJAX :", {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    responseText: xhr.responseText
-                });
-                alert("Une erreur s'est produite lors du chargement des produits.");
+            });
+        }
+    
+        // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
+        $('.modal-produit-panier-apply-btn').on('click', function () {
+            chargerProduits();
+        });
+    
+        // Optionnel: Ajouter la recherche lors de la touche Entrée
+        $('#modal-produit-panier-search-input').on('keypress', function(e) {
+            if (e.which === 13) {
+                chargerProduits();
             }
         });
-    }
-
-    // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
-    $('.modal-produit-panier-apply-btn').on('click', function () {
-        chargerProduits();
     });
-
-    // Optionnel: Ajouter la recherche lors de la touche Entrée
-    $('#modal-produit-panier-search-input').on('keypress', function(e) {
-        if (e.which === 13) {
-            chargerProduits();
-        }
-    });
-});
-</script>
+    </script>
     <script>
         // Gestion du menu mobile
         function toggleMenu() {

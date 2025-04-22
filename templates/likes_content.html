@@ -22,7 +22,7 @@
         <!-- Détails du produit -->
         <div class="product-details">
             <!-- Titre et catégorie -->
-            <div class="product-category">Électronique</div>
+            <div class="product-category">En vente</div>
             <h3 class="product-title">
                 <a href="{{ produit.url }}">{{ produit.nom|truncatechars:50 }}</a>
             </h3>
@@ -30,7 +30,7 @@
             <!-- Évaluation -->
             <div class="product-rating">
                 <div class="stars" style="--rating: 4.5;"></div>
-                <span class="reviews">(24 avis)</span>
+                <span class="reviews"></span>
             </div>
             
             <!-- Prix -->
@@ -51,7 +51,7 @@
                     {% endif %}
                 </span>
                 <span class="delivery-info">
-                    <i class="fas fa-shipping-fast"></i> Livraison gratuite
+                    <i class="fas fa-shipping-fast"></i> Livraison rapide
                 </span>
             </div>
         </div>

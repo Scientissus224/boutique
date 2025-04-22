@@ -63,7 +63,7 @@ def activate(request, uidb64, token):
             utilisateur_temporaire.delete()
             informations_temporaire.delete()  # Supprimer les informations temporaires après transfert
 
-            messages.success(request, 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.')
+            messages.success(request, "Un email contenant votre identifiant et un lien d'activation vous a été envoyé. Veuillez vérifier votre boîte de réception et activer votre compte en cliquant sur le lien. Tant que votre compte n’est pas activé, vous ne pourrez pas vous connecter.")
             return redirect('login')
 
         except Exception as e:

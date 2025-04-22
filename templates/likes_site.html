@@ -2578,7 +2578,7 @@
 
 
  
-<!-- Modal de recherche produits -->
+<!-- Modal de recherche produits (sans CSS pour le spinner) -->
 <div id="modal-produit-panier" class="modal-produit-panier">
     <div class="modal-produit-panier-content">
         <div class="modal-produit-panier-header">
@@ -2602,13 +2602,12 @@
                 </button>
             </div>
             <div id="modal-produit-panier-product-container" class="modal-produit-panier-product-section">
-                <div class="modal-produit-panier-product-grid" id="modal-produit-panier-product-container">
-                    <!-- Les produits filtrés ou recherchés apparaîtront ici -->
-                </div>
+                <!-- Les produits ou le spinner apparaîtront ici -->
             </div>
         </div>
     </div>
 </div>
+
  <!-----------------------------Section du footer--------------------------->
  <footer class="footer">
     <div class="footer-container">
@@ -2676,8 +2675,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- ---------------------------// API gestion des categories produits  ---------------------------------->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script>document.addEventListener('DOMContentLoaded', function() {
     // Configuration centrale améliorée
     const CONFIG = {
         RETRY_DELAY: 3000,
@@ -2688,8 +2686,7 @@
             ADD_TO_CART: '/ajouter_produit_au_panier/',
             GET_CART_COUNT: '/obtenir_panier/',
             GET_LIKE_COUNT: '/obtenir_like/',
-            CSRF_TOKEN: '/get-csrf-token/',
-            BULK_REMOVE_LIKES: '/retirer-likes-en-masse/'
+            CSRF_TOKEN: '/get-csrf-token/'
         },
         ERROR_MESSAGES: {
             NETWORK: 'Problème de connexion. Réessai...',
@@ -2854,19 +2851,15 @@
     }
 
     // Fonction générique de compteur
-    function updateCounter(url, dataKey, selectors) {
-        return new Promise((resolve, reject) => {
-            secureFetch(url)
-                .then(data => {
-                    const count = data[dataKey] || 0;
-                    updateElementsText(selectors, count);
-                    resolve();
-                })
-                .catch(error => {
-                    updateElementsText(selectors, '0');
-                    reject(error);
-                });
-        });
+    async function updateCounter(url, dataKey, selectors) {
+        try {
+            const data = await secureFetch(url);
+            const count = data[dataKey] || 0;
+            updateElementsText(selectors, count);
+        } catch (error) {
+            console.error(`Erreur mise à jour compteur ${dataKey}:`, error);
+            updateElementsText(selectors, '0');
+        }
     }
 
     // Mise à jour des éléments DOM
@@ -2896,6 +2889,9 @@
                 body: JSON.stringify({ product_id: productId })
             });
 
+            // Mise à jour immédiate du compteur de likes
+            await updateCounter(CONFIG.API_ENDPOINTS.GET_LIKE_COUNT, 'total_likes', ['#likes-count-nav', '#sidebar-like-count']);
+            
             // Animation de suppression réussie
             productCard.style.height = `${productCard.offsetHeight}px`;
             productCard.style.overflow = 'hidden';
@@ -2909,7 +2905,6 @@
                 setTimeout(() => {
                     productCard.remove();
                     showToast(CONFIG.ERROR_MESSAGES.SUCCESS_REMOVE, 'success');
-                    updateCounters();
                     
                     // Vérifier s'il reste des produits
                     const remainingProducts = document.querySelectorAll('.liked-product-card').length;
@@ -2937,7 +2932,7 @@
         }
     }
 
-    // Nouvelle implémentation de suppression en masse avec boucle et gestion par lots
+    // Nouvelle implémentation de suppression en masse avec boucle sur REMOVE_LIKE
     async function bulkRemoveProducts(productIds) {
         if (!productIds || productIds.length === 0) {
             showToast(CONFIG.ERROR_MESSAGES.SELECTION, 'error');
@@ -2957,72 +2952,54 @@
         });
 
         try {
-            // Diviser les IDs en lots pour éviter de surcharger le serveur
-            const batches = [];
-            for (let i = 0; i < productIds.length; i += CONFIG.BULK_OPERATION.BATCH_SIZE) {
-                batches.push(productIds.slice(i, i + CONFIG.BULK_OPERATION.BATCH_SIZE));
-            }
-
             const results = {
                 successIds: [],
                 failedIds: []
             };
 
-            // Traiter chaque lot avec un délai entre eux
-            for (let i = 0; i < batches.length; i++) {
-                const batch = batches[i];
+            // Traiter chaque produit individuellement avec REMOVE_LIKE
+            for (const productId of productIds) {
                 try {
-                    const response = await secureFetch(CONFIG.API_ENDPOINTS.BULK_REMOVE_LIKES, {
+                    const response = await secureFetch(`${CONFIG.API_ENDPOINTS.REMOVE_LIKE}${productId}/`, {
                         method: 'POST',
-                        body: JSON.stringify({ product_ids: batch })
+                        body: JSON.stringify({ product_id: productId })
                     });
 
-                    if (response.success_ids) {
-                        results.successIds.push(...response.success_ids);
-                    }
-                    if (response.failed_ids) {
-                        results.failedIds.push(...response.failed_ids);
-                    }
-
-                    // Animer les cartes supprimées avec succès
-                    batch.forEach(id => {
-                        if (response.success_ids && response.success_ids.includes(id)) {
-                            const card = document.querySelector(`.liked-product-card[data-product-id="${id}"]`);
-                            if (card) {
-                                card.style.height = `${card.offsetHeight}px`;
-                                card.style.overflow = 'hidden';
-                                
-                                setTimeout(() => {
-                                    card.style.height = '0';
-                                    card.style.margin = '0';
-                                    card.style.padding = '0';
-                                    card.style.border = 'none';
-                                    
-                                    setTimeout(() => card.remove(), 300);
-                                }, 100);
-                            }
-                        }
-                    });
-
-                    // Délai entre les lots sauf pour le dernier
-                    if (i < batches.length - 1) {
-                        await new Promise(resolve => setTimeout(resolve, CONFIG.BULK_OPERATION.DELAY_BETWEEN_BATCHES));
+                    results.successIds.push(productId);
+                    
+                    // Animer la carte supprimée avec succès
+                    const card = document.querySelector(`.liked-product-card[data-product-id="${productId}"]`);
+                    if (card) {
+                        card.style.height = `${card.offsetHeight}px`;
+                        card.style.overflow = 'hidden';
+                        
+                        setTimeout(() => {
+                            card.style.height = '0';
+                            card.style.margin = '0';
+                            card.style.padding = '0';
+                            card.style.border = 'none';
+                            
+                            setTimeout(() => card.remove(), 300);
+                        }, 100);
                     }
                 } catch (error) {
-                    console.error(`Erreur lors du traitement du lot ${i}:`, error);
-                    results.failedIds.push(...batch);
+                    console.error(`Erreur suppression produit ${productId}:`, error);
+                    results.failedIds.push(productId);
+                    
+                    // Restaurer la carte en cas d'échec
+                    const card = document.querySelector(`.liked-product-card[data-product-id="${productId}"]`);
+                    if (card) {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                        card.querySelector('.product-select').checked = true;
+                    }
                 }
             }
 
-            // Gestion des cartes en échec
-            results.failedIds.forEach(id => {
-                const card = document.querySelector(`.liked-product-card[data-product-id="${id}"]`);
-                if (card) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'scale(1)';
-                    card.querySelector('.product-select').checked = true;
-                }
-            });
+            // Mise à jour du compteur après toutes les suppressions
+            if (results.successIds.length > 0) {
+                await updateCounter(CONFIG.API_ENDPOINTS.GET_LIKE_COUNT, 'total_likes', ['#likes-count-nav', '#sidebar-like-count']);
+            }
 
             // Feedback utilisateur
             if (results.failedIds.length > 0) {
@@ -3037,15 +3014,10 @@
                 );
             }
 
-            // Mise à jour des compteurs et rechargement si nécessaire
-            if (results.successIds.length > 0) {
-                updateCounters();
-                
-                // Vérifier s'il reste des produits
-                const remainingProducts = document.querySelectorAll('.liked-product-card').length;
-                if (remainingProducts === 0) {
-                    loadLikedProducts(); // Recharger pour afficher le message "Aucun favori"
-                }
+            // Rechargement si nécessaire
+            const remainingProducts = document.querySelectorAll('.liked-product-card').length;
+            if (remainingProducts === 0) {
+                loadLikedProducts(); // Recharger pour afficher le message "Aucun favori"
             }
 
             return {
@@ -3276,7 +3248,6 @@
                     const loadingOverlay = createFullscreenLoader();
                     
                     try {
-                        // Utilisation de la nouvelle fonction bulkRemoveProducts avec boucle
                         await bulkRemoveProducts(productIds);
                     } finally {
                         button.disabled = false;
@@ -3561,71 +3532,103 @@
       
    </script>
    <script>
-   const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
-   
-   if (!user_id) {
-       console.error("Utilisateur ID est manquant");
-   }
-   
-   $(document).ready(function () {
-       // Fonction pour récupérer et afficher les produits
-       function chargerProduits() {
-           let nom_produit = $('#modal-produit-panier-search-input').val().trim();
-           let prix_min = $('#modal-produit-panier-min-price').val();
-           let prix_max = $('#modal-produit-panier-max-price').val();
-   
-           console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
-   
-           // Afficher un indicateur de chargement en réduisant l'opacité
-           $('#modal-produit-panier-product-container').css('opacity', '0.5');
-   
-           $.ajax({
-               url: '/produits/recherche/' + user_id + '/',
-               type: 'GET',
-               data: {
-                   'nom': nom_produit,
-                   'prix_min': prix_min,
-                   'prix_max': prix_max
-               },
-               success: function (response) {
-                   console.log("✅ Réponse AJAX reçue :", response);
-   
-                   if (response.produits_html) {
-                       $('#modal-produit-panier-product-container').html(response.produits_html).css('opacity', '1');
-   
-                       // Vérifier si aucun produit n'a été retourné
-                       if ($('#modal-produit-panier-product-container').html().trim() === '') {
-                           $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
-                       }
-                   } else {
-                       console.error("⚠️ Réponse inattendue du serveur :", response);
-                       alert("Une erreur s'est produite.");
-                   }
-               },
-               error: function (xhr, status, error) {
-                   console.error("❌ Erreur AJAX :", {
-                       status: xhr.status,
-                       statusText: xhr.statusText,
-                       responseText: xhr.responseText
-                   });
-                   alert("Une erreur s'est produite lors du chargement des produits.");
-               }
-           });
-       }
-   
-       // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
-       $('.modal-produit-panier-apply-btn').on('click', function () {
-           chargerProduits();
-       });
-   
-       // Optionnel: Ajouter la recherche lors de la touche Entrée
-       $('#modal-produit-panier-search-input').on('keypress', function(e) {
-           if (e.which === 13) {
-               chargerProduits();
-           }
-       });
-   });
-   </script>
+    const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
+    
+    if (!user_id) {
+        console.error("Utilisateur ID est manquant");
+    }
+    
+    $(document).ready(function () {
+        // Créer le style pour le spinner dynamiquement
+        const spinnerStyle = document.createElement('style');
+        spinnerStyle.textContent = `
+            .modal-produit-panier-spinner-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .modal-produit-panier-spinner {
+                border: 4px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top: 4px solid #3498db;
+                width: 40px;
+                height: 40px;
+                animation: modal-produit-panier-spin 1s linear infinite;
+                margin-bottom: 10px;
+            }
+            
+            @keyframes modal-produit-panier-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(spinnerStyle);
+ 
+        // Fonction pour récupérer et afficher les produits
+        function chargerProduits() {
+            let nom_produit = $('#modal-produit-panier-search-input').val().trim();
+            let prix_min = $('#modal-produit-panier-min-price').val();
+            let prix_max = $('#modal-produit-panier-max-price').val();
+    
+            console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
+    
+            // Afficher le spinner
+            $('#modal-produit-panier-product-container').html(`
+                <div class="modal-produit-panier-spinner-container">
+                    <div class="modal-produit-panier-spinner"></div>
+                    <p>Chargement des produits...</p>
+                </div>
+            `);
+    
+            $.ajax({
+                url: '/produits/recherche/' + user_id + '/',
+                type: 'GET',
+                data: {
+                    'nom': nom_produit,
+                    'prix_min': prix_min,
+                    'prix_max': prix_max
+                },
+                success: function (response) {
+    
+                    if (response.produits_html) {
+                        $('#modal-produit-panier-product-container').html(response.produits_html);
+    
+                        // Vérifier si aucun produit n'a été retourné
+                        if ($('#modal-produit-panier-product-container').html().trim() === '') {
+                            $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+                        }
+                    } else {
+                        console.error("⚠️ Réponse inattendue du serveur :", response);
+                        $('#modal-produit-panier-product-container').html('<p>Une erreur s\'est produite.</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ Erreur AJAX :", {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText
+                    });
+                    $('#modal-produit-panier-product-container').html('<p>Erreur lors du chargement des produits.</p>');
+                }
+            });
+        }
+    
+        // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
+        $('.modal-produit-panier-apply-btn').on('click', function () {
+            chargerProduits();
+        });
+    
+        // Optionnel: Ajouter la recherche lors de la touche Entrée
+        $('#modal-produit-panier-search-input').on('keypress', function(e) {
+            if (e.which === 13) {
+                chargerProduits();
+            }
+        });
+    });
+ </script>
     <script>
         // Gestion du menu mobile
         function toggleMenu() {

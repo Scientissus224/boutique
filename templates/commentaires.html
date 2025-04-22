@@ -2631,257 +2631,11 @@
     animation: pulse 0.5s ease-in-out;
 }
 
-
-:root {
-    --bg-color: rgba(255, 255, 255, 0.97);
-    --text-color: #333;
-    --border-color: rgba(0, 0, 0, 0.1);
-    --progress-gradient: linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8));
-    --mobile-breakpoint: 768px;
-  }
-  
-  .messages-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 20px;
-    z-index: 9999;
-    pointer-events: none;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .messages-container {
-    max-width: 600px;
-    width: 90%;
-    pointer-events: auto;
-    padding: 10px;
-  }
-  
-  .notification-modal {
-    position: relative;
-    margin-bottom: 15px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    transform: translateY(-30px) scale(0.95);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backdrop-filter: blur(12px);
-    overflow: hidden;
-    background: var(--bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .notification-modal.show {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  
-  .notification-modal.closing {
-    transform: translateY(-20px) scale(0.95);
-    opacity: 0;
-  }
-  
-  .notification-icon {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 24px;
-    color: var(--primary-color, #4e73ff);
-  }
-  
-  .notification-content {
-    padding-left: 40px;
-    padding-right: 20px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  
-  .pulse {
-    animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-  
-  .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    opacity: 0.6;
-    transition: all 0.2s ease-out;
-    color: inherit;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    touch-action: manipulation;
-  }
-  
-  .close-btn:hover {
-    opacity: 1;
-    background: rgba(0, 0, 0, 0.05);
-  }
-  
-  .progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 100%;
-    background: var(--progress-gradient);
-    transform-origin: left;
-    transition: width 5s linear;
-  }
-  
-  /* Effet de "glow" subtil */
-  .notification-modal::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
-  }
-  
-  /* Animation d'entrée spécifique pour chaque notification */
-  .notification-modal:nth-child(1) { transition-delay: 0.1s; }
-  .notification-modal:nth-child(2) { transition-delay: 0.2s; }
-  .notification-modal:nth-child(3) { transition-delay: 0.3s; }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .messages-overlay {
-        padding-top: 10px;
-        align-items: center;
-        justify-content: flex-start;
-        flex-direction: column;
-    }
-    
-    .messages-container {
-        width: 95%;
-        max-width: 100%;
-        padding: 5px;
-    }
-    
-    .notification-modal {
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 10px;
-    }
-    
-    .notification-icon {
-        left: 15px;
-        top: 15px;
-        font-size: 20px;
-    }
-    
-    .notification-content {
-        padding-left: 35px;
-        padding-right: 15px;
-        font-size: 14px;
-    }
-    
-    .close-btn {
-        top: 10px;
-        right: 10px;
-        width: 24px;
-        height: 24px;
-        font-size: 14px;
-    }
-    
-    .progress-bar {
-        height: 2px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .notification-modal {
-        padding: 12px;
-    }
-    
-    .notification-icon {
-        left: 12px;
-        top: 12px;
-        font-size: 18px;
-    }
-    
-    .notification-content {
-        padding-left: 30px;
-        padding-right: 10px;
-    }
-    
-    .notification-modal::after {
-        display: none; /* Supprime l'effet glow sur petits écrans */
-    }
-  }
-  
-  /* Support pour les appareils tactiles */
-  @media (hover: none) {
-    .close-btn {
-        opacity: 0.8; /* Rend le bouton plus visible sur mobile */
-        background: rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  /* Amélioration pour les très grands écrans */
-  @media (min-width: 1600px) {
-    .messages-container {
-        max-width: 700px;
-    }
-  }
-  
 </style>
 </head>
 
 <body>
-    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
 
-{% if messages %}
-<div class="messages-overlay" id="messages-overlay">
-  <div class="messages-container">
-      {% for message in messages %}
-          <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
-              <div class="notification-icon">
-                  <i class="fas fa-robot pulse"></i>
-              </div>
-              
-              <div class="notification-content">
-                  <div class="message">
-                      {{ message }}
-                  </div>
-              </div>
-              
-              <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
-                  <i class="fas fa-times"></i>
-              </button>
-              
-              <div class="progress-bar"></div>
-          </div>
-      {% endfor %}
-  </div>
-</div>
-{% endif %}
     <nav class="navbar">
         <!-- Logo et nom de la plateforme -->
         <a class="navbar-brand">
@@ -2942,7 +2696,7 @@
         </svg>
     </a>
 </div>
-<!-- Modal de recherche produits -->
+<!-- Modal de recherche produits (sans CSS pour le spinner) -->
 <div id="modal-produit-panier" class="modal-produit-panier">
     <div class="modal-produit-panier-content">
         <div class="modal-produit-panier-header">
@@ -2966,13 +2720,12 @@
                 </button>
             </div>
             <div id="modal-produit-panier-product-container" class="modal-produit-panier-product-section">
-                <div class="modal-produit-panier-product-grid" id="modal-produit-panier-product-container">
-                    <!-- Les produits filtrés ou recherchés apparaîtront ici -->
-                </div>
+                <!-- Les produits ou le spinner apparaîtront ici -->
             </div>
         </div>
     </div>
 </div>
+
 <div class="modern-product-page">
 
     <!-- Product Section - Enhanced Design -->
@@ -3777,71 +3530,103 @@
       
    </script>
    <script>
-   const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
-   
-   if (!user_id) {
-       console.error("Utilisateur ID est manquant");
-   }
-   
-   $(document).ready(function () {
-       // Fonction pour récupérer et afficher les produits
-       function chargerProduits() {
-           let nom_produit = $('#modal-produit-panier-search-input').val().trim();
-           let prix_min = $('#modal-produit-panier-min-price').val();
-           let prix_max = $('#modal-produit-panier-max-price').val();
-   
-           //console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
-   
-           // Afficher un indicateur de chargement en réduisant l'opacité
-           $('#modal-produit-panier-product-container').css('opacity', '0.5');
-   
-           $.ajax({
-               url: '/produits/recherche/' + user_id + '/',
-               type: 'GET',
-               data: {
-                   'nom': nom_produit,
-                   'prix_min': prix_min,
-                   'prix_max': prix_max
-               },
-               success: function (response) {
-                   //console.log("✅ Réponse AJAX reçue :", response);
-   
-                   if (response.produits_html) {
-                       $('#modal-produit-panier-product-container').html(response.produits_html).css('opacity', '1');
-   
-                       // Vérifier si aucun produit n'a été retourné
-                       if ($('#modal-produit-panier-product-container').html().trim() === '') {
-                           $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
-                       }
-                   } else {
-                       console.error("⚠️ Réponse inattendue du serveur :", response);
-                       alert("Une erreur s'est produite.");
-                   }
-               },
-               error: function (xhr, status, error) {
-                   console.error("❌ Erreur AJAX :", {
-                       status: xhr.status,
-                       statusText: xhr.statusText,
-                       responseText: xhr.responseText
-                   });
-                   alert("Une erreur s'est produite lors du chargement des produits.");
-               }
-           });
-       }
-   
-       // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
-       $('.modal-produit-panier-apply-btn').on('click', function () {
-           chargerProduits();
-       });
-   
-       // Optionnel: Ajouter la recherche lors de la touche Entrée
-       $('#modal-produit-panier-search-input').on('keypress', function(e) {
-           if (e.which === 13) {
-               chargerProduits();
-           }
-       });
-   });
-   </script>
+    const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
+    
+    if (!user_id) {
+        console.error("Utilisateur ID est manquant");
+    }
+    
+    $(document).ready(function () {
+        // Créer le style pour le spinner dynamiquement
+        const spinnerStyle = document.createElement('style');
+        spinnerStyle.textContent = `
+            .modal-produit-panier-spinner-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .modal-produit-panier-spinner {
+                border: 4px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top: 4px solid #3498db;
+                width: 40px;
+                height: 40px;
+                animation: modal-produit-panier-spin 1s linear infinite;
+                margin-bottom: 10px;
+            }
+            
+            @keyframes modal-produit-panier-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(spinnerStyle);
+ 
+        // Fonction pour récupérer et afficher les produits
+        function chargerProduits() {
+            let nom_produit = $('#modal-produit-panier-search-input').val().trim();
+            let prix_min = $('#modal-produit-panier-min-price').val();
+            let prix_max = $('#modal-produit-panier-max-price').val();
+    
+            console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
+    
+            // Afficher le spinner
+            $('#modal-produit-panier-product-container').html(`
+                <div class="modal-produit-panier-spinner-container">
+                    <div class="modal-produit-panier-spinner"></div>
+                    <p>Chargement des produits...</p>
+                </div>
+            `);
+    
+            $.ajax({
+                url: '/produits/recherche/' + user_id + '/',
+                type: 'GET',
+                data: {
+                    'nom': nom_produit,
+                    'prix_min': prix_min,
+                    'prix_max': prix_max
+                },
+                success: function (response) {
+    
+                    if (response.produits_html) {
+                        $('#modal-produit-panier-product-container').html(response.produits_html);
+    
+                        // Vérifier si aucun produit n'a été retourné
+                        if ($('#modal-produit-panier-product-container').html().trim() === '') {
+                            $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+                        }
+                    } else {
+                        console.error("⚠️ Réponse inattendue du serveur :", response);
+                        $('#modal-produit-panier-product-container').html('<p>Une erreur s\'est produite.</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ Erreur AJAX :", {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText
+                    });
+                    $('#modal-produit-panier-product-container').html('<p>Erreur lors du chargement des produits.</p>');
+                }
+            });
+        }
+    
+        // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
+        $('.modal-produit-panier-apply-btn').on('click', function () {
+            chargerProduits();
+        });
+    
+        // Optionnel: Ajouter la recherche lors de la touche Entrée
+        $('#modal-produit-panier-search-input').on('keypress', function(e) {
+            if (e.which === 13) {
+                chargerProduits();
+            }
+        });
+    });
+ </script>
     <script>
         // Gestion du menu mobile
         function toggleMenu() {
@@ -4158,169 +3943,247 @@ document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('darkMode') === 'true') {
         document.documentElement.classList.add('dark');
     }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Styles CSS intégrés
-            const style = document.createElement('style');
-            style.textContent = `
-                .modern-form {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    font-family: 'Arial', sans-serif;
-                }
-                
-                .submit-button {
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 12px 24px;
-                    background-color: #4a6bff;
-                    color: white;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 16px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    overflow: hidden;
-                }
-                
-                .submit-button:hover {
-                    background-color: #3a5bef;
-                }
-                
-                .submit-button svg {
-                    margin-left: 8px;
-                    transition: all 0.3s ease;
-                }
-                
-                .submit-button.loading .button-text {
-                    transform: translateX(-10px);
-                }
-                
-                .submit-button.loading svg {
-                    opacity: 0;
-                }
-                
-                .spinner {
-                    position: absolute;
-                    width: 20px;
-                    height: 20px;
-                    border: 3px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 50%;
-                    border-top-color: white;
-                    animation: spin 1s ease-in-out infinite;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    right: 20px;
-                }
-                
-                .submit-button.loading .spinner {
-                    opacity: 1;
-                }
-                
-                .button-text {
-                    transition: transform 0.3s ease;
-                }
-                
-                .avatar-uploader {
-                    margin: 20px 0;
-                }
-                
-                .upload-label {
-                    display: block;
-                    cursor: pointer;
-                }
-                
-                .upload-title {
-                    display: block;
-                    margin-bottom: 5px;
-                    font-weight: 500;
-                    color: #333;
-                }
-                
-                .upload-hint {
-                    display: block;
-                    font-size: 12px;
-                    color: #777;
-                    margin-bottom: 10px;
-                }
-                
-                .avatar-input {
-                    display: none;
-                }
-                
-                .upload-preview {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    width: 120px;
-                    height: 120px;
-                    border: 2px dashed #ccc;
-                    border-radius: 50%;
-                    background-color: #f9f9f9;
-                    transition: all 0.3s ease;
-                    position: relative;
-                    overflow: hidden;
-                }
-                
-                .upload-preview:hover {
-                    border-color: #4a6bff;
-                    background-color: #f0f4ff;
-                }
-                
-                .upload-icon {
-                    fill: #aaa;
-                    margin-bottom: 8px;
-                }
-                
-                .upload-text {
-                    font-size: 12px;
-                    color: #777;
-                }
-                
-                .avatar-preview {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                }
-                
-                .upload-preview.has-avatar .avatar-preview {
-                    opacity: 1;
-                }
-                
-                .upload-preview.has-avatar .upload-icon,
-                .upload-preview.has-avatar .upload-text {
-                    display: none;
-                }
-                
-                .progress-bar {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 0%;
-                    height: 4px;
-                    background-color: #4a6bff;
-                    transition: width 0.3s ease;
-                }
-                
-                @keyframes spin {
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Styles CSS intégrés
+        const style = document.createElement('style');
+        style.textContent = `
+            .modern-form {
+                max-width: 600px;
+                margin: 0 auto;
+                font-family: 'Arial', sans-serif;
+            }
+            
+            .submit-button {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 24px;
+                background-color: #4a6bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+            
+            .submit-button:hover {
+                background-color: #3a5bef;
+            }
+            
+            .submit-button svg {
+                margin-left: 8px;
+                transition: all 0.3s ease;
+            }
+            
+            .submit-button.loading .button-text {
+                transform: translateX(-10px);
+            }
+            
+            .submit-button.loading svg {
+                opacity: 0;
+            }
+            
+            .spinner {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                border: 3px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top-color: white;
+                animation: spin 1s ease-in-out infinite;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                right: 20px;
+            }
+            
+            .submit-button.loading .spinner {
+                opacity: 1;
+            }
+            
+            .button-text {
+                transition: transform 0.3s ease;
+            }
+            
+            .avatar-uploader {
+                margin: 20px 0;
+            }
+            
+            .upload-label {
+                display: block;
+                cursor: pointer;
+            }
+            
+            .upload-title {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 500;
+                color: #333;
+            }
+            
+            .upload-hint {
+                display: block;
+                font-size: 12px;
+                color: #777;
+                margin-bottom: 10px;
+            }
+            
+            .avatar-input {
+                display: none;
+            }
+            
+            .upload-preview {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 120px;
+                height: 120px;
+                border: 2px dashed #ccc;
+                border-radius: 50%;
+                background-color: #f9f9f9;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .upload-preview:hover {
+                border-color: #4a6bff;
+                background-color: #f0f4ff;
+            }
+            
+            .upload-icon {
+                fill: #aaa;
+                margin-bottom: 8px;
+            }
+            
+            .upload-text {
+                font-size: 12px;
+                color: #777;
+            }
+            
+            .avatar-preview {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .upload-preview.has-avatar .avatar-preview {
+                opacity: 1;
+            }
+            
+            .upload-preview.has-avatar .upload-icon,
+            .upload-preview.has-avatar .upload-text {
+                display: none;
+            }
+            
+            .progress-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0%;
+                height: 4px;
+                background-color: #4a6bff;
+                transition: width 0.3s ease;
+            }
+            
+            /* Style pour la notification */
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background-color: #4CAF50;
+                color: white;
+                border-radius: 4px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                transform: translateX(200%);
+                transition: transform 0.3s ease-in-out;
+            }
+            
+            .notification.show {
+                transform: translateX(0);
+            }
+            
+            .notification.hide {
+                transform: translateX(200%);
+            }
+            
+            .notification-close {
+                margin-left: 15px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            
+            .notification.error {
+                background-color: #f44336;
+            }
+            
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
         
-            // Gestion du formulaire
-            const form = document.querySelector('.modern-form');
+        // Fonction pour afficher la notification avec durée prolongée
+        function showNotification(message, isError = false) {
+            // Durée d'affichage prolongée (6 secondes pour succès, 8 secondes pour erreurs)
+            const duration = isError ? 8000 : 6000;
+            
+            // Supprimer toute notification existante
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Créer la nouvelle notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${isError ? 'error' : ''}`;
+            
+            const notificationText = document.createElement('span');
+            notificationText.textContent = message;
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'notification-close';
+            closeBtn.textContent = '×';
+            closeBtn.addEventListener('click', () => {
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            });
+            
+            notification.appendChild(notificationText);
+            notification.appendChild(closeBtn);
+            document.body.appendChild(notification);
+            
+            // Afficher la notification
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Cacher et supprimer après la durée spécifiée
+            setTimeout(() => {
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+
+        // Gestion du formulaire
+        const form = document.querySelector('.modern-form');
+        if (form) {
             const submitButton = form.querySelector('.submit-button');
             const avatarInput = form.querySelector('.avatar-input');
             const uploadPreview = form.querySelector('.upload-preview');
@@ -4382,9 +4245,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Gestion de la soumission du formulaire
             form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
                 // Empêcher la soumission multiple
                 if (submitButton.classList.contains('loading')) {
-                    e.preventDefault();
                     return;
                 }
                 
@@ -4392,133 +4256,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.classList.add('loading');
                 submitButton.disabled = true;
                 buttonTextSpan.textContent = 'Publication en cours...';
-            });
-            
-            // Réinitialiser le bouton si la soumission échoue
-            form.addEventListener('formdata', function() {
-                setTimeout(() => {
+                
+                // Envoyer le formulaire via AJAX
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Afficher la notification de succès
+                        showNotification("Votre commentaire a été ajouté avec succès !");
+                        
+                        // Réinitialiser le bouton
+                        submitButton.classList.remove('loading');
+                        submitButton.disabled = false;
+                        buttonTextSpan.textContent = 'Publier votre avis';
+                        
+                        // Rediriger ou recharger la page après un délai
+                        setTimeout(() => {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                window.location.reload();
+                            }
+                        }, 5500); // 5.5s (la notification sera visible pendant 6s)
+                    } else {
+                        throw new Error(data.message || 'Erreur lors de la soumission');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Réinitialiser le bouton en cas d'erreur
                     submitButton.classList.remove('loading');
                     submitButton.disabled = false;
                     buttonTextSpan.textContent = 'Publier votre avis';
-                }, 3000);
+                    
+                    // Afficher la notification d'erreur
+                    showNotification(error.message || 'Une erreur est survenue lors de la publication', true);
+                });
             });
-        });
-        </script>
-        <script>
-            // Configuration des thèmes
-        const themes = {
-          light: {
-              bg: 'rgba(255, 255, 255, 0.97)',
-              text: '#333',
-              border: 'rgba(0, 0, 0, 0.1)',
-              progress: 'linear-gradient(90deg, rgba(78, 115, 255, 0.8), rgba(46, 204, 113, 0.8))'
-          }
-        };
-        
-        // Fonction pour jouer le son avec gestion moderne des erreurs
-        function playNotificationSound() {
-          const sound = document.getElementById('notification-sound');
-          if (!sound) return;
-        
-          const playSound = () => {
-              sound.currentTime = 0;
-              sound.volume = 0.8;
-              sound.play().catch(e => console.debug("Sound play prevented:", e));
-          };
-        
-          // Essayer de jouer immédiatement
-          playSound();
-          
-          // Si bloqué, attendre une interaction utilisateur
-          if (sound.paused) {
-              const enableSound = () => {
-                  playSound();
-                  document.removeEventListener('click', enableSound);
-                  document.removeEventListener('keydown', enableSound);
-              };
-              document.addEventListener('click', enableSound, { once: true });
-              document.addEventListener('keydown', enableSound, { once: true });
-          }
         }
-        
-        // Fermeture de notification avec animation fluide
-        function closeNotification(closeButton) {
-          const notification = closeButton.closest('.notification-modal');
-          if (!notification) return;
-          
-          notification.classList.add('closing');
-          setTimeout(() => {
-              notification.classList.remove('show', 'closing');
-              notification.remove();
-          }, 300);
-        }
-        
-        // Affichage de notification avec effets modernes
-        function showNotification(notificationElement) {
-          // Appliquer le thème light par défaut
-          const themeConfig = themes.light;
-          
-          notificationElement.style.setProperty('--bg-color', themeConfig.bg);
-          notificationElement.style.setProperty('--text-color', themeConfig.text);
-          notificationElement.style.setProperty('--border-color', themeConfig.border);
-          notificationElement.style.setProperty('--progress-gradient', themeConfig.progress);
-        
-          // Animation d'entrée
-          notificationElement.classList.add('show');
-          playNotificationSound();
-          
-          // Barre de progression animée
-          const progressBar = notificationElement.querySelector('.progress-bar');
-          if (progressBar) {
-              progressBar.style.width = '100%';
-              setTimeout(() => {
-                  progressBar.style.transition = 'width 5s linear';
-                  progressBar.style.width = '0%';
-              }, 50);
-          }
-        
-          // Fermeture automatique après délai
-          let timeoutId = setTimeout(() => {
-              notificationElement.classList.add('closing');
-              setTimeout(() => notificationElement.remove(), 300);
-          }, 5000);
-        
-          // Réinitialiser le timeout si la souris entre
-          notificationElement.addEventListener('mouseenter', () => {
-              clearTimeout(timeoutId);
-              if (progressBar) progressBar.style.transition = 'none';
-          });
-        
-          // Redémarrer le timeout si la souris sort
-          notificationElement.addEventListener('mouseleave', () => {
-              if (progressBar) {
-                  const remaining = (parseFloat(progressBar.style.width) / 100) * 5000;
-                  progressBar.style.transition = `width ${remaining}ms linear`;
-                  progressBar.style.width = '0%';
-              }
-              timeoutId = setTimeout(() => {
-                  notificationElement.classList.add('closing');
-                  setTimeout(() => notificationElement.remove(), 300);
-              }, progressBar ? remaining : 5000);
-          });
-        }
-        
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-          document.querySelectorAll('.notification-modal').forEach(notification => {
-              showNotification(notification);
-          });
-        });
-        
-        // Gestion des clics en dehors pour fermer
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.notification-modal')) {
-              document.querySelectorAll('.notification-modal.show').forEach(modal => {
-                  modal.classList.add('closing');
-                  setTimeout(() => modal.remove(), 300);
-              });
-          }
-        });
-            </script>   
+    });
+</script>
+
 </body>
 </html>

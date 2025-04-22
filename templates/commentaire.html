@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commentaire sur votre boutique {{ boutique }}</title>
+    <title>Nouvel avis sur {{ boutique }} ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -43,6 +43,28 @@
             margin: 0;
         }
 
+        .product-card {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            align-items: center;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
         .content {
             margin-bottom: 20px;
         }
@@ -59,17 +81,37 @@
         .rating {
             display: flex;
             gap: 5px;
-            margin-top: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .stars {
+            display: flex;
+            gap: 3px;
         }
 
         .star {
             color: #FFD700;
-            font-size: 2em;
+            font-size: 1.8em;
         }
 
         .star-half {
             color: #D3D3D3;
-            font-size: 2em;
+            font-size: 1.8em;
+        }
+
+        .rating-value {
+            margin-left: 10px;
+            font-weight: 600;
+            color: #FF7043;
+        }
+
+        .comment-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #FF7043;
         }
 
         .footer {
@@ -77,6 +119,8 @@
             font-size: 0.9em;
             color: #777;
             margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
 
         .footer em {
@@ -92,11 +136,13 @@
             .header h1 {
                 font-size: 1.8rem;
             }
-            .content p {
-                font-size: 1.1em;
+            .product-card {
+                flex-direction: column;
+                text-align: center;
             }
-            .rating .star, .rating .star-half {
-                font-size: 1.8em;
+            .product-image {
+                width: 120px;
+                height: 120px;
             }
         }
 
@@ -107,39 +153,44 @@
             .content p {
                 font-size: 1em;
             }
-            .rating .star, .rating .star-half {
-                font-size: 1.6em;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Vous avez reçu un commentaire sur votre boutique {{ boutique }}</h1>
+            <h1>🌟 Nouvel avis sur {{ boutique }} 🌟</h1>
         </div>
         
-        <div class="content">
-            <p><strong>Nom du produit:</strong> {{ produit_nom }}</p>
-            <p><strong>Commentaire :</strong></p>
-            <p>{{ commentaire }}</p>
+        <div class="product-card">
+            <img src="{{ produit_image }}" alt="{{ produit_nom }}" class="product-image">
+            <div class="product-info">
+                <h3>{{ produit_nom }}</h3>
+                <div class="rating">
+                    <div class="stars">
+                        {% for star in etoiles %}
+                            {% if star == 1 %}
+                                <span class="star">★</span>
+                            {% else %}
+                                <span class="star-half">★</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="rating-value">{{ note }}/5</span>
+                </div>
+            </div>
+        </div>
 
-            <p><strong>Note attribuée :</strong></p>
-            <div class="rating">
-                <!-- Affichage des étoiles -->
-                {% for star in etoiles %}
-                    {% if star == 1 %}
-                        <span class="star">&#9733;</span>
-                    {% else %}
-                        <span class="star-half">&#9733;</span>
-                    {% endif %}
-                {% endfor %}
+        <div class="content">
+            <div class="comment-box">
+                <p><strong>Commentaire client :</strong></p>
+                <p>"{{ commentaire }}"</p>
             </div>
         </div>
 
         <div class="footer">
-            <p>Merci de prendre en compte ce commentaire pour améliorer votre service.</p>
-            <p><em>Ce message a été envoyé automatiquement, ne pas y répondre directement.</em></p>
+            <p>Merci pour votre engagement envers la satisfaction client !</p>
+            <p><em>Ce message est généré automatiquement - pour répondre, utilisez votre interface de gestion.</em></p>
         </div>
     </div>
 </body>
