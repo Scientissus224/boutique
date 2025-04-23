@@ -22,6 +22,7 @@
             bottom: 20px;
             right: 20px;
             width: 320px;
+            max-width: 90%;
             background: white;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -100,6 +101,7 @@
             align-items: center;
             padding: 16px 0;
             border-bottom: 1px solid #E5E7EB;
+            flex-wrap: wrap;
         }
 
         .product-image {
@@ -113,6 +115,7 @@
 
         .product-details {
             flex: 1;
+            min-width: 150px;
         }
 
         .product-name {
@@ -134,6 +137,130 @@
             margin-left: 16px;
             min-width: 80px;
             text-align: right;
+        }
+
+        /* Container principal responsive */
+        .email-container {
+            max-width: 640px;
+            width: 100%;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* En-tête responsive */
+        .email-header {
+            background: #4F46E5;
+            padding: 16px 24px;
+            color: white;
+            text-align: center;
+        }
+
+        .email-header h1 {
+            margin: 0;
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: 600;
+        }
+
+        /* Contenu responsive */
+        .email-content {
+            padding: 24px;
+        }
+
+        /* Carte informations client responsive */
+        .client-card {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        /* Bouton CTA responsive */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4F46E5;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 6px;
+            margin-top: 16px;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        /* Pied de page responsive */
+        .email-footer {
+            text-align: center;
+            padding: 16px;
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        /* Media queries pour les petits écrans */
+        @media (max-width: 640px) {
+            .order-notification {
+                right: 10px;
+                bottom: 10px;
+                width: calc(100% - 20px);
+            }
+
+            .email-container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            .email-content {
+                padding: 16px;
+            }
+
+            .product-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .product-image {
+                margin-right: 0;
+                margin-bottom: 12px;
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+
+            .product-price {
+                margin-left: 0;
+                margin-top: 8px;
+                text-align: left;
+                width: 100%;
+            }
+
+            .client-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .email-header {
+                padding: 12px 16px;
+            }
+
+            .client-card {
+                padding: 12px;
+            }
+
+            .cta-button {
+                padding: 10px 16px;
+            }
         }
     </style>
 </head>
@@ -160,19 +287,20 @@
     </div>
 
     <!-- Container principal de l'email -->
-    <div style="max-width: 640px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+    <div class="email-container">
         <!-- En-tête -->
-        <div style="background: #4F46E5; padding: 24px 32px; color: white; text-align: center;">
-            <h1 style="margin: 0; font-size: 22px; font-weight: 600;">Nouvelle commande reçue !</h1>
+        <div class="email-header">
+            <h1>Nouvelle commande reçue !</h1>
         </div>
         
         <!-- Contenu -->
-        <div style="padding: 32px;">
+        <div class="email-content">
             <p style="font-size: 16px; color: #374151; margin-bottom: 24px;">Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
+            
             <!-- Carte informations client -->
-            <div style="background: #F9FAFB; border-radius: 8px; padding: 24px; margin-bottom: 24px; border: 1px solid #E5E7EB;">
+            <div class="client-card">
                 <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Informations du client</h2>
-                <div style="display: grid; grid-template-columns: 120px 1fr; gap: 12px;">
+                <div class="client-info-grid">
                     <div style="font-weight: 500; color: #6B7280;">Nom:</div>
                     <div style="font-weight: 400;">{{ client_nom }}</div>
                     
@@ -185,7 +313,7 @@
             </div>
             
             <!-- Carte produits -->
-            <div style="background: #F9FAFB; border-radius: 8px; padding: 24px; margin-bottom: 24px; border: 1px solid #E5E7EB;">
+            <div class="client-card">
                 <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Récapitulatif des produits</h2>
                 <div style="margin-top: 16px;">
                     {% for produit in produits_info %}
@@ -196,7 +324,7 @@
                                 {% if produit.type == 'variante' %}
                                     <div class="product-attributes">
                                         <div><strong>Taille:</strong> {{ produit.taille }}</div>
-                                        <div><strong>Couleur:</strong> {{ produit.couleur }}</div>
+                                        <div><strong>Couleur:</strong><p style="background-color: {{ produit.couleur }}; width: 20px; height: 10px; border-radius: 50%; display: inline-block;"></p></div>
                                     </div>
                                 {% endif %}
                             </div>
@@ -214,65 +342,15 @@
             <!-- Bouton CTA -->
             <div style="text-align: center; margin-top: 32px;">
                 <p>Pour gérer cette commande, connectez-vous à votre tableau de bord :</p>
-                <a href="http://{{ domain }}{% url 'table' %}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; font-weight: 500; border-radius: 6px;">Accéder au tableau de bord</a>
+                <a href="http://{{ domain }}{% url 'table' %}" class="cta-button">Accéder au tableau de bord</a>
             </div>
         </div>
         
         <!-- Pied de page -->
-        <div style="text-align: center; padding: 24px; color: #6B7280; font-size: 14px;">
+        <div class="email-footer">
             <p>© {% now "Y" %} Votre entreprise. Tous droits réservés.</p>
         </div>
     </div>
 
-    <script>
-        // Fonction pour jouer le son de notification
-        function playNotificationSound() {
-            const sound = document.getElementById('notification-sound');
-            if (!sound) return;
-
-            // Réinitialiser et jouer le son
-            sound.currentTime = 0;
-            sound.volume = 0.7; // Volume à 70% pour éviter d'être trop fort
-            
-            // Essayer de jouer le son immédiatement
-            const playPromise = sound.play();
-            
-            // Gérer les erreurs de lecture automatique
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Lecture automatique empêchée - attendre une interaction utilisateur");
-                    // Activer le son au premier clic
-                    document.addEventListener('click', enableSound, { once: true });
-                });
-            }
-            
-            function enableSound() {
-                sound.play().catch(e => console.log("Impossible de jouer le son:", e));
-            }
-        }
-
-        // Afficher la notification
-        function showNotification() {
-            const notification = document.getElementById('order-notification');
-            notification.classList.add('show');
-            playNotificationSound();
-            
-            // Fermer automatiquement après 8 secondes
-            setTimeout(() => {
-                closeNotification();
-            }, 8000);
-        }
-
-        // Fermer la notification
-        function closeNotification() {
-            const notification = document.getElementById('order-notification');
-            notification.classList.remove('show');
-        }
-
-        // Afficher la notification lorsque la page est chargée
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(showNotification, 1000); // Délai de 1s pour l'effet
-        });
-    </script>
 </body>
 </html>
