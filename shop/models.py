@@ -299,10 +299,17 @@ class Produit(models.Model):
         return reverse('detail_produits', kwargs={'produit_id': self.pk})
     
     def get_produit_url(self):
-        return reverse('afficher_produit', kwargs={
-            'produit_identifiant': self.identifiant,  # Utilisation de l'UUID au lieu de self.pk
-            'utilisateur_identifiant': self.utilisateur.identifiant_unique
-        })
+        try:
+            if not self.utilisateur:
+                return '#'
+            return reverse('afficher_produit', kwargs={
+                'produit_identifiant': self.identifiant,
+                'utilisateur_identifiant': self.utilisateur.identifiant_unique
+            })
+        except Exception as e:
+            print(f"[get_produit_url] Erreur pour produit {self.id} : {e}")
+            return '#'
+
     def produit_panier_id(self):
         return reverse('ajouter_au_panier', kwargs={'produit_id': self.pk})
 
