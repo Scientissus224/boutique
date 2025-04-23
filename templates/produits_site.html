@@ -3189,60 +3189,60 @@
         </div>
     </section>
     
-    <!-- SECTION VARIANTES MODERNE -->
-    {% if variantes %}
-    <section class="variants-section">
-        <h2 class="section-header">Options disponibles</h2>
-        
-        <div class="variants-grid">
-            {% for variante in variantes %}
-            <div class="variant-card">
-                <div class="variant-image">
-                    <img src="{% if variante.image %}{{ variante.image.url }}{% else %}{% static 'img/placeholder-variant.png' %}{% endif %}" alt="{{ variante.taille|default:variante.couleur }}">
+   <!-- SECTION VARIANTES MODERNE -->
+{% if variantes %}
+<section class="variants-section">
+    <h2 class="section-header">Options disponibles</h2>
+    
+    <div class="variants-grid">
+        {% for variante in variantes %}
+        <div class="variant-card">
+            <div class="variant-image">
+                <img src="{% if variante.image %}{{ variante.image.url }}{% else %}{% static 'img/placeholder-variant.png' %}{% endif %}" alt="{{ variante.taille|default:variante.couleur }}">
+            </div>
+            
+            <div class="variant-details">
+                {% if variante.taille %}
+                <div class="variant-attribute">
+                    <span class="attribute-label">Taille:</span>
+                    <span class="attribute-value">{{ variante.taille }}</span>
+                </div>
+                {% endif %}
+                
+                {% if variante.couleur %}
+                <div class="variant-attribute">
+                    <span class="attribute-label">Couleur:</span>
+                    <div class="color-swatch" style="background-color: {{ variante.couleur }};"></div>
+                </div>
+                {% endif %}
+                
+                <div class="variant-price">
+                    {% if variante.prix %}
+                        {{ variante.prix }} {{ devise }}
+                    {% else %}
+                        <span style="color: var(--gray); font-weight: 500;">Contactez-nous</span>
+                    {% endif %}
                 </div>
                 
-                <div class="variant-details">
-                    {% if variante.taille %}
-                    <div class="variant-attribute">
-                        <span class="attribute-label">Taille:</span>
-                        <span class="attribute-value">{{ variante.taille }}</span>
-                    </div>
+                <div class="variant-actions">
+                    {% if variante.id in request.session.session_id %}
+                        <button class="variant-btn in-cart" disabled>
+                            <i class="fas fa-check"></i> Ajouté
+                        </button>
+                    {% else %}
+                        <button class="variant-btn add-to-cart" 
+                                data-produit-id="{{ produit.id }}" 
+                                data-variante-id="{{ variante.id }}">
+                            <i class="fas fa-cart-plus"></i> Ajouter
+                        </button>
                     {% endif %}
-                    
-                    {% if variante.couleur %}
-                    <div class="variant-attribute">
-                        <span class="attribute-label">Couleur:</span>
-                        <div class="color-swatch" style="background-color: {{ variante.couleur }};"></div>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="variant-price">
-                        {% if variante.prix %}
-                            {{ variante.prix }} {{ devise }}
-                        {% else %}
-                            <span style="color: var(--gray); font-weight: 500;">Contactez-nous</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="variant-actions">
-                        {% if variante.id in request.session.session_id %}
-                            <button class="variant-btn in-cart" disabled>
-                                <i class="fas fa-check"></i> Ajouté
-                            </button>
-                        {% else %}
-                            <button class="variant-btn add-to-cart" 
-                                    data-produit-id="{{ produit.id }}" 
-                                    data-variante-id="{{ variante.id }}">
-                                <i class="fas fa-cart-plus"></i> Ajouter
-                            </button>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-    </section>
-    {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
     {% if images %}
     <section class="gallery-section">
@@ -3964,44 +3964,51 @@ document.addEventListener('DOMContentLoaded', function() {
        });
    });
    
-   // Pour ajouter une variante au panier
-   document.querySelectorAll('.variant-btn.add-to-cart').forEach(button => {
-       button.addEventListener('click', function(event) {
-           event.preventDefault();
-   
-           const varianteId = this.getAttribute('data-variante-id');
-           const buttonElement = this;
-   
-           if (!varianteId) {
-               console.error("ID de variante manquant");
-               return;
-           }
-   
-           const url = `/ajouter_variante_au_panier/${varianteId}/`;
-           const spinner = document.getElementById('loading-spinner');
-           if (spinner) spinner.style.display = 'block';
-   
-           fetch(url)
-               .then(response => response.json())
-               .then(data => {
-                   // Mise à jour du compteur
-                   updateCartCounters(data.total_articles);
-   
-                   // Jouer le son de confirmation
-                   playSound('confirmation-sound-variante');
-   
-                   // Mettre à jour le bouton
-                   buttonElement.innerHTML = '<i class="fas fa-check"></i> Ajouté';
-                   buttonElement.classList.remove('add-to-cart');
-                   buttonElement.classList.add('in-cart');
-                   buttonElement.disabled = true;
-               })
-               .catch(console.error)
-               .finally(() => {
-                   if (spinner) spinner.style.display = 'none';
-               });
-       });
-   });
+  // Pour ajouter une variante au panier
+document.querySelectorAll('.variant-btn.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const varianteId = this.getAttribute('data-variante-id');
+        const buttonElement = this;
+
+        if (!varianteId) {
+            console.error("ID de variante manquant");
+            return;
+        }
+
+        // Sauvegarder le contenu original du bouton
+        const originalContent = buttonElement.innerHTML;
+        
+        // Afficher le spinner à la place du texte
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        buttonElement.disabled = true;
+
+        const url = `/ajouter_variante_au_panier/${varianteId}/`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Mise à jour du compteur
+                updateCartCounters(data.total_articles);
+
+                // Jouer le son de confirmation
+                playSound('confirmation-sound-variante');
+
+                // Mettre à jour le bouton
+                buttonElement.innerHTML = '<i class="fas fa-check"></i> Ajouté';
+                buttonElement.classList.remove('add-to-cart');
+                buttonElement.classList.add('in-cart');
+                buttonElement.disabled = true;
+            })
+            .catch(error => {
+                console.error(error);
+                // En cas d'erreur, restaurer le bouton original
+                buttonElement.innerHTML = originalContent;
+                buttonElement.disabled = false;
+            });
+    });
+});
    
    // Fonction pour mettre à jour tous les compteurs du panier
    function updateCartCounters(count) {

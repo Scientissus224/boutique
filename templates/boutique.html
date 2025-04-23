@@ -3632,7 +3632,7 @@
             </div>
  </div>
 <!-- Modal -->
-<!-- Modal de recherche produits -->
+<!-- Modal de recherche produits (sans CSS pour le spinner) -->
 <div id="modal-produit-panier" class="modal-produit-panier">
     <div class="modal-produit-panier-content">
         <div class="modal-produit-panier-header">
@@ -3656,9 +3656,7 @@
                 </button>
             </div>
             <div id="modal-produit-panier-product-container" class="modal-produit-panier-product-section">
-                <div class="modal-produit-panier-product-grid" id="modal-produit-panier-product-container">
-                    <!-- Les produits filtrés ou recherchés apparaîtront ici -->
-                </div>
+                <!-- Les produits ou le spinner apparaîtront ici -->
             </div>
         </div>
     </div>
@@ -4254,7 +4252,7 @@
     });
 </script>
     <!-- //------------------- Récupérer l'ID de l'utilisateur Gestion Modal-----------------------------------  -->
-    <script>
+<script>
         // Fonction pour ouvrir le modal
        function openModalProduitPanier() {
            document.getElementById('modal-produit-panier').style.display = 'flex';
@@ -4272,74 +4270,106 @@
            }
        });
           
-       </script>
-       <script>
-       const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
-       
-       if (!user_id) {
-           console.error("Utilisateur ID est manquant");
-       }
-       
-       $(document).ready(function () {
-           // Fonction pour récupérer et afficher les produits
-           function chargerProduits() {
-               let nom_produit = $('#modal-produit-panier-search-input').val().trim();
-               let prix_min = $('#modal-produit-panier-min-price').val();
-               let prix_max = $('#modal-produit-panier-max-price').val();
-       
-               console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
-       
-               // Afficher un indicateur de chargement en réduisant l'opacité
-               $('#modal-produit-panier-product-container').css('opacity', '0.5');
-       
-               $.ajax({
-                   url: '/produits/recherche/' + user_id + '/',
-                   type: 'GET',
-                   data: {
-                       'nom': nom_produit,
-                       'prix_min': prix_min,
-                       'prix_max': prix_max
-                   },
-                   success: function (response) {
-                       console.log("✅ Réponse AJAX reçue :", response);
-       
-                       if (response.produits_html) {
-                           $('#modal-produit-panier-product-container').html(response.produits_html).css('opacity', '1');
-       
-                           // Vérifier si aucun produit n'a été retourné
-                           if ($('#modal-produit-panier-product-container').html().trim() === '') {
-                               $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
-                           }
-                       } else {
-                           console.error("⚠️ Réponse inattendue du serveur :", response);
-                           alert("Une erreur s'est produite.");
-                       }
-                   },
-                   error: function (xhr, status, error) {
-                       console.error("❌ Erreur AJAX :", {
-                           status: xhr.status,
-                           statusText: xhr.statusText,
-                           responseText: xhr.responseText
-                       });
-                       alert("Une erreur s'est produite lors du chargement des produits.");
-                   }
-               });
-           }
-       
-           // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
-           $('.modal-produit-panier-apply-btn').on('click', function () {
-               chargerProduits();
-           });
-       
-           // Optionnel: Ajouter la recherche lors de la touche Entrée
-           $('#modal-produit-panier-search-input').on('keypress', function(e) {
-               if (e.which === 13) {
-                   chargerProduits();
-               }
-           });
-       });
-       </script>
-           <script>
+</script>
+<script>
+        const user_id = document.getElementById('user-data') ? document.getElementById('user-data').getAttribute('data-user-id') : null;
+        
+        if (!user_id) {
+            console.error("Utilisateur ID est manquant");
+        }
+        
+        $(document).ready(function () {
+            // Créer le style pour le spinner dynamiquement
+            const spinnerStyle = document.createElement('style');
+            spinnerStyle.textContent = `
+                .spinner-boutique-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                }
+                
+                .spinner-boutique {
+                    border: 4px solid rgba(0, 0, 0, 0.1);
+                    border-radius: 50%;
+                    border-top: 4px solid #3498db;
+                    width: 40px;
+                    height: 40px;
+                    animation: spinner-boutique-spin 1s linear infinite;
+                    margin-bottom: 10px;
+                }
+                
+                @keyframes spinner-boutique-spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(spinnerStyle);
+     
+            // Fonction pour récupérer et afficher les produits
+            function chargerProduits() {
+                let nom_produit = $('#modal-produit-panier-search-input').val().trim();
+                let prix_min = $('#modal-produit-panier-min-price').val();
+                let prix_max = $('#modal-produit-panier-max-price').val();
+        
+                console.log("🔍 Recherche de produits avec :", { nom_produit, prix_min, prix_max });
+        
+                // Afficher le spinner
+                $('#modal-produit-panier-product-container').html(`
+                    <div class="spinner-boutique-container">
+                        <div class="spinner-boutique"></div>
+                        <p>Chargement des produits...</p>
+                    </div>
+                `);
+        
+                $.ajax({
+                    url: '/produits/recherche/' + user_id + '/',
+                    type: 'GET',
+                    data: {
+                        'nom': nom_produit,
+                        'prix_min': prix_min,
+                        'prix_max': prix_max
+                    },
+                    success: function (response) {
+        
+                        if (response.produits_html) {
+                            $('#modal-produit-panier-product-container').html(response.produits_html);
+        
+                            // Vérifier si aucun produit n'a été retourné
+                            if ($('#modal-produit-panier-product-container').html().trim() === '') {
+                                $('#modal-produit-panier-product-container').html('<p>Aucun produit trouvé.</p>');
+                            }
+                        } else {
+                            console.error("⚠️ Réponse inattendue du serveur :", response);
+                            $('#modal-produit-panier-product-container').html('<p>Une erreur s\'est produite.</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("❌ Erreur AJAX :", {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText
+                        });
+                        $('#modal-produit-panier-product-container').html('<p>Erreur lors du chargement des produits.</p>');
+                    }
+                });
+            }
+        
+            // Appliquer les filtres lorsqu'on clique sur le bouton "Appliquer"
+            $('.modal-produit-panier-apply-btn').on('click', function () {
+                chargerProduits();
+            });
+        
+            // Optionnel: Ajouter la recherche lors de la touche Entrée
+            $('#modal-produit-panier-search-input').on('keypress', function(e) {
+                if (e.which === 13) {
+                    chargerProduits();
+                }
+            });
+        });
+</script>
+<script>
 // Gestion du menu mobile
 function toggleMenu() {
     const navbar = document.querySelector('.navbar');

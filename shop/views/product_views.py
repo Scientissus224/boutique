@@ -81,16 +81,46 @@ def gestion_produits(request):
                 try:
                     produit = form.save(commit=False)
                     produit.utilisateur = utilisateur  # Associer l'utilisateur au produit
+
+                    # --- RÈGLES MÉTIER SUR PRIX ET TYPE ---
+                    if produit.ancien_prix and produit.type_produit != Produit.PROMO:
+                        messages.error(request, "Vous ne pouvez définir un ancien prix que si le type du produit est 'Promo'.")
+                        return render(request, 'gestion_produits.html', {
+                            'form': form,
+                            'products': produits,
+                            'devise': devise,
+                        })
+
+                    if produit.type_produit == Produit.PROMO and not produit.ancien_prix:
+                        messages.error(request, "Le type 'Promo' nécessite obligatoirement un ancien prix.")
+                        return render(request, 'gestion_produits.html', {
+                            'form': form,
+                            'products': produits,
+                            'devise': devise,
+                        })
+
+                    if produit.ancien_prix and produit.ancien_prix <= produit.prix:
+                        messages.error(request, "L'ancien prix doit être strictement supérieur au prix actuel.")
+                        return render(request, 'gestion_produits.html', {
+                            'form': form,
+                            'products': produits,
+                            'devise': devise,
+                        })
+                    # --- FIN DES RÈGLES ---
+
                     produit.save()
-
-                    # Ajouter le produit à la liste des produits affichés
-                    produits = Produit.objects.filter(utilisateur=utilisateur)  # Rafraîchir la liste des produits
-
                     messages.success(request, 'Produit ajouté avec succès !')
-                    return redirect('produits')  # Redirige après l'ajout du produit
+                    return redirect('produits')
+
                 except Exception as e:
                     messages.error(request, f"Une erreur est survenue lors de l'ajout du produit : {str(e)}")
-            
+                    return render(request, 'gestion_produits.html', {
+                        'form': form,
+                        'products': produits,
+                        'devise': devise,
+                    })
+
+
         elif 'supprimer' in request.POST:
             produit_id = request.POST.get('produit_id')
             if produit_id:
