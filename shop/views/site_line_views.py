@@ -30,23 +30,34 @@ def check_account_validation(statut_validation_compte):
 
 def check_prerequisites_for_publication(utilisateur, request):
     """Vérifie les prérequis avant de publier la boutique."""
-    if not Produit.objects.filter(utilisateur=utilisateur).exists():
-        messages.error(request, "Vous devez ajouter des produits à votre boutique avant de la publier.")
+    
+    # Vérification du nombre de produits
+    if Produit.objects.filter(utilisateur=utilisateur).count() < 10:
+        messages.error(request, "Vous devez ajouter au moins 10 produits à votre boutique avant de la publier.")
         return False
+    
+    # Vérification de l'existence d'images pour chaque produit
     if not ProduitImage.objects.filter(produit__utilisateur=utilisateur).exists():
         messages.error(request, "Ajoutez plusieurs images à vos produits (face, dos, etc.) pour mieux les présenter. Une belle présentation attire plus de clients !")
-
         return False
-    if not SliderImage.objects.filter(utilisateur=utilisateur).exists():
-        messages.error(request, "Vous devez ajouter des images de slider pour attirer l'attention des clients.")
+    
+    # Vérification du nombre d'images de slider
+    if SliderImage.objects.filter(utilisateur=utilisateur).count() < 10:
+        messages.error(request, "Vous devez ajouter au moins 10 images de slider pour attirer l'attention des clients.")
         return False
+    
+    # Vérification de la présence de localisation
     if not Localisation.objects.filter(utilisateur=utilisateur).exists():
         messages.error(request, "Veuillez ajouter une localisation pour votre boutique afin de permettre aux clients de vous trouver.")
         return False
-    if not LocalImages.objects.filter(utilisateur=utilisateur).exists():
-        messages.error(request, "Ajoutez des images de votre localisation pour renforcer la visibilité de votre boutique.")
+    
+    # Vérification du nombre d'images de localisation
+    if LocalImages.objects.filter(utilisateur=utilisateur).count() < 4:
+        messages.error(request, "Ajoutez au moins 3 images de votre localisation pour renforcer la visibilité de votre boutique.")
         return False
+
     return True
+
 
 
 def gestion_boutique(request):

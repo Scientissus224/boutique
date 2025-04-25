@@ -357,6 +357,7 @@ class VenteAttente(models.Model):
     prix_vente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Prix de vente
     quantite_vendue = models.PositiveIntegerField(default=0)  # Quantité vendue
     date_vente = models.DateTimeField(auto_now_add=True)  # Date de la vente
+    vue_par_boutiquier = models.BooleanField(default=False)
 
     def __str__(self):
         return f"[Attente] Vente de {self.nom_produit} ({self.quantite_vendue}x) par {self.utilisateur}"
@@ -372,6 +373,7 @@ class Vente(models.Model):
     statut = models.BooleanField(default=False) 
     quantite_vendue = models.PositiveIntegerField(default=0)  # Quantité vendue
     date_vente = models.DateTimeField(auto_now_add=True)  # Date de la vente
+
 
     def update_stock(self):
         """ Mise à jour du stock du produit après chaque vente """

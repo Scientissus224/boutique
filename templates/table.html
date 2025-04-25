@@ -649,6 +649,388 @@
     padding: 18px;
   }
 }
+
+
+
+/* Base commune minimaliste */
+.badge, .badge-vente, .badge-stock-critique, .badge-stock-limite {
+  position: absolute;
+  color: white;
+  border-radius: 12px; /* Forme plus moderne que le cercle parfait */
+  font-size: 11px;
+  font-weight: 600; /* Semi-bold pour meilleure lisibilité */
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  z-index: 10;
+  padding: 0 6px;
+  line-height: 1;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* Style plat avec légère profondeur */
+.badge {
+  top: 8px;
+  left: 8px;
+  background: #FF4757; /* Rouge moderne */
+}
+
+.badge-vente {
+  top: 8px;
+  left: 8px;
+  background: #FF4757;
+}
+
+.badge-stock-critique {
+  top: 8px;
+  left: 8px;
+  background: #FF4757;
+}
+
+.badge-stock-limite {
+  top: 8px;
+  right: 8px;
+  background: #FFA502; /* Orange moderne */
+}
+
+/* Micro-interaction au survol */
+.badge:hover, .badge-vente:hover, 
+.badge-stock-critique:hover, .badge-stock-limite:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Effet "press" */
+.badge:active, .badge-vente:active, 
+.badge-stock-critique:active, .badge-stock-limite:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .badge, .badge-vente, .badge-stock-critique, .badge-stock-limite {
+    font-size: 10px;
+    min-width: 20px;
+    min-height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+  }
+}
+
+/* Variante avec badge numérique seulement */
+.badge-count {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.2px;
+}
+.status-point {
+  position: absolute;
+  top: 10px;
+  left: 25px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 2;
+}
+
+/* Statut "attente" - subtile pulsation */
+.status-point[style*="yellow"] {
+  background-color: #FFD700 !important;
+  animation: subtle-pulse 2s infinite ease-in-out;
+}
+
+/* Statut "invalider" - micro-interaction au hover */
+.status-point[style*="red"] {
+  background-color: #FF4444 !important;
+}
+.status-point[style*="red"]:hover {
+  transform: scale(1.05);
+}
+
+/* Statut "valider" - légère élévation */
+.status-point[style*="green"] {
+  background-color: #4CAF50 !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Animation subtile */
+@keyframes subtle-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
+}
+
+/* Transition au hover pour tous les états */
+.status-point:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+
+
+/* Conteneur principal */
+.guide-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1000;
+}
+
+.guide-btn {
+  width: 60px;
+  height: 60px;
+  background-color: #4da6ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.7em;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.guide-btn:hover {
+  transform: scale(1.1);
+  background-color: #3d96ef;
+}
+
+.guide-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.guide-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+.guide-window {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 92%;
+  max-width: 420px;
+  max-height: 85vh;
+  background-color: white;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  z-index: 1001;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.guide-window.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.guide-header {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.guide-content {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 210px); /* Ajusté pour les deux messages */
+  -webkit-overflow-scrolling: touch;
+}
+.guide-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.guide-content::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 3px;
+}
+
+.status-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.status-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.status-icon {
+  margin-right: 16px;
+  font-size: 1.4em;
+  color: #495057;
+  min-width: 32px;
+  text-align: center;
+  padding-top: 4px;
+}
+
+.status-content {
+  flex: 1;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 12px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  color: #343a40;
+}
+
+.status-text {
+  font-size: 0.95em;
+  color: #495057;
+  line-height: 1.6;
+  margin-left: 26px;
+}
+
+.status-subitems {
+  margin-top: 8px;
+}
+
+.status-subitem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.92em;
+}
+
+.status-subitem:last-child {
+  margin-bottom: 0;
+}
+
+.status-subitem .status-dot {
+  margin-right: 10px;
+}
+
+.red { background-color: #ff4d4d; }
+.orange { background-color: #ffa64d; }
+.green { background-color: #4dff4d; }
+.blue { background-color: #4da6ff; }
+
+.guide-footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
+.warning-message {
+  padding: 16px 20px;
+  background-color: #fff8e6;
+  border-top: 1px solid #ffe8a1;
+  color: #856404;
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+
+.warning-message strong {
+  color: #d9480f;
+}
+
+.info-message {
+  padding: 16px 20px;
+  background-color: #e7f5ff;
+  border-top: 1px solid #a5d8ff;
+  color: #1864ab;
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+
+.info-message strong {
+  color: #1c7ed6;
+}
+
+@media (max-width: 400px) {
+  .guide-window {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .guide-content {
+    padding: 16px;
+  }
+  
+  .status-item {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+  }
+  
+  .status-icon {
+    font-size: 1.3em;
+    margin-right: 14px;
+  }
+  
+  .warning-message,
+  .info-message {
+    padding: 14px 16px;
+  }
+}
     </style>
 </head>
 <body>
@@ -730,33 +1112,58 @@
     </div>
     
     <div class="content">
-        <div class="card">
-            <i class="fas fa-images text-primary"></i>
-            <h5>Gestion des sliders</h5>
-            <p>Ajouter, modifier ou supprimer les images de votre slider.</p>
-            <a href="{% url 'sliders' %}">Gérer</a>
-        </div>
+       <div class="card" style="position: relative;">
+          <i class="fas fa-images text-primary"></i>
+          {% if nombre_slider_images < 10 %}
+              <span class="status-point" style="background-color: red;"></span>
+          {% else %}
+              <span class="status-point" style="background-color: green;"></span>
+          {% endif %}
+          <h5>Gestion des sliders</h5>
+          <p>Ajouter, modifier ou supprimer les images de votre slider.</p>
+          <a href="{% url 'sliders' %}">Gérer</a>
+       </div>
+    
+       <div class="card" style="position: relative;">
+          <i class="fas fa-box text-success"></i>
+          {% if nombre_produits < 10 %}
+              <span class="status-point" style="background-color: red;"></span>
+          {% else %}
+              <span class="status-point" style="background-color: green;"></span>
+          {% endif %}
+          <h5>Gestion des produits</h5>
+          <p>Ajouter, modifier ou supprimer vos produits.</p>
+          <a href="{% url 'produits' %}">Gérer</a>
+      </div>
+    
 
-        <div class="card">
-            <i class="fas fa-box text-success"></i>
-            <h5>Gestion des produits</h5>
-            <p>Ajouter, modifier ou supprimer vos produits.</p>
-            <a href="{% url 'produits' %}">Gérer</a>
-        </div>
+      <div class="card" style="position: relative;">
+        <i class="fas fa-map-marker-alt text-danger"></i>
+        {% if localisation %}
+            <span class="status-point" style="background-color: green;"></span>
+        {% else %}
+            <span class="status-point" style="background-color: red;"></span>
+        {% endif %}
+        <h5>Localisation</h5>
+        <p>Ajouter ou modifier votre lien de localisation Google Maps.</p>
+        <a href="{% url 'localisation' %}">Gérer</a>
+      </div>
+    
 
-        <div class="card">
-            <i class="fas fa-map-marker-alt text-danger"></i>
-            <h5>Localisation</h5>
-            <p>Ajouter ou modifier votre lien de localisation Google Maps.</p>
-            <a href="{% url 'localisation' %}">Gérer</a>
-        </div>
-
-        <div class="card">
+        <div class="card" style="position: relative;">
           <i class="fas fa-headset"></i>
+          {% if statut_validation_compte == 'attente' %}
+            <span class="status-point" style="background-color: yellow;"></span>
+          {% elif statut_validation_compte == 'invalider' %}
+            <span class="status-point" style="background-color: red;"></span>
+          {% elif statut_validation_compte == 'valider' %}
+            <span class="status-point" style="background-color: green;"></span>
+          {% endif %}
           <h5>Support client</h5>
           <p>Besoin d'aide ? Notre équipe est là pour vous assister à chaque étape.</p>
           <a href="{% url 'statut_validation_compte' %}">Configurer</a>
-      </div>      
+      </div>
+         
 
         <div class="card">
             <i class="fas fa-cogs text-secondary"></i>
@@ -772,26 +1179,41 @@
             <a href="{% url 'gestion_boutique' %}">Publier</a>
         </div>
 
-        <div class="card">
-            <i class="fas fa-shopping-cart text-warning"></i>
-            <h5>Gestion des commandes</h5>
-            <p>Suivre et gérer les commandes des clients.</p>
-            <a href="{% url 'commandes_utilisateur' %}">Gérer</a>
+        <div class="card" style="position: relative;">
+          <i class="fas fa-shopping-cart text-warning"></i>
+          {% if nouvelles_commandes > 0 %}
+              <span class="badge">{{ nouvelles_commandes }}</span>
+          {% endif %}
+          <h5>Gestion des commandes</h5>
+          <p>Suivre et gérer les commandes des clients.</p>
+          <a href="{% url 'commandes_utilisateur' %}">Gérer</a>
         </div>
+      
 
-        <div class="card">
-            <i class="fas fa-chart-line text-success"></i>
-            <h5>Croissance des ventes</h5>
-            <p>Suivi de l'évolution des ventes avec des graphiques.</p>
-            <a href="{% url 'vente_list' %}">Voir</a>
+        <div class="card" style="position: relative;">
+          <i class="fas fa-chart-line text-success"></i>
+          {% if nouvelles_ventes > 0 %}
+              <span class="badge-vente">{{ nouvelles_ventes }}</span>
+          {% endif %}
+          <h5>Croissance des ventes</h5>
+          <p>Suivi de l'évolution des ventes avec des graphiques.</p>
+          <a href="{% url 'vente_list' %}">Voir</a>
         </div>
+      
 
-        <div class="card">
-            <i class="fas fa-cubes"></i>
-            <h5>Gestion des stocks</h5>
-            <p>gérez vos stocks</p>
-            <a href="{% url 'update_quantite' %}">Voir</a>
+        <div class="card" style="position: relative;">
+          <i class="fas fa-cubes"></i>
+          {% if produits_stock_critique > 0 %}
+              <span class="badge-stock-critique">{{ produits_stock_critique }}</span>
+          {% endif %}
+          {% if produits_stock_limite > 0 %}
+              <span class="badge-stock-limite">{{ produits_stock_limite }}</span>
+          {% endif %}
+          <h5>Gestion des stocks</h5>
+          <p>Gérez vos stocks</p>
+          <a href="{% url 'update_quantite' %}">Voir</a>
         </div>
+      
 
         <div class="card">
             <i class="fas fa-arrow-up text-dark"></i>
@@ -799,7 +1221,117 @@
             <p>Suivez l'évolution de vos commandes et leur impact sur les ventes.</p>
             <a href="{% url 'statistiques_commandes' %}">Voir</a>
         </div>
-    </div>
+
+        <div class="card" style="position: relative;">
+            <i class="fas fa-store text-primary"></i>
+            {% if boutique and boutique.titre %}
+                <span class="status-point" style="background-color: green;"></span>
+            {% else %}
+                <span class="status-point" style="background-color: red;"></span>
+            {% endif %}
+            <h5>Ma boutique</h5>
+            <p>Ajoutez des produits, des sliders et plus encore pour voir instantanément comment votre boutique évolue et se modernise.</p>
+            <a href="{% url 'site' %}">Voir ma boutique</a>
+      </div>
+      
+      <div class="guide-container">
+        <button class="guide-btn" id="guideBtn" aria-label="Ouvrir le guide">
+          <i class="fas fa-robot"></i>
+        </button>
+      </div>
+      
+      <!-- Overlay -->
+      <div class="guide-overlay" id="guideOverlay"></div>
+      
+      <!-- Fenêtre du guide -->
+      <div class="guide-window" id="guideWindow">
+        <div class="guide-header">
+          <h3 style="margin: 0; font-size: 1.2em; color: #212529; font-weight: 600;">Guide des indicateurs</h3>
+          <button class="close-btn" id="closeGuide" aria-label="Fermer le guide">&times;</button>
+        </div>
+        
+        <div class="guide-content">
+          <div class="status-item">
+            <i class="fas fa-images status-icon"></i>
+            <div class="status-content">
+              <div class="status-title">
+                <span class="status-dot red"></span>
+                <span>Gestion des sliders</span>
+              </div>
+              <div class="status-text">Minimum 10 images requises pour publier votre boutique. Le point rouge indique qu'il vous manque des images.</div>
+            </div>
+          </div>
+          
+          <div class="status-item">
+            <i class="fas fa-box status-icon"></i>
+            <div class="status-content">
+              <div class="status-title">
+                <span class="status-dot green"></span>
+                <span>Gestion des produits</span>
+              </div>
+              <div class="status-text">Minimum 10 produits requis. Le point vert signifie que cette condition est remplie.</div>
+            </div>
+          </div>
+          
+          <div class="status-item">
+            <i class="fas fa-map-marker-alt status-icon"></i>
+            <div class="status-content">
+              <div class="status-title">
+                <span class="status-dot red"></span>
+                <span>Localisation</span>
+              </div>
+              <div class="status-text">Votre adresse physique est obligatoire. Le point rouge signifie qu'elle n'est pas renseignée.</div>
+            </div>
+          </div>
+          
+          <div class="status-item">
+            <i class="fas fa-headset status-icon"></i>
+            <div class="status-content">
+              <div class="status-title">
+                <span class="status-dot red"></span>
+                <span>Support client</span>
+              </div>
+              <div class="status-subitems">
+                <div class="status-subitem">
+                  <span class="status-dot red"></span>
+                  <span>Compte rejeté - correction nécessaire</span>
+                </div>
+                <div class="status-subitem">
+                  <span class="status-dot orange"></span>
+                  <span>Validation en cours</span>
+                </div>
+                <div class="status-subitem">
+                  <span class="status-dot green"></span>
+                  <span>Compte validé</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-item">
+            <i class="fas fa-store status-icon"></i>
+            <div class="status-content">
+              <div class="status-title">
+                <span class="status-dot red"></span>
+                <span>Ma boutique</span>
+              </div>
+              <div class="status-text">Configuration minimale requise non atteinte. Cliquez sur "Voir ma boutique" pour compléter la configuration.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="guide-footer">
+          <div class="warning-message">
+            <strong>Important :</strong> Tant que des points rouges sont visibles, vous ne pourrez pas publier votre boutique. Corrigez les éléments marqués en rouge pour activer la publication.
+          </div>
+          
+          <div class="info-message">
+            <strong>Mise à jour requise :</strong> Après chaque modification (sliders, produits, localisation), vous devez cliquer sur "Voir ma boutique" pour sauvegarder les changements. Sans cette étape, les modifications ne seront pas visibles par vos clients.
+          </div>
+        </div>
+      </div>
+  </div>
+    
    
     <script>
     // Configuration des thèmes
@@ -968,6 +1500,64 @@ document.addEventListener('click', (e) => {
             }, 600);  // Attendre la fin de l'animation avant de le cacher
         }
     </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const guideBtn = document.getElementById('guideBtn');
+          const guideWindow = document.getElementById('guideWindow');
+          const closeGuide = document.getElementById('closeGuide');
+          const guideOverlay = document.getElementById('guideOverlay');
+          
+          // Animation fluide d'ouverture
+          function openGuide() {
+              guideOverlay.style.display = 'block';
+              guideWindow.style.display = 'block';
+              
+              // Force le recalcul des styles pour déclencher l'animation
+              void guideWindow.offsetWidth;
+              
+              guideOverlay.classList.add('active');
+              guideWindow.classList.add('active');
+              document.body.style.overflow = 'hidden';
+          }
+          
+          // Animation fluide de fermeture
+          function closeGuideWindow() {
+              guideWindow.classList.remove('active');
+              guideOverlay.classList.remove('active');
+              document.body.style.overflow = '';
+              
+              // Retire les éléments après l'animation
+              setTimeout(() => {
+                  if (!guideWindow.classList.contains('active')) {
+                      guideWindow.style.display = 'none';
+                      guideOverlay.style.display = 'none';
+                  }
+              }, 300);
+          }
+          
+          // Ouvrir le guide
+          guideBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              openGuide();
+          });
+          
+          // Fermer le guide
+          closeGuide.addEventListener('click', closeGuideWindow);
+          guideOverlay.addEventListener('click', closeGuideWindow);
+          
+          // Fermer avec la touche Escape
+          document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape' && guideWindow.classList.contains('active')) {
+                  closeGuideWindow();
+              }
+          });
+          
+          // Empêcher la propagation du clic dans la fenêtre
+          guideWindow.addEventListener('click', function(e) {
+              e.stopPropagation();
+          });
+      });
+  </script>
 
     <!-- Bootstrap JS (facultatif pour certaines interactions) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
