@@ -1,464 +1,1284 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - WarabaGuinée</title>
-    {% load static %}
-    {% load widget_tweaks %}
-    
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    
+    <title>Tableau de Bord - WarabaGuinnée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset et styles de base */
+        :root {
+            /* Light Theme */
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #64748b;
+            --success: #10b981;
+            --info: #0ea5e9;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --card-bg: #ffffff;
+            --sidebar-bg: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            
+            /* Spinner */
+            --spinner-color: var(--primary);
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --secondary: #94a3b8;
+            --success: #34d399;
+            --info: #60a5fa;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --light: #1e293b;
+            --dark: #f8fafc;
+            --card-bg: #0f172a;
+            --sidebar-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --hover-bg: #1e293b;
+            
+            --spinner-color: var(--primary);
+        }
+
         * {
-            padding: 0; 
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            box-sizing: border-box;
-            transition: all 0.2 linear;
-            text-decoration: none;
-            list-style-type: none;
-            border: none;
-        }
-        
-        html {
-            font-size: 80.5%;
-            scroll-padding-top: 7em;
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Orbitron', sans-serif;
             margin: 0;
             padding: 0;
-            background: #fff;
-            color: #0b0c0e;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--light);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
+        }
+
+        /* Spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--spinner-color);
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .spinner-lg {
+            width: 40px;
+            height: 40px;
+            border-width: 4px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            touch-action: none;
         }
-        
-        /* En-tête */
-        .top-bar {
+
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.25rem;
+            color: white;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .user-name {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            opacity: 0.8;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background-color: #333;
-            position: fixed;
+            justify-content: center;
+            gap: 0.5rem;
+            word-break: break-word;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1.5rem;
+        }
+
+        .logout-btn, .theme-toggle {
             width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .logout-btn:hover, .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .logout-btn:active, .theme-toggle:active {
+            transform: scale(0.98);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 280px);
+        }
+
+        .top-navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            overflow: hidden;
+        }
+
+        .page-title h1 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .page-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #currentTime {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .content-container {
+            padding: 1.5rem 1rem;
+            flex: 1;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            transform: translateX(0);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: calc(100% - 40px);
+            border-left: 4px solid;
+        }
+
+        .notification.hide {
+            transform: translateX(120%);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        .notification.info {
+            border-left-color: var(--info);
+        }
+
+        .notification-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .notification.success .notification-icon {
+            color: var(--success);
+        }
+
+        .notification.error .notification-icon {
+            color: var(--danger);
+        }
+
+        .notification.warning .notification-icon {
+            color: var(--warning);
+        }
+
+        .notification.info .notification-icon {
+            color: var(--info);
+        }
+
+        .notification-content {
+            flex: 1;
+            font-size: 0.875rem;
+            word-break: break-word;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .notification-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
-            box-sizing: border-box;
-            margin: 0;
+            height: 4px;
+            background: inherit;
         }
-        
-        .top-bar h1 {
-            flex: 1;
-            text-align: center;
-            font-size: 24px;
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .stat-card-primary {
+            border-top-color: var(--primary);
+        }
+
+        .stat-card-success {
+            border-top-color: var(--success);
+        }
+
+        .stat-card-warning {
+            border-top-color: var(--warning);
+        }
+
+        .stat-card-danger {
+            border-top-color: var(--danger);
+        }
+
+        .stat-title {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #fff;
-            padding: 0 10px;
-            word-break: break-word;
-            white-space: normal;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
         }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            left: -250px;
-            top: 0;
-            background-color: #333;
-            padding-top: 20px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            z-index: 1001;
-            border-right: 2px solid #000;
-            box-sizing: border-box;
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.8125rem;
+            gap: 0.25rem;
         }
-        
-        .sidebar.active {
-            left: 0;
+
+        .stat-change.positive {
+            color: var(--success);
         }
-        
-        /* Contenu principal */
-        .content {
-            margin-left: 0;
-            padding: 20px;
-            margin-top: 60px;
-            min-height: calc(100vh - 60px);
-            transition: margin-left 0.3s ease;
-            overflow-x: hidden;
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Filter Section */
+        .filter-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reset-btn {
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+
+        .filter-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .filter-group {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .filter-input {
             width: 100%;
-            box-sizing: border-box;
-            position: relative;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            transition: all 0.3s ease;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            -webkit-appearance: none;
         }
-        
-        /* Tableaux */
-        .table-container {
-            width: 100%;
+
+        .filter-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .filter-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        /* Users Table */
+        .users-table {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .table-responsive {
             overflow-x: auto;
-            margin-bottom: 20px;
-            padding: 0 15px;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
         }
-        
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
+
+        table {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            overflow: auto;
-            backdrop-filter: blur(5px);
+            border-collapse: collapse;
+            min-width: 800px;
         }
-        
-        /* Notifications */
-        .messages-overlay {
+
+        th, td {
+            padding: 0.875rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: var(--hover-bg);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            gap: 0.25rem;
+            white-space: nowrap;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .action-btn {
+            padding: 0.375rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin: 0.125rem;
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0d9b6c;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e69009;
+        }
+
+        .whatsapp-link {
+            color: #25D366;
+            font-size: 0.8125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .whatsapp-link:hover {
+            color: #128C7E;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .page-item {
+            list-style: none;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-link:active {
+            transform: scale(0.95);
+        }
+
+        .page-link:hover {
+            background: var(--hover-bg);
+        }
+
+        .page-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filter-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .content-container {
+                padding: 1rem 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.25rem;
+            }
+
+            .filter-card {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-navbar {
+                padding: 0.75rem;
+            }
+
+            .page-title h1 {
+                font-size: 1.1rem;
+            }
+
+            .sidebar-logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+            }
+
+            .sidebar-header h3 {
+                font-size: 1.1rem;
+            }
+
+            .user-name {
+                font-size: 0.9375rem;
+            }
+
+            .logout-btn, .theme-toggle {
+                padding: 0.625rem;
+                font-size: 0.8125rem;
+            }
+
+            .stat-title {
+                font-size: 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1.1rem;
+            }
+
+            .stat-change {
+                font-size: 0.75rem;
+            }
+
+            .filter-title {
+                font-size: 0.9375rem;
+            }
+
+            .reset-btn {
+                padding: 0.375rem 0.625rem;
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.625rem;
+            }
+
+            .action-btn {
+                padding: 0.25rem 0.375rem;
+                font-size: 0.6875rem;
+            }
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 20px;
-            z-index: 9999;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Loading state */
+        .loading {
+            position: relative;
             pointer-events: none;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            opacity: 0.7;
         }
-        
-        /* Responsive Design */
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            border-radius: inherit;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        /* Smooth transitions */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile optimizations */
+        @media (hover: none) {
+            button, .action-btn, .page-link, .logout-btn, .theme-toggle, .reset-btn {
+                transition: none !important;
+            }
+            
+            button:active, .action-btn:active, .page-link:active, .logout-btn:active, 
+            .theme-toggle:active, .reset-btn:active {
+                transform: scale(0.95) !important;
+            }
+            
+            tr:hover td {
+                background-color: inherit !important;
+            }
+            
+            .stat-card:hover {
+                transform: none !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            }
+        }
+
+        /* Prevent zoom on input focus on mobile */
         @media screen and (max-width: 767px) {
-            .top-bar h1 {
-                font-size: 18px;
-                white-space: normal;
-                overflow: visible;
-                text-overflow: clip;
-            }
-            
-            .menu-btn {
-                font-size: 22px;
-                margin-right: 5px;
-                padding: 5px 8px;
-            }
-            
-            .content {
-                margin: 60px 0 0 0;
-                padding: 15px;
-                width: 100%;
+            input, select, textarea {
+                font-size: 16px !important;
             }
         }
-        
-        @media screen and (min-width: 768px) {
-            .content {
-                margin-left: 250px;
-            }
-            
-            .sidebar {
-                left: 0;
-            }
-            
-            .menu-btn {
-                display: none;
-            }
-        }
-        
-        /* Ajoutez ici tous les autres styles existants... */
-        
     </style>
 </head>
 <body>
-    <!-- Audio pour les notifications -->
-    <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
-    
-    <!-- Notifications -->
-    {% if messages %}
-    <div class="messages-overlay" id="messages-overlay">
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="notification-modal" id="notification-{{ forloop.counter }}" data-theme="{{ theme }}">
-                    <div class="notification-icon">
-                        <i class="fas fa-robot pulse"></i>
-                    </div>
-                    
-                    <div class="notification-content">
-                        <div class="message">
-                            {{ message }}
-                        </div>
-                    </div>
-                    
-                    <button class="close-btn" onclick="closeNotification(this)" aria-label="Fermer">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    
-                    <div class="progress-bar"></div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- En-tête -->
-    <div class="top-bar">
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <h1>Tableau de Bord - WarabaGuinée</h1>
-    </div>
-    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <button class="sidebar-close" onclick="toggleSidebar()">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="logo-container">
-            <img src="{% static 'lo.jpeg' %}" alt="Logo" class="logo">
+        <div class="sidebar-header">
+            <img src="{% static 'lo.webp' %}" alt="WarabaGuinnée Logo" class="sidebar-logo">
+            <h3>WarabaGuinnée</h3>
         </div>
-        <h2>WarabaGuinée</h2>
-        <hr>    
-        <a href="{% url 'table' %}"><i class="fas fa-home"></i> Tableau de bord</a>
-        <a href="{% url 'site' %}"><i class="fas fa-store"></i> Voir ma boutique</a>
-        <a href="{% url 'sliders' %}"><i class="fas fa-images"></i> Gestion sliders</a>
-        <a href="{% url 'produits' %}"><i class="fas fa-box"></i> Gestion produits</a>
-        <a href="{% url 'localisation' %}"><i class="fas fa-map-marker-alt"></i> Localisation</a>
-        <a href="{% url 'commandes_utilisateur' %}"><i class="fas fa-shopping-cart"></i>Commandes</a>
-        <a href="{% url 'vente_list' %}"><i class="fas fa-chart-line"></i> Ventes en hausse</a>
-        <a href="{% url 'update_quantite' %}"><i class="fas fa-cogs"></i> Gestion des stocks</a>
-        <a href="{% url 'statistiques_commandes' %}"><i class="fas fa-chart-bar"></i>Croissance des commandes</a>
-        <a href="{% url 'statut_validation_compte' %}"><i class="fas fa-headset"></i> Support client</a>
-        <a href="{% url 'profil' %}"><i class="fas fa-cogs"></i> Paramètres</a>
-        <a href="{% url 'gestion_boutique' %}"><i class="fas fa-upload"></i> Publier le site</a>
-        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
-        <a href=""></a>
+        
+        <div class="user-profile">
+            <img src="{{ supportClient.profil.url }}" alt="Photo du support client" class="user-avatar">
+            <h4 class="user-name">{{ supportClient.nom_complet }}</h4>
+            <p class="user-role">{{ supportClient.role }}</p>
+            <p class="user-email">
+                <i class="fas fa-envelope"></i> {{ supportClient.email }}
+            </p>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i> Thème sombre
+            </button>
+            
+            <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
     </div>
     
-    <!-- Contenu principal -->
-    <div class="content">
-        <h2 class="text-center">
-            <i class="fas fa-list-alt"></i> Liste des Commandes
-        </h2>
-        
-        <!-- Formulaire de filtre -->
-        <form method="get" action="{% url 'commandes_utilisateur' %}">
-            <div class="form-group">
-                <label for="filter">Filtrer les commandes :</label>
-                <select name="filter" id="filter" class="form-select">
-                    <option value="all" {% if request.GET.filter == 'all' %}selected{% endif %}>Toutes</option>
-                    <option value="week" {% if request.GET.filter == 'week' %}selected{% endif %}>Cette semaine</option>
-                    <option value="month" {% if request.GET.filter == 'month' %}selected{% endif %}>Ce mois</option>
-                    <option value="day" {% if request.GET.filter == 'day' %}selected{% endif %}>Aujourd'hui</option>
-                    <option value="date" {% if request.GET.filter == 'date' %}selected{% endif %}>Date spécifique</option>
-                </select>
-
-                {% if request.GET.filter == 'date' %}
-                    <input type="date" name="selected_date" class="form-control mt-2" value="{{ request.GET.selected_date }}">
-                {% endif %}
-                
-                <button type="submit" class="btn btn-primary btn-sm mt-2">Appliquer le filtre</button>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h1><i class="fas fa-tachometer-alt"></i> Tableau de Bord</h1>
             </div>
-        </form>
-
-        <!-- Tableau des commandes -->
-        <div class="table-container">
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom du Client</th>
-                        <th>Numéro du Client</th>
-                        <th>Date de Commande</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for commande in commandes %}
-                    <tr>
-                        <td class="id-cell">{{ forloop.counter }}</td>
-                        <td>{{ commande.nom_client }}</td>
-                        <td>{{ commande.numero_client }}</td>
-                        <td>{{ commande.date_commande|date:"d M Y H:i" }}</td>
-                        <td>
-                            <form method="post" class="statut-form">
-                                {% csrf_token %}
-                                <input type="hidden" name="commande_id" value="{{ commande.id }}">
-                                <select name="action" class="form-select" {% if commande.statut == 'Livrée' or commande.statut == 'Annulée' %}disabled{% endif %}>
-                                    {% for key, value in statut_choices %}
-                                    <option value="{{ key }}" {% if commande.statut == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button type="submit" class="btn btn-success btn-sm mt-2" {% if commande.statut == 'Livrée' or commande.statut == 'Annulée' %}disabled{% endif %}>
-                                    {% if commande.statut == 'Livrée' or commande.statut == 'Annulée' %}
-                                        <i class="fas fa-lock"></i> Statut bloqué
-                                    {% else %}
-                                        OK
-                                    {% endif %}
-                                </button>
-                            </form>
-                        </td>
-                        <td class="text-center">
-                            <div class="btn-group">
-                                <button class="btn btn-info btn-sm" onclick="openModal('modal-{{ forloop.counter }}')">
-                                    <i class="fas fa-info-circle"></i> Détail
-                                </button>
-                                <form method="post" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="commande_id" value="{{ commande.id }}">
-                                    <input type="hidden" name="action" value="supprimer">
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i> Supprimer
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Modal pour les détails de commande -->
-                    <div id="modal-{{ forloop.counter }}" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3><i class="fas fa-receipt"></i> Détails de la commande</h3>
-                                <span class="close" onclick="closeModal('modal-{{ forloop.counter }}')">&times;</span>
-                            </div>
-                            <div class="modal-body">
-                                <div class="command-container">
-                                    {{ commande.html_contenu|safe }}
-                                </div>
-                            </div>
+            <div class="page-actions">
+                <span id="currentTime" class="text-sm text-gray-600"></span>
+            </div>
+        </div>
+        
+        <!-- Content Container -->
+        <div class="content-container">
+            <!-- Notification -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notification {% if message.tags %}{{ message.tags }}{% endif %} fade-in" id="notification">
+                        <div class="notification-icon">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif message.tags == 'info' %}
+                                <i class="fas fa-info-circle"></i>
+                            {% else %}
+                                <i class="fas fa-bell"></i>
+                            {% endif %}
+                        </div>
+                        <div class="notification-content">
+                            {{ message }}
+                        </div>
+                        <button class="notification-close">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-title">
+                        <i class="fas fa-users"></i> Total Utilisateurs
+                    </div>
+                    <div class="stat-value">{{ total_utilisateurs }}</div>
+                </div>
+                
+                <div class="stat-card stat-card-success">
+                    <div class="stat-title">
+                        <i class="fas fa-check-circle"></i> Comptes Validés
+                    </div>
+                    <div class="stat-value">{{ compte_valide }}</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> {{ pourcentage_valide }}% du total
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-title">
+                        <i class="fas fa-clock"></i> En Attente
+                    </div>
+                    <div class="stat-value">{{ compte_en_attente }}</div>
+                    <div class="stat-change">
+                        {{ pourcentage_en_attente }}% du total
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-card-danger">
+                    <div class="stat-title">
+                        <i class="fas fa-times-circle"></i> Comptes Invalidés
+                    </div>
+                    <div class="stat-value">{{ compte_invalide }}</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i> {{ pourcentage_invalide }}% du total
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-card">
+                <div class="filter-header">
+                    <div class="filter-title">
+                        <i class="fas fa-filter"></i> Filtrer les Utilisateurs
+                    </div>
+                    <button class="reset-btn" onclick="resetFilters()">
+                        <i class="fas fa-sync-alt"></i> Réinitialiser
+                    </button>
+                </div>
+                
+                <form method="GET" action="">
+                    <div class="filter-fields">
+                        <div class="filter-group">
+                            <label class="filter-label" for="nom">
+                                <i class="fas fa-user"></i> Nom
+                            </label>
+                            <input type="text" class="filter-input" id="nom" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="statut">
+                                <i class="fas fa-tag"></i> Statut
+                            </label>
+                            <select class="filter-input" id="statut" name="statut">
+                                <option value="">Tous les statuts</option>
+                                <option value="valider" {% if statut_filtre == 'valider' %}selected{% endif %}>Validé</option>
+                                <option value="invalider" {% if statut_filtre == 'invalider' %}selected{% endif %}>Invalidé</option>
+                                <option value="attente" {% if statut_filtre == 'attente' %}selected{% endif %}>En attente</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="date_specifique">
+                                <i class="fas fa-calendar-day"></i> Date spécifique
+                            </label>
+                            <input type="date" class="filter-input" id="date_specifique" name="date_specifique" value="{{ date_specifique }}">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="intervalle_debut">
+                                <i class="fas fa-calendar-alt"></i> Intervalle (début)
+                            </label>
+                            <input type="date" class="filter-input" id="intervalle_debut" name="intervalle_debut" value="{{ intervalle_debut }}">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="intervalle_fin">
+                                <i class="fas fa-calendar-alt"></i> Intervalle (fin)
+                            </label>
+                            <input type="date" class="filter-input" id="intervalle_fin" name="intervalle_fin" value="{{ intervalle_fin }}">
                         </div>
                     </div>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center p-3">
-                            <i class="fas fa-robot fa-3x"></i> Aucune vente trouvée.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination">
-            {% if commandes.has_previous %}
-                <a href="?page={{ commandes.previous_page_number }}" class="btn btn-primary btn-sm">Précédent</a>
-            {% endif %}
-            <span>Page {{ commandes.number }} sur {{ commandes.paginator.num_pages }}</span>
-            {% if commandes.has_next %}
-                <a href="?page={{ commandes.next_page_number }}" class="btn btn-primary btn-sm">Suivant</a>
-            {% endif %}
-        </div>
-
-        <!-- Filtres rapides -->
-        <div class="filter-options">
-            <a href="?filter=week" class="btn btn-info btn-sm">Cette Semaine</a>
-            <a href="?filter=month" class="btn btn-info btn-sm">Ce Mois</a>
-            <a href="?filter=all" class="btn btn-info btn-sm">Toutes</a>
+                </form>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="users-table">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user"></i> Nom Complet</th>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <th><i class="fas fa-phone"></i> Téléphone</th>
+                                <th><i class="fas fa-calendar-plus"></i> Date Inscription</th>
+                                <th><i class="fas fa-tag"></i> Statut</th>
+                                <th><i class="fas fa-cog"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for utilisateur in utilisateurs %}
+                            <tr>
+                                <td>{{ utilisateur.nom_complet }}</td>
+                                <td>{{ utilisateur.email }}</td>
+                                <td>
+                                    <a href="{{ utilisateur.whatsapp_link }}" target="_blank" class="whatsapp-link">
+                                        <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
+                                    </a>
+                                </td>
+                                <td>{{ utilisateur.date_joined|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if utilisateur.statut_validation_compte == 'valider' %}
+                                        <span class="status-badge status-success">
+                                            <i class="fas fa-check-circle"></i> Validé
+                                        </span>
+                                    {% elif utilisateur.statut_validation_compte == 'invalider' %}
+                                        <span class="status-badge status-danger">
+                                            <i class="fas fa-times-circle"></i> Invalidé
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-warning">
+                                            <i class="fas fa-clock"></i> En attente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="action-buttons-container" style="display: flex; gap: 0.25rem;">
+                                        <!-- Formulaire pour Valider -->
+                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
+                                            <input type="hidden" name="action" value="valider">
+                                            <button type="submit" class="action-btn btn-success">
+                                                <i class="fas fa-check"></i> Valider
+                                            </button>
+                                        </form>
+                                
+                                        <!-- Formulaire pour Mettre en Attente -->
+                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
+                                            <input type="hidden" name="action" value="attente">
+                                            <button type="submit" class="action-btn btn-warning">
+                                                <i class="fas fa-clock"></i> Attente
+                                            </button>
+                                        </form>
+                                
+                                        <!-- Formulaire pour Invalider -->
+                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
+                                            <input type="hidden" name="action" value="invalider">
+                                            <button type="submit" class="action-btn btn-danger">
+                                                <i class="fas fa-times"></i> Invalider
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Scripts JavaScript -->
+    
     <script>
-        // Fonction pour ouvrir et fermer le sidebar
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            const body = document.querySelector('body');
-            
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                body.classList.remove('no-scroll');
-            } else {
-                sidebar.classList.add('active');
-                body.classList.add('no-scroll');
-            }
-        }
-
-        // Fermer le sidebar en cliquant en dehors
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const menuBtn = document.querySelector('.menu-btn');
-            const sidebarClose = document.querySelector('.sidebar-close');
-            
-            if (!sidebar.contains(event.target) && 
-                event.target !== menuBtn && 
-                !menuBtn.contains(event.target) &&
-                event.target !== sidebarClose && 
-                !sidebarClose.contains(event.target)) {
-                
-                sidebar.classList.remove('active');
-                document.body.classList.remove('no-scroll');
-            }
+        // Toggle sidebar on mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
         });
         
-        // Fonctions pour les modals
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.style.display = "flex";
-            }
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.style.display = "none";
-                document.body.style.overflow = 'auto';
-            }
-        }
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
         
-        // Fermer le modal si on clique en dehors
-        window.onclick = function(event) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            });
-        };
-        
-        // Gestion des notifications
-        function closeNotification(closeButton) {
-            const notification = closeButton.closest('.notification-modal');
-            if (!notification) return;
+        // Auto-hide notification after 5 seconds
+        const notification = document.getElementById('notification');
+        if (notification) {
+            setTimeout(function() {
+                notification.classList.add('hide');
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            }, 5000);
             
-            notification.classList.add('closing');
-            setTimeout(() => {
-                notification.classList.remove('show', 'closing');
-                notification.remove();
-            }, 300);
+            // Manual close notification
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', function() {
+                notification.classList.add('hide');
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            });
         }
         
-        // Initialisation des notifications
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.notification-modal').forEach(notification => {
-                notification.classList.add('show');
+        // Reset filters
+        function resetFilters() {
+            window.location.href = window.location.pathname;
+        }
+        
+        // Auto-submit form when filters change
+        document.querySelectorAll('.filter-input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                // Show loading state
+                document.body.classList.add('loading');
                 
-                // Fermeture automatique après 5 secondes
+                // Submit form after a small delay for better UX
                 setTimeout(() => {
-                    notification.classList.add('closing');
-                    setTimeout(() => notification.remove(), 300);
-                }, 5000);
+                    this.closest('form').submit();
+                }, 300);
+            });
+        });
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Apply the saved theme
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        });
+        
+        function updateThemeButton(theme) {
+            if (theme === 'dark') {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Thème clair';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Thème sombre';
+            }
+        }
+        
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentTime').textContent = now.toLocaleDateString('fr-FR', options);
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000); // Update every minute
+        
+        // Add loading state to buttons when clicked
+        document.querySelectorAll('button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const spinner = document.createElement('span');
+                spinner.className = 'spinner';
+                this.innerHTML = '';
+                this.appendChild(spinner);
+                this.disabled = true;
+                this.classList.add('loading');
+                
+                // Submit the form if it's a form button
+                if (this.closest('form')) {
+                    this.closest('form').submit();
+                }
             });
         });
     </script>
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

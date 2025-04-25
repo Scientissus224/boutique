@@ -24,7 +24,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise Exception("La variable SECRET_KEY est manquante dans le fichier .env")
 
-DEBUG = os.getenv("DEBUG", "True").strip().lower() == "true"
+# DEBUG = os.getenv("DEBUG", "True").strip().lower() == "true"
+DEBUG = True
 
 # Charger les hôtes autorisés depuis le fichier .env
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')

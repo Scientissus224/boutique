@@ -843,10 +843,11 @@ class SupportClientManager(BaseUserManager):
 
 class SupportClient(AbstractBaseUser):
     ROLES = [
-        ('responsable_support', 'Responsable Support'),
-        ('assistant_support', 'Assistant Support'),
-        ('technicien_support', 'Technicien Support'),
+        ('verificateur_comptes', 'Vérificateur de Comptes'),
+        ('controleur_produits', 'Contrôleur de Produits'),
+        ('gestionnaire_comptes', 'Gestionnaire de Comptes'),
     ]
+
 
     VALIDATION_COMPTE = [
         ('accordé', 'Accordé'),

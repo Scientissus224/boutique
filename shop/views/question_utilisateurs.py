@@ -40,7 +40,7 @@ def informations_supplementaires_view(request, utilisateur_temporaire_id):
                 return render(request, 'infos_plus.html', {'form': form, 'utilisateur': utilisateur_temporaire})
 
             # Affichage du message de succès
-            messages.success(request, "Vos informations ont été enregistrées. Un email de bienvenue et de confirmation vous a été envoyé.")
+            messages.success(request, "Vos informations ont été enregistrées.Un email contenant votre identifiant et un lien d'activation vous a été envoyé. Veuillez vérifier votre boîte de réception et activer votre compte en cliquant sur le lien. Tant que votre compte n’est pas activé, vous ne pourrez pas vous connecter.")
             return redirect('login')
     else:
         form = InformationsSupplementairesForm()

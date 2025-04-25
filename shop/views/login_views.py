@@ -94,8 +94,22 @@ def login(request):
                         'last_login': str(datetime.now())
                     })
                     logger.info(f"Connexion réussie - Support: {user.id}")
-                    messages.success(request, f"Bienvenue, {user.nom} !")
-                    return redirect('update_status')
+                   
+
+                    if user.role == 'verificateur_comptes':
+                        messages.success(request, f"Bienvenue, {user.nom} !")
+                        return redirect('update_status')
+                    elif user.role == 'controleur_produits':
+                        messages.success(request, f"Bienvenue, {user.nom} !")
+                        return redirect('gestion_produits_utilisateurs')
+                    elif user.role == 'gestionnaire_comptes':
+                        messages.success(request, f"Bienvenue, {user.nom} !")
+                        return redirect('gestion_utilisateurs_boutiques')
+                    else:
+                        # Optionnel : cas où le rôle est inconnu ou différent
+                        messages.warning(request, "Votre rôle n'est pas reconnu pour une redirection automatique.")
+                        return redirect('login')  # à remplacer par une vue par défaut
+
 
         except Exception as e:
             logger.error(f"ERREUR CONNEXION - {str(e)}", exc_info=True)

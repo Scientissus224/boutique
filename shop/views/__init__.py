@@ -35,7 +35,7 @@ from .renitialisation_pass import (
     password_reset_complete
 )
 from .validation_compte_views import statut_validation_compte
-from .support_client_views import update_utilisateur_status
+from .support_client_views import update_utilisateur_status,gestion_produits_utilisateurs,gestion_utilisateurs_boutiques
 from .statistique_commande import statistiques_commandes
 from .vente_views import vente_list
 from .new_quantite import mise_a_jour_quantite

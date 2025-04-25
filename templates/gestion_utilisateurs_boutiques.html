@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - WarabaGuinnée</title>
+    <title>Gestion Utilisateurs - WarabaGuinnée</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -12,11 +12,17 @@
             /* Light Theme */
             --primary: #6366f1;
             --primary-hover: #4f46e5;
+            --primary-light: #e0e7ff;
             --secondary: #64748b;
+            --secondary-light: #f1f5f9;
             --success: #10b981;
+            --success-light: #d1fae5;
             --info: #0ea5e9;
+            --info-light: #e0f2fe;
             --warning: #f59e0b;
+            --warning-light: #fef3c7;
             --danger: #ef4444;
+            --danger-light: #fee2e2;
             --light: #f8fafc;
             --dark: #1e293b;
             --card-bg: #ffffff;
@@ -25,6 +31,7 @@
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
             --hover-bg: #f1f5f9;
+            --input-bg: #ffffff;
             
             /* Spinner */
             --spinner-color: var(--primary);
@@ -33,11 +40,17 @@
         [data-theme="dark"] {
             --primary: #818cf8;
             --primary-hover: #6366f1;
+            --primary-light: #312e81;
             --secondary: #94a3b8;
+            --secondary-light: #1e293b;
             --success: #34d399;
+            --success-light: #064e3b;
             --info: #60a5fa;
+            --info-light: #1e40af;
             --warning: #fbbf24;
+            --warning-light: #92400e;
             --danger: #f87171;
+            --danger-light: #991b1b;
             --light: #1e293b;
             --dark: #f8fafc;
             --card-bg: #0f172a;
@@ -46,6 +59,7 @@
             --text-secondary: #94a3b8;
             --border-color: #334155;
             --hover-bg: #1e293b;
+            --input-bg: #1e293b;
             
             --spinner-color: var(--primary);
         }
@@ -304,18 +318,22 @@
 
         .notification.success {
             border-left-color: var(--success);
+            background-color: var(--success-light);
         }
 
         .notification.error {
             border-left-color: var(--danger);
+            background-color: var(--danger-light);
         }
 
         .notification.warning {
             border-left-color: var(--warning);
+            background-color: var(--warning-light);
         }
 
         .notification.info {
             border-left-color: var(--info);
+            background-color: var(--info-light);
         }
 
         .notification-icon {
@@ -395,18 +413,22 @@
 
         .stat-card-primary {
             border-top-color: var(--primary);
+            background-color: var(--primary-light);
         }
 
         .stat-card-success {
             border-top-color: var(--success);
+            background-color: var(--success-light);
         }
 
         .stat-card-warning {
             border-top-color: var(--warning);
+            background-color: var(--warning-light);
         }
 
         .stat-card-danger {
             border-top-color: var(--danger);
+            background-color: var(--danger-light);
         }
 
         .stat-title {
@@ -484,6 +506,10 @@
             font-weight: 500;
         }
 
+        .reset-btn:hover {
+            background: var(--secondary-light);
+        }
+
         .reset-btn:active {
             transform: scale(0.98);
         }
@@ -506,19 +532,19 @@
             font-weight: 500;
         }
 
-        .filter-input {
+        .filter-input, .filter-input select, .filter-input input {
             width: 100%;
             padding: 0.625rem 0.875rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 0.8125rem;
             transition: all 0.3s ease;
-            background-color: var(--card-bg);
+            background-color: var(--input-bg);
             color: var(--text-primary);
             -webkit-appearance: none;
         }
 
-        .filter-input:focus {
+        .filter-input:focus, .filter-input select:focus, .filter-input input:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
@@ -527,6 +553,101 @@
         .filter-input::placeholder {
             color: var(--text-secondary);
             opacity: 0.7;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364758b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2rem;
+        }
+
+        [data-theme="dark"] .form-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        }
+
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            background-color: var(--input-bg);
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-check-input:checked::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 0.5rem;
+            height: 0.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            transform: translate(-50%, -50%);
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
         }
 
         /* Users Table */
@@ -605,21 +726,21 @@
         }
 
         .action-btn {
-            padding: 0.375rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
             margin: 0.125rem;
         }
 
         .action-btn:active {
-            transform: translateY(0);
+            transform: translateY(1px);
         }
 
         .btn-primary {
@@ -656,6 +777,25 @@
 
         .btn-warning:hover {
             background: #e69009;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--hover-bg);
         }
 
         .whatsapp-link {
@@ -713,6 +853,16 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+        }
+
+        /* Image Preview */
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 1rem;
+            display: block;
         }
 
         /* Responsive */
@@ -824,8 +974,8 @@
             }
 
             .action-btn {
-                padding: 0.25rem 0.375rem;
-                font-size: 0.6875rem;
+                padding: 0.375rem 0.5rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -923,11 +1073,11 @@
         </div>
         
         <div class="user-profile">
-            <img src="{{ supportClient.profil.url }}" alt="Photo du support client" class="user-avatar">
-            <h4 class="user-name">{{ supportClient.nom_complet }}</h4>
-            <p class="user-role">{{ supportClient.role }}</p>
+            <img src="{{ support_client.profil.url }}" alt="Photo du support client" class="user-avatar">
+            <h4 class="user-name">{{ support_client.nom_complet }}</h4>
+            <p class="user-role">{{ support_client.role }}</p>
             <p class="user-email">
-                <i class="fas fa-envelope"></i> {{ supportClient.email }}
+                <i class="fas fa-envelope"></i> {{ support_client.email }}
             </p>
         </div>
         
@@ -950,7 +1100,13 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="page-title">
-                <h1><i class="fas fa-tachometer-alt"></i> Tableau de Bord</h1>
+                <h1>
+                    {% if mode == 'liste' %}
+                        <i class="fas fa-users"></i> Gestion des Utilisateurs
+                    {% elif mode == 'detail' %}
+                        <i class="fas fa-user"></i> Détails de l'Utilisateur
+                    {% endif %}
+                </h1>
             </div>
             <div class="page-actions">
                 <span id="currentTime" class="text-sm text-gray-600"></span>
@@ -995,290 +1151,383 @@
                 
                 <div class="stat-card stat-card-success">
                     <div class="stat-title">
-                        <i class="fas fa-check-circle"></i> Comptes Validés
+                        <i class="fas fa-user-check"></i> Comptes Actifs
                     </div>
-                    <div class="stat-value">{{ compte_valide }}</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> {{ pourcentage_valide }}% du total
+                    <div class="stat-value">{{ utilisateurs_actifs }}</div>
+                    <div class="stat-change">
+                        {{ pourcentage_actifs }}% du total
                     </div>
                 </div>
                 
                 <div class="stat-card stat-card-warning">
                     <div class="stat-title">
-                        <i class="fas fa-clock"></i> En Attente
+                        <i class="fas fa-user-times"></i> Comptes Inactifs
                     </div>
-                    <div class="stat-value">{{ compte_en_attente }}</div>
+                    <div class="stat-value">{{ utilisateurs_inactifs }}</div>
                     <div class="stat-change">
-                        {{ pourcentage_en_attente }}% du total
+                        {{ pourcentage_inactifs }}% du total
                     </div>
                 </div>
                 
                 <div class="stat-card stat-card-danger">
                     <div class="stat-title">
-                        <i class="fas fa-times-circle"></i> Comptes Invalidés
+                        <i class="fas fa-store"></i> Boutiques Premium
                     </div>
-                    <div class="stat-value">{{ compte_invalide }}</div>
-                    <div class="stat-change negative">
-                        <i class="fas fa-arrow-down"></i> {{ pourcentage_invalide }}% du total
+                    <div class="stat-value">{{ boutiques_premium }}</div>
+                    <div class="stat-change">
+                        {{ pourcentage_premium }}% des boutiques
                     </div>
                 </div>
             </div>
             
-            <!-- Filter Section -->
-            <div class="filter-card">
-                <div class="filter-header">
-                    <div class="filter-title">
-                        <i class="fas fa-filter"></i> Filtrer les Utilisateurs
+            {% if mode == 'liste' %}
+                <!-- Filter Section pour la liste des utilisateurs -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <div class="filter-title">
+                            <i class="fas fa-filter"></i> Filtrer les Utilisateurs
+                        </div>
+                        <button class="reset-btn" onclick="resetFilters()">
+                            <i class="fas fa-sync-alt"></i> Réinitialiser
+                        </button>
                     </div>
-                    <button class="reset-btn" onclick="resetFilters()">
-                        <i class="fas fa-sync-alt"></i> Réinitialiser
-                    </button>
+                    
+                    <form method="GET" action="">
+                        <div class="filter-fields">
+                            <div class="filter-group">
+                                <label class="filter-label" for="nom_recherche">
+                                    <i class="fas fa-user"></i> Nom ou Téléphone
+                                </label>
+                                <input type="text" class="filter-input" id="nom_recherche" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom ou téléphone">
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label" for="statut_compte">
+                                    <i class="fas fa-user-circle"></i> Statut Compte
+                                </label>
+                                <select class="filter-input form-select" id="statut_compte" name="statut_compte">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="actif" {% if statut_compte == 'actif' %}selected{% endif %}>Actif</option>
+                                    <option value="inactif" {% if statut_compte == 'inactif' %}selected{% endif %}>Inactif</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label" for="statut_boutique">
+                                    <i class="fas fa-store"></i> Statut Boutique
+                                </label>
+                                <select class="filter-input form-select" id="statut_boutique" name="statut_boutique">
+                                    <option value="">Toutes les boutiques</option>
+                                    <option value="avec_boutique" {% if statut_boutique == 'avec_boutique' %}selected{% endif %}>Avec boutique</option>
+                                    <option value="sans_boutique" {% if statut_boutique == 'sans_boutique' %}selected{% endif %}>Sans boutique</option>
+                                    <option value="boutique_premium" {% if statut_boutique == 'boutique_premium' %}selected{% endif %}>Premium</option>
+                                    <option value="boutique_publiee" {% if statut_boutique == 'boutique_publiee' %}selected{% endif %}>Publiée</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label" for="date_specifique">
+                                    <i class="fas fa-calendar-day"></i> Date spécifique
+                                </label>
+                                <input type="date" class="filter-input" id="date_specifique" name="date_specifique" value="{{ date_specifique }}">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 
-                <form method="GET" action="">
-                    <div class="filter-fields">
-                        <div class="filter-group">
-                            <label class="filter-label" for="nom">
-                                <i class="fas fa-user"></i> Nom
-                            </label>
-                            <input type="text" class="filter-input" id="nom" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label" for="statut">
-                                <i class="fas fa-tag"></i> Statut
-                            </label>
-                            <select class="filter-input" id="statut" name="statut">
-                                <option value="">Tous les statuts</option>
-                                <option value="valider" {% if statut_filtre == 'valider' %}selected{% endif %}>Validé</option>
-                                <option value="invalider" {% if statut_filtre == 'invalider' %}selected{% endif %}>Invalidé</option>
-                                <option value="attente" {% if statut_filtre == 'attente' %}selected{% endif %}>En attente</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label" for="date_specifique">
-                                <i class="fas fa-calendar-day"></i> Date spécifique
-                            </label>
-                            <input type="date" class="filter-input" id="date_specifique" name="date_specifique" value="{{ date_specifique }}">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label" for="intervalle_debut">
-                                <i class="fas fa-calendar-alt"></i> Intervalle (début)
-                            </label>
-                            <input type="date" class="filter-input" id="intervalle_debut" name="intervalle_debut" value="{{ intervalle_debut }}">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label" for="intervalle_fin">
-                                <i class="fas fa-calendar-alt"></i> Intervalle (fin)
-                            </label>
-                            <input type="date" class="filter-input" id="intervalle_fin" name="intervalle_fin" value="{{ intervalle_fin }}">
-                        </div>
+                <!-- Users Table -->
+                <div class="users-table">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-user"></i> Nom Complet</th>
+                                    <th><i class="fas fa-phone"></i> Téléphone</th>
+                                    <th><i class="fas fa-store"></i> Boutique</th>
+                                    <th><i class="fas fa-calendar-plus"></i> Date Inscription</th>
+                                    <th><i class="fas fa-user-circle"></i> Statut</th>
+                                    <th><i class="fas fa-cog"></i> Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for utilisateur in utilisateurs %}
+                                <tr>
+                                    <td>{{ utilisateur.nom_complet }}</td>
+                                    <td>
+                                        <a href="https://wa.me/{{ utilisateur.numero }}" target="_blank" class="whatsapp-link">
+                                            <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if utilisateur.boutique_exists %}
+                                            <span class="status-badge {% if utilisateur.boutique_premium %}status-success{% else %}status-warning{% endif %}">
+                                                <i class="fas fa-store"></i> 
+                                                {{ utilisateur.boutique.titre|default:"Sans nom" }}
+                                                {% if utilisateur.boutique_premium %}(Premium){% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge status-danger">
+                                                <i class="fas fa-store-slash"></i> Aucune
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ utilisateur.date_joined|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if utilisateur.is_active %}
+                                            <span class="status-badge status-success">
+                                                <i class="fas fa-check-circle"></i> Actif
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge status-danger">
+                                                <i class="fas fa-times-circle"></i> Inactif
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                            <a href="?utilisateur_id={{ utilisateur.id }}" class="action-btn btn-primary">
+                                                <i class="fas fa-eye"></i> Détails
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                </form>
-            </div>
-            
-            <!-- Users Table -->
-            <div class="users-table">
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-user"></i> Nom Complet</th>
-                                <th><i class="fas fa-envelope"></i> Email</th>
-                                <th><i class="fas fa-phone"></i> Téléphone</th>
-                                <th><i class="fas fa-calendar-plus"></i> Date Inscription</th>
-                                <th><i class="fas fa-tag"></i> Statut</th>
-                                <th><i class="fas fa-cog"></i> Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for utilisateur in utilisateurs %}
-                            <tr>
-                                <td>{{ utilisateur.nom_complet }}</td>
-                                <td>{{ utilisateur.email }}</td>
-                                <td>
-                                    <a href="{{ utilisateur.whatsapp_link }}" target="_blank" class="whatsapp-link">
-                                        <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
+                </div>
+                
+            {% elif mode == 'detail' %}
+                <!-- Détails de l'utilisateur -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <div class="filter-title">
+                            <i class="fas fa-user"></i> Utilisateur: {{ utilisateur_detail.nom_complet }}
+                        </div>
+                        <a href="{% url 'gestion_utilisateurs_boutiques' %}" class="reset-btn">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-primary);">
+                                <i class="fas fa-info-circle"></i> Informations Personnelles
+                            </h3>
+                            <div style="background: var(--hover-bg); padding: 1rem; border-radius: 8px;">
+                                <p><strong><i class="fas fa-id-card"></i> Identifiant:</strong> {{ utilisateur_detail.identifiant_unique }}</p>
+                                <p><strong><i class="fas fa-phone"></i> Téléphone:</strong> 
+                                    <a href="{{ whatsapp_link }}" target="_blank" class="whatsapp-link">
+                                        <i class="fab fa-whatsapp"></i> {{ utilisateur_detail.numero }}
                                     </a>
-                                </td>
-                                <td>{{ utilisateur.date_joined|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    {% if utilisateur.statut_validation_compte == 'valider' %}
+                                </p>
+                                <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ utilisateur_detail.email }}</p>
+                                <p><strong><i class="fas fa-calendar-plus"></i> Date d'inscription:</strong> {{ utilisateur_detail.date_joined|date:"d/m/Y H:i" }}</p>
+                                <p><strong><i class="fas fa-user-shield"></i> Statut:</strong> 
+                                    {% if utilisateur_detail.is_active %}
                                         <span class="status-badge status-success">
-                                            <i class="fas fa-check-circle"></i> Validé
+                                            <i class="fas fa-check-circle"></i> Compte actif
                                         </span>
-                                    {% elif utilisateur.statut_validation_compte == 'invalider' %}
+                                    {% else %}
                                         <span class="status-badge status-danger">
-                                            <i class="fas fa-times-circle"></i> Invalidé
+                                            <i class="fas fa-times-circle"></i> Compte désactivé
+                                        </span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {% if boutique %}
+                        <div>
+                            <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-primary);">
+                                <i class="fas fa-store"></i> Informations Boutique
+                            </h3>
+                            <div style="background: var(--hover-bg); padding: 1rem; border-radius: 8px;">
+                                <p><strong><i class="fas fa-signature"></i> Nom:</strong> {{ boutique.titre }}</p>
+                                <p><strong><i class="fas fa-id-card"></i> Identifiant:</strong> {{ boutique.identifiant }}</p>
+                                <p><strong><i class="fas fa-crown"></i> Statut Premium:</strong> 
+                                    {% if boutique.premium %}
+                                        <span class="status-badge status-success">
+                                            <i class="fas fa-check-circle"></i> Activé
                                         </span>
                                     {% else %}
                                         <span class="status-badge status-warning">
-                                            <i class="fas fa-clock"></i> En attente
+                                            <i class="fas fa-times-circle"></i> Désactivé
                                         </span>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <div class="action-buttons-container" style="display: flex; gap: 0.25rem;">
-                                        <!-- Formulaire pour Valider -->
-                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                            <input type="hidden" name="action" value="valider">
-                                            <button type="submit" class="action-btn btn-success">
-                                                <i class="fas fa-check"></i> Valider
-                                            </button>
-                                        </form>
+                                </p>
+                                <p><strong><i class="fas fa-globe"></i> Publication:</strong> 
+                                    {% if boutique.publier %}
+                                        <span class="status-badge status-success">
+                                            <i class="fas fa-check-circle"></i> Publiée
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-danger">
+                                            <i class="fas fa-times-circle"></i> Non publiée
+                                        </span>
+                                    {% endif %}
+                                </p>
+                                {% if boutique.date_publication %}
+                                    <p><strong><i class="fas fa-calendar-alt"></i> Dernière publication:</strong> {{ boutique.date_publication|date:"d/m/Y H:i" }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        <form method="POST" action="{% url 'gestion_utilisateurs_boutiques' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur_detail.id }}">
+                            
+                            {% if utilisateur_detail.is_active %}
+                                <button type="submit" name="deactivate_account" class="action-btn btn-warning">
+                                    <i class="fas fa-user-times"></i> Désactiver le compte
+                                </button>
+                            {% else %}
+                                <button type="submit" name="activate_account" class="action-btn btn-success">
+                                    <i class="fas fa-user-check"></i> Activer le compte
+                                </button>
+                            {% endif %}
+                            
+                            <button type="submit" name="delete_account" class="action-btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce compte utilisateur ? Cette action est irréversible.');">
+                                <i class="fas fa-trash-alt"></i> Supprimer le compte
+                            </button>
+                            
+                            {% if boutique %}
+                                <button type="submit" name="toggle_premium" class="action-btn {% if boutique.premium %}btn-secondary{% else %}btn-primary{% endif %}">
+                                    <i class="fas fa-crown"></i> {% if boutique.premium %}Désactiver Premium{% else %}Activer Premium{% endif %}
+                                </button>
                                 
-                                        <!-- Formulaire pour Mettre en Attente -->
-                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                            <input type="hidden" name="action" value="attente">
-                                            <button type="submit" class="action-btn btn-warning">
-                                                <i class="fas fa-clock"></i> Attente
-                                            </button>
-                                        </form>
-                                
-                                        <!-- Formulaire pour Invalider -->
-                                        <form method="POST" action="{% url 'update_status' %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                            <input type="hidden" name="action" value="invalider">
-                                            <button type="submit" class="action-btn btn-danger">
-                                                <i class="fas fa-times"></i> Invalider
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                <button type="submit" name="toggle_publish" class="action-btn {% if boutique.publier %}btn-secondary{% else %}btn-primary{% endif %}">
+                                    <i class="fas fa-globe"></i> {% if boutique.publier %}Dépublier{% else %}Publier{% endif %}
+                                </button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    
+                    <!-- Logo Boutique -->
+                    {% if boutique and boutique.logo %}
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-primary);">
+                            <i class="fas fa-image"></i> Logo de la boutique
+                        </h3>
+                        <img src="{{ boutique.logo.url }}" alt="Logo {{ boutique.titre }}" class="image-preview" style="max-height: 200px;">
+                    </div>
+                    {% endif %}
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
     
     <script>
-        // Toggle sidebar on mobile
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
+      // Toggle sidebar on mobile
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      
+      menuToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('active');
+          sidebarOverlay.classList.toggle('active');
+      });
+      
+      // Close sidebar when clicking on overlay
+      sidebarOverlay.addEventListener('click', function() {
+          sidebar.classList.remove('active');
+          sidebarOverlay.classList.remove('active');
+      });
+      
+      // Auto-hide notification after 5 seconds
+      const notification = document.getElementById('notification');
+      if (notification) {
+          setTimeout(function() {
+              notification.classList.add('hide');
+              setTimeout(function() {
+                  notification.remove();
+              }, 300);
+          }, 5000);
+          
+          // Manual close notification
+          const closeBtn = notification.querySelector('.notification-close');
+          closeBtn.addEventListener('click', function() {
+              notification.classList.add('hide');
+              setTimeout(function() {
+                  notification.remove();
+              }, 300);
+          });
+      }
+      
+      // Theme toggle
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      
+      // Check for saved theme preference or use preferred color scheme
+      const savedTheme = localStorage.getItem('theme') || 
+                       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      
+      // Apply the saved theme
+      html.setAttribute('data-theme', savedTheme);
+      updateThemeButton(savedTheme);
+      
+      themeToggle.addEventListener('click', function() {
+          const currentTheme = html.getAttribute('data-theme');
+          const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+          
+          html.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          updateThemeButton(newTheme);
+      });
+      
+      function updateThemeButton(theme) {
+          if (theme === 'dark') {
+              themeToggle.innerHTML = '<i class="fas fa-sun"></i> Thème clair';
+          } else {
+              themeToggle.innerHTML = '<i class="fas fa-moon"></i> Thème sombre';
+          }
+      }
+      
+      // Update current time
+      function updateTime() {
+          const now = new Date();
+          const options = { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+          };
+          document.getElementById('currentTime').textContent = now.toLocaleDateString('fr-FR', options);
+      }
+      
+      updateTime();
+      setInterval(updateTime, 60000); // Update every minute
+      
+        // Confirmation pour la suppression de compte
+      document.querySelectorAll('form').forEach(form => {
+            if (form.querySelector('button[name="delete_account"]')) {
+                form.addEventListener('submit', function(e) {
+                    if (e.submitter && e.submitter.name === 'delete_account') {
+                        if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement ce compte utilisateur et toutes ses données associées ? Cette action est irréversible.')) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
         });
-        
-        // Close sidebar when clicking on overlay
-        sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-        });
-        
-        // Auto-hide notification after 5 seconds
-        const notification = document.getElementById('notification');
-        if (notification) {
-            setTimeout(function() {
-                notification.classList.add('hide');
-                setTimeout(function() {
-                    notification.remove();
-                }, 300);
-            }, 5000);
-            
-            // Manual close notification
-            const closeBtn = notification.querySelector('.notification-close');
-            closeBtn.addEventListener('click', function() {
-                notification.classList.add('hide');
-                setTimeout(function() {
-                    notification.remove();
-                }, 300);
+
+        // Auto-submit form when filters change
+        document.querySelectorAll('.filter-input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                this.closest('form').submit();
             });
-        }
+        });
         
         // Reset filters
         function resetFilters() {
             window.location.href = window.location.pathname;
         }
-        
-        // Auto-submit form when filters change
-        document.querySelectorAll('.filter-input').forEach(function(input) {
-            input.addEventListener('change', function() {
-                // Show loading state
-                document.body.classList.add('loading');
-                
-                // Submit form after a small delay for better UX
-                setTimeout(() => {
-                    this.closest('form').submit();
-                }, 300);
-            });
-        });
-        
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        
-        // Check for saved theme preference or use preferred color scheme
-        const savedTheme = localStorage.getItem('theme') || 
-                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        // Apply the saved theme
-        html.setAttribute('data-theme', savedTheme);
-        updateThemeButton(savedTheme);
-        
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeButton(newTheme);
-        });
-        
-        function updateThemeButton(theme) {
-            if (theme === 'dark') {
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Thème clair';
-            } else {
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Thème sombre';
-            }
-        }
-        
-        // Update current time
-        function updateTime() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            document.getElementById('currentTime').textContent = now.toLocaleDateString('fr-FR', options);
-        }
-        
-        updateTime();
-        setInterval(updateTime, 60000); // Update every minute
-        
-        // Add loading state to buttons when clicked
-        document.querySelectorAll('button[type="submit"]').forEach(button => {
-            button.addEventListener('click', function() {
-                const spinner = document.createElement('span');
-                spinner.className = 'spinner';
-                this.innerHTML = '';
-                this.appendChild(spinner);
-                this.disabled = true;
-                this.classList.add('loading');
-                
-                // Submit the form if it's a form button
-                if (this.closest('form')) {
-                    this.closest('form').submit();
-                }
-            });
-        });
     </script>
 </body>
 </html>
