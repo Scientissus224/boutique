@@ -2,14 +2,18 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
 from shop.models import Boutique,Produit
-from django.db.models import Q  # Importer Q pour les requêtes complexes
+from django.db.models import Q , Count  # Importer Q pour les requêtes complexes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.loader import render_to_string
+import random
+from django.db.models import Avg
+
+
 
 
 def home(request):
     """
-    Page d'accueil avec boutiques et produits premium - Version robuste
+    Page d'accueil avec boutiques et produits premium - Version ultra robuste avec commentaires
     """
     try:
         # 1. GESTION DES BOUTIQUES
@@ -34,7 +38,7 @@ def home(request):
             "page_html_path": reverse('boutique_contenu', args=[boutique.identifiant]),
         } for boutique in boutiques_page]
 
-        # 2. PRODUITS DES BOUTIQUES PREMIUM (version robuste)
+        # 2. PRODUITS DES BOUTIQUES PREMIUM (version ultra robuste avec commentaires)
         def get_produits_premium():
             try:
                 boutiques_premium = Boutique.objects.filter(
@@ -57,7 +61,7 @@ def home(request):
                         base_query = Produit.objects.filter(
                             utilisateur=boutique.utilisateur,
                             disponible=True
-                        )
+                        ).prefetch_related('commentaires')  # Optimisation pour les commentaires
                         
                         # Remplissage des catégories avec gestion des erreurs
                         for categorie in produits_data.keys():
@@ -68,23 +72,45 @@ def home(request):
                                     force_categorie=categorie
                                 )[:8]  # Limite à 8 produits par catégorie
                                 
-                                produits_data[categorie].extend([{
-                                    "id": p.id,
-                                    "identifiant":p.identifiant,
-                                    'stock':p.quantite_stock,
-                                    "nom": p.nom,
-                                    "url_boutique": p.get_produit_url(),
-                                    "prix": float(p.prix) if p.prix else 0.0,
-                                    "pourcentage_reduction": round(((p.ancien_prix - p.prix) / p.ancien_prix) * 100, 2) if p.prix and p.ancien_prix else 0,
-                                    "ancien_prix": float(p.ancien_prix) if p.ancien_prix else None,
-                                    "image": p.image.url if p.image and hasattr(p.image, 'url') else None,
-                                    "boutique_url": reverse('boutique_contenu', args=[boutique.id]),
-                                    "produit_url": p.get_produit_url() if hasattr(p, 'get_produit_url') else '#',
-                                    "type_produit": p.type_produit if hasattr(p, 'type_produit') else '',
-                                    "etat": p.etat if hasattr(p, 'etat') else '',
-                                    "date_ajout": p.date_ajout if hasattr(p, 'date_ajout') else None,
-                                    "disponible": p.disponible if hasattr(p, 'disponible') else True
-                                } for p in filtered])
+                                for p in filtered:
+                                    try:
+                                        # Calcul du nombre de commentaires et de la moyenne des notes
+                                        commentaires = p.commentaires.all()
+                                        nb_commentaires = commentaires.count()
+                                        
+                                        # Calcul de la moyenne des notes (arrondie à 1 décimale)
+                                        moyenne_notes = None
+                                        if nb_commentaires > 0:
+                                            moyenne_notes = round(
+                                                sum(c.note for c in commentaires if c.note is not None) / nb_commentaires,
+                                                1
+                                            )
+                                        
+                                        produit_dict = {
+                                            "id": p.id,
+                                            "identifiant": p.identifiant,
+                                            'stock': p.quantite_stock,
+                                            "nom": p.nom,
+                                            "url_boutique": p.get_produit_url(),
+                                            "prix": float(p.prix) if p.prix else 0.0,
+                                            "pourcentage_reduction": round(((p.ancien_prix - p.prix) / p.ancien_prix) * 100) if p.prix and p.ancien_prix else 0,
+                                            "ancien_prix": float(p.ancien_prix) if p.ancien_prix else None,
+                                            "image": p.image.url if p.image and hasattr(p.image, 'url') else None,
+                                            "boutique_url": reverse('boutique_contenu', args=[boutique.id]),
+                                            "produit_url": p.get_produit_url() if hasattr(p, 'get_produit_url') else '#',
+                                            "type_produit": p.type_produit if hasattr(p, 'type_produit') else '',
+                                            "etat": p.etat if hasattr(p, 'etat') else '',
+                                            "date_ajout": p.date_ajout if hasattr(p, 'date_ajout') else None,
+                                            "disponible": p.disponible if hasattr(p, 'disponible') else True,
+                                            "nb_commentaires": nb_commentaires,
+                                            "moyenne_notes": moyenne_notes,
+                                            "has_notes": moyenne_notes is not None
+                                        }
+                                        produits_data[categorie].append(produit_dict)
+                                    except Exception as e:
+                                        print(f"Erreur construction produit {p.id}: {str(e)}")
+                                        continue
+                                        
                             except Exception as e:
                                 print(f"Erreur catégorie {categorie}: {str(e)}")
                                 continue
@@ -92,6 +118,13 @@ def home(request):
                     except Exception as e:
                         print(f"Erreur boutique {boutique.id}: {str(e)}")
                         continue
+                
+                # Mélange aléatoire des produits dans chaque catégorie pour varier l'affichage
+                for categorie in produits_data:
+                    try:
+                        random.shuffle(produits_data[categorie])
+                    except:
+                        pass
                 
                 return produits_data
                 
@@ -102,7 +135,7 @@ def home(request):
                     'occasion': [], 'reconditionne': [], 'neuf': []
                 }
 
-        # Fonction de filtrage robuste
+        # Fonction de filtrage ultra robuste
         def filtrer_produits(produits_queryset, request, force_categorie=None):
             try:
                 categorie = force_categorie if force_categorie else request.GET.get('categorie', 'default')
@@ -152,6 +185,16 @@ def home(request):
                         produits_queryset = produits_queryset.order_by('nom')
                     elif sort_by == "name-desc":
                         produits_queryset = produits_queryset.order_by('-nom')
+                    elif sort_by == "best-rated":
+                        # Tri par meilleures notes (moyenne des commentaires)
+                        produits_queryset = produits_queryset.annotate(
+                            avg_rating=Avg('commentaires__note')
+                        ).order_by('-avg_rating')
+                    elif sort_by == "most-commented":
+                        # Tri par nombre de commentaires
+                        produits_queryset = produits_queryset.annotate(
+                            comment_count=Count('commentaires')
+                        ).order_by('-comment_count')
                 except Exception as e:
                     print(f"Erreur tri: {str(e)}")
                     produits_queryset = produits_queryset.order_by('-date_ajout')
@@ -162,10 +205,10 @@ def home(request):
                 print(f"Erreur majeure filtrer_produits: {str(e)}")
                 return produits_queryset.none()
 
-        # Récupération des produits premium
+        # Récupération des produits premium avec commentaires
         produits_premium = get_produits_premium()
 
-        # 3. GESTION AJAX PRODUITS (version robuste)
+        # 3. GESTION AJAX PRODUITS (version ultra robuste)
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('type') == 'produits':
             def filtrer_produits_liste(liste_produits):
                 if not liste_produits:
@@ -224,6 +267,10 @@ def home(request):
                             filtered.sort(key=lambda x: x.get('nom', '').lower())
                         elif sort_by == "name-desc":
                             filtered.sort(key=lambda x: x.get('nom', '').lower(), reverse=True)
+                        elif sort_by == "best-rated":
+                            filtered.sort(key=lambda x: x.get('moyenne_notes', 0), reverse=True)
+                        elif sort_by == "most-commented":
+                            filtered.sort(key=lambda x: x.get('nb_commentaires', 0), reverse=True)
                     except Exception as e:
                         print(f"Erreur tri: {str(e)}")
 
@@ -321,8 +368,6 @@ def home(request):
             "produitsNeufs": [],
             "error": "Une erreur est survenue"
         })
-
-
 
 
 

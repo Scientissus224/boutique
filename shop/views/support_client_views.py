@@ -551,8 +551,8 @@ def gestion_utilisateurs_boutiques(request):
             # Suppression du compte utilisateur et de sa boutique associée
             nom_utilisateur = utilisateur.nom_complet
             try:
-                if utilisateur.boutique:
-                    utilisateur.boutique.delete()
+                if utilisateur :
+                   utilisateur.delete()
             except Boutique.DoesNotExist:
                 pass
             utilisateur.delete()
@@ -561,7 +561,7 @@ def gestion_utilisateurs_boutiques(request):
         elif 'toggle_premium' in request.POST:
             # Basculer le mode premium de la boutique avec vérification supplémentaire
             try:
-                boutique = utilisateur.boutique
+                boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
                 # Vérifier que l'utilisateur a le droit d'avoir une boutique premium
                 if not utilisateur.is_active:
                     messages.error(request, "Impossible: le compte utilisateur est désactivé")
@@ -582,7 +582,7 @@ def gestion_utilisateurs_boutiques(request):
         elif 'toggle_publish' in request.POST:
             # Publier/dépublier la boutique avec vérifications
             try:
-                boutique = utilisateur.boutique
+                boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
                 if not utilisateur.is_active:
                     messages.error(request, "Impossible: le compte utilisateur est désactivé")
                 else:

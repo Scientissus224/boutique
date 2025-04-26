@@ -6,63 +6,428 @@
     <title>Nouvelle Commande Reçue</title>
     {% load static %}
     <style>
-        /* Styles de base */
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #F3F4F6;
-            color: #374151;
+        /* Reset radical avec débordements contrôlés */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
         }
         
-        /* Notification toast */
-        .order-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 320px;
-            max-width: 90%;
-            background: white;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #FFF8F5;
+            color: #2D3748;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Container principal avec éléments qui débordent */
+        .email-wrapper {
+            max-width: 680px;
+            width: calc(100% - 40px);
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: visible;
+            box-shadow: 0 10px 30px rgba(255, 90, 31, 0.15);
+            position: relative;
+        }
+        
+        /* Effet de débordement orange */
+        .email-wrapper::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: linear-gradient(45deg, #FF5A1F 0%, #FF7A45 100%);
+            z-index: -1;
+            border-radius: 24px;
+            opacity: 0.1;
+        }
+        
+        /* En-tête avec débordement contrôlé */
+        .email-header {
+            background: linear-gradient(135deg, #FF5A1F 0%, #FF8C5F 100%);
+            padding: 32px 24px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .email-header::after {
+            content: "";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: #FF5A1F;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        .email-header::before {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 90, 31, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .email-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+            z-index: 3;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Contenu avec effets de débordement */
+        .email-content {
+            padding: 0 24px 24px;
+            position: relative;
+        }
+        
+        .intro-text {
+            font-size: 17px;
+            color: #4A5568;
+            margin-bottom: 32px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Cartes avec ombres qui débordent */
+        .info-card {
+            background: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 16px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            border-left: 4px solid #4F46E5;
-            display: none;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: none;
+            box-shadow: 0 5px 20px rgba(255, 90, 31, 0.1);
+            position: relative;
+            overflow: visible;
+            z-index: 2;
         }
         
-        .order-notification.show {
-            transform: translateY(0);
-            opacity: 1;
+        .info-card::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(255, 90, 31, 0.15);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .card-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #FF5A1F;
+            border-radius: 3px;
+        }
+        
+        /* Grille responsive avec effet dynamique */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        
+        .info-item {
+            margin-bottom: 12px;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #718096;
+            font-weight: 500;
             display: block;
+            margin-bottom: 6px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #2D3748;
+            font-weight: 600;
+        }
+        
+        /* Liste des produits avec effet de zoom */
+        .product-list {
+            margin-top: 20px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #EDF2F7;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-item:hover {
+            transform: translateX(10px);
+        }
+        
+        .product-item::before {
+            content: "";
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: #FF5A1F;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .product-item:hover::before {
+            height: 60%;
+        }
+        
+        .product-image-container {
+            flex-shrink: 0;
+            width: 90px;
+            height: 90px;
+            margin-right: 20px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-item:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .product-attributes {
+            font-size: 15px;
+            color: #718096;
+        }
+        
+        .attribute-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .product-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FF5A1F;
+            margin-left: 20px;
+            white-space: nowrap;
+        }
+        
+        /* Total avec effet de surbrillance */
+        .order-total {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #E2E8F0;
+            position: relative;
+        }
+        
+        .order-total::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: #FF5A1F;
+        }
+        
+        .total-label {
+            font-size: 18px;
+            color: #4A5568;
+            font-weight: 600;
+        }
+        
+        .total-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #FF5A1F;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        /* Bouton CTA qui "déborde" */
+        .cta-container {
+            text-align: center;
+            margin: 40px 0 20px;
+            position: relative;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #FF5A1F 0%, #FF8C5F 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(255, 90, 31, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF8C5F 0%, #FF5A1F 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 90, 31, 0.4);
+        }
+        
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+        
+        .cta-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* Pied de page avec effet de bordure */
+        .email-footer {
+            text-align: center;
+            padding: 24px;
+            background: #FFF8F5;
+            color: #A0AEC0;
+            font-size: 14px;
+            border-top: 1px solid #FFE5DC;
+            border-radius: 0 0 16px 16px;
+            position: relative;
+        }
+        
+        .email-footer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 24px;
+            right: 24px;
+            height: 1px;
+            background: linear-gradient(to right, transparent 0%, #FF5A1F 50%, transparent 100%);
+        }
+        
+        /* Notification toast dynamique */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 360px;
+            max-width: calc(100% - 60px);
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(255, 90, 31, 0.2);
+            padding: 20px;
+            transform: translateX(120%) translateY(0);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            border-left: 5px solid #FF5A1F;
+        }
+        
+        .notification.show {
+            transform: translateX(0) translateY(0);
+            opacity: 1;
         }
         
         .notification-header {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         
         .notification-icon {
-            background: #4F46E5;
+            background: linear-gradient(135deg, #FF5A1F 0%, #FF8C5F 100%);
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            font-size: 16px;
+            margin-right: 14px;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(255, 90, 31, 0.3);
         }
         
         .notification-title {
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2D3748;
             margin: 0;
         }
         
@@ -70,196 +435,138 @@
             margin-left: auto;
             background: none;
             border: none;
-            color: #6B7280;
+            color: #CBD5E0;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 22px;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+        
+        .notification-close:hover {
+            color: #FF5A1F;
         }
         
         .notification-body {
-            font-size: 14px;
-            color: #4B5563;
+            font-size: 15px;
+            color: #4A5568;
         }
         
         .notification-product {
             display: flex;
             justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #E5E7EB;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #EDF2F7;
+            font-weight: 600;
         }
         
         .notification-total {
-            font-weight: 600;
-            color: #111827;
-            margin-top: 8px;
+            font-weight: 800;
+            color: #FF5A1F;
+            margin-top: 12px;
             text-align: right;
-        }
-
-        /* Styles pour les images de produits */
-        .product-item {
-            display: flex;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid #E5E7EB;
-            flex-wrap: wrap;
-        }
-
-        .product-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-right: 16px;
-            border: 1px solid #E5E7EB;
-        }
-
-        .product-details {
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .product-name {
-            margin: 0 0 4px 0;
             font-size: 16px;
-            font-weight: 500;
         }
-
-        .product-attributes {
-            font-size: 14px;
-            color: #6B7280;
-            margin: 4px 0;
-        }
-
-        .product-price {
-            font-weight: 600;
-            color: #F59E0B;
-            white-space: nowrap;
-            margin-left: 16px;
-            min-width: 80px;
-            text-align: right;
-        }
-
-        /* Container principal responsive */
-        .email-container {
-            max-width: 640px;
-            width: 100%;
-            margin: 20px auto;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* En-tête responsive */
-        .email-header {
-            background: #4F46E5;
-            padding: 16px 24px;
-            color: white;
-            text-align: center;
-        }
-
-        .email-header h1 {
-            margin: 0;
-            font-size: clamp(18px, 4vw, 22px);
-            font-weight: 600;
-        }
-
-        /* Contenu responsive */
-        .email-content {
-            padding: 24px;
-        }
-
-        /* Carte informations client responsive */
-        .client-card {
-            background: #F9FAFB;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
-            border: 1px solid #E5E7EB;
-        }
-
-        .client-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-        }
-
-        /* Bouton CTA responsive */
-        .cta-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #4F46E5;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: 6px;
-            margin-top: 16px;
-            width: 100%;
-            max-width: 300px;
-            box-sizing: border-box;
-        }
-
-        /* Pied de page responsive */
-        .email-footer {
-            text-align: center;
-            padding: 16px;
-            color: #6B7280;
-            font-size: 14px;
-        }
-
-        /* Media queries pour les petits écrans */
-        @media (max-width: 640px) {
-            .order-notification {
-                right: 10px;
-                bottom: 10px;
+        
+        /* Responsive avec gestion des débordements */
+        @media (max-width: 768px) {
+            .email-wrapper {
                 width: calc(100% - 20px);
+                margin: 20px auto;
             }
-
-            .email-container {
-                margin: 10px;
-                border-radius: 8px;
+            
+            .email-wrapper::before {
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
             }
-
+            
+            .email-header {
+                padding: 24px 16px;
+            }
+            
+            .email-header h1 {
+                font-size: 24px;
+            }
+            
             .email-content {
-                padding: 16px;
+                padding: 0 16px 16px;
             }
-
-            .product-item {
-                flex-direction: column;
-                align-items: flex-start;
+            
+            .info-card {
+                padding: 20px;
             }
-
-            .product-image {
-                margin-right: 0;
-                margin-bottom: 12px;
-                width: 100%;
-                height: auto;
-                max-height: 200px;
+            
+            .product-image-container {
+                width: 80px;
+                height: 80px;
+                margin-right: 16px;
             }
-
-            .product-price {
-                margin-left: 0;
-                margin-top: 8px;
-                text-align: left;
-                width: 100%;
+            
+            .product-name {
+                font-size: 16px;
             }
-
-            .client-info-grid {
+            
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+            
+            .notification {
+                right: 20px;
+                bottom: 20px;
+                width: calc(100% - 40px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .email-wrapper {
+                width: calc(100% - 10px);
+                margin: 15px auto;
+                border-radius: 12px;
+            }
+            
+            .email-wrapper::before {
+                top: -5px;
+                left: -5px;
+                right: -5px;
+                bottom: -5px;
+                border-radius: 16px;
+            }
+            
+            .info-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        @media (max-width: 480px) {
-            .email-header {
-                padding: 12px 16px;
+            
+            .product-item {
+                flex-wrap: wrap;
+                padding: 16px 0;
             }
-
-            .client-card {
-                padding: 12px;
+            
+            .product-image-container {
+                width: 70px;
+                height: 70px;
+                margin-right: 12px;
+                margin-bottom: 12px;
             }
-
+            
+            .product-details {
+                min-width: calc(100% - 82px);
+            }
+            
+            .product-price {
+                margin-left: 82px;
+                margin-top: 8px;
+            }
+            
             .cta-button {
-                padding: 10px 16px;
+                width: 100%;
+                padding: 16px;
+            }
+            
+            .notification {
+                padding: 16px;
             }
         }
     </style>
@@ -269,7 +576,7 @@
     <audio id="notification-sound" src="{% static 'son2.mp3' %}" preload="auto"></audio>
     
     <!-- Notification toast -->
-    <div class="order-notification" id="order-notification">
+    <div class="notification" id="order-notification">
         <div class="notification-header">
             <div class="notification-icon">🛒</div>
             <h3 class="notification-title">Nouvelle commande !</h3>
@@ -287,44 +594,69 @@
     </div>
 
     <!-- Container principal de l'email -->
-    <div class="email-container">
-        <!-- En-tête -->
+    <div class="email-wrapper">
+        <!-- En-tête avec effet de débordement -->
         <div class="email-header">
             <h1>Nouvelle commande reçue !</h1>
         </div>
         
         <!-- Contenu -->
         <div class="email-content">
-            <p style="font-size: 16px; color: #374151; margin-bottom: 24px;">Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
+            <p class="intro-text">Félicitations, vous avez reçu une nouvelle commande d'un client. Voici les détails :</p>
             
             <!-- Carte informations client -->
-            <div class="client-card">
-                <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Informations du client</h2>
-                <div class="client-info-grid">
-                    <div style="font-weight: 500; color: #6B7280;">Nom:</div>
-                    <div style="font-weight: 400;">{{ client_nom }}</div>
+            <div class="info-card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                        <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="#FF5A1F"/>
+                        <path d="M18 17C18 14.2386 15.3137 12 12 12C8.68629 12 6 14.2386 6 17" stroke="#FF5A1F" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Informations du client
+                </h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Nom:</span>
+                        <span class="info-value">{{ client_nom }}</span>
+                    </div>
                     
-                    <div style="font-weight: 500; color: #6B7280;">Numéro de commande:</div>
-                    <div style="font-weight: 400;">{{ client_numero }}</div>
+                    <div class="info-item">
+                        <span class="info-label">Numéro de commande:</span>
+                        <span class="info-value">{{ client_numero }}</span>
+                    </div>
                     
-                    <div style="font-weight: 500; color: #6B7280;">Lieu de livraison:</div>
-                    <div style="font-weight: 400;">{{ lieu_de_livraison }}</div>
+                    <div class="info-item">
+                        <span class="info-label">Lieu de livraison:</span>
+                        <span class="info-value">{{ lieu_de_livraison }}</span>
+                    </div>
                 </div>
             </div>
             
-            <!-- Carte produits -->
-            <div class="client-card">
-                <h2 style="font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; color: #374151;">Récapitulatif des produits</h2>
-                <div style="margin-top: 16px;">
+            <!-- Carte produits avec effets visuels -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                        <path d="M3 10H21L19 21H5L3 10Z" stroke="#FF5A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 10V6C16 3.79086 14.2091 2 12 2V2C9.79086 2 8 3.79086 8 6V10" stroke="#FF5A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Récapitulatif des produits
+                </h2>
+                <div class="product-list">
                     {% for produit in produits_info %}
                         <div class="product-item">
-                            <img src="{{ produit.image |default:'https://via.placeholder.com/80' }}" alt="{{ produit.nom }}" class="product-image">
+                            <div class="product-image-container">
+                                <img src="{{ produit.image|default:'https://via.placeholder.com/80' }}" alt="{{ produit.nom }}" class="product-image">
+                            </div>
                             <div class="product-details">
                                 <h4 class="product-name">{{ produit.nom }}</h4>
                                 {% if produit.type == 'variante' %}
                                     <div class="product-attributes">
-                                        <div><strong>Taille:</strong> {{ produit.taille }}</div>
-                                        <div><strong>Couleur:</strong><p style="background-color: {{ produit.couleur }}; width: 20px; height: 10px; border-radius: 50%; display: inline-block;"></p></div>
+                                        <div class="attribute-item">
+                                            <strong>Taille:</strong> {{ produit.taille }}
+                                        </div>
+                                        <div class="attribute-item">
+                                            <strong>Couleur:</strong> 
+                                            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 50%; background-color: {{ produit.couleur }}; margin-left: 8px; border: 1px solid #E2E8F0;"></span>
+                                        </div>
                                     </div>
                                 {% endif %}
                             </div>
@@ -333,24 +665,47 @@
                     {% endfor %}
                 </div>
                 
-                <!-- Total -->
-                <div style="text-align: right; font-size: 18px; font-weight: 600; margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
-                    <strong>Total Commande:</strong> <span style="color: #F59E0B;">{{ total_prix }} {{ devise }}</span>
+                <!-- Total avec effet visuel -->
+                <div class="order-total">
+                    <span class="total-label">Total Commande:</span>
+                    <span class="total-value">{{ total_prix }} {{ devise }}</span>
                 </div>
             </div>
             
-            <!-- Bouton CTA -->
-            <div style="text-align: center; margin-top: 32px;">
-                <p>Pour gérer cette commande, connectez-vous à votre tableau de bord :</p>
+            <!-- Bouton CTA dynamique -->
+            <div class="cta-container">
+                <p style="margin-bottom: 20px; color: #718096; font-size: 16px;">Pour gérer cette commande, connectez-vous à votre tableau de bord :</p>
                 <a href="http://{{ domain }}{% url 'table' %}" class="cta-button">Accéder au tableau de bord</a>
             </div>
         </div>
         
-        <!-- Pied de page -->
+        <!-- Pied de page avec effet de bordure -->
         <div class="email-footer">
             <p>© {% now "Y" %} Votre entreprise. Tous droits réservés.</p>
         </div>
     </div>
 
+    <script>
+        // Animation de la notification
+        document.addEventListener('DOMContentLoaded', function() {
+            const notification = document.getElementById('order-notification');
+            const sound = document.getElementById('notification-sound');
+            
+            // Jouer le son et afficher la notification avec un léger délai
+            setTimeout(() => {
+                sound.play().catch(e => console.log("Le son n'a pas pu être joué:", e));
+                notification.classList.add('show');
+            }, 800);
+            
+            // Fermer automatiquement après 8 secondes
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 8000);
+        });
+        
+        function closeNotification() {
+            document.getElementById('order-notification').classList.remove('show');
+        }
+    </script>
 </body>
 </html>

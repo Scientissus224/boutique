@@ -4,20 +4,24 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.urls import reverse
 from shop.models import Produit, Utilisateur, Boutique
-from datetime import datetime, timedelta
+
 
 def obtenir_produits_ajax(request, utilisateur_id):
     """
-    Vue AJAX pour récupérer les produits filtrés selon les catégories et états
-    avec toutes les données comme dans la vue home
+    Vue AJAX pour récupérer les produits filtrés avec:
+    - Calcul robuste de la moyenne des notes
+    - Nombre total de commentaires
+    - Utilisation de prefetch_related pour optimiser les requêtes
     """
     # Vérification requête AJAX
-    if not (request.headers.get('X-Requested-With') == 'XMLHttpRequest' and 
-            request.GET.get('type') == 'produits'):
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({"error": "Requête invalide"}, status=400)
+    
+    if request.GET.get('type') != 'produits':
+        return JsonResponse({"error": "Type de requête invalide"}, status=400)
 
     try:
-        # Initialisation des paramètres
+        # Initialisation
         utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
         boutique = get_object_or_404(Boutique, utilisateur=utilisateur)
         categorie = request.GET.get('categorie', 'default')
@@ -28,13 +32,13 @@ def obtenir_produits_ajax(request, utilisateur_id):
         
         likes_ids = request.session.get('likes_ids', [])
 
-        # Base QuerySet - produits disponibles uniquement
+        # Base QuerySet avec prefetch_related pour les commentaires
         produits = Produit.objects.filter(
             utilisateur=utilisateur,
             disponible=True
-        )
+        ).prefetch_related('commentaires')
 
-        # Filtrage par catégorie principale
+        # Filtrage par catégorie
         if categorie == "promo":
             produits = produits.filter(
                 Q(type_produit=Produit.PROMO) | 
@@ -50,7 +54,7 @@ def obtenir_produits_ajax(request, utilisateur_id):
             produits = produits.filter(etat=Produit.RECONDITIONNE)
         elif categorie == "neuf":
             produits = produits.filter(etat=Produit.NEUF)
-        else:  # Par défaut: tous sauf promos
+        else:
             produits = produits.exclude(type_produit=Produit.PROMO)
 
         # Filtre de recherche
@@ -62,7 +66,7 @@ def obtenir_produits_ajax(request, utilisateur_id):
                 Q(tags__nom__icontains=search_query)
             ).distinct()
 
-        # Système de tri
+        # Tri
         if sort_by == "price-asc":
             produits = produits.order_by('prix')
         elif sort_by == "price-desc":
@@ -73,6 +77,14 @@ def obtenir_produits_ajax(request, utilisateur_id):
             produits = produits.order_by('nom')
         elif sort_by == "name-desc":
             produits = produits.order_by('-nom')
+        elif sort_by == "rating":
+            produits = produits.annotate(
+                moyenne_notes=Avg('commentaires__note')
+            ).order_by('-moyenne_notes')
+        elif sort_by == "reviews":
+            produits = produits.annotate(
+                nombre_avis=Count('commentaires')
+            ).order_by('-nombre_avis')
 
         # Pagination
         start = (page - 1) * per_page
@@ -80,26 +92,42 @@ def obtenir_produits_ajax(request, utilisateur_id):
         total_products = produits.count()
         produits_page = produits[start:end]
 
-        # Préparation des données des produits avec toutes les propriétés
-        produits_list = [{
-            "id": produit.id,
-            "identifiant":produit.identifiant,
-            "nom": produit.nom,
-            "url_boutique": produit.get_produit_url(),
-            "prix": float(produit.prix) if produit.prix else 0.0,
-            "pourcentage_reduction": round(((produit.ancien_prix - produit.prix) / produit.ancien_prix) * 100, 2) if produit.prix and produit.ancien_prix else 0,
-            "ancien_prix": float(produit.ancien_prix) if produit.ancien_prix else None,
-            "image": produit.image.url if produit.image and hasattr(produit.image, 'url') else None,
-            "boutique_url": reverse('boutique_contenu', args=[boutique.identifiant]),
-            "produit_url": produit.get_produit_url() if hasattr(produit, 'get_produit_url') else '#',
-            "type_produit": produit.type_produit if hasattr(produit, 'type_produit') else '',
-            "etat": produit.etat if hasattr(produit, 'etat') else '',
-            "is_liked": produit.id in likes_ids,  # Info like
-            "date_ajout": produit.date_ajout if hasattr(produit, 'date_ajout') else None,
-            "disponible": produit.disponible if hasattr(produit, 'disponible') else True
-        } for produit in produits_page]
+        # Préparation des données avec calcul des notes et commentaires
+        produits_list = []
+        for produit in produits_page:
+            # Calcul robuste des commentaires et notes comme dans la fonction home
+            commentaires = produit.commentaires.all()
+            nb_commentaires = commentaires.count()
+            
+            moyenne_notes = None
+            if nb_commentaires > 0:
+                notes_valides = [c.note for c in commentaires if c.note is not None]
+                if notes_valides:
+                    moyenne_notes = round(sum(notes_valides) / len(notes_valides), 1)
 
-        # Préparation du contexte pour le template
+            produit_data = {
+                "id": produit.id,
+                "identifiant": produit.identifiant,
+                "nom": produit.nom,
+                "url_boutique": produit.get_produit_url(),
+                "prix": float(produit.prix) if produit.prix else 0.0,
+                "ancien_prix": float(produit.ancien_prix) if produit.ancien_prix else None,
+                "image": produit.image.url if produit.image and hasattr(produit.image, 'url') else None,
+                "boutique_url": reverse('boutique_contenu', args=[boutique.identifiant]),
+                "produit_url": produit.get_produit_url(),
+                "is_liked": produit.id in likes_ids,
+                "nombre_avis": nb_commentaires,
+                "moyenne_notes": moyenne_notes,
+                "has_notes": moyenne_notes is not None,
+                "marque": produit.marque or '',
+                "description": produit.description or '',
+                "disponible": produit.disponible if hasattr(produit, 'disponible') else True,
+                "quantite_stock": produit.quantite_stock if hasattr(produit, 'quantite_stock') else 0,
+                "pourcentage_reduction": round(((produit.ancien_prix - produit.prix) / produit.ancien_prix) * 100, 2) if produit.prix and produit.ancien_prix else 0,
+            }
+            produits_list.append(produit_data)
+
+        # Contexte pour le template
         context = {
             "produits": produits_list,
             "has_more": total_products > end,
@@ -108,7 +136,7 @@ def obtenir_produits_ajax(request, utilisateur_id):
             "request": request,
         }
 
-        # Rendu du template
+        # Rendu
         produits_html = render_to_string('produits_list.html', context)
 
         return JsonResponse({
@@ -118,4 +146,5 @@ def obtenir_produits_ajax(request, utilisateur_id):
         })
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        # En production, vous devriez logger cette erreur
+        return JsonResponse({"error": "Erreur serveur"}, status=500)

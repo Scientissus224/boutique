@@ -56,7 +56,7 @@
                     {% if produit.type == 'variante' %}
                     <div class="product-attributes">
                         {% if produit.taille %}<span>Taille: {{ produit.taille }}</span>{% endif %}
-                        {% if produit.couleur %}<span>Couleur: {{ produit.couleur }}</span>{% endif %}
+                        {% if produit.couleur %}<span>Couleur : <span style="background-color: {{ produit.couleur }}; height:10px; width:10px; border-radius: 50%; display: inline-block;"></span></span>{% endif %}
                     </div>
                     {% endif %}
                     

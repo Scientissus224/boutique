@@ -25,6 +25,8 @@ def table(request):
                 localisation = Localisation.objects.filter(utilisateur=utilisateur).first()
                 nombre_local_images =LocalImages.objects.filter(utilisateur=utilisateur).count()
                 boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
+                html_contenu = boutique.html_contenu if boutique else None
+
 
             else:
                 messages.error(request, "Utilisateur introuvable.")
@@ -44,7 +46,7 @@ def table(request):
             'nombre_slider_images': nombre_slider_images,
             'localisation': localisation,
             'nombre_local_images': nombre_local_images,
-            'boutique': boutique
+            'boutique': html_contenu if html_contenu else None,
         })
     else:
         # Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
