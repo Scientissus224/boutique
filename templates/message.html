@@ -10,129 +10,272 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f8f8;
             color: #333333;
             line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
 
-        table {
+        /* Conteneur principal */
+        .email-container {
             width: 100%;
             max-width: 600px;
-            background-color: #FFFFFF;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            padding: 30px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* En-tête */
+        .header {
+            background-color: #FF6B00;
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 4px solid #E05A00;
+        }
+
+        .logo-container {
+            display: inline-block;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            display: block;
+        }
+
+        /* Contenu */
+        .content {
+            padding: 25px 30px;
         }
 
         h1 {
-            color: #2c3e50;
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 25px;
+            color: #FF6B00;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         p {
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 20px;
             color: #555555;
+            line-height: 1.5;
         }
 
+        .highlight {
+            color: #FF6B00;
+            font-weight: 600;
+        }
+
+        /* Bloc d'informations */
         .info-block {
-            background-color: #f9f9f9;
-            padding: 16px;
-            border-radius: 4px;
-            margin: 20px 0;
-            border-left: 3px solid #3498db;
+            background-color: #FFF5EF;
+            padding: 18px;
+            border-radius: 6px;
+            margin: 25px 0;
+            border-left: 4px solid #FF6B00;
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .info-label {
             font-weight: 600;
-            color: #2c3e50;
-            display: inline-block;
-            min-width: 180px;
+            color: #FF6B00;
+            width: 150px;
+            margin-bottom: 5px;
         }
 
+        .info-value {
+            flex: 1;
+            min-width: 200px;
+            color: #333333;
+        }
+
+        /* Bouton CTA */
         .cta-button {
-            display: inline-block;
-            background: #3498db;
-            color: white;
+            display: block;
+            background: linear-gradient(to right, #FF6B00, #FF8C00);
+            color: white !important;
             text-align: center;
-            padding: 12px 24px;
-            font-weight: 500;
-            border-radius: 4px;
+            padding: 14px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 30px;
             text-decoration: none;
-            width: 200px;
             margin: 20px auto;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(255, 107, 0, 0.2);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            max-width: 280px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .cta-button:hover {
-            background-color: #2980b9;
+            background: linear-gradient(to right, #E05A00, #FF6B00);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 0, 0.3);
         }
 
+        /* Pied de page */
         .footer {
-            font-size: 13px;
-            color: #7f8c8d;
+            background-color: #2C2C2C;
+            padding: 20px;
             text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ecf0f1;
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            color: #FFFFFF;
+        }
+
+        .social-links {
+            margin: 15px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 8px;
         }
 
         /* Responsive styles */
         @media screen and (max-width: 600px) {
-            table {
-                padding: 20px;
-                margin: 10px;
+            .content {
+                padding: 20px 15px;
             }
-
+            
             h1 {
                 font-size: 20px;
             }
-
-            .info-label {
-                min-width: 120px;
-                display: block;
-                margin-bottom: 5px;
+            
+            .info-block {
+                padding: 12px;
             }
-
+            
+            .info-item {
+                display: block;
+            }
+            
+            .info-label {
+                width: 100%;
+                margin-bottom: 2px;
+            }
+            
+            .info-value {
+                width: 100%;
+                min-width: 0;
+            }
+            
             .cta-button {
                 width: 100%;
+                max-width: 100%;
+                padding: 12px;
+                font-size: 15px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .header {
+                padding: 20px 0;
+            }
+            
+            .header img {
+                width: 36px;
+                height: 36px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            p {
+                font-size: 15px;
             }
         }
     </style>
 </head>
-<body>
+<body style="margin: 0; padding: 20px 0; background-color: #f8f8f8; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #333333; line-height: 1.6; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
 
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td>
-                <h1>Confirmation de création de boutique</h1>
-                <p style="text-align: center;">Votre boutique <strong style="color: #2c3e50;">{{ boutique }}</strong> a été créée avec succès.</p>
-
-                <div class="info-block">
-                    <p><span class="info-label">Votre Identifiant :</span> {{ identifiant }}</p>
-                    <p><span class="info-label">Email associé :</span> {{ email }}</p>
-                    <p><span class="info-label">Numéro de téléphone :</span> {{ numero }}</p>
-                    <p><span class="info-label">Type de boutique :</span> {{ type_boutique }}</p>
-                    <p><span class="info-label">Produits vendus :</span> {{ produits_vendus }}</p>
-                    <p><span class="info-label">Source de découverte :</span> {{ source_decouverte }}</p>
+    <!-- Conteneur principal -->
+    <div class="email-container" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+        
+        <!-- En-tête -->
+        <div class="header" style="background-color: #FF6B00; padding: 30px 0; text-align: center; border-bottom: 4px solid #E05A00;">
+            <div class="logo-container" style="display: inline-block; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <img src="https://res.cloudinary.com/dgbbbmmlm/image/upload/v1745831195/eb9krgahreos9mdhuqxd.webp" alt="WarabaShop Logo" style="width: 40px; height: 40px; display: block;">
+            </div>
+        </div>
+        
+        <!-- Contenu -->
+        <div class="content" style="padding: 25px 30px;">
+            <h1 style="color: #FF6B00; font-size: 24px; font-weight: 700; margin: 0 0 20px 0; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">Confirmation de création de boutique</h1>
+            
+            <p style="font-size: 16px; margin-bottom: 20px; color: #555555; line-height: 1.5; text-align: center;">
+                Félicitations ! Votre boutique <strong class="highlight" style="color: #FF6B00; font-weight: 600;">{{ boutique }}</strong> a été créée avec succès.
+            </p>
+            
+            <div class="info-block" style="background-color: #FFF5EF; padding: 18px; border-radius: 6px; margin: 25px 0; border-left: 4px solid #FF6B00;">
+                <div class="info-item" style="margin-bottom: 12px; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Identifiant :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ identifiant }}</span>
                 </div>
-
-                <div style="text-align: center;">
-                    <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="cta-button">Activer mon compte</a>
+                <div class="info-item" style="margin-bottom: 12px; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Email :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ email }}</span>
                 </div>
-
-                <div class="footer">
-                    <p>Nous sommes honorés de vous accueillir parmi nos partenaires professionnels.</p>
-                    <p>L'équipe WarabaGuinée</p>
+                <div class="info-item" style="margin-bottom: 12px; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Téléphone :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ numero }}</span>
                 </div>
-            </td>
-        </tr>
-    </table>
+                <div class="info-item" style="margin-bottom: 12px; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Type de boutique :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ type_boutique }}</span>
+                </div>
+                <div class="info-item" style="margin-bottom: 12px; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Produits vendus :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ produits_vendus }}</span>
+                </div>
+                <div class="info-item" style="margin-bottom: 0; display: flex; flex-wrap: wrap;">
+                    <span class="info-label" style="font-weight: 600; color: #FF6B00; width: 150px; margin-bottom: 5px;">Source de découverte :</span>
+                    <span class="info-value" style="flex: 1; min-width: 200px; color: #333333;">{{ source_decouverte }}</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="cta-button" style="display: block; background: linear-gradient(to right, #FF6B00, #FF8C00); color: white !important; text-align: center; padding: 14px 28px; font-weight: 600; font-size: 16px; border-radius: 30px; text-decoration: none; margin: 20px auto; transition: all 0.3s; box-shadow: 0 4px 8px rgba(255, 107, 0, 0.2); border: none; text-transform: uppercase; letter-spacing: 0.5px; max-width: 280px; width: 100%; box-sizing: border-box;">Activer mon compte</a>
+            </div>
+            
+            <p style="font-size: 16px; margin-bottom: 20px; color: #555555; line-height: 1.5; text-align: center;">
+                Cliquez sur le bouton ci-dessus pour activer votre compte et commencer à vendre sur WarabaGuinée
+            </p>
+        </div>
+        
+        <!-- Pied de page -->
+        <div class="footer" style="background-color: #2C2C2C; padding: 20px; text-align: center; color: #FFFFFF; font-size: 14px;">
+            <p style="margin: 5px 0; color: #FFFFFF;">Nous sommes honorés de vous accueillir parmi nos partenaires professionnels.</p>
+            <p style="margin: 5px 0; color: #FFFFFF;">L'équipe WarabaGuinée</p>
+            <p style="margin: 15px 0 0 0; color: #AAAAAA; font-size: 12px;">© {% now "Y" %} WarabaGuinée. Tous droits réservés.</p>
+        </div>
+    </div>
 
 </body>
 </html>
