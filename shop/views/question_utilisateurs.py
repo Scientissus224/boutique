@@ -98,3 +98,5 @@ def send_welcome_and_confirmation_email(request, utilisateur_temporaire):
     )
     email.content_subtype = "html"
     email.send()
+    
+    

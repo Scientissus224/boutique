@@ -105,6 +105,9 @@ def login(request):
                     elif user.role == 'gestionnaire_comptes':
                         messages.success(request, f"Bienvenue, {user.nom} !")
                         return redirect('gestion_utilisateurs_boutiques')
+                    elif user.role == 'gestionnaire_abonnements':
+                        messages.success(request, f"Bienvenue, {user.nom} !")
+                        return redirect('gestion_abonnements')
                     else:
                         # Optionnel : cas où le rôle est inconnu ou différent
                         messages.warning(request, "Votre rôle n'est pas reconnu pour une redirection automatique.")

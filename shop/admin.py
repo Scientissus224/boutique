@@ -21,6 +21,8 @@ from .models import (
     SupportClient,
     Vente,
     VenteAttente,
+    Abonnement,
+    HistoriqueAbonnement,
 
 )
 
@@ -329,3 +331,58 @@ class SupportClientAdmin(admin.ModelAdmin):
     list_per_page = 25
 
 admin.site.register(SupportClient, SupportClientAdmin)
+
+#Gestion des abonnements
+
+@admin.register(Abonnement)
+class AbonnementAdmin(admin.ModelAdmin):
+    list_display = (
+        'utilisateur',
+        'date_debut',
+        'date_fin',
+        'montant',
+        'est_premium',
+        'actif',
+        'methode_paiement',
+        'reference_paiement',
+        'cree_par',
+    )
+    list_filter = (
+        'actif',
+        'est_premium',
+        'methode_paiement',
+        'date_debut',
+        'cree_par',
+    )
+    search_fields = (
+        'utilisateur__nom_complet',
+        'utilisateur__identifiant_unique',
+        'reference_paiement',
+    )
+    ordering = ('-date_debut',)
+    
+    
+
+
+@admin.register(HistoriqueAbonnement)
+class HistoriqueAbonnementAdmin(admin.ModelAdmin):
+    list_display = (
+        'utilisateur',
+        'abonnement',
+        'action',
+        'date_action',
+        'effectue_par',
+    )
+    list_filter = (
+        'action',
+        'date_action',
+        'effectue_par',
+    )
+    search_fields = (
+        'utilisateur__nom_complet',
+        'abonnement__id',
+        'effectue_par__nom_complet',
+        'details',
+    )
+    ordering = ('-date_action',)
+    

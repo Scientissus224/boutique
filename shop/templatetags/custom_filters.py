@@ -71,3 +71,14 @@ def active_si(value, arg):
         return 'active' if value == arg else ''
     except Exception:
         return ''
+    
+@register.filter
+def format_prix(value):
+    """
+    Formate un prix avec des espaces tous les 3 chiffres pour améliorer la lisibilité.
+    Exemple : 2000000 → '2 000 000'
+    """
+    try:
+        return f"{int(float(value)):,}".replace(",", " ")
+    except (ValueError, TypeError):
+        return value

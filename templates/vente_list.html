@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Tableau de Bord - WarabaGuinée</title>
     {% load static %}
     {% load custom_filters %}
@@ -746,7 +747,7 @@
                                     <div class="col me-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                             Revenu Total</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_revenu|floatformat:2 }} FG</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_revenu|format_prix}} FG</div>
                                     </div>
                                     <div class="col-auto">
                                     <i class="fas fa-hand-holding-usd fa-2x text-success"></i>
@@ -763,7 +764,7 @@
                                     <div class="col me-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                             Coût Total</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_cout|floatformat:2 }} FG</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_cout|format_prix}} FG</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-money-bill-wave fa-2x text-primary"></i>
@@ -783,7 +784,7 @@
                                             Profit ({{ pourcentage_profit }}%)
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-{% if total_profit < 0 %}danger{% else %}gray-800{% endif %}">
-                                            {{ total_profit|floatformat:2 }} FG
+                                            {{total_profit|format_prix}} FG
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -801,7 +802,7 @@
                                     <div class="col me-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                             Total Ventes</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_ventes }}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_ventes|format_prix}}</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-shopping-cart fa-2x text-warning"></i>
@@ -880,7 +881,7 @@
                                                     {% endif %}
                                                 </td>
                                                 <td class="text-end">{{ produit.total_vendu }}</td>
-                                                <td class="text-end text-success">{{ produit.total_profit|floatformat:2 }} FG</td>
+                                                <td class="text-end text-success">{{ produit.total_profit|format_prix}} FG</td>
                                             </tr>
                                             {% empty %}
                                             <tr>
@@ -925,7 +926,7 @@
                                                     {% endif %}
                                                 </td>
                                                 <td class="text-end">{{ produit.total_vendu }}</td>
-                                                <td class="text-end text-danger">{{ produit.total_profit|floatformat:2 }} FG</td>
+                                                <td class="text-end text-danger">{{ produit.total_profit|format_prix}} FG</td>
                                             </tr>
                                             {% empty %}
                                             <tr>
@@ -1421,13 +1422,13 @@
                                                     <span class="text-muted">Aucune image</span>
                                                     {% endif %}
                                                 </td>
-                                                <td class="text-end">{{ vente.prix_achat|floatformat:2 }} FG</td>
-                                                <td class="text-end">{{ vente.prix_vente|floatformat:2 }} FG</td>
+                                                <td class="text-end">{{ vente.prix_achat|format_prix}} FG</td>
+                                                <td class="text-end">{{ vente.prix_vente|format_prix}} FG</td>
                                                 <td class="text-end">{{ vente.quantite_vendue }}</td>
                                                 <td class="text-end text-{% if vente.get_profit_unitaire >= 0 %}success{% else %}danger{% endif %}">
-                                                    {{ vente.get_profit_unitaire|floatformat:2 }} FG
+                                                    {{ vente.get_profit_unitaire|format_prix }} FG
                                                 </td>
-                                                <td class="text-end">{{ vente.get_total|floatformat:2 }} FG</td>
+                                                <td class="text-end">{{ vente.get_total|format_prix}} FG</td>
                                                 <td>{{ vente.date_vente|date:"d/m/Y" }}</td>
                                                 <td>
                                                     <span class="badge bg-success">Terminée</span>

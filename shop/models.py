@@ -846,6 +846,7 @@ class SupportClient(AbstractBaseUser):
         ('verificateur_comptes', 'Vérificateur de Comptes'),
         ('controleur_produits', 'Contrôleur de Produits'),
         ('gestionnaire_comptes', 'Gestionnaire de Comptes'),
+        ('gestionnaire_abonnements', 'Gestionnaire abonnement'),
     ]
 
 
@@ -887,3 +888,87 @@ class SupportClient(AbstractBaseUser):
             self.set_password(self.password)
         
         super().save(*args, **kwargs)
+        
+        
+#-------------------------------------------Gestion des abonnements-----------------------------------      
+class Abonnement(models.Model):
+    utilisateur = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.CASCADE,
+        related_name='abonnements'
+    )
+    date_debut = models.DateTimeField(auto_now_add=True)
+    date_fin = models.DateTimeField()
+    montant = models.DecimalField(max_digits=10, decimal_places=2)
+    actif = models.BooleanField(default=True)
+
+    methode_paiement = models.CharField(max_length=50, blank=True, null=True)
+    reference_paiement = models.CharField(max_length=100, blank=True, null=True)
+
+    est_premium = models.BooleanField(default=False)
+
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_mise_a_jour = models.DateTimeField(auto_now=True)
+    cree_par = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        ordering = ['-date_debut']
+        verbose_name = "Abonnement"
+        verbose_name_plural = "Abonnements"
+
+    def __str__(self):
+        return f"{self.utilisateur.nom_complet} | {'Premium' if self.est_premium else 'Standard'} | {self.date_debut.date()} → {self.date_fin.date()}"
+
+    def est_actif(self):
+        """Retourne True si l’abonnement est actif aujourd’hui."""
+        aujourd_hui = timezone.now().date()
+        return self.actif and self.date_debut.date() <= aujourd_hui <= self.date_fin.date()
+
+    @staticmethod
+    def est_dans_essai_gratuit(utilisateur):
+        """Retourne True si l'utilisateur est dans sa période d'essai gratuit (90 jours après inscription)."""
+        limite = utilisateur.date_joined.date() + timedelta(days=90)
+        return timezone.now().date() <= limite
+    
+    @staticmethod
+    def abonnement_actuel(utilisateur):
+        """Retourne l'abonnement actif actuel."""
+        aujourd_hui = timezone.now().date()
+        return utilisateur.abonnements.filter(
+            actif=True,
+            date_debut__lte=aujourd_hui,
+            date_fin__gte=aujourd_hui
+        ).order_by('-date_fin').first()
+
+    @staticmethod
+    def doit_payer(utilisateur):
+        """Retourne True si l'utilisateur a terminé ses 3 mois gratuits et n'a pas d'abonnement actif."""
+        if Abonnement.est_dans_essai_gratuit(utilisateur):
+            return False
+        abonnement = Abonnement.abonnement_actuel(utilisateur)
+        return abonnement is None
+
+    @staticmethod
+    def creer_abonnement_gratuit(utilisateur):
+        """Crée un abonnement gratuit de 3 mois si aucun abonnement n'existe encore."""
+        if not utilisateur.abonnements.exists():
+            return Abonnement.objects.create(
+                utilisateur=utilisateur,
+                date_fin=timezone.now() + timedelta(days=90),
+                montant=0.00,
+                actif=True,
+                est_premium=False,
+                methode_paiement='Gratuit',
+                reference_paiement='ESSAI_3_MOIS'
+            )
+            
+class HistoriqueAbonnement(models.Model):
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.SET_NULL, null=True, blank=True)
+    date_action = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=100)
+    effectue_par = models.ForeignKey(SupportClient, on_delete=models.SET_NULL, null=True)
+    details = models.TextField()
+
+    class Meta:
+        ordering = ['-date_action']

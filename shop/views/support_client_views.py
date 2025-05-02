@@ -3,12 +3,13 @@ from django.contrib import messages
 from django.db.models import Count
 from django.utils import timezone
 from datetime import datetime, timedelta
-from shop.models import Utilisateur, SupportClient, Produit,Boutique
-from django.db.models import Count, Q
-from django.views.decorators.http import require_POST
+from shop.models import Utilisateur, SupportClient, Produit,Boutique,Abonnement,HistoriqueAbonnement
+from django.db.models import Count, Q, Sum
 from shop.forms import ProduitForm  # Supposons que vous avez un formulaire ProduitForm
 from django.urls import reverse
-
+from decimal import Decimal
+from urllib import parse
+import logging
 
 
 
@@ -724,3 +725,644 @@ def gestion_utilisateurs_boutiques(request):
             'now': timezone.now(),
         }
         return render(request, 'gestion_utilisateurs_boutiques.html', context)
+    
+    
+
+
+
+
+logger = logging.getLogger(__name__)
+
+def gestion_abonnements(request):
+    # Vérification de la connexion et autorisation
+    if not request.session.get('connection'):
+        messages.error(request, 'Vous devez être connecté pour accéder à cette page.')
+        return redirect('login')
+
+    personnel_support_id = request.session.get('user_id')
+    if not personnel_support_id:
+        messages.error(request, 'Utilisateur non trouvé dans la session.')
+        return redirect('login')
+
+    support_client = get_object_or_404(SupportClient, id=personnel_support_id)
+
+    if support_client.validation_compte == 'non accordé':
+        messages.error(request, "Vous n'êtes pas autorisé à accéder à cette fonctionnalité.")
+        return redirect('login')
+
+    # Gestion des actions POST
+    if request.method == 'POST':
+        utilisateur_id = request.POST.get('utilisateur_id')
+        utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
+        
+        if 'creer_abonnement' in request.POST:
+            try:
+                montant = Decimal(request.POST.get('montant', '0'))
+                duree_jours = int(request.POST.get('duree_jours', '30'))
+                est_premium = 'est_premium' in request.POST
+                methode_paiement = request.POST.get('methode_paiement', '')
+                reference_paiement = request.POST.get('reference_paiement', '')
+
+                # Log avant création
+                logger.info(f"Création d'abonnement pour {utilisateur.nom_complet} - Montant: {montant} - Durée: {duree_jours} jours - Premium: {est_premium}")
+
+                # Désactiver les anciens abonnements
+                Abonnement.objects.filter(utilisateur=utilisateur, actif=True).update(actif=False)
+
+                # Créer le nouvel abonnement
+                nouvel_abonnement = Abonnement.objects.create(
+                    utilisateur=utilisateur,
+                    date_fin=timezone.now() + timedelta(days=duree_jours),
+                    montant=montant,
+                    actif=True,
+                    est_premium=est_premium,
+                    methode_paiement=methode_paiement,
+                    reference_paiement=reference_paiement,
+                    cree_par=support_client
+                )
+
+                # Gestion de la boutique
+                try:
+                    boutique = Boutique.objects.get(utilisateur=utilisateur)
+                    if est_premium:
+                        boutique.publier = True
+                        boutique.save()
+                        logger.info(f"Boutique de {utilisateur.nom_complet} publiée (Premium)")
+                    else:
+                        boutique.publier = False
+                        boutique.save()
+                        logger.info(f"Boutique de {utilisateur.nom_complet} dépubliée (Standard)")
+                except Boutique.DoesNotExist:
+                    logger.warning(f"Aucune boutique trouvée pour {utilisateur.nom_complet}")
+
+                # Enregistrer dans l'historique
+                HistoriqueAbonnement.objects.create(
+                    utilisateur=utilisateur,
+                    abonnement=nouvel_abonnement,
+                    action="Création",
+                    effectue_par=support_client,
+                    details=f"Création d'abonnement - {duree_jours} jours - {montant}€ - {'Premium' if est_premium else 'Standard'}"
+                )
+
+                # Calcul des revenus de la plateforme
+                revenus_platforme = Abonnement.objects.filter(
+                    actif=True,
+                    date_fin__gte=timezone.now()
+                ).aggregate(total=Sum('montant'))['total'] or 0
+
+                logger.info(f"Revenus totaux de la plateforme mis à jour : {revenus_platforme}€")
+
+                # Messages WhatsApp possibles
+                whatsapp_messages = {
+                    'abonnement_actived_premium': (
+                        f"Bonjour {utilisateur.nom_complet},\n\n"
+                        f"Félicitations ! Votre abonnement PREMIUM a été activé avec succès.\n"
+                        f"• Montant: {montant}€\n"
+                        f"• Durée: {duree_jours} jours\n"
+                        f"• Expiration: {nouvel_abonnement.date_fin.strftime('%d/%m/%Y')}\n"
+                        f"• Boutique: PUBLIÉE\n\n"
+                        f"Votre boutique est maintenant visible par tous les clients !\n\n"
+                        f"Pour toute question, contactez-nous."
+                    ),
+                    'abonnement_actived_standard': (
+                        f"Bonjour {utilisateur.nom_complet},\n\n"
+                        f"Votre abonnement STANDARD a été activé.\n"
+                        f"• Montant: {montant}€\n"
+                        f"• Durée: {duree_jours} jours\n"
+                        f"• Expiration: {nouvel_abonnement.date_fin.strftime('%d/%m/%Y')}\n"
+                        f"• Boutique: NON PUBLIÉE\n\n"
+                        f"Pour publier votre boutique, passez à l'abonnement PREMIUM.\n"
+                        f"Contactez-nous pour plus d'informations."
+                    ),
+                    'general_contact': (
+                        f"Bonjour {utilisateur.nom_complet},\n\n"
+                        f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                        f"L'équipe de support"
+                    )
+                }
+
+                # Générer les liens WhatsApp
+                whatsapp_links = {}
+                for key, message in whatsapp_messages.items():
+                    message_encoded = parse.quote(message)
+                    whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+                
+                logger.info(f"Messages WhatsApp générés pour {utilisateur.nom_complet}")
+                messages.success(request, f"Abonnement créé pour {utilisateur.nom_complet} jusqu'au {nouvel_abonnement.date_fin.date()}")
+            
+            except Exception as e:
+                logger.error(f"Erreur lors de la création d'abonnement pour {utilisateur.nom_complet}: {str(e)}", exc_info=True)
+                messages.error(request, f"Erreur: {str(e)}")
+
+        elif 'desactiver_abonnement' in request.POST:
+            abonnement_id = request.POST.get('abonnement_id')
+            abonnement = get_object_or_404(Abonnement, id=abonnement_id, utilisateur=utilisateur)
+            
+            # Log avant désactivation
+            logger.info(f"Désactivation de l'abonnement {abonnement_id} pour {utilisateur.nom_complet}")
+            
+            abonnement.actif = False
+            abonnement.save()
+
+            # Dépublier la boutique
+            try:
+                boutique = Boutique.objects.get(utilisateur=utilisateur)
+                if boutique.publier:
+                    boutique.publier = False
+                    boutique.save()
+                    logger.info(f"Boutique de {utilisateur.nom_complet} dépubliée après désactivation d'abonnement")
+            except Boutique.DoesNotExist:
+                logger.warning(f"Aucune boutique trouvée pour {utilisateur.nom_complet} lors de la désactivation")
+
+            # Enregistrer dans l'historique
+            HistoriqueAbonnement.objects.create(
+                utilisateur=utilisateur,
+                abonnement=abonnement,
+                action="Désactivation",
+                effectue_par=support_client,
+                details="Désactivation manuelle de l'abonnement"
+            )
+
+            # Messages WhatsApp possibles
+            whatsapp_messages = {
+                'abonnement_desactive': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Nous vous informons que votre abonnement a été désactivé.\n"
+                    f"Date de désactivation: {timezone.now().strftime('%d/%m/%Y')}\n"
+                    f"Votre boutique n'est plus visible par les clients.\n\n"
+                    f"Pour renouveler ou toute question, contactez-nous.\n\n"
+                    f"L'équipe de support"
+                ),
+                'renouvellement': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Votre abonnement a expiré. Souhaitez-vous le renouveler ?\n\n"
+                    f"Options disponibles :\n"
+                    f"- Standard (30 jours) : XX€\n"
+                    f"- Premium (30 jours) : XX€\n\n"
+                    f"Répondez par 'STANDARD' ou 'PREMIUM' pour choisir."
+                ),
+                'general_contact': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                    f"L'équipe de support"
+                )
+            }
+
+            # Générer les liens WhatsApp
+            whatsapp_links = {}
+            for key, message in whatsapp_messages.items():
+                message_encoded = parse.quote(message)
+                whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+
+            logger.info(f"Messages WhatsApp de fin d'abonnement pour {utilisateur.nom_complet}")
+            messages.success(request, f"Abonnement désactivé pour {utilisateur.nom_complet}")
+
+        elif 'prolonger_abonnement' in request.POST:
+            abonnement_id = request.POST.get('abonnement_id')
+            jours_ajout = int(request.POST.get('jours_ajout', '30'))
+            abonnement = get_object_or_404(Abonnement, id=abonnement_id, utilisateur=utilisateur)
+            
+            # Log avant prolongation
+            logger.info(f"Prolongation de l'abonnement {abonnement_id} pour {utilisateur.nom_complet} de {jours_ajout} jours")
+            
+            ancienne_date_fin = abonnement.date_fin
+            abonnement.date_fin += timedelta(days=jours_ajout)
+            abonnement.save()
+
+            # Enregistrer dans l'historique
+            HistoriqueAbonnement.objects.create(
+                utilisateur=utilisateur,
+                abonnement=abonnement,
+                action="Prolongation",
+                effectue_par=support_client,
+                details=f"Prolongation de {jours_ajout} jours (ancienne date: {ancienne_date_fin})"
+            )
+
+            # Messages WhatsApp possibles
+            whatsapp_messages = {
+                'abonnement_prolonge': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Nous avons prolongé votre abonnement de {jours_ajout} jours.\n"
+                    f"• Ancienne date d'expiration: {ancienne_date_fin.strftime('%d/%m/%Y')}\n"
+                    f"• Nouvelle date d'expiration: {abonnement.date_fin.strftime('%d/%m/%Y')}\n\n"
+                    f"Votre boutique reste {'PUBLIÉE' if abonnement.est_premium else 'NON PUBLIÉE'}.\n\n"
+                    f"Pour toute question, contactez-nous.\n\n"
+                    f"L'équipe de support"
+                ),
+                'upgrade_premium': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Profitez de notre offre PREMIUM pour publier votre boutique !\n\n"
+                    f"Avantages :\n"
+                    f"- Boutique visible par tous les clients\n"
+                    f"- Statistiques avancées\n"
+                    f"- Support prioritaire\n\n"
+                    f"Répondez 'PREMIUM' pour plus d'informations."
+                ),
+                'general_contact': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                    f"L'équipe de support"
+                )
+            }
+
+            # Générer les liens WhatsApp
+            whatsapp_links = {}
+            for key, message in whatsapp_messages.items():
+                message_encoded = parse.quote(message)
+                whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+
+            logger.info(f"Messages WhatsApp de prolongation pour {utilisateur.nom_complet}")
+            messages.success(request, f"Abonnement prolongé jusqu'au {abonnement.date_fin.date()}")
+
+        elif 'publier_boutique' in request.POST:
+            try:
+                boutique = Boutique.objects.get(utilisateur=utilisateur)
+                if not boutique.publier:
+                    # Vérifier que l'utilisateur a un abonnement premium actif
+                    abonnement_actif = Abonnement.abonnement_actuel(utilisateur)
+                    if abonnement_actif and abonnement_actif.est_premium:
+                        boutique.publier = True
+                        boutique.save()
+                        
+                        # Messages WhatsApp possibles
+                        whatsapp_messages = {
+                            'boutique_publiee': (
+                                f"Bonjour {utilisateur.nom_complet},\n\n"
+                                f"Votre boutique a été publiée avec succès !\n"
+                                f"Elle est maintenant visible par tous les clients.\n\n"
+                                f"Pour accéder à votre boutique : [lien-de-la-boutique]\n\n"
+                                f"Pour toute question, contactez-nous."
+                            ),
+                            'promotion': (
+                                f"Bonjour {utilisateur.nom_complet},\n\n"
+                                f"Votre boutique est maintenant en ligne !\n\n"
+                                f"Profitez de notre offre spéciale pour promouvoir vos produits :\n"
+                                f"- Mise en avant pendant 7 jours : XX€\n"
+                                f"- Newsletter spéciale : XX€\n\n"
+                                f"Répondez 'PROMO' pour en savoir plus."
+                            ),
+                            'general_contact': (
+                                f"Bonjour {utilisateur.nom_complet},\n\n"
+                                f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                                f"L'équipe de support"
+                            )
+                        }
+
+                        # Générer les liens WhatsApp
+                        whatsapp_links = {}
+                        for key, message in whatsapp_messages.items():
+                            message_encoded = parse.quote(message)
+                            whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+                        
+                        messages.success(request, f"Boutique de {utilisateur.nom_complet} publiée avec succès")
+                    else:
+                        messages.error(request, "L'utilisateur doit avoir un abonnement premium actif pour publier sa boutique")
+                else:
+                    messages.warning(request, "La boutique est déjà publiée")
+            except Boutique.DoesNotExist:
+                messages.error(request, "Aucune boutique trouvée pour cet utilisateur")
+
+        elif 'depublier_boutique' in request.POST:
+            try:
+                boutique = Boutique.objects.get(utilisateur=utilisateur)
+                if boutique.publier:
+                    boutique.publier = False
+                    boutique.save()
+                    
+                    # Messages WhatsApp possibles
+                    whatsapp_messages = {
+                        'boutique_depubliee': (
+                            f"Bonjour {utilisateur.nom_complet},\n\n"
+                            f"Votre boutique a été dépubliée.\n"
+                            f"Elle n'est plus visible par les clients.\n\n"
+                            f"Pour la republier, assurez-vous d'avoir un abonnement premium actif.\n\n"
+                            f"Pour toute question, contactez-nous."
+                        ),
+                        'reactivation': (
+                            f"Bonjour {utilisateur.nom_complet},\n\n"
+                            f"Votre boutique a été temporairement dépubliée.\n\n"
+                            f"Pour la republier immédiatement, répondez 'REACTIVER' ou contactez-nous."
+                        ),
+                        'general_contact': (
+                            f"Bonjour {utilisateur.nom_complet},\n\n"
+                            f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                            f"L'équipe de support"
+                        )
+                    }
+
+                    # Générer les liens WhatsApp
+                    whatsapp_links = {}
+                    for key, message in whatsapp_messages.items():
+                        message_encoded = parse.quote(message)
+                        whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+                    
+                    messages.success(request, f"Boutique de {utilisateur.nom_complet} dépubliée avec succès")
+                else:
+                    messages.warning(request, "La boutique est déjà dépubliée")
+            except Boutique.DoesNotExist:
+                messages.error(request, "Aucune boutique trouvée pour cet utilisateur")
+
+        elif 'mettre_en_attente' in request.POST:
+            utilisateur.is_active = False
+            utilisateur.save()
+
+            # Dépublier la boutique
+            try:
+                boutique = Boutique.objects.get(utilisateur=utilisateur)
+                if boutique.publier:
+                    boutique.publier = False
+                    boutique.save()
+                    logger.info(f"Boutique de {utilisateur.nom_complet} dépubliée après mise en attente du compte")
+            except Boutique.DoesNotExist:
+                logger.warning(f"Aucune boutique trouvée pour {utilisateur.nom_complet} lors de la mise en attente")
+
+            # Messages WhatsApp possibles
+            whatsapp_messages = {
+                'compte_en_attente': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Votre compte a été mis en attente par notre équipe.\n"
+                    f"Votre boutique n'est plus accessible.\n\n"
+                    f"Pour plus d'informations, contactez-nous.\n\n"
+                    f"L'équipe de support"
+                ),
+                'reactivation_demande': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Votre compte est actuellement en attente.\n\n"
+                    f"Pour demander une réactivation, répondez 'REACTIVATION' avec les informations suivantes :\n"
+                    f"- Raison de la suspension\n"
+                    f"- Justificatifs si nécessaire\n\n"
+                    f"Nous traiterons votre demande rapidement."
+                ),
+                'general_contact': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                    f"L'équipe de support"
+                )
+            }
+
+            # Générer les liens WhatsApp
+            whatsapp_links = {}
+            for key, message in whatsapp_messages.items():
+                message_encoded = parse.quote(message)
+                whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+
+            messages.success(request, f"Compte {utilisateur.nom_complet} mis en attente")
+
+        elif 'reactiver_compte' in request.POST:
+            utilisateur.is_active = True
+            utilisateur.save()
+            
+            # Vérifier si l'utilisateur a un abonnement actif pour republier la boutique
+            abonnement_actif = Abonnement.abonnement_actuel(utilisateur)
+            if abonnement_actif and abonnement_actif.est_premium:
+                try:
+                    boutique = Boutique.objects.get(utilisateur=utilisateur)
+                    if not boutique.publier:
+                        boutique.publier = True
+                        boutique.save()
+                        logger.info(f"Boutique de {utilisateur.nom_complet} republiée après réactivation du compte (abonnement premium actif)")
+                except Boutique.DoesNotExist:
+                    logger.warning(f"Aucune boutique trouvée pour {utilisateur.nom_complet} lors de la réactivation")
+
+            # Messages WhatsApp possibles
+            whatsapp_messages = {
+                'compte_reactive': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Votre compte a été réactivé avec succès !\n"
+                    f"Votre boutique est maintenant {'PUBLIÉE' if abonnement_actif and abonnement_actif.est_premium else 'NON PUBLIÉE'}.\n\n"
+                    f"Pour toute question, contactez-nous.\n\n"
+                    f"L'équipe de support"
+                ),
+                'remerciement': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Nous sommes ravis de vous retrouver !\n\n"
+                    f"Votre compte et votre boutique ont été réactivés.\n"
+                    f"Profitez de nos services et n'hésitez pas à nous contacter pour toute question.\n\n"
+                    f"L'équipe de support"
+                ),
+                'general_contact': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                    f"L'équipe de support"
+                )
+            }
+
+            # Générer les liens WhatsApp
+            whatsapp_links = {}
+            for key, message in whatsapp_messages.items():
+                message_encoded = parse.quote(message)
+                whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+
+            messages.success(request, f"Compte {utilisateur.nom_complet} réactivé")
+
+        return redirect(f'{reverse("gestion_abonnements")}?utilisateur_id={utilisateur_id}')
+
+    # Mode affichage
+    utilisateur_id = request.GET.get('utilisateur_id')
+    
+    if utilisateur_id:
+        # Mode détail
+        utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
+        abonnements = Abonnement.objects.filter(utilisateur=utilisateur).order_by('-date_debut')
+        historique = HistoriqueAbonnement.objects.filter(utilisateur=utilisateur).order_by('-date_action')
+        
+        # Statuts d'abonnement
+        en_essai = Abonnement.est_dans_essai_gratuit(utilisateur)
+        doit_payer = Abonnement.doit_payer(utilisateur)
+        abonnement_actuel = Abonnement.abonnement_actuel(utilisateur)
+        
+        # Vérifier si le paiement a expiré
+        paiement_expire = False
+        if abonnement_actuel and abonnement_actuel.date_fin < timezone.now():
+            paiement_expire = True
+            logger.warning(f"Abonnement expiré détecté pour {utilisateur.nom_complet} (ID: {abonnement_actuel.id})")
+
+        # Vérifier la boutique
+        boutique = None
+        boutique_exists = False
+        try:
+            boutique = Boutique.objects.get(utilisateur=utilisateur)
+            boutique_exists = True
+        except Boutique.DoesNotExist:
+            pass
+
+        # Calcul des revenus de la plateforme
+        revenus_platforme = Abonnement.objects.filter(
+            actif=True,
+            date_fin__gte=timezone.now()
+        ).aggregate(total=Sum('montant'))['total'] or 0
+
+        # Messages WhatsApp possibles selon le statut
+        whatsapp_messages = {
+            'contact_general': (
+                f"Bonjour {utilisateur.nom_complet},\n\n"
+                f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                f"L'équipe de support"
+            ),
+            'statut_abonnement': (
+                f"Bonjour {utilisateur.nom_complet},\n\n"
+                f"Statut de votre abonnement :\n"
+                f"• Type: {'PREMIUM' if abonnement_actuel and abonnement_actuel.est_premium else 'STANDARD' if abonnement_actuel else 'AUCUN'}\n"
+                f"• Statut: {'ACTIF' if abonnement_actuel and abonnement_actuel.actif else 'INACTIF'}\n"
+                f"• Expiration: {abonnement_actuel.date_fin.strftime('%d/%m/%Y') if abonnement_actuel else 'N/A'}\n\n"
+                f"Pour toute question, contactez-nous."
+            ),
+            'renouvellement': (
+                f"Bonjour {utilisateur.nom_complet},\n\n"
+                f"Votre abonnement {'expire bientôt' if abonnement_actuel else 'est inactif'}.\n\n"
+                f"Souhaitez-vous le renouveler ?\n"
+                f"Options disponibles :\n"
+                f"- Standard (30 jours) : XX€\n"
+                f"- Premium (30 jours) : XX€\n\n"
+                f"Répondez par 'STANDARD' ou 'PREMIUM' pour choisir."
+            )
+        }
+
+        # Ajouter des messages spécifiques selon le statut
+        if en_essai:
+            whatsapp_messages['fin_essai'] = (
+                f"Bonjour {utilisateur.nom_complet},\n\n"
+                f"Votre période d'essai gratuit se termine bientôt.\n"
+                f"Jours restants : {(utilisateur.date_joined.date() + timedelta(days=90) - timezone.now().date()).days}\n\n"
+                f"Pour continuer à utiliser nos services, choisissez un abonnement :\n"
+                f"- Standard (30 jours) : XX€\n"
+                f"- Premium (30 jours) : XX€\n\n"
+                f"Répondez par 'STANDARD' ou 'PREMIUM' pour choisir."
+            )
+        
+        if paiement_expire:
+            whatsapp_messages['expiration'] = (
+                f"Bonjour {utilisateur.nom_complet},\n\n"
+                f"Votre abonnement a expiré le {abonnement_actuel.date_fin.strftime('%d/%m/%Y')}.\n"
+                f"Votre boutique n'est plus visible par les clients.\n\n"
+                f"Pour renouveler immédiatement, répondez 'RENOUVELER'."
+            )
+
+        # Générer les liens WhatsApp
+        whatsapp_links = {}
+        for key, message in whatsapp_messages.items():
+            message_encoded = parse.quote(message)
+            whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+
+        context = {
+            'support_client': support_client,
+            'mode': 'detail',
+            'utilisateur': utilisateur,
+            'abonnements': abonnements,
+            'historique_abonnements': historique,
+            'abonnement_actuel': abonnement_actuel,
+            'en_essai': en_essai,
+            'doit_payer': doit_payer,
+            'paiement_expire': paiement_expire,
+            'boutique_exists': boutique_exists,
+            'boutique': boutique,
+            'now': timezone.now(),
+            'jours_restants_essai': (utilisateur.date_joined.date() + timedelta(days=90) - timezone.now().date()).days if en_essai else 0,
+            'revenus_platforme': revenus_platforme,
+            'whatsapp_links': whatsapp_links,  # Tous les liens WhatsApp disponibles
+        }
+        return render(request, 'gestion_abonnements.html', context)
+    
+    else:
+        # Mode liste avec filtres
+        nom_recherche = request.GET.get('nom', '')
+        statut_abonnement = request.GET.get('statut_abonnement', '')
+        statut_compte = request.GET.get('statut_compte', '')
+        
+        utilisateurs = Utilisateur.objects.all().order_by('-date_joined')
+        
+        if nom_recherche:
+            utilisateurs = utilisateurs.filter(
+                Q(nom_complet__icontains=nom_recherche) | 
+                Q(numero__icontains=nom_recherche))
+            
+        if statut_compte == 'actif':
+            utilisateurs = utilisateurs.filter(is_active=True)
+        elif statut_compte == 'inactif':
+            utilisateurs = utilisateurs.filter(is_active=False)
+
+        # Préparer les données avec les statuts d'abonnement
+        utilisateurs_avec_statut = []
+        aujourd_hui = timezone.now().date()
+        
+        for utilisateur in utilisateurs:
+            en_essai = Abonnement.est_dans_essai_gratuit(utilisateur)
+            doit_payer = Abonnement.doit_payer(utilisateur)
+            abonnement_actuel = Abonnement.abonnement_actuel(utilisateur)
+            
+            # Déterminer le statut pour le filtre
+            statut = 'essai' if en_essai else 'actif' if abonnement_actuel else 'inactif'
+            
+            if statut_abonnement and statut != statut_abonnement:
+                continue
+            
+            # Calcul des jours restants d'essai
+            jours_restants_essai = (utilisateur.date_joined.date() + timedelta(days=90) - aujourd_hui).days if en_essai else 0
+            
+            # Vérifier si l'abonnement a expiré
+            paiement_expire = False
+            if abonnement_actuel and abonnement_actuel.date_fin.date() < aujourd_hui:
+                paiement_expire = True
+                logger.info(f"Utilisateur {utilisateur.nom_complet} avec abonnement expiré détecté en liste")
+            
+            # Messages WhatsApp de base pour la liste
+            whatsapp_messages = {
+                'contact_general': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Comment pouvons-nous vous aider aujourd'hui ?\n\n"
+                    f"L'équipe de support"
+                ),
+                'statut_compte': (
+                    f"Bonjour {utilisateur.nom_complet},\n\n"
+                    f"Statut de votre compte :\n"
+                    f"• Abonnement: {'PREMIUM' if abonnement_actuel and abonnement_actuel.est_premium else 'STANDARD' if abonnement_actuel else 'ESSAI'}\n"
+                    f"• Statut: {'ACTIF' if utilisateur.is_active else 'INACTIF'}\n"
+                    f"• Boutique: {'PUBLIÉE' if Boutique.objects.filter(utilisateur=utilisateur, publier=True).exists() else 'NON PUBLIÉE'}\n\n"
+                    f"Pour toute question, contactez-nous."
+                )
+            }
+
+            # Générer les liens WhatsApp
+            whatsapp_links = {}
+            for key, message in whatsapp_messages.items():
+                message_encoded = parse.quote(message)
+                whatsapp_links[key] = f"https://wa.me/{utilisateur.numero}?text={message_encoded}"
+                
+            utilisateurs_avec_statut.append({
+                'utilisateur': utilisateur,
+                'en_essai': en_essai,
+                'doit_payer': doit_payer,
+                'abonnement_actuel': abonnement_actuel,
+                'statut': statut,
+                'jours_restants_essai': jours_restants_essai,
+                'paiement_expire': paiement_expire,
+                'boutique': Boutique.objects.filter(utilisateur=utilisateur).first(),
+                'whatsapp_links': whatsapp_links,  # Tous les liens WhatsApp disponibles
+            })
+
+        # Calculer les statistiques
+        stats = {
+            'total': Utilisateur.objects.count(),
+            'actifs': Utilisateur.objects.filter(is_active=True).count(),
+            'inactifs': Utilisateur.objects.filter(is_active=False).count(),
+            'en_essai': sum(1 for u in utilisateurs_avec_statut if u['en_essai']),
+            'abonnes': sum(1 for u in utilisateurs_avec_statut if u['abonnement_actuel']),
+            'en_retard': sum(1 for u in utilisateurs_avec_statut if u['doit_payer'] and not u['en_essai']),
+            'expires': sum(1 for u in utilisateurs_avec_statut if u['paiement_expire']),
+            'revenus_platforme': Abonnement.objects.filter(
+                actif=True,
+                date_fin__gte=timezone.now()
+            ).aggregate(total=Sum('montant'))['total'] or 0,
+        }
+
+        context = {
+            'support_client': support_client,
+            'mode': 'liste',
+            'utilisateurs': utilisateurs_avec_statut,
+            'stats': stats,
+            'nom_recherche': nom_recherche,
+            'statut_abonnement': statut_abonnement,
+            'statut_compte': statut_compte,
+            'now': timezone.now(),
+        }
+        return render(request, 'gestion_abonnements.html', context)

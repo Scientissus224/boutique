@@ -1,4 +1,4 @@
-
+{% load custom_filters %} 
 <div class="liked-products-grid">
     {% for produit in produits %}
     <div class="liked-product-card" data-product-id="{{ produit.id }}">
@@ -35,9 +35,9 @@
             
             <!-- Prix -->
             <div class="product-pricing">
-                <span class="current-price">{{ produit.prix }} {{ devise }}</span>
+                <span class="current-price">{{ produit.prix|format_prix}} {{ devise }}</span>
                 {% if produit.ancien_prix %}
-                <span class="old-price">{{ produit.ancien_prix }} {{ devise }}</span>
+                <span class="old-price">{{ produit.ancien_prix|format_prix}} {{ devise }}</span>
                 {% endif %}
             </div>
             

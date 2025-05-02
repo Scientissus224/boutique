@@ -82,8 +82,8 @@
             <div class="product-pricing">
                 {% if produit.ancien_prix %}
                     <div class="price-with-discount">
-                        <span class="current-price" style="font-size: 18px; font-weight: 700; color: #FF6B00;">{{ produit.prix|floatformat:2 }} FG</span>
-                        <span class="old-price" style="text-decoration:line-through;color:#999; font-size: 14px;">{{ produit.ancien_prix|floatformat:2 }} FG</span>
+                        <span class="current-price" style="font-size: 18px; font-weight: 700; color: #FF6B00;">{{ produit.prix|format_prix}} FG </span>
+                        <span class="old-price" style="text-decoration:line-through;color:#999; font-size: 14px;">{{ produit.ancien_prix|format_prix}} FG</span>
                         {% if produit.pourcentage_reduction %}
                             <span class="discount-badge" style="background: #FF4500; color: white; padding: 2px 5px; border-radius: 3px; font-size: 10px; margin-left: 5px;">
                                 <i class="fas fa-tag" style="margin-right: 2px;"></i>{{ produit.pourcentage_reduction }}%
@@ -91,7 +91,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="standard-price" style="font-size: 18px; font-weight: 700; color: #FF6B00;">{{ produit.prix|floatformat:2 }} FG</div>
+                    <div class="standard-price" style="font-size: 18px; font-weight: 700; color: #FF6B00;">{{ produit.prix|format_prix}} FG</div>
                 {% endif %}
             </div>
             

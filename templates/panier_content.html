@@ -1,3 +1,4 @@
+{% load custom_filters %} 
 <div class="modern-cart">
     <!-- Header du panier -->
     <div class="cart-header">
@@ -31,7 +32,7 @@
                 <div class="info-top">
                     <div class="product-header">
                         <a href="{{ produit.url }}" class="product-name">{{ produit.nom }}</a>
-                        <div class="product-price">{{ produit.prix }} {{ devise }}</div>
+                        <div class="product-price">{{ produit.prix|format_prix}} {{ devise }}</div>
                     </div>
                     <div class="product-meta">
                         <span class="product-sku">Réf: {{ produit.sku }}</span>
@@ -70,7 +71,7 @@
         <div class="summary-totals">
             <div class="summary-row">
                 <span>Sous-total</span>
-                <span class="subtotal-price">{{ total_prix }} {{ devise }}</span>
+                <span class="subtotal-price">{{ total_prix|format_prix}} {{ devise }}</span>
             </div>
             <div class="summary-row">
                 <span>Livraison</span>
@@ -78,7 +79,7 @@
             </div>
             <div class="summary-row total-row">
                 <span>Total</span>
-                <span class="total-price">{{ total_prix }} {{ devise }}</span>
+                <span class="total-price">{{ total_prix|format_prix}} {{ devise }}</span>
             </div>
         </div>
         

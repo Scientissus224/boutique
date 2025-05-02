@@ -43,6 +43,7 @@ from .views import (
       get_csrf_token,
       gestion_produits_utilisateurs,
       gestion_utilisateurs_boutiques,
+      gestion_abonnements,
 
     # Vues liées à la gestion du site
     home,

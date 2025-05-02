@@ -76,8 +76,8 @@ from shop.views import (
     get_csrf_token,
    gestion_produits_utilisateurs,
    gestion_utilisateurs_boutiques,
+   gestion_abonnements,
       
-
 
 )
 
@@ -138,6 +138,7 @@ urlpatterns = [
     path('get-csrf-token/',get_csrf_token, name='get_csrf_token'),
     path('gestion-produits-utilisateurs/', gestion_produits_utilisateurs, name='gestion_produits_utilisateurs'),
     path('gestion-utilisateurs/', gestion_utilisateurs_boutiques, name='gestion_utilisateurs_boutiques'),
+    path('gestion_abonnements/', gestion_abonnements, name='gestion_abonnements'),
     
     # Route pour la page d'accueil du site, utilisant la vue home
     path('', home, name='accueil'),
