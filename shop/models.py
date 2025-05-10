@@ -9,10 +9,11 @@ import string
 from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
 from django.utils.timezone import now
-from django.utils import timezone
+from django.utils import timezone 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import timedelta, date
 from django.urls import reverse
 from .const_models import (
     COULEURS,
@@ -61,29 +62,36 @@ STATUT_CHOICES = [
         ('valider', 'Valider'),
         ('invalider', 'Invalider'),
     ]
+def default_date_fin_essai():
+    return date.today() + timedelta(days=90)
+
 class Utilisateur(AbstractUser):
     identifiant_unique = models.CharField(max_length=100, unique=True)
     nom_complet = models.CharField(max_length=200)
     numero = models.CharField(max_length=15, unique=True)
     nom_boutique = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
+    
     statut_validation_compte = models.CharField(
         max_length=10,
         choices=STATUT_CHOICES,
         default='attente',
     )
-    
+
     produits_vendus = models.CharField(
         max_length=225,
         default=None,
         blank=True
     )
 
-    logo_boutique =  CloudinaryField(
+    logo_boutique = CloudinaryField(
         'logos_boutiques',
         blank=True,
         null=True
     )
+
+    # Période d'essai : modifiable, mais initialisée à 90 jours
+    date_fin_essai = models.DateField(default=default_date_fin_essai)
 
     groups = models.ManyToManyField(
         'auth.Group', 
@@ -102,10 +110,26 @@ class Utilisateur(AbstractUser):
     def __str__(self):
         return f"{self.nom_complet} - {self.nom_boutique}"
 
-    # Utilisation de identifiant_unique comme identifiant principal
     USERNAME_FIELD = 'identifiant_unique'
     REQUIRED_FIELDS = ['email', 'nom_complet', 'nom_boutique']
 
+    @property
+    def jours_restants_essai(self):
+        """Retourne le nombre de jours restants jusqu'à la fin d'essai."""
+        jours = (self.date_fin_essai - date.today()).days
+        return max(jours, 0)
+
+    def verifier_statut_essai(self):
+        """Désactive l'utilisateur et sa boutique si la période d’essai est expirée."""
+
+        if self.jours_restants_essai == 0 and self.is_active:
+            self.is_active = False
+            self.save()
+
+            # Désactiver la boutique associée
+            if hasattr(self, 'boutique'):
+                self.boutique.depublier_boutique()
+            
 class UtilisateurTemporaire(models.Model):
     identifiant_unique= models.CharField(max_length=100, unique=True, default='identifiant_par_defaut')
     email = models.EmailField(unique=True)
@@ -891,7 +915,24 @@ class SupportClient(AbstractBaseUser):
         
         
 #-------------------------------------------Gestion des abonnements-----------------------------------      
+
 class Abonnement(models.Model):
+    # Types d'abonnement (choix mensuel, trimestriel, annuel)
+    TYPE_CHOICES = [
+        ('1M', '1 Mois'),
+        ('2M', '2 Mois'),
+        ('3M', '3 Mois'),
+        ('4M', '4 Mois'),
+        ('5M', '5 Mois'),
+        ('6M', '6 Mois'),
+        ('7M', '7 Mois'),
+        ('8M', '8 Mois'),
+        ('9M', '9 Mois'),
+        ('10M', '10 Mois'),
+        ('11M', '11 Mois'),
+        ('12M', '12 Mois'),
+    ]
+
     utilisateur = models.ForeignKey(
         Utilisateur,
         on_delete=models.CASCADE,
@@ -900,16 +941,17 @@ class Abonnement(models.Model):
     date_debut = models.DateTimeField(auto_now_add=True)
     date_fin = models.DateTimeField()
     montant = models.DecimalField(max_digits=10, decimal_places=2)
-    actif = models.BooleanField(default=True)
-
     methode_paiement = models.CharField(max_length=50, blank=True, null=True)
     reference_paiement = models.CharField(max_length=100, blank=True, null=True)
 
-    est_premium = models.BooleanField(default=False)
-
     date_creation = models.DateTimeField(auto_now_add=True)
-    date_mise_a_jour = models.DateTimeField(auto_now=True)
     cree_par = models.CharField(max_length=100, blank=True, null=True)
+
+    type_abonnement = models.CharField(
+        max_length=3,
+        choices=TYPE_CHOICES,
+        default='1M',
+    )
 
     class Meta:
         ordering = ['-date_debut']
@@ -917,51 +959,8 @@ class Abonnement(models.Model):
         verbose_name_plural = "Abonnements"
 
     def __str__(self):
-        return f"{self.utilisateur.nom_complet} | {'Premium' if self.est_premium else 'Standard'} | {self.date_debut.date()} → {self.date_fin.date()}"
+        return f"{self.utilisateur.nom_complet} | {self.type_abonnement} | {self.date_debut.date()} → {self.date_fin.date()}"
 
-    def est_actif(self):
-        """Retourne True si l’abonnement est actif aujourd’hui."""
-        aujourd_hui = timezone.now().date()
-        return self.actif and self.date_debut.date() <= aujourd_hui <= self.date_fin.date()
-
-    @staticmethod
-    def est_dans_essai_gratuit(utilisateur):
-        """Retourne True si l'utilisateur est dans sa période d'essai gratuit (90 jours après inscription)."""
-        limite = utilisateur.date_joined.date() + timedelta(days=90)
-        return timezone.now().date() <= limite
-    
-    @staticmethod
-    def abonnement_actuel(utilisateur):
-        """Retourne l'abonnement actif actuel."""
-        aujourd_hui = timezone.now().date()
-        return utilisateur.abonnements.filter(
-            actif=True,
-            date_debut__lte=aujourd_hui,
-            date_fin__gte=aujourd_hui
-        ).order_by('-date_fin').first()
-
-    @staticmethod
-    def doit_payer(utilisateur):
-        """Retourne True si l'utilisateur a terminé ses 3 mois gratuits et n'a pas d'abonnement actif."""
-        if Abonnement.est_dans_essai_gratuit(utilisateur):
-            return False
-        abonnement = Abonnement.abonnement_actuel(utilisateur)
-        return abonnement is None
-
-    @staticmethod
-    def creer_abonnement_gratuit(utilisateur):
-        """Crée un abonnement gratuit de 3 mois si aucun abonnement n'existe encore."""
-        if not utilisateur.abonnements.exists():
-            return Abonnement.objects.create(
-                utilisateur=utilisateur,
-                date_fin=timezone.now() + timedelta(days=90),
-                montant=0.00,
-                actif=True,
-                est_premium=False,
-                methode_paiement='Gratuit',
-                reference_paiement='ESSAI_3_MOIS'
-            )
-            
 class HistoriqueAbonnement(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.SET_NULL, null=True, blank=True)

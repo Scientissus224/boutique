@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion Abonnements - WarabaGuinnée</title>
+    {% load custom_filters %}  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -817,96 +818,6 @@
             color: #128C7E;
         }
 
-        /* Subscription Card */
-        .subscription-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .subscription-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .subscription-card-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .subscription-card-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .subscription-card-body {
-            margin-bottom: 1.5rem;
-        }
-
-        .subscription-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .subscription-detail {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .subscription-detail-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .subscription-detail-value {
-            font-size: 0.9375rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .subscription-card-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--primary);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
         /* Pagination */
         .pagination {
             display: flex;
@@ -948,6 +859,83 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
         }
 
         /* Responsive */
@@ -994,10 +982,6 @@
 
             .filter-card {
                 padding: 1rem;
-            }
-
-            .subscription-details {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -1151,147 +1135,116 @@
     </style>
 </head>
 <body>
- <!-- Sidebar Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <img src="{% static 'lo.webp' %}" alt="WarabaGuinnée Logo" class="sidebar-logo">
-        <h3>WarabaGuinnée</h3>
-    </div>
-    
-    <div class="user-profile">
-        <img src="{{ support_client.profil.url }}" alt="Photo du support client" class="user-avatar">
-        <h4 class="user-name">{{ support_client.nom_complet }}</h4>
-        <p class="user-role">{{ support_client.role }}</p>
-        <p class="user-email">
-            <i class="fas fa-envelope"></i> {{ support_client.email }}
-        </p>
-    </div>
-    
-    <div class="sidebar-footer">
-        <button class="theme-toggle" id="themeToggle">
-            <i class="fas fa-moon"></i> Thème sombre
-        </button>
-        
-        <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">
-            <i class="fas fa-sign-out-alt"></i> Déconnexion
-        </button>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <!-- Top Navbar -->
-    <div class="top-navbar">
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="page-title">
-            <h1>
-                {% if mode == 'liste' %}
-                    <i class="fas fa-id-card-alt"></i> Gestion des Abonnements
-                {% elif mode == 'detail' %}
-                    <i class="fas fa-user"></i> Abonnements de {{ utilisateur.nom_complet }}
-                {% endif %}
-            </h1>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'lo.webp' %}" alt="WarabaGuinnée Logo" class="sidebar-logo">
+            <h3>WarabaGuinnée</h3>
         </div>
-        <div class="page-actions">
-            <span id="currentTime" class="text-sm text-gray-600"></span>
-            {% if mode == 'detail' %}
-                <span class="revenus-badge">
-                    <i class="fas fa-coins"></i> Revenus plateforme: {{ revenus_platforme|floatformat:2 }}€
-                </span>
+        
+        <div class="user-profile">
+            <img src="{{ support_client.profil.url }}" alt="Photo du support client" class="user-avatar">
+            <h4 class="user-name">{{ support_client.nom_complet }}</h4>
+            <p class="user-role">{{ support_client.role }}</p>
+            <p class="user-email">
+                <i class="fas fa-envelope"></i> {{ support_client.email }}
+            </p>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i> Thème sombre
+            </button>
+            
+            <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h1><i class="fas fa-id-card-alt"></i> Gestion des Abonnements</h1>
+            </div>
+            <div class="page-actions">
+                <span id="currentTime" class="text-sm text-gray-600"></span>
+            </div>
+        </div>
+        
+        <!-- Content Container -->
+        <div class="content-container">
+            <!-- Notification -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notification {% if message.tags %}{{ message.tags }}{% endif %} fade-in" id="notification">
+                        <div class="notification-icon">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif message.tags == 'info' %}
+                                <i class="fas fa-info-circle"></i>
+                            {% else %}
+                                <i class="fas fa-bell"></i>
+                            {% endif %}
+                        </div>
+                        <div class="notification-content">
+                            {{ message }}
+                        </div>
+                        <button class="notification-close">&times;</button>
+                    </div>
+                {% endfor %}
             {% endif %}
-        </div>
-    </div>
-    
-    <!-- Content Container -->
-    <div class="content-container">
-        <!-- Notification -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="notification {% if message.tags %}{{ message.tags }}{% endif %} fade-in" id="notification">
-                    <div class="notification-icon">
-                        {% if message.tags == 'success' %}
-                            <i class="fas fa-check-circle"></i>
-                        {% elif message.tags == 'error' %}
-                            <i class="fas fa-exclamation-circle"></i>
-                        {% elif message.tags == 'warning' %}
-                            <i class="fas fa-exclamation-triangle"></i>
-                        {% elif message.tags == 'info' %}
-                            <i class="fas fa-info-circle"></i>
-                        {% else %}
-                            <i class="fas fa-bell"></i>
-                        {% endif %}
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-title">
+                        <i class="fas fa-money-bill-wave"></i> Revenus Totaux
                     </div>
-                    <div class="notification-content">
-                        {{ message }}
+                    <div class="stat-value">{{ revenus_totaux|format_prix}} FG</div>
+                </div>
+                
+                <div class="stat-card stat-card-success">
+                    <div class="stat-title">
+                        <i class="fas fa-calendar-alt"></i> Revenus ce mois
                     </div>
-                    <button class="notification-close">&times;</button>
+                    <div class="stat-value">{{ revenus_mois|format_prix}} FG</div>
                 </div>
-            {% endfor %}
-        {% endif %}
-        
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card stat-card-primary">
-                <div class="stat-title">
-                    <i class="fas fa-users"></i> Total Utilisateurs
+                
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-title">
+                        <i class="fas fa-user-check"></i> Abonnés Actifs
+                    </div>
+                    <div class="stat-value">{{ abonnes_actifs }}</div>
                 </div>
-                <div class="stat-value">{{ stats.total }}</div>
-            </div>
-            
-            <div class="stat-card stat-card-success">
-                <div class="stat-title">
-                    <i class="fas fa-user-check"></i> Comptes Actifs
-                </div>
-                <div class="stat-value">{{ stats.actifs }}</div>
-                <div class="stat-change">
-                    
+                
+                <div class="stat-card stat-card-danger">
+                    <div class="stat-title">
+                        <i class="fas fa-clock"></i> Essais Expirés
+                    </div>
+                    <div class="stat-value">{{ essais_expires }}</div>
                 </div>
             </div>
             
-            <div class="stat-card stat-card-warning">
-                <div class="stat-title">
-                    <i class="fas fa-id-card"></i> Abonnés Actifs
-                </div>
-                <div class="stat-value">{{ stats.abonnes }}</div>
-                <div class="stat-change">
-                   
-                </div>
-            </div>
-            
-            <div class="stat-card stat-card-danger">
-                <div class="stat-title">
-                    <i class="fas fa-exclamation-triangle"></i> En Retard/Expirés
-                </div>
-                <div class="stat-value">{{ stats.en_retard }}</div>
-                <div class="stat-change">
-                   
-                </div>
-            </div>
-            
-            <div class="stat-card stat-card-info">
-                <div class="stat-title">
-                    <i class="fas fa-coins"></i> Revenus Plateforme
-                </div>
-                <div class="stat-value">{{ stats.revenus_platforme|floatformat:2 }}€</div>
-                <div class="stat-change">
-                    {{ stats.abonnes }} abonnés actifs
-                </div>
-            </div>
-        </div>
-        
-        {% if mode == 'liste' %}
-            <!-- Filter Section pour la liste des utilisateurs -->
+            <!-- Filter Section -->
             <div class="filter-card">
                 <div class="filter-header">
                     <div class="filter-title">
                         <i class="fas fa-filter"></i> Filtrer les Utilisateurs
                     </div>
-                    <button class="reset-btn" onclick="resetFilters()">
+                    <button class="reset-btn" onclick="window.location.href='{% url 'gestion_abonnements' %}'">
                         <i class="fas fa-sync-alt"></i> Réinitialiser
                     </button>
                 </div>
@@ -1300,32 +1253,31 @@
                     <div class="filter-fields">
                         <div class="filter-group">
                             <label class="filter-label" for="nom_recherche">
-                                <i class="fas fa-user"></i> Nom ou Téléphone
+                                <i class="fas fa-user"></i> Nom
                             </label>
-                            <input type="text" class="filter-input" id="nom_recherche" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom ou téléphone">
+                            <input type="text" class="filter-input" id="nom_recherche" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom">
                         </div>
                         
                         <div class="filter-group">
-                            <label class="filter-label" for="statut_compte">
+                            <label class="filter-label" for="statut_filtre">
                                 <i class="fas fa-user-circle"></i> Statut Compte
                             </label>
-                            <select class="filter-input form-select" id="statut_compte" name="statut_compte">
+                            <select class="filter-input form-select" id="statut_filtre" name="statut">
                                 <option value="">Tous les statuts</option>
-                                <option value="actif" {% if statut_compte == 'actif' %}selected{% endif %}>Actif</option>
-                                <option value="inactif" {% if statut_compte == 'inactif' %}selected{% endif %}>Inactif</option>
+                                <option value="valide" {% if statut_filtre == 'valide' %}selected{% endif %}>Validé</option>
+                                <option value="en_attente" {% if statut_filtre == 'en_attente' %}selected{% endif %}>En attente</option>
+                                <option value="rejete" {% if statut_filtre == 'rejete' %}selected{% endif %}>Rejeté</option>
                             </select>
                         </div>
                         
                         <div class="filter-group">
-                            <label class="filter-label" for="statut_abonnement">
-                                <i class="fas fa-id-card-alt"></i> Statut Abonnement
+                            <label class="filter-label" for="abonnement_filtre">
+                                <i class="fas fa-id-card-alt"></i> Type d'abonnement
                             </label>
-                            <select class="filter-input form-select" id="statut_abonnement" name="statut_abonnement">
-                                <option value="">Tous les statuts</option>
-                                <option value="actif" {% if statut_abonnement == 'actif' %}selected{% endif %}>Abonné actif</option>
-                                <option value="inactif" {% if statut_abonnement == 'inactif' %}selected{% endif %}>Non abonné</option>
-                                <option value="essai" {% if statut_abonnement == 'essai' %}selected{% endif %}>Période d'essai</option>
-                                <option value="expire" {% if statut_abonnement == 'expire' %}selected{% endif %}>Abonnement expiré</option>
+                            <select class="filter-input form-select" id="abonnement_filtre" name="abonnement">
+                                <option value="">Tous les types</option>
+                                <option value="essai" {% if abonnement_filtre == 'essai' %}selected{% endif %}>Période d'essai</option>
+                                <option value="payant" {% if abonnement_filtre == 'payant' %}selected{% endif %}>Abonnement payant</option>
                             </select>
                         </div>
                     </div>
@@ -1341,30 +1293,24 @@
                                 <th><i class="fas fa-user"></i> Nom Complet</th>
                                 <th><i class="fas fa-phone"></i> Téléphone</th>
                                 <th><i class="fas fa-store"></i> Boutique</th>
-                                <th><i class="fas fa-id-card-alt"></i> Abonnement</th>
-                                <th><i class="fas fa-calendar-alt"></i> Date Fin</th>
+                                <th><i class="fas fa-id-card-alt"></i> Statut Abonnement</th>
+                                <th><i class="fas fa-calendar"></i> Date Fin</th>
                                 <th><i class="fas fa-cog"></i> Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for u in utilisateurs %}
+                            {% for utilisateur in utilisateurs %}
                             <tr>
-                                <td>{{ u.utilisateur.nom_complet }}</td>
+                                <td>{{ utilisateur.nom_complet }}</td>
                                 <td>
-                                    <a href="{{ u.whatsapp_link }}" target="_blank" class="whatsapp-link">
-                                        <i class="fab fa-whatsapp"></i> {{ u.utilisateur.numero }}
+                                    <a href="{{ utilisateur.whatsapp_link }}" target="_blank" class="whatsapp-link">
+                                        <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
                                     </a>
                                 </td>
                                 <td>
-                                    {% if u.boutique %}
-                                        <span class="status-badge {% if u.boutique.publier %}status-success{% else %}status-warning{% endif %}">
-                                            <i class="fas fa-store"></i> 
-                                            {{ u.boutique.nom|default:"Sans nom" }}
-                                            {% if u.boutique.publier %}
-                                                <i class="fas fa-check-circle"></i>
-                                            {% else %}
-                                                <i class="fas fa-times-circle"></i>
-                                            {% endif %}
+                                    {% if utilisateur.boutique_exists %}
+                                        <span class="status-badge status-success">
+                                            <i class="fas fa-store"></i> {{ utilisateur.boutique.titre|default:"Sans nom" }}
                                         </span>
                                     {% else %}
                                         <span class="status-badge status-danger">
@@ -1373,68 +1319,51 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if u.abonnement_actuel %}
-                                        <span class="status-badge {% if u.abonnement_actuel.est_premium %}status-success{% else %}status-warning{% endif %}">
-                                            <i class="fas fa-id-card-alt"></i> 
-                                            {% if u.abonnement_actuel.est_premium %}Premium{% else %}Standard{% endif %}
+                                    {% if utilisateur.abonnement_statut.type == 'payant' %}
+                                        <span class="subscription-status subscription-active">
+                                            <i class="fas fa-crown"></i> Payant ({{ utilisateur.abonnement_statut.type_abonnement }})
                                         </span>
-                                    {% elif u.en_essai %}
-                                        <span class="status-badge status-info">
-                                            <i class="fas fa-clock"></i> Essai gratuit ({{ u.jours_restants_essai }}j restants)
+                                    {% elif utilisateur.abonnement_statut.type == 'essai' %}
+                                        <span class="subscription-status subscription-trial">
+                                            <i class="fas fa-clock"></i> Essai
                                         </span>
                                     {% else %}
-                                        <span class="status-badge status-danger">
-                                            <i class="fas fa-times-circle"></i> Non abonné
+                                        <span class="subscription-status subscription-expired">
+                                            <i class="fas fa-exclamation-circle"></i> Expiré
                                         </span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if u.abonnement_actuel %}
-                                        {{ u.abonnement_actuel.date_fin|date:"d/m/Y" }}
-                                        {% if u.paiement_expire %}
-                                            <span class="status-badge status-danger">
-                                                <i class="fas fa-exclamation-circle"></i> Expiré
-                                            </span>
-                                        {% elif u.abonnement_actuel.jours_restants <= 7 %}
-                                            <span class="status-badge status-warning">
-                                                {{ u.abonnement_actuel.jours_restants }}j restants
-                                            </span>
-                                        {% endif %}
-                                    {% elif u.en_essai %}
-                                        {{ u.utilisateur.date_joined|date:"d/m/Y" }}
+                                    {% if utilisateur.abonnement_statut.date_fin %}
+                                        {{ utilisateur.abonnement_statut.date_fin|date:"d/m/Y" }}
                                     {% else %}
                                         -
                                     {% endif %}
                                 </td>
                                 <td>
                                     <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                                        <a href="?utilisateur_id={{ u.utilisateur.id }}" class="action-btn btn-primary">
-                                            <i class="fas fa-eye"></i> Gérer
-                                        </a>
-                                        {% if u.abonnement_actuel %}
-                                            <button class="action-btn btn-success" onclick="showProlongerModal('{{ u.abonnement_actuel.id }}', '{{ u.utilisateur.id }}')">
-                                                <i class="fas fa-calendar-plus"></i> Prolonger
+                                        <!-- Bouton Actions générales -->
+                                        <button class="action-btn btn-primary" onclick="openUserActionsModal('{{ utilisateur.id }}', '{{ utilisateur.nom_complet }}')">
+                                            <i class="fas fa-cog"></i> Actions
+                                        </button>
+                                        
+                                        <!-- Bouton Ajouter abonnement (toujours visible) -->
+                                        <button class="action-btn btn-success" onclick="openAddSubscriptionModal('{{ utilisateur.id }}', '{{ utilisateur.nom_complet }}')">
+                                            <i class="fas fa-plus-circle"></i> Ajouter abonnement
+                                        </button>
+                                        
+                                        <!-- Bouton Envoyer reçu (visible seulement si abonnement payant) -->
+                                        {% if utilisateur.abonnement_statut.type == 'payant' and utilisateur.whatsapp_receipt_link %}
+                                            <button class="action-btn whatsapp-btn" 
+                                                    onclick="sendWhatsappReceipt('{{ utilisateur.whatsapp_receipt_link }}', '{{ utilisateur.nom_complet }}')">
+                                                <i class="fab fa-whatsapp"></i> Envoyer reçu
                                             </button>
                                         {% endif %}
-                                        {% if u.boutique %}
-                                            {% if u.boutique.publier %}
-                                                <form method="POST" action="?utilisateur_id={{ u.utilisateur.id }}" style="display: inline;">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="utilisateur_id" value="{{ u.utilisateur.id }}">
-                                                    <button type="submit" name="depublier_boutique" class="action-btn btn-warning">
-                                                        <i class="fas fa-eye-slash"></i> Dépublier
-                                                    </button>
-                                                </form>
-                                            {% else %}
-                                                <form method="POST" action="?utilisateur_id={{ u.utilisateur.id }}" style="display: inline;">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="utilisateur_id" value="{{ u.utilisateur.id }}">
-                                                    <button type="submit" name="publier_boutique" class="action-btn btn-info">
-                                                        <i class="fas fa-eye"></i> Publier
-                                                    </button>
-                                                </form>
-                                            {% endif %}
-                                        {% endif %}
+                                        
+                                        <!-- Bouton Historique -->
+                                        <button class="action-btn btn-info" onclick="window.location.href='?historique=1&user_id={{ utilisateur.id }}'">
+                                            <i class="fas fa-history"></i> Historique
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -1443,375 +1372,159 @@
                     </table>
                 </div>
             </div>
-            
-        {% elif mode == 'detail' %}
-            <!-- Détails de l'utilisateur et gestion des abonnements -->
-            <div class="filter-card">
-                <div class="filter-header">
-                    <div class="filter-title">
-                        <i class="fas fa-user"></i> Utilisateur: {{ utilisateur.nom_complet }}
-                    </div>
-                    <a href="{% url 'gestion_abonnements' %}" class="reset-btn">
-                        <i class="fas fa-arrow-left"></i> Retour à la liste
-                    </a>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-                    <div>
-                        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-primary);">
-                            <i class="fas fa-info-circle"></i> Informations Personnelles
+            <!-- Historique Modal -->
+            {% if show_historique and user_historique and historique_paiements %}
+            <div class="modal active" id="historyModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <i class="fas fa-history"></i> Historique des abonnements
                         </h3>
-                        <div style="background: var(--hover-bg); padding: 1rem; border-radius: 8px;">
-                            <p><strong><i class="fas fa-phone"></i> Téléphone:</strong> 
-                                <a href="{{ whatsapp_link }}" target="_blank" class="whatsapp-link">
-                                    <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
-                                </a>
-                            </p>
-                            <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ utilisateur.email }}</p>
-                            <p><strong><i class="fas fa-calendar-plus"></i> Date d'inscription:</strong> {{ utilisateur.date_joined|date:"d/m/Y H:i" }}</p>
-                            <p><strong><i class="fas fa-user-shield"></i> Statut:</strong> 
-                                {% if utilisateur.is_active %}
-                                    <span class="status-badge status-success">
-                                        <i class="fas fa-check-circle"></i> Compte actif
-                                    </span>
-                                {% else %}
-                                    <span class="status-badge status-danger">
-                                        <i class="fas fa-times-circle"></i> Compte désactivé
-                                    </span>
-                                {% endif %}
-                            </p>
-                            <p><strong><i class="fas fa-clock"></i> Statut abonnement:</strong> 
-                                {% if en_essai %}
-                                    <span class="status-badge status-warning">
-                                        <i class="fas fa-clock"></i> Essai gratuit ({{ jours_restants_essai }}j restants)
-                                    </span>
-                                {% elif abonnement_actuel %}
-                                    <span class="status-badge {% if abonnement_actuel.est_premium %}status-success{% else %}status-info{% endif %}">
-                                        <i class="fas fa-id-card-alt"></i> 
-                                        {% if abonnement_actuel.est_premium %}Premium{% else %}Standard{% endif %}
-                                        {% if paiement_expire %}
-                                            <span class="status-badge status-danger">
-                                                <i class="fas fa-exclamation-circle"></i> Expiré
-                                            </span>
-                                        {% endif %}
-                                    </span>
-                                {% else %}
-                                    <span class="status-badge status-danger">
-                                        <i class="fas fa-times-circle"></i> Non abonné
-                                    </span>
-                                {% endif %}
-                            </p>
-                        </div>
+                        <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
                     </div>
-                    
-                    <div>
-                        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-primary);">
-                            <i class="fas fa-store"></i> Statut Boutique
-                        </h3>
-                        <div style="background: var(--hover-bg); padding: 1rem; border-radius: 8px;">
-                            {% if boutique_exists %}
-                                <p><strong><i class="fas fa-signature"></i> Nom:</strong> {{ boutique.nom }}</p>
-                                <p><strong><i class="fas fa-globe"></i> Publication:</strong> 
-                                    {% if boutique.publier %}
-                                        <span class="status-badge status-success">
-                                            <i class="fas fa-check-circle"></i> Publiée
-                                        </span>
-                                    {% else %}
-                                        <span class="status-badge status-danger">
-                                            <i class="fas fa-times-circle"></i> Non publiée
-                                        </span>
-                                    {% endif %}
-                                </p>
-                                <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
-                                    <form method="POST" action="" style="display: inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                        {% if boutique.publier %}
-                                            <button type="submit" name="depublier_boutique" class="action-btn btn-warning">
-                                                <i class="fas fa-eye-slash"></i> Dépublier
-                                            </button>
-                                        {% else %}
-                                            <button type="submit" name="publier_boutique" class="action-btn btn-info">
-                                                <i class="fas fa-eye"></i> Publier
-                                            </button>
-                                        {% endif %}
-                                    </form>
-                                </div>
-                            {% else %}
-                                <p class="status-badge status-danger">
-                                    <i class="fas fa-store-slash"></i> Aucune boutique créée
-                                </p>
+                    <div class="modal-body">
+                        {% for historique in historique_paiements %}
+                        <div class="history-item">
+                            <div class="history-date">
+                                {{ historique.date_action|date:"d/m/Y H:i" }}
+                            </div>
+                            <div class="history-action">
+                                {{ historique.action }}
+                            </div>
+                            {% if historique.details %}
+                            <div class="history-details">
+                                {{ historique.details }}
+                            </div>
                             {% endif %}
+                            {% if historique.abonnement %}
+                            <div class="history-details">
+                                <strong>Abonnement:</strong> {{ historique.abonnement.get_type_abonnement_display }} - 
+                                {{ historique.abonnement.montant }} FG - 
+                                Jusqu'au {{ historique.abonnement.date_fin|date:"d/m/Y" }}
+                            </div>
+                            {% endif %}
+                            <div class="history-by">
+                                Par {{ historique.effectue_par.nom_complet }}
+                            </div>
                         </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="action-btn btn-secondary" onclick="closeModal('historyModal')">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Section Abonnements -->
-                <div style="margin-top: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-primary);">
-                        <i class="fas fa-id-card-alt"></i> Gestion des Abonnements
-                    </h3>
-                    
-                    <!-- Formulaire de création d'abonnement -->
-                    <form method="POST" action="" style="background: var(--hover-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            </div>
+            {% endif %}
+            
+            <!-- User Actions Modal -->
+            <div class="modal" id="userActionsModal">
+                <div class="modal-content">
+
+                        <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                            Date actuelle de fin d'essai: <strong>{{ utilisateur.date_fin_essai|date:"d/m/Y" }}</strong><br>
+                            Jours restants: <strong>{{ utilisateur.jours_restants_essai }}</strong>
+                        </p>
+                 
+                    <form method="POST" action="{% url 'gestion_abonnements' %}">
                         {% csrf_token %}
-                        <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                        
-                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
-                            <i class="fas fa-plus-circle"></i> Créer un nouvel abonnement
-                        </h4>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <input type="hidden" name="utilisateur_id" id="modalUserId">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="modalUserName"></h3>
+                            <button type="button" class="modal-close" onclick="closeModal('userActionsModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
                             <div class="form-group">
-                                <label class="form-label" for="montant">Montant (€)</label>
-                                <input type="number" class="form-control" id="montant" name="montant" step="0.01" min="0" required>
+                                <label class="form-label">Actions disponibles:</label>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button type="submit" name="action" value="activer_compte" class="action-btn btn-success">
+                                        <i class="fas fa-check-circle"></i> Activer le compte
+                                    </button>
+                                    <button type="submit" name="action" value="desactiver_compte" class="action-btn btn-warning">
+                                        <i class="fas fa-times-circle"></i> Désactiver le compte
+                                    </button>
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label class="form-label" for="duree_jours">Durée (jours)</label>
-                                <input type="number" class="form-control" id="duree_jours" name="duree_jours" min="1" value="30" required>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i> Prolonger la période d'essai
+                                </label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="number" class="form-control" name="jours_ajoutes" placeholder="Nombre de jours" min="1" style="flex: 1;">
+                                    <button type="submit" name="action" value="modifier_essai" class="action-btn btn-primary">
+                                        <i class="fas fa-calendar-plus"></i> Ajouter
+                                    </button>
+                                </div>
                             </div>
-                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn btn-secondary" onclick="closeModal('userActionsModal')">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Add Subscription Modal -->
+            <div class="modal" id="addSubscriptionModal">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'gestion_abonnements' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="utilisateur_id" id="subscriptionUserId">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="subscriptionUserName"></h3>
+                            <button type="button" class="modal-close" onclick="closeModal('addSubscriptionModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
                             <div class="form-group">
-                                <label class="form-label" for="methode_paiement">Méthode de paiement</label>
-                                <select class="form-control form-select" id="methode_paiement" name="methode_paiement" required>
-                                    <option value="">Sélectionner</option>
-                                    <option value="orange_money">Orange Money</option>
-                                    <option value="mtn_money">MTN Money</option>
-                                    <option value="carte_bancaire">Carte Bancaire</option>
-                                    <option value="especes">Espèces</option>
-                                    <option value="autre">Autre</option>
+                                <label class="form-label">Type d'abonnement</label>
+                                <select class="form-control form-select" name="type_abonnement" required>
+                                    {% for choice in type_abonnement_choices %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="reference_paiement">Référence paiement</label>
-                                <input type="text" class="form-control" id="reference_paiement" name="reference_paiement">
+                                <label class="form-label">Montant (FG)</label>
+                                <input type="number" class="form-control" name="montant" required step="0.01" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Méthode de paiement</label>
+                                <select class="form-control form-select" name="methode_paiement" required>
+                                    <option value="Orange Money">Orange Money</option>
+                                    <option value="MTN Mobile Money">MTN Mobile Money</option>
+                                    <option value="Wave">Wave</option>
+                                    <option value="Carte Bancaire">Carte Bancaire</option>
+                                    <option value="Espèce">Espèce</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Référence de paiement</label>
+                                <input type="text" class="form-control" name="reference_paiement" placeholder="Numéro de transaction" required>
                             </div>
                         </div>
-                        
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="est_premium" name="est_premium">
-                                <label class="form-check-label" for="est_premium">Abonnement Premium</label>
-                            </div>
-                            <small class="form-text">Cochez cette case pour activer les fonctionnalités premium et publier la boutique</small>
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="envoyer_whatsapp" name="envoyer_whatsapp" checked>
-                                <label class="form-check-label" for="envoyer_whatsapp">Envoyer notification WhatsApp</label>
-                            </div>
-                            <small class="form-text">Un message sera envoyé automatiquement à l'utilisateur</small>
-                        </div>
-                        
-                        <button type="submit" name="creer_abonnement" class="action-btn btn-primary">
-                            <i class="fas fa-save"></i> Créer l'abonnement
-                        </button>
-                    </form>
-                    
-                    <!-- Liste des abonnements existants -->
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
-                            <i class="fas fa-history"></i> Historique des Abonnements
-                        </h4>
-                        
-                        {% if abonnements %}
-                            <div class="table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Date Début</th>
-                                            <th>Date Fin</th>
-                                            <th>Montant</th>
-                                            <th>Statut</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for abonnement in abonnements %}
-                                        <tr>
-                                            <td>
-                                                {% if abonnement.est_premium %}
-                                                    <span class="status-badge status-success">
-                                                        <i class="fas fa-crown"></i> Premium
-                                                    </span>
-                                                {% else %}
-                                                    <span class="status-badge status-info">
-                                                        <i class="fas fa-id-card-alt"></i> Standard
-                                                    </span>
-                                                {% endif %}
-                                            </td>
-                                            <td>{{ abonnement.date_debut|date:"d/m/Y" }}</td>
-                                            <td>
-                                                {{ abonnement.date_fin|date:"d/m/Y" }}
-                                                {% if abonnement.actif %}
-                                                    {% if abonnement.jours_restants <= 7 %}
-                                                        <span class="status-badge {% if abonnement.jours_restants <= 3 %}status-danger{% else %}status-warning{% endif %}">
-                                                            {{ abonnement.jours_restants }}j restants
-                                                        </span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </td>
-                                            <td>{{ abonnement.montant }}€</td>
-                                            <td>
-                                                {% if abonnement.actif %}
-                                                    <span class="status-badge status-success">
-                                                        <i class="fas fa-check-circle"></i> Actif
-                                                    </span>
-                                                {% else %}
-                                                    <span class="status-badge status-secondary">
-                                                        <i class="fas fa-times-circle"></i> Expiré
-                                                    </span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                                                    {% if abonnement.actif %}
-                                                        <form method="POST" action="" style="display: inline;">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                                            <input type="hidden" name="abonnement_id" value="{{ abonnement.id }}">
-                                                            <button type="submit" name="desactiver_abonnement" class="action-btn btn-warning">
-                                                                <i class="fas fa-ban"></i> Désactiver
-                                                            </button>
-                                                        </form>
-                                                        
-                                                        <button type="button" class="action-btn btn-success" onclick="showProlongerModal('{{ abonnement.id }}', '{{ utilisateur.id }}')">
-                                                            <i class="fas fa-calendar-plus"></i> Prolonger
-                                                        </button>
-                                                    {% endif %}
-                                                    
-                                                    <button type="button" class="action-btn btn-info" onclick="showWhatsappModal('{{ abonnement.id }}', '{{ utilisateur.id }}', '{{ utilisateur.numero }}')">
-                                                        <i class="fab fa-whatsapp"></i> Envoyer message
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <p style="padding: 1rem; background: var(--hover-bg); border-radius: 8px;">
-                                <i class="fas fa-info-circle"></i> Aucun abonnement enregistré pour cet utilisateur.
-                            </p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Actions sur le compte -->
-                    <div style="margin-top: 1.5rem;">
-                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
-                            <i class="fas fa-user-cog"></i> Actions sur le compte
-                        </h4>
-                        
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
-                            <form method="POST" action="" style="display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="utilisateur_id" value="{{ utilisateur.id }}">
-                                
-                                {% if utilisateur.is_active %}
-                                    <button type="submit" name="mettre_en_attente" class="action-btn btn-warning">
-                                        <i class="fas fa-user-times"></i> Suspendre le compte
-                                    </button>
-                                {% else %}
-                                    <button type="submit" name="reactiver_compte" class="action-btn btn-success">
-                                        <i class="fas fa-user-check"></i> Réactiver le compte
-                                    </button>
-                                {% endif %}
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Modal pour prolonger un abonnement -->
-            <div id="prolongerModal" class="modal-overlay">
-                <div class="modal-content">
-                    <h3>
-                        <i class="fas fa-calendar-plus"></i> Prolonger l'abonnement
-                    </h3>
-                    
-                    <form method="POST" action="" id="prolongerForm">
-                        {% csrf_token %}
-                        <input type="hidden" name="utilisateur_id" id="prolongerUtilisateurId">
-                        <input type="hidden" name="abonnement_id" id="prolongerAbonnementId">
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="jours_ajout">Nombre de jours à ajouter</label>
-                            <input type="number" class="form-control" id="jours_ajout" name="jours_ajout" min="1" value="30" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="envoyer_notification_prolongation" name="envoyer_notification" checked>
-                                <label class="form-check-label" for="envoyer_notification_prolongation">Envoyer notification WhatsApp</label>
-                            </div>
-                            <small class="form-text">Un message de confirmation sera envoyé à l'utilisateur</small>
-                        </div>
-                        
-                        <div class="modal-actions">
-                            <button type="button" class="action-btn btn-outline" onclick="hideModal('prolongerModal')">
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn btn-secondary" onclick="closeModal('addSubscriptionModal')">
                                 <i class="fas fa-times"></i> Annuler
                             </button>
-                            <button type="submit" name="prolonger_abonnement" class="action-btn btn-primary">
-                                <i class="fas fa-save"></i> Confirmer
+                            <button type="submit" name="action" value="ajouter_abonnement" class="action-btn btn-success">
+                                <i class="fas fa-check"></i> Confirmer
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-            
-            <!-- Modal pour envoyer un message WhatsApp -->
-            <div id="whatsappModal" class="modal-overlay">
-                <div class="modal-content">
-                    <h3>
-                        <i class="fab fa-whatsapp"></i> Envoyer un message WhatsApp
-                    </h3>
-                    
-                    <form method="POST" action="" id="whatsappForm">
-                        {% csrf_token %}
-                        <input type="hidden" name="utilisateur_id" id="whatsappUtilisateurId">
-                        <input type="hidden" name="abonnement_id" id="whatsappAbonnementId">
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="type_message">Type de message</label>
-                            <select class="form-control form-select" id="type_message" name="type_message" required onchange="updateWhatsappPreview()">
-                                <option value="">Sélectionner un type</option>
-                                <option value="confirmation">Confirmation de paiement</option>
-                                <option value="rappel">Rappel de paiement</option>
-                                <option value="expiration">Notification d'expiration</option>
-                                <option value="personnalise">Message personnalisé</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group" id="messagePreview" style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                            <h5>Prévisualisation du message:</h5>
-                            <p id="previewContent">Sélectionnez un type de message pour voir la prévisualisation</p>
-                        </div>
-                        
-                        <div class="form-group" id="customMessageGroup" style="display: none;">
-                            <label class="form-label" for="message_personnalise">Message personnalisé</label>
-                            <textarea class="form-control" id="message_personnalise" name="message_personnalise" rows="4" oninput="updateCustomPreview()"></textarea>
-                        </div>
-                        
-                        <div class="modal-actions">
-                            <button type="button" class="action-btn btn-outline" onclick="hideModal('whatsappModal')">
-                                <i class="fas fa-times"></i> Annuler
-                            </button>
-                            <button type="submit" name="envoyer_whatsapp" class="action-btn btn-success">
-                                <i class="fab fa-whatsapp"></i> Envoyer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        {% endif %}
+        </div>
     </div>
-</div>
-<script>
+    
+    <script>
         // Toggle sidebar on mobile
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
@@ -1895,29 +1608,21 @@
         setInterval(updateTime, 60000); // Update every minute
         
         // Modal functions
-        function showProlongerModal(abonnementId) {
-            document.getElementById('modalAbonnementId').value = abonnementId;
-            document.getElementById('prolongerModal').style.display = 'flex';
+        function openUserActionsModal(userId, userName) {
+            document.getElementById('modalUserId').value = userId;
+            document.getElementById('modalUserName').textContent = 'Actions pour ' + userName;
+            document.getElementById('userActionsModal').classList.add('active');
         }
         
-        function showEmailModal(abonnementId) {
-            document.getElementById('emailAbonnementId').value = abonnementId;
-            document.getElementById('emailModal').style.display = 'flex';
+        function openAddSubscriptionModal(userId, userName) {
+            document.getElementById('subscriptionUserId').value = userId;
+            document.getElementById('subscriptionUserName').textContent = 'Ajouter abonnement pour ' + userName;
+            document.getElementById('addSubscriptionModal').classList.add('active');
         }
         
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target.id === 'prolongerModal') {
-                hideModal('prolongerModal');
-            }
-            if (event.target.id === 'emailModal') {
-                hideModal('emailModal');
-            }
-        });
         
         // Auto-submit form when filters change
         document.querySelectorAll('.filter-input').forEach(function(input) {
@@ -1926,80 +1631,26 @@
             });
         });
         
-        // Reset filters
-        function resetFilters() {
-            window.location.href = window.location.pathname;
+        // Close history modal when clicking outside
+        const historyModal = document.getElementById('historyModal');
+        if (historyModal) {
+            historyModal.addEventListener('click', function(e) {
+                if (e.target === historyModal) {
+                    closeModal('historyModal');
+                }
+            });
         }
     </script>
     <script>
-        // Fonction pour mettre à jour l'aperçu du message WhatsApp
-        function updateWhatsappPreview() {
-            const typeMessage = document.getElementById('type_message').value;
-            const previewContent = document.getElementById('previewContent');
-            const customMessageGroup = document.getElementById('customMessageGroup');
-            const messagePreview = document.getElementById('messagePreview');
-            
-            // Masquer le groupe de message personnalisé si ce n'est pas sélectionné
-            if (typeMessage !== 'personnalise') {
-                customMessageGroup.style.display = 'none';
-                messagePreview.style.display = 'block';
-            }
-            
-            // Mettre à jour l'aperçu selon le type de message
-            switch(typeMessage) {
-                case 'confirmation':
-                    previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-                    Nous confirmons la réception de votre paiement pour votre abonnement.<br>
-                    Votre boutique est maintenant ${document.querySelector('input[name="est_premium"]:checked') ? 'publiée' : 'non publiée'}.<br><br>
-                    Pour toute question, contactez-nous via ce lien : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-                    L'équipe de support`;
-                    break;
-                    
-                case 'rappel':
-                    previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-                    Nous vous rappelons que votre abonnement expire dans ${document.querySelector('#jours_ajout') ? document.querySelector('#jours_ajout').value : 'X'} jours.<br>
-                    Veuillez renouveler votre abonnement pour continuer à bénéficier de nos services.<br><br>
-                    Pour renouveler ou toute question : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-                    L'équipe de support`;
-                    break;
-                    
-                case 'expiration':
-                    previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-                    Nous vous informons que votre abonnement a expiré.<br>
-                    Votre boutique n'est plus visible par les clients.<br><br>
-                    Pour renouveler : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-                    L'équipe de support`;
-                    break;
-                    
-                case 'personnalise':
-                    customMessageGroup.style.display = 'block';
-                    messagePreview.style.display = 'none';
-                    break;
-                    
-                default:
-                    previewContent.innerHTML = 'Sélectionnez un type de message pour voir la prévisualisation';
-            }
-        }}
-        
-        // Fonction pour mettre à jour l'aperçu du message personnalisé
-        function updateCustomPreview() {
-            const previewContent = document.getElementById('previewContent');
-            const customMessage = document.getElementById('message_personnalise').value;
-            
-            previewContent.innerHTML = customMessage || 'Entrez votre message personnalisé ci-dessus';
-        }
-        
-        // Fonction pour afficher le modal WhatsApp avec les bonnes valeurs
-        function showWhatsappModal(abonnementId, utilisateurId, numero) {
-            document.getElementById('whatsappAbonnementId').value = abonnementId;
-            document.getElementById('whatsappUtilisateurId').value = utilisateurId;
-            document.getElementById('type_message').value = '';
-            document.getElementById('message_personnalise').value = '';
-            document.getElementById('customMessageGroup').style.display = 'none';
-            document.getElementById('messagePreview').style.display = 'block';
-            document.getElementById('previewContent').innerHTML = 'Sélectionnez un type de message pour voir la prévisualisation';
-            showModal('whatsappModal');
-        }
-        </script>
+        // Fonction pour envoyer le reçu WhatsApp
+function sendWhatsappReceipt(whatsappLink, userName) {
+    if (confirm(`Envoyer le reçu de paiement à ${userName} via WhatsApp ?`)) {
+        // Ouvrir dans un nouvel onglet
+        window.open(whatsappLink, '_blank', 'width=600,height=600');
+    }
+}
+
+
+</script>
 </body>
 </html>

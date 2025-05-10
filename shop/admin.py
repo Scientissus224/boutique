@@ -29,7 +29,7 @@ from .models import (
 # Configuration de l'administration pour le modèle Utilisateur
 class UtilisateurAdmin(UserAdmin):
     # Liste des champs à afficher dans l'interface d'administration
-    list_display = ('identifiant_unique', 'nom_complet', 'nom_boutique', 'email', 'produits_vendus', 'logo_boutique', 'is_active', 'is_staff', 'date_joined', 'statut_validation_compte')
+    list_display = ('identifiant_unique', 'nom_complet', 'nom_boutique', 'email', 'produits_vendus', 'logo_boutique', 'is_active', 'is_staff', 'date_joined', 'statut_validation_compte' , 'date_fin_essai')
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'groups')
     search_fields = ('identifiant_unique', 'email', 'nom_complet', 'nom_boutique', 'produits_vendus')  # Mise à jour ici
     ordering = ('identifiant_unique',)
@@ -341,15 +341,13 @@ class AbonnementAdmin(admin.ModelAdmin):
         'date_debut',
         'date_fin',
         'montant',
-        'est_premium',
-        'actif',
+        'type_abonnement',  # Ajout du type d'abonnement
         'methode_paiement',
         'reference_paiement',
         'cree_par',
     )
     list_filter = (
-        'actif',
-        'est_premium',
+        'type_abonnement',  # Ajout de type_abonnement pour filtrer les abonnements
         'methode_paiement',
         'date_debut',
         'cree_par',
@@ -360,8 +358,6 @@ class AbonnementAdmin(admin.ModelAdmin):
         'reference_paiement',
     )
     ordering = ('-date_debut',)
-    
-    
 
 
 @admin.register(HistoriqueAbonnement)

@@ -26,6 +26,10 @@ def table(request):
                 nombre_local_images =LocalImages.objects.filter(utilisateur=utilisateur).count()
                 boutique = Boutique.objects.filter(utilisateur=utilisateur).first()
                 html_contenu = boutique.html_contenu if boutique else None
+                # Calcul du nombre de jours restants d'essai
+                jours_restants = utilisateur.jours_restants_essai  # Utilisation de la propriété
+                # Vérification du statut d'essai et désactivation si nécessaire
+                utilisateur.verifier_statut_essai()
 
 
             else:
@@ -47,6 +51,7 @@ def table(request):
             'localisation': localisation,
             'nombre_local_images': nombre_local_images,
             'boutique': html_contenu if html_contenu else None,
+            'jours_restants': jours_restants
         })
     else:
         # Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion

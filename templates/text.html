@@ -817,96 +817,6 @@
             color: #128C7E;
         }
 
-        /* Subscription Card */
-        .subscription-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .subscription-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .subscription-card-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .subscription-card-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .subscription-card-body {
-            margin-bottom: 1.5rem;
-        }
-
-        .subscription-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .subscription-detail {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .subscription-detail-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .subscription-detail-value {
-            font-size: 0.9375rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .subscription-card-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--primary);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
         /* Pagination */
         .pagination {
             display: flex;
@@ -948,6 +858,83 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
         }
 
         /* Responsive */
@@ -994,10 +981,6 @@
 
             .filter-card {
                 padding: 1rem;
-            }
-
-            .subscription-details {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -1176,75 +1159,470 @@
             </button>
             
             <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">
-                <i class="fas fa-sign-out-alt"></i
-
-<script>
-// Fonction pour mettre à jour l'aperçu du message WhatsApp
-function updateWhatsappPreview() {
-    const typeMessage = document.getElementById('type_message').value;
-    const previewContent = document.getElementById('previewContent');
-    const customMessageGroup = document.getElementById('customMessageGroup');
-    const messagePreview = document.getElementById('messagePreview');
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
+    </div>
     
-    // Masquer le groupe de message personnalisé si ce n'est pas sélectionné
-    if (typeMessage !== 'personnalise') {
-        customMessageGroup.style.display = 'none';
-        messagePreview.style.display = 'block';
-    }
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h1><i class="fas fa-id-card-alt"></i> Gestion des Abonnements</h1>
+            </div>
+            <div class="page-actions">
+                <span id="currentTime" class="text-sm text-gray-600"></span>
+            </div>
+        </div>
+        
+        <!-- Content Container -->
+        <div class="content-container">
+            <!-- Notification -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notification {% if message.tags %}{{ message.tags }}{% endif %} fade-in" id="notification">
+                        <div class="notification-icon">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif message.tags == 'info' %}
+                                <i class="fas fa-info-circle"></i>
+                            {% else %}
+                                <i class="fas fa-bell"></i>
+                            {% endif %}
+                        </div>
+                        <div class="notification-content">
+                            {{ message }}
+                        </div>
+                        <button class="notification-close">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-title">
+                        <i class="fas fa-money-bill-wave"></i> Revenus Totaux
+                    </div>
+                    <div class="stat-value">{{ revenus_totaux|floatformat:0 }} XOF</div>
+                </div>
+                
+                <div class="stat-card stat-card-success">
+                    <div class="stat-title">
+                        <i class="fas fa-calendar-alt"></i> Revenus ce mois
+                    </div>
+                    <div class="stat-value">{{ revenus_mois|floatformat:0 }} XOF</div>
+                </div>
+                
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-title">
+                        <i class="fas fa-user-check"></i> Abonnés Actifs
+                    </div>
+                    <div class="stat-value">{{ abonnes_actifs }}</div>
+                </div>
+                
+                <div class="stat-card stat-card-danger">
+                    <div class="stat-title">
+                        <i class="fas fa-clock"></i> Essais Expirés
+                    </div>
+                    <div class="stat-value">{{ essais_expires }}</div>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-card">
+                <div class="filter-header">
+                    <div class="filter-title">
+                        <i class="fas fa-filter"></i> Filtrer les Utilisateurs
+                    </div>
+                    <button class="reset-btn" onclick="window.location.href='{% url 'gestion_abonnements' %}'">
+                        <i class="fas fa-sync-alt"></i> Réinitialiser
+                    </button>
+                </div>
+                
+                <form method="GET" action="">
+                    <div class="filter-fields">
+                        <div class="filter-group">
+                            <label class="filter-label" for="nom_recherche">
+                                <i class="fas fa-user"></i> Nom
+                            </label>
+                            <input type="text" class="filter-input" id="nom_recherche" name="nom" value="{{ nom_recherche }}" placeholder="Rechercher par nom">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="statut_filtre">
+                                <i class="fas fa-user-circle"></i> Statut Compte
+                            </label>
+                            <select class="filter-input form-select" id="statut_filtre" name="statut">
+                                <option value="">Tous les statuts</option>
+                                <option value="valide" {% if statut_filtre == 'valide' %}selected{% endif %}>Validé</option>
+                                <option value="en_attente" {% if statut_filtre == 'en_attente' %}selected{% endif %}>En attente</option>
+                                <option value="rejete" {% if statut_filtre == 'rejete' %}selected{% endif %}>Rejeté</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="abonnement_filtre">
+                                <i class="fas fa-id-card-alt"></i> Type d'abonnement
+                            </label>
+                            <select class="filter-input form-select" id="abonnement_filtre" name="abonnement">
+                                <option value="">Tous les types</option>
+                                <option value="essai" {% if abonnement_filtre == 'essai' %}selected{% endif %}>Période d'essai</option>
+                                <option value="payant" {% if abonnement_filtre == 'payant' %}selected{% endif %}>Abonnement payant</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="users-table">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user"></i> Nom Complet</th>
+                                <th><i class="fas fa-phone"></i> Téléphone</th>
+                                <th><i class="fas fa-store"></i> Boutique</th>
+                                <th><i class="fas fa-id-card-alt"></i> Statut Abonnement</th>
+                                <th><i class="fas fa-calendar"></i> Date Fin</th>
+                                <th><i class="fas fa-cog"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for utilisateur in utilisateurs %}
+                            <tr>
+                                <td>{{ utilisateur.nom_complet }}</td>
+                                <td>
+                                    <a href="{{ utilisateur.whatsapp_link }}" target="_blank" class="whatsapp-link">
+                                        <i class="fab fa-whatsapp"></i> {{ utilisateur.numero }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if utilisateur.boutique_exists %}
+                                        <span class="status-badge status-success">
+                                            <i class="fas fa-store"></i> {{ utilisateur.boutique.titre|default:"Sans nom" }}
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-danger">
+                                            <i class="fas fa-store-slash"></i> Aucune
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if utilisateur.abonnement_statut.type == 'payant' %}
+                                        <span class="subscription-status subscription-active">
+                                            <i class="fas fa-crown"></i> Payant ({{ utilisateur.abonnement_statut.type_abonnement }})
+                                        </span>
+                                    {% elif utilisateur.abonnement_statut.type == 'essai' %}
+                                        <span class="subscription-status subscription-trial">
+                                            <i class="fas fa-clock"></i> Essai
+                                        </span>
+                                    {% else %}
+                                        <span class="subscription-status subscription-expired">
+                                            <i class="fas fa-exclamation-circle"></i> Expiré
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if utilisateur.abonnement_statut.date_fin %}
+                                        {{ utilisateur.abonnement_statut.date_fin|date:"d/m/Y" }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                        <button class="action-btn btn-primary" onclick="openUserActionsModal('{{ utilisateur.id }}', '{{ utilisateur.nom_complet }}')">
+                                            <i class="fas fa-cog"></i> Actions
+                                        </button>
+                                        {% if utilisateur.abonnement_statut.type == 'essai' or utilisateur.abonnement_statut.type == 'expire' %}
+                                            <button class="action-btn btn-success" onclick="openAddSubscriptionModal('{{ utilisateur.id }}', '{{ utilisateur.nom_complet }}')">
+                                                <i class="fas fa-plus-circle"></i> Ajouter abonnement
+                                            </button>
+                                        {% endif %}
+                                        <button class="action-btn btn-info" onclick="window.location.href='?historique=1&user_id={{ utilisateur.id }}'">
+                                            <i class="fas fa-history"></i> Historique
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Historique Modal -->
+            {% if show_historique and user_historique and historique_paiements %}
+            <div class="modal active" id="historyModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            <i class="fas fa-history"></i> Historique des abonnements
+                        </h3>
+                        <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        {% for historique in historique_paiements %}
+                        <div class="history-item">
+                            <div class="history-date">
+                                {{ historique.date_action|date:"d/m/Y H:i" }}
+                            </div>
+                            <div class="history-action">
+                                {{ historique.action }}
+                            </div>
+                            {% if historique.details %}
+                            <div class="history-details">
+                                {{ historique.details }}
+                            </div>
+                            {% endif %}
+                            {% if historique.abonnement %}
+                            <div class="history-details">
+                                <strong>Abonnement:</strong> {{ historique.abonnement.get_type_abonnement_display }} - 
+                                {{ historique.abonnement.montant }} XOF - 
+                                Jusqu'au {{ historique.abonnement.date_fin|date:"d/m/Y" }}
+                            </div>
+                            {% endif %}
+                            <div class="history-by">
+                                Par {{ historique.effectue_par.nom_complet }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="action-btn btn-secondary" onclick="closeModal('historyModal')">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- User Actions Modal -->
+            <div class="modal" id="userActionsModal">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'gestion_abonnements' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="utilisateur_id" id="modalUserId">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="modalUserName"></h3>
+                            <button type="button" class="modal-close" onclick="closeModal('userActionsModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">Actions disponibles:</label>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button type="submit" name="action" value="activer_compte" class="action-btn btn-success">
+                                        <i class="fas fa-check-circle"></i> Activer le compte
+                                    </button>
+                                    <button type="submit" name="action" value="desactiver_compte" class="action-btn btn-warning">
+                                        <i class="fas fa-times-circle"></i> Désactiver le compte
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i> Prolonger la période d'essai
+                                </label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="number" class="form-control" name="jours_ajoutes" placeholder="Nombre de jours" min="1" style="flex: 1;">
+                                    <button type="submit" name="action" value="modifier_essai" class="action-btn btn-primary">
+                                        <i class="fas fa-calendar-plus"></i> Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn btn-secondary" onclick="closeModal('userActionsModal')">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Add Subscription Modal -->
+            <div class="modal" id="addSubscriptionModal">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'gestion_abonnements' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="utilisateur_id" id="subscriptionUserId">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="subscriptionUserName"></h3>
+                            <button type="button" class="modal-close" onclick="closeModal('addSubscriptionModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">Type d'abonnement</label>
+                                <select class="form-control form-select" name="type_abonnement" required>
+                                    {% for choice in type_abonnement_choices %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Montant (XOF)</label>
+                                <input type="number" class="form-control" name="montant" required step="0.01" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Méthode de paiement</label>
+                                <select class="form-control form-select" name="methode_paiement" required>
+                                    <option value="Orange Money">Orange Money</option>
+                                    <option value="MTN Mobile Money">MTN Mobile Money</option>
+                                    <option value="Wave">Wave</option>
+                                    <option value="Carte Bancaire">Carte Bancaire</option>
+                                    <option value="Espèce">Espèce</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Référence de paiement</label>
+                                <input type="text" class="form-control" name="reference_paiement" placeholder="Numéro de transaction" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn btn-secondary" onclick="closeModal('addSubscriptionModal')">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                            <button type="submit" name="action" value="ajouter_abonnement" class="action-btn btn-success">
+                                <i class="fas fa-check"></i> Confirmer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    // Mettre à jour l'aperçu selon le type de message
-    switch(typeMessage) {
-        case 'confirmation':
-            previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-            Nous confirmons la réception de votre paiement pour votre abonnement.<br>
-            Votre boutique est maintenant ${document.querySelector('input[name="est_premium"]:checked') ? 'publiée' : 'non publiée'}.<br><br>
-            Pour toute question, contactez-nous via ce lien : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-            L'équipe de support`;
-            break;
+    <script>
+        // Toggle sidebar on mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Auto-hide notification after 5 seconds
+        const notification = document.getElementById('notification');
+        if (notification) {
+            setTimeout(function() {
+                notification.classList.add('hide');
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            }, 5000);
             
-        case 'rappel':
-            previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-            Nous vous rappelons que votre abonnement expire dans ${document.querySelector('#jours_ajout') ? document.querySelector('#jours_ajout').value : 'X'} jours.<br>
-            Veuillez renouveler votre abonnement pour continuer à bénéficier de nos services.<br><br>
-            Pour renouveler ou toute question : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-            L'équipe de support`;
-            break;
+            // Manual close notification
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', function() {
+                notification.classList.add('hide');
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            });
+        }
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Apply the saved theme
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             
-        case 'expiration':
-            previewContent.innerHTML = `Bonjour {{ utilisateur.nom_complet }},<br><br>
-            Nous vous informons que votre abonnement a expiré.<br>
-            Votre boutique n'est plus visible par les clients.<br><br>
-            Pour renouveler : <a href="{{ whatsapp_link }}" target="_blank">{{ whatsapp_link }}</a><br><br>
-            L'équipe de support`;
-            break;
-            
-        case 'personnalise':
-            customMessageGroup.style.display = 'block';
-            messagePreview.style.display = 'none';
-            break;
-            
-        default:
-            previewContent.innerHTML = 'Sélectionnez un type de message pour voir la prévisualisation';
-    }
-}
-
-// Fonction pour mettre à jour l'aperçu du message personnalisé
-function updateCustomPreview() {
-    const previewContent = document.getElementById('previewContent');
-    const customMessage = document.getElementById('message_personnalise').value;
-    
-    previewContent.innerHTML = customMessage || 'Entrez votre message personnalisé ci-dessus';
-}
-
-// Fonction pour afficher le modal WhatsApp avec les bonnes valeurs
-function showWhatsappModal(abonnementId, utilisateurId, numero) {
-    document.getElementById('whatsappAbonnementId').value = abonnementId;
-    document.getElementById('whatsappUtilisateurId').value = utilisateurId;
-    document.getElementById('type_message').value = '';
-    document.getElementById('message_personnalise').value = '';
-    document.getElementById('customMessageGroup').style.display = 'none';
-    document.getElementById('messagePreview').style.display = 'block';
-    document.getElementById('previewContent').innerHTML = 'Sélectionnez un type de message pour voir la prévisualisation';
-    showModal('whatsappModal');
-}
-</script>
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        });
+        
+        function updateThemeButton(theme) {
+            if (theme === 'dark') {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Thème clair';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Thème sombre';
+            }
+        }
+        
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentTime').textContent = now.toLocaleDateString('fr-FR', options);
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000); // Update every minute
+        
+        // Modal functions
+        function openUserActionsModal(userId, userName) {
+            document.getElementById('modalUserId').value = userId;
+            document.getElementById('modalUserName').textContent = 'Actions pour ' + userName;
+            document.getElementById('userActionsModal').classList.add('active');
+        }
+        
+        function openAddSubscriptionModal(userId, userName) {
+            document.getElementById('subscriptionUserId').value = userId;
+            document.getElementById('subscriptionUserName').textContent = 'Ajouter abonnement pour ' + userName;
+            document.getElementById('addSubscriptionModal').classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Auto-submit form when filters change
+        document.querySelectorAll('.filter-input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        });
+        
+        // Close history modal when clicking outside
+        const historyModal = document.getElementById('historyModal');
+        if (historyModal) {
+            historyModal.addEventListener('click', function(e) {
+                if (e.target === historyModal) {
+                    closeModal('historyModal');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

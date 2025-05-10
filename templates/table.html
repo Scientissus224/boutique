@@ -1111,7 +1111,11 @@
     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Déconnexion</a>
     <a href=""></a>
     </div>
-    
+    <div class="essai-info" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; background-color: #f0f0f0; color: #333; font-size: 16px; padding: 10px 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+      <i class="fa fa-clock" style="margin-right: 8px; color: #007bff; font-size: 18px;"></i>
+      <span style="flex: 1 1 100%; max-width: 100%;"><strong>Votre accès au service prend fin dans :</strong> {{ jours_restants }} jour{{ jours_restants|pluralize }}</span>
+   </div>
+  
     <div class="content">
        <div class="card" style="position: relative;">
           <i class="fas fa-images text-primary"></i>
